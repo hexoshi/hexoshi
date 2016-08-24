@@ -3,6 +3,9 @@
  <tileset firstgid="1" name="main" tilewidth="16" tileheight="16" tilecount="88">
   <image source="../images/tiles/main_blue.png" width="352" height="64"/>
  </tileset>
+ <tileset firstgid="89" name="extras" tilewidth="16" tileheight="16" tilecount="77">
+  <image source="../images/tiles/extras.png" width="176" height="112"/>
+ </tileset>
  <layer name="Tile Layer 1" width="50" height="28">
   <data encoding="base64" compression="zlib">
    eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==

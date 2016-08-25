@@ -10,27 +10,27 @@ without any warranty.
 
 HOW TO RUN
 
-To run ReTux, you will need the following dependencies:
+To run Hexoshi, you will need the following dependencies:
 
 - Python 2 (2.7 or later) or 3 (3.1 or later) <http://www.python.org>
 - Pygame 1.9.1 or later <http://pygame.org/download.shtml>
 
-If you have downloaded a version of ReTux designated for a particular
+If you have downloaded a version of Hexoshi designated for a particular
 system, these dependencies can be found under the "deps" folder.  Please
 see any "README" files in that folder for instructions and tips.
 
-Once you have installed the dependencies, you can start ReTux by
-running retux.py. On most systems, this should be done by
+Once you have installed the dependencies, you can start Hexoshi by
+running hexoshi.py. On most systems, this should be done by
 double-clicking on it; if you are shown a dialog asking you if you want
 to display or run the file, choose to run it.
 
-Python 2 will be used by default. To run ReTux with Python 3 instead,
+Python 2 will be used by default. To run Hexoshi with Python 3 instead,
 you can either change the shebang on line 1 from "python2" to "python3",
 or explicitly run the Python 3 executable, e.g. with
-"python3 retux.py" (the exact command may be different depending on
+"python3 hexoshi.py" (the exact command may be different depending on
 your system).
 
-There are some command-line options that can be passed. Run ReTux in a
+There are some command-line options that can be passed. Run Hexoshi in a
 terminal with the "-h" command-line option for more information.
 
 

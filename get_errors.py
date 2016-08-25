@@ -25,7 +25,7 @@ import shutil
 
 import six
 
-CONFIG = os.path.join(os.path.expanduser("~"), ".config", "retux")
+CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
 
 
 if __name__ == "__main__":

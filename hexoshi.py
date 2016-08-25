@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-# reTux
+# Hexoshi
 # Copyright (C) 2014-2016 onpon4 <onpon4@riseup.net>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -64,8 +64,8 @@ else:
 if getattr(sys, "frozen", False):
     __file__ = sys.executable
 
-DATA = tempfile.mkdtemp("retux-data")
-CONFIG = os.path.join(os.path.expanduser("~"), ".config", "retux")
+DATA = tempfile.mkdtemp("hexoshi-data")
+CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
 
 dirs = [os.path.join(os.path.dirname(__file__), "data"),
         os.path.join(CONFIG, "data")]
@@ -84,7 +84,7 @@ for d in dirs:
                 shutil.copy2(os.path.join(dirpath, fname), nd)
 del dirs
 
-gettext.install("retux", os.path.abspath(os.path.join(DATA, "locale")))
+gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -129,7 +129,7 @@ NO_HUD = args.no_hud
 GOD = (args.god and args.god.lower() == "plz4giv")
 
 if args.lang:
-    lang = gettext.translation("retux",
+    lang = gettext.translation("hexoshi",
                                os.path.abspath(os.path.join(DATA, "locale")),
                                [args.lang])
     lang.install()
@@ -7909,7 +7909,7 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
 
 print(_("Initializing game system..."))
 Game(SCREEN_SIZE[0], SCREEN_SIZE[1], fps=FPS, delta=DELTA, delta_min=DELTA_MIN,
-     delta_max=DELTA_MAX, window_text="reTux {}".format(__version__),
+     delta_max=DELTA_MAX, window_text="Hexoshi {}".format(__version__),
      window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
 
 print(_("Initializing GUI system..."))

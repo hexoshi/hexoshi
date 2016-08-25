@@ -24,6 +24,14 @@ Details:
 
 ------------------------------------------------------------------------
 
+images/objects/player/legs_stand_right.png
+images/objects/player/torso_stand_right.png
+
+Author: Luke Bunday
+License: CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0/>
+
+------------------------------------------------------------------------
+
 credits.json
 objecttypes.xml
 rooms/base.tmx

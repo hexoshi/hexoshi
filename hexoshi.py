@@ -141,13 +141,6 @@ DELTA_MIN = FPS / 2
 DELTA_MAX = FPS * 4
 TRANSITION_TIME = 750
 
-DEFAULT_LEVELSET = "retux.json"
-DEFAULT_LEVEL_TIME_BONUS = 90000
-
-TUX_ORIGIN_X = 28
-TUX_ORIGIN_Y = 16
-TUX_KICK_TIME = 10
-
 GRAVITY = 0.2
 
 PLAYER_MAX_HP = 100
@@ -157,67 +150,10 @@ PLAYER_ACCELERATION = 0.25
 PLAYER_FRICTION = 0.5
 PLAYER_JUMP_HEIGHT = 6 * TILE_SIZE + 2
 PLAYER_FALL_SPEED = 4
-PLAYER_WALK_FRAMES_PER_PIXEL = 2 / 17
 PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
 
-SNOWMAN_WALK_SPEED = 2
-SNOWMAN_STRONG_WALK_SPEED = 3
-SNOWMAN_FINAL_WALK_SPEED = 4
-SNOWMAN_STUNNED_WALK_SPEED = 6
-SNOWMAN_ACCELERATION = 0.1
-SNOWMAN_STRONG_ACCELERATION = 0.2
-SNOWMAN_FINAL_ACCELERATION = 0.5
-SNOWMAN_HOP_HEIGHT = 2 * TILE_SIZE
-SNOWMAN_JUMP_HEIGHT = 7 * TILE_SIZE
-SNOWMAN_JUMP_TRIGGER = 2 * TILE_SIZE
-SNOWMAN_STOMP_DELAY = 30
-SNOWMAN_WALK_FRAMES_PER_PIXEL = 1 / 4
-SNOWMAN_HP = 5
-SNOWMAN_STRONG_STAGE = 2
-SNOWMAN_FINAL_STAGE = 3
-SNOWMAN_HITSTUN = 120
-SNOWMAN_SHAKE_NUM = 3
-
-RACCOT_WALK_SPEED = 3
-RACCOT_ACCELERATION = 0.2
-RACCOT_HOP_HEIGHT = TILE_SIZE
-RACCOT_JUMP_HEIGHT = 5 * TILE_SIZE
-RACCOT_JUMP_TRIGGER = 2 * TILE_SIZE
-RACCOT_STOMP_SPEED = 4
-RACCOT_STOMP_DELAY = 15
-RACCOT_WALK_FRAMES_PER_PIXEL = 1 / 22
-RACCOT_HP = 5
-RACCOT_HOP_TIME = 5
-RACCOT_HOP_INTERVAL_MIN = 45
-RACCOT_HOP_INTERVAL_MAX = 120
-RACCOT_CHARGE_INTERVAL_MIN = 300
-RACCOT_CHARGE_INTERVAL_MAX = 600
-RACCOT_CRUSH_LAX = -8 # A negative lax makes it have the opposite effect.
-RACCOT_CRUSH_GRAVITY = 0.6
-RACCOT_CRUSH_FALL_SPEED = 15
-RACCOT_CRUSH_SPEED = 12
-RACCOT_CRUSH_CHARGE = TILE_SIZE
-RACCOT_SHAKE_NUM = 4
-
-HP_POINTS = 1000
-TIMER_FRAMES = 40
-HEAL_COINS = 20
-
-CEILING_LAX = 10
-STOMP_LAX = 8
-
-BLOCK_HIT_HEIGHT = 8
-ITEM_HIT_HEIGHT = 16
-COIN_COLLECT_TIME = 30
-COIN_COLLECT_SPEED = 2
-ITEM_SPAWN_SPEED = 1
-
-SECOND_POINTS = 100
-COIN_POINTS = 100
-ENEMY_KILL_POINTS = 50
-AMMO_POINTS = 10
-TUXDOLL_POINTS = 5000
+CEILING_LAX = 2
 
 CAMERA_HSPEED_FACTOR = 1 / 2
 CAMERA_VSPEED_FACTOR = 1 / 20
@@ -226,104 +162,18 @@ CAMERA_MARGIN_TOP = 4 * TILE_SIZE
 CAMERA_MARGIN_BOTTOM = 5 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = CAMERA_MARGIN_BOTTOM + TILE_SIZE
 
-WARP_LAX = 12
-WARP_SPEED = 1.5
-
 SHAKE_FRAME_TIME = FPS / DELTA_MIN
 SHAKE_AMOUNT = 3
-
-ENEMY_WALK_SPEED = 1
-ENEMY_FALL_SPEED = 7
-ENEMY_SLIDE_SPEED = 0.3
-ENEMY_HIT_BELOW_HEIGHT = TILE_SIZE * 3 / 4
-SNOWBALL_BOUNCE_HEIGHT = TILE_SIZE * 3 + 2
-KICK_FORWARD_SPEED = 6
-KICK_FORWARD_HEIGHT = TILE_SIZE * 3 / 4
-KICK_UP_HEIGHT = 5.5 * TILE_SIZE
-ICEBLOCK_GRAVITY = 0.6
-ICEBLOCK_FALL_SPEED = 9
-ICEBLOCK_FRICTION = 0.1
-ICEBLOCK_DASH_SPEED = 7
-JUMPY_BOUNCE_HEIGHT = TILE_SIZE * 4
-BOMB_GRAVITY = 0.6
-BOMB_TICK_TIME = 4
-EXPLOSION_TIME = FPS * 3 / 4
-ICICLE_LAX = TILE_SIZE * 3 / 4
-ICICLE_SHAKE_TIME = FPS
-ICICLE_GRAVITY = 0.75
-ICICLE_FALL_SPEED = 12
-CRUSHER_LAX = TILE_SIZE * 3 / 4
-CRUSHER_GRAVITY = 1
-CRUSHER_FALL_SPEED = 15
-CRUSHER_RISE_SPEED = 2
-CRUSHER_CRUSH_TIME = FPS * 2 / 3
-CRUSHER_SHAKE_NUM = 2
-THAW_FPS = 15
-THAW_TIME_DEFAULT = FPS * 5
-THAW_WARN_TIME = FPS
-
-BRICK_SHARD_NUM = 6
-BRICK_SHARD_SPEED = 3
-BRICK_SHARD_HEIGHT = TILE_SIZE * 2
-BRICK_SHARD_GRAVITY = 0.75
-BRICK_SHARD_FALL_SPEED = 12
-
-ROCK_GRAVITY = 0.6
-ROCK_FALL_SPEED = 10
-ROCK_FRICTION = 0.4
-
-SPRING_JUMP_HEIGHT = 8 * TILE_SIZE + 11
-
-FLOWER_FALL_SPEED = 5
-FLOWER_THROW_HEIGHT = TILE_SIZE / 2
-FLOWER_THROW_UP_HEIGHT = TILE_SIZE * 3 / 2
-
-FIREBALL_AMMO = 20
-FIREBALL_SPEED = 8
-FIREBALL_GRAVITY = 0.5
-FIREBALL_FALL_SPEED = 5
-FIREBALL_BOUNCE_HEIGHT = TILE_SIZE / 2
-FIREBALL_UP_HEIGHT = TILE_SIZE * 3 / 2
-
-ICEBULLET_AMMO = 20
-ICEBULLET_SPEED = 16
-
-COINBRICK_COINS = 20
-COINBRICK_DECAY_TIME = 25
-
-ICE_CRACK_TIME = 20
-ICE_REFREEZE_RATE = 1 / 4
-
-LIGHT_RANGE = 600
-
-ACTIVATE_RANGE = 528
-ENEMY_ACTIVE_RANGE = 32
-ICEBLOCK_ACTIVE_RANGE = 400
-BULLET_ACTIVE_RANGE = 96
-ROCK_ACTIVE_RANGE = 464
-TILE_ACTIVE_RANGE = 528
-DEATHZONE = 2 * TILE_SIZE
-
-DEATH_FADE_TIME = 3000
-DEATH_RESTART_WAIT = FPS
-
-WIN_COUNT_START_TIME = 120
-WIN_COUNT_CONTINUE_TIME = 45
-WIN_COUNT_POINTS_MULT = 111
-WIN_COUNT_TIME_MULT = 311
-WIN_FINISH_DELAY = 120
-
-MAP_SPEED = 5
 
 TEXT_SPEED = 1000
 
 SAVE_NSLOTS = 10
 MENU_MAX_ITEMS = 14
 
-SOUND_MAX_RADIUS = 400
-SOUND_ZERO_RADIUS = 1200
-SOUND_CENTERED_RADIUS = 150
-SOUND_TILTED_RADIUS = 1000
+SOUND_MAX_RADIUS = 200
+SOUND_ZERO_RADIUS = 600
+SOUND_CENTERED_RADIUS = 75
+SOUND_TILTED_RADIUS = 500
 SOUND_TILT_LIMIT = 0.75
 
 backgrounds = {}
@@ -342,9 +192,9 @@ right_key = [["right", "d"]]
 up_key = [["up", "w"]]
 down_key = [["down", "s"]]
 jump_key = [["space"]]
-action_key = [["ctrl_left", "ctrl_right"]]
-sneak_key = [["shift_left", "shift_right"]]
-menu_key = [["tab", "backspace"]]
+shoot_key = [["ctrl_left", "ctrl_right"]]
+mode_reset_key = [["shift_left", "shift_right"]]
+mode_key = [["tab"]]
 pause_key = [["enter", "p"]]
 left_js = [[(0, "axis-", 0), (0, "hat_left", 0)]]
 right_js = [[(0, "axis+", 0), (0, "hat_right", 0)]]
@@ -352,8 +202,8 @@ up_js = [[(0, "axis-", 1), (0, "hat_up", 0)]]
 down_js = [[(0, "axis+", 1), (0, "hat_down", 0)]]
 jump_js = [[(0, "button", 1), (0, "button", 3)]]
 action_js = [[(0, "button", 0)]]
-sneak_js = [[(0, "button", 2)]]
-menu_js = [[(0, "button", 8)]]
+mode_reset_js = [[(0, "button", 2)]]
+mode_js = [[(0, "button", 8)]]
 pause_js = [[(0, "button", 9)]]
 save_slots = [None for i in six.moves.range(SAVE_NSLOTS)]
 
@@ -5842,470 +5692,6 @@ class CircoflamePath(xsge_path.Path):
         self.destroy()
 
 
-class MapPlayer(sge.dsp.Object):
-
-    moving = False
-
-    def _follow_path(self, space, path):
-        if path is not None and not self.moving:
-            if path.points:
-                x, y = path.points[-1]
-            else:
-                x = 0
-                y = 0
-            target_space = MapSpace.get_at(path.x + x, path.y + y)
-            if target_space is not None:
-                if space.cleared or target_space.cleared:
-                    self.moving = True
-                    path.follow_start(self, MAP_SPEED)
-            else:
-                print("Space at position ({}, {}) doesn't exist!".format(
-                    path.x + x, path.y + y))
-
-    def move_left(self):
-        space = MapSpace.get_at(self.x, self.y)
-        if space is not None:
-            path = space.get_left_exit()
-            self._follow_path(space, path)
-
-    def move_right(self):
-        space = MapSpace.get_at(self.x, self.y)
-        if space is not None:
-            path = space.get_right_exit()
-            self._follow_path(space, path)
-
-    def move_up(self):
-        space = MapSpace.get_at(self.x, self.y)
-        if space is not None:
-            path = space.get_up_exit()
-            self._follow_path(space, path)
-
-    def move_down(self):
-        space = MapSpace.get_at(self.x, self.y)
-        if space is not None:
-            path = space.get_down_exit()
-            self._follow_path(space, path)
-
-    def move_forward(self):
-        space = MapSpace.get_at(self.x, self.y)
-        if space is not None:
-            paths = []
-            for path in space.get_exits():
-                if path is not None and path.forward:
-                    paths.append(path)
-
-            if len(paths) == 1:
-                self._follow_path(space, paths[0])
-
-    def start_level(self):
-        space = MapSpace.get_at(self.x, self.y)
-        if space is not None:
-            space.start_level()
-
-    def event_create(self):
-        global worldmap_entry_space
-
-        start_space = MapSpace.get_at(self.x, self.y)
-        if start_space is None:
-            start_space = MapSpace.create(self.x, self.y)
-
-        if worldmap_entry_space is None:
-            worldmap_entry_space = start_space.ID
-
-        if current_worldmap_space is not None:
-            for obj in sge.game.current_room.objects:
-                if (isinstance(obj, MapSpace) and
-                        obj.ID == current_worldmap_space):
-                    self.x = obj.x
-                    self.y = obj.y
-
-    def event_step(self, time_passed, delta_mult):
-        global current_areas
-
-        room = sge.game.current_room
-        space = MapSpace.get_at(self.x, self.y)
-
-        if space is not None:
-            if space.level and space.level not in level_names:
-                r = Level.load(space.level, True)
-                if r is not None:
-                    loaded_levels[space.level] = r
-                    current_areas = {}
-                else:
-                    rush_save()
-                    sge.game.start_room.start()
-
-            room.level_text = level_names.get(space.level)
-            room.level_tuxdoll_available = space.level in tuxdolls_available
-            room.level_tuxdoll_found = space.level in tuxdolls_found
-
-            key_controls = [left_key, right_key, up_key, down_key, sneak_key]
-            js_controls = [left_js, right_js, up_js, down_js, sneak_js]
-            states = [0 for i in key_controls]
-
-            for i in six.moves.range(len(key_controls)):
-                for player in six.moves.range(len(key_controls[i])):
-                    for choice in key_controls[i][player]:
-                        value = sge.keyboard.get_pressed(choice)
-                        states[i] = max(states[i], value)
-
-            for i in six.moves.range(len(js_controls)):
-                for player in six.moves.range(len(key_controls[i])):
-                    for choice in js_controls[i][player]:
-                        j, t, c = choice
-                        value = min(sge.joystick.get_value(j, t, c), 1)
-                        if value >= joystick_threshold:
-                            states[i] = max(states[i], value)
-
-            left_pressed = states[0]
-            right_pressed = states[1]
-            up_pressed = states[2]
-            down_pressed = states[3]
-            sneak_pressed = states[4]
-
-            if sneak_pressed:
-                self.move_forward()
-            if right_pressed - left_pressed > 0:
-                self.move_right()
-            elif left_pressed - right_pressed > 0:
-                self.move_left()
-            if down_pressed - up_pressed > 0:
-                self.move_down()
-            elif up_pressed - down_pressed > 0:
-                self.move_up()
-
-        if room.views:
-            view = room.views[0]
-            view.x = self.x - view.width / 2 + self.sprite.width / 2
-            view.y = self.y - view.height / 2 + self.sprite.height / 2
-
-    def event_key_press(self, key, char):
-        if (key in itertools.chain.from_iterable(jump_key) or
-                key in itertools.chain.from_iterable(action_key) or
-                key in itertools.chain.from_iterable(pause_key)):
-            self.start_level()
-        elif key == "escape" or key in itertools.chain.from_iterable(menu_key):
-            sge.game.current_room.show_menu()
-
-    def event_joystick(self, js_name, js_id, input_type, input_id, value):
-        js = (js_id, input_type, input_id)
-        if value >= joystick_threshold:
-            if (js in itertools.chain.from_iterable(jump_js) or
-                    js in itertools.chain.from_iterable(action_js) or
-                    js in itertools.chain.from_iterable(pause_js)):
-                self.start_level()
-            elif js in itertools.chain.from_iterable(menu_js):
-                sge.game.current_room.show_menu()
-
-    def event_stop(self):
-        self.moving = False
-
-
-class MapSpace(sge.dsp.Object):
-
-    def __init__(self, x, y, level=None, level_spawn=None, ID=None, **kwargs):
-        super(MapSpace, self).__init__(x, y, **kwargs)
-        self.level = level
-        self.level_spawn = level_spawn
-        if ID is not None:
-            self.ID = ID
-        elif level is not None:
-            self.ID = level
-        else:
-            self.ID = "__{}x{}__".format(x, y)
-
-    @property
-    def cleared(self):
-        if self.ID == worldmap_entry_space:
-            return True
-        else:
-            if self.level is not None:
-                return self.level in cleared_levels
-            else:
-                connected_spaces = []
-                already_checked = []
-                for path in self.get_exits():
-                    if path is not None:
-                        x, y = path.points[-1]
-                        space = MapSpace.get_at(self.x + x, self.y + y)
-                        if space is not None:
-                            connected_spaces.append(space)
-
-                while connected_spaces:
-                    space = connected_spaces.pop(0)
-                    already_checked.append(space)
-                    if (space.ID == worldmap_entry_space or
-                            space.level in cleared_levels):
-                        return True
-                    elif space.level is None:
-                        for path in space.get_exits():
-                            if path is not None:
-                                x, y = path.points[-1]
-                                new_space = MapSpace.get_at(space.x + x,
-                                                            space.y + y)
-                                if (new_space is not None and
-                                        new_space not in connected_spaces and
-                                        new_space not in already_checked):
-                                    connected_spaces.append(new_space)
-                return False
-
-    def update_sprite(self):
-        if self.level is not None:
-            if self.cleared:
-                self.sprite = worldmap_level_complete_sprite
-            else:
-                self.sprite = worldmap_level_incomplete_sprite
-                self.image_fps = None
-        else:
-            self.sprite = None
-
-    def get_exits(self):
-        """
-        Return the exits of this space as a tuple in the form:
-        (up, right, down, left)
-        """
-        exits = []
-        diagonal_exits = []
-        left_exit = None
-        right_exit = None
-        up_exit = None
-        down_exit = None
-
-        for obj in sge.game.current_room.get_objects_at(self.x - 1, self.y - 1,
-                                                        2, 2):
-            if (isinstance(obj, MapPath) and obj.points and
-                    abs(self.x - obj.x) < 1 and abs(self.y - obj.y) < 1):
-                exits.append(obj)
-
-        # First do exits that are unambiguously one direction
-        for obj in exits:
-            x, y = obj.points[0]
-            if x == 0:
-                if y > 0:
-                    if down_exit is None:
-                        down_exit = obj
-                elif y < 0:
-                    if up_exit is None:
-                        up_exit = obj
-                else:
-                    warnings.warn("Path at ({}, {}) has no direction!".format(
-                        obj.x, obj.y))
-            elif y == 0:
-                if x > 0:
-                    if right_exit is None:
-                        right_exit = obj
-                elif x < 0:
-                    if left_exit is None:
-                        left_exit = obj
-                else:
-                    warnings.warn("Path at ({}, {}) has no direction!".format(
-                        obj.x, obj.y))
-            else:
-                diagonal_exits.append(obj)
-
-        # And now do diagonal exits
-        for obj in diagonal_exits:
-            x, y = obj.points[0]
-            assert x and y
-            if abs(y) > abs(x):
-                # Mostly vertical
-                if y > 0:
-                    if down_exit is None:
-                        down_exit = obj
-                    else:
-                        if x > 0:
-                            if right_exit is None:
-                                right_exit = obj
-                        else:
-                            if left_exit is None:
-                                left_exit = obj
-                else:
-                    if up_exit is None:
-                        up_exit = obj
-                    else:
-                        if x > 0:
-                            if right_exit is None:
-                                right_exit = obj
-                        else:
-                            if left_exit is None:
-                                left_exit = obj
-            else:
-                # Mostly horizontal, or equal
-                if x > 0:
-                    if right_exit is None:
-                        right_exit = obj
-                    else:
-                        if y > 0:
-                            if down_exit is None:
-                                down_exit = obj
-                        else:
-                            if up_exit is None:
-                                up_exit = obj
-                else:
-                    if left_exit is None:
-                        left_exit = obj
-                    else:
-                        if y > 0:
-                            if down_exit is None:
-                                down_exit = obj
-                        else:
-                            if up_exit is None:
-                                up_exit = obj
-
-        return (up_exit, right_exit, down_exit, left_exit)
-
-    def get_left_exit(self):
-        return self.get_exits()[3]
-
-    def get_right_exit(self):
-        return self.get_exits()[1]
-
-    def get_up_exit(self):
-        return self.get_exits()[0]
-
-    def get_down_exit(self):
-        return self.get_exits()[2]
-
-    def start_level(self):
-        global main_area
-        global level_time_bonus
-        global current_areas
-        global current_checkpoints
-
-        if self.level:
-            main_area = None
-            current_areas = {}
-            level = Level.load(self.level, True)
-            if level is not None:
-                checkpoint = current_checkpoints.get(self.level)
-                if checkpoint is not None:
-                    main_area = level.fname
-                    level_time_bonus = level.time_bonus
-                    area_name, area_spawn = checkpoint.split(':', 1)
-                    level = Level.load(area_name, True)
-                    level.spawn = area_spawn
-                else:
-                    level.spawn = self.level_spawn
-
-                x = self.x - sge.game.current_room.views[0].x
-                y = self.y - sge.game.current_room.views[0].y
-                if self.sprite:
-                    x += self.sprite.width / 2
-                    y += self.sprite.height / 2
-                level.start(transition="iris_in",
-                            transition_time=TRANSITION_TIME,
-                            transition_arg=(x, y))
-            else:
-                rush_save()
-                sge.game.start_room.start()
-
-    @classmethod
-    def get_at(cls, x, y):
-        for obj in sge.game.current_room.get_objects_at(x - 1, y - 1, 2, 2):
-            if (isinstance(obj, MapSpace) and abs(x - obj.x) < 1 and
-                    abs(y - obj.y) < 1):
-                return obj
-
-        return None
-
-
-class MapWarp(MapSpace):
-
-    def __init__(self, x, y, dest=None, **kwargs):
-        super(MapWarp, self).__init__(x, y, **kwargs)
-        self.dest = dest
-
-    def update_sprite(self):
-        self.sprite = worldmap_warp_sprite
-        self.image_fps = None
-
-    def start_level(self):
-        global current_worldmap
-        global current_worldmap_space
-        global worldmap_entry_space
-        global mapdest
-        global mapdest_space
-
-        if self.dest and ':' in self.dest:
-            mapdest, mapdest_space = self.dest.split(':', 1)
-        else:
-            mapdest_space = None
-            if self.dest:
-                mapdest = self.dest
-
-        if self.level:
-            MapSpace.start_level(self)
-        else:
-            current_worldmap = mapdest
-            current_worldmap_space = mapdest_space
-            worldmap_entry_space = mapdest_space
-            mapdest = None
-            mapdest_space = None
-            m = Worldmap.load(current_worldmap)
-            m.start(transition="dissolve", transition_time=TRANSITION_TIME)
-            play_sound(warp_sound)
-
-
-class MapPath(xsge_path.Path):
-
-    forward = True
-
-    def event_create(self):
-        if self.points:
-            if self.forward:
-                rx, ry = self.points[-1]
-                rx += self.x
-                ry += self.y
-                rp = []
-                for x, y in self.points[-2::-1] + [(0, 0)]:
-                    x = x + self.x - rx
-                    y = y + self.y - ry
-                    rp.append((x, y))
-                # Not using Object.create to prevent infinite recursion.
-                m = MapPath(rx, ry, rp)
-                m.forward = False
-                sge.game.current_room.add(m)
-
-            if MapSpace.get_at(self.x, self.y) is None:
-                MapSpace.create(self.x, self.y)
-        else:
-            warnings.warn("MapPath at ({}, {}) has only one point!".format(
-                self.x, self.y))
-
-    def event_follow_end(self, obj):
-        global current_worldmap_space
-        global current_level
-
-        if self.points:
-            x, y = self.points[-1]
-        else:
-            x = 0
-            y = 0
-
-        obj.x = self.x + x
-        obj.y = self.y + y
-        obj.moving = False
-
-        space = MapSpace.get_at(obj.x, obj.y)
-        if space is not None and space.ID is not None:
-            current_worldmap_space = space.ID
-
-            # Save the current worldmap space as the current level.
-            # This will make preloading start there next time.
-            if current_worldmap_space in levels:
-                current_level = levels.index(current_worldmap_space)
-
-        save_game()
-
-
-class MapWater(sge.dsp.Object):
-
-    def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = worldmap_water_sprite
-        kwargs["tangible"] = False
-        super(MapWater, self).__init__(x, y, **kwargs)
-
-
 class Menu(xsge_gui.MenuWindow):
 
     items = []
@@ -6675,8 +6061,8 @@ class KeyboardMenu(Menu):
     @classmethod
     def create_page(cls, default=0, page=0):
         page %= min(len(left_key), len(right_key), len(up_key), len(down_key),
-                    len(jump_key), len(action_key), len(sneak_key),
-                    len(menu_key), len(pause_key))
+                    len(jump_key), len(shoot_key), len(mode_reset_key),
+                    len(mode_key), len(pause_key))
 
         def format_key(key):
             if key:
@@ -6690,9 +6076,9 @@ class KeyboardMenu(Menu):
                      _("Up: {}").format(format_key(up_key[page])),
                      _("Down: {}").format(format_key(down_key[page])),
                      _("Jump: {}").format(format_key(jump_key[page])),
-                     _("Action: {}").format(format_key(action_key[page])),
-                     _("Sneak: {}").format(format_key(sneak_key[page])),
-                     _("Menu: {}").format(format_key(menu_key[page])),
+                     _("Shoot: {}").format(format_key(shoot_key[page])),
+                     _("Reset Mode: {}").format(format_key(mode_reset_key[page])),
+                     _("Mode: {}").format(format_key(mode_key[page])),
                      _("Pause: {}").format(format_key(pause_key[page])),
                      _("Back")]
         self = cls.create(default)
@@ -6759,7 +6145,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 6:
             k = wait_key()
             if k is not None:
-                toggle_key(action_key[self.page], k)
+                toggle_key(shoot_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -6768,7 +6154,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 7:
             k = wait_key()
             if k is not None:
-                toggle_key(sneak_key[self.page], k)
+                toggle_key(mode_reset_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -6777,7 +6163,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 8:
             k = wait_key()
             if k is not None:
-                toggle_key(menu_key[self.page], k)
+                toggle_key(mode_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -6804,8 +6190,8 @@ class JoystickMenu(Menu):
     @classmethod
     def create_page(cls, default=0, page=0):
         page %= min(len(left_js), len(right_js), len(up_js), len(down_js),
-                    len(jump_js), len(action_js), len(sneak_js), len(menu_js),
-                    len(pause_js))
+                    len(jump_js), len(shoot_js), len(mode_reset_js),
+                    len(mode_js), len(pause_js))
 
         def format_js(js):
             js_template = "{},{},{}"
@@ -6823,9 +6209,9 @@ class JoystickMenu(Menu):
                      _("Up: {}").format(format_js(up_js[page])),
                      _("Down: {}").format(format_js(down_js[page])),
                      _("Jump: {}").format(format_js(jump_js[page])),
-                     _("Action: {}").format(format_js(action_js[page])),
-                     _("Sneak: {}").format(format_js(sneak_js[page])),
-                     _("Menu: {}").format(format_js(menu_js[page])),
+                     _("Shoot: {}").format(format_js(shoot_js[page])),
+                     _("Reset Mode: {}").format(format_js(mode_reset_js[page])),
+                     _("Mode: {}").format(format_js(mode_js[page])),
                      _("Pause: {}").format(format_js(pause_js[page])),
                      _("Back")]
         self = cls.create(default)
@@ -6892,7 +6278,7 @@ class JoystickMenu(Menu):
         elif self.choice == 6:
             js = wait_js()
             if js is not None:
-                toggle_js(action_js[self.page], js)
+                toggle_js(shoot_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -6901,7 +6287,7 @@ class JoystickMenu(Menu):
         elif self.choice == 7:
             js = wait_js()
             if js is not None:
-                toggle_js(sneak_js[self.page], js)
+                toggle_js(mode_reset_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -6910,7 +6296,7 @@ class JoystickMenu(Menu):
         elif self.choice == 8:
             js = wait_js()
             if js is not None:
-                toggle_js(menu_js[self.page], js)
+                toggle_js(mode_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -7336,11 +6722,11 @@ def set_gui_controls():
     xsge_gui.up_keys = list(itertools.chain.from_iterable(up_key))
     xsge_gui.down_keys = list(itertools.chain.from_iterable(down_key))
     xsge_gui.enter_keys = (list(itertools.chain.from_iterable(jump_key)) +
-                           list(itertools.chain.from_iterable(action_key)) +
+                           list(itertools.chain.from_iterable(shoot_key)) +
                            list(itertools.chain.from_iterable(pause_key)))
     if not xsge_gui.enter_keys:
         xsge_gui.enter_keys = ["enter"]
-    xsge_gui.escape_keys = (list(itertools.chain.from_iterable(menu_key)) +
+    xsge_gui.escape_keys = (list(itertools.chain.from_iterable(mode_key)) +
                             ["escape"])
     xsge_gui.next_widget_joystick_events = (
         list(itertools.chain.from_iterable(down_js)) +
@@ -7356,12 +6742,12 @@ def set_gui_controls():
     xsge_gui.down_joystick_events = list(itertools.chain.from_iterable(down_js))
     xsge_gui.enter_joystick_events = (
         list(itertools.chain.from_iterable(jump_js)) +
-        list(itertools.chain.from_iterable(action_js)) +
+        list(itertools.chain.from_iterable(shoot_js)) +
         list(itertools.chain.from_iterable(pause_js)))
     if not xsge_gui.enter_joystick_events:
         xsge_gui.enter_joystick_events = [(0, "button", 9)]
     xsge_gui.escape_joystick_events = (
-        list(itertools.chain.from_iterable(menu_js)))
+        list(itertools.chain.from_iterable(mode_js)))
     if not xsge_gui.escape_joystick_events:
         xsge_gui.escape_joystick_events = [(0, "button", 8)]
 
@@ -7673,11 +7059,12 @@ def set_new_game():
 def write_to_disk():
     # Write our saves and settings to disk.
     keys_cfg = {"left": left_key, "right": right_key, "up": up_key,
-                "down": down_key, "jump": jump_key, "action": action_key,
-                "sneak": sneak_key, "menu": menu_key, "pause": pause_key}
+                "down": down_key, "jump": jump_key, "shoot": shoot_key,
+                "mode_reset": mode_reset_key, "mode": mode_key,
+                "pause": pause_key}
     js_cfg = {"left": left_js, "right": right_js, "up": up_js,
-              "down": down_js, "jump": jump_js, "action": action_js,
-              "sneak": sneak_js, "menu": menu_js, "pause": pause_js}
+              "down": down_js, "jump": jump_js, "shoot": shoot_js,
+              "mode_reset": mode_reset_js, "mode": mode_js, "pause": pause_js}
 
     cfg = {"version": 1, "fullscreen": fullscreen,
            "scale_method": scale_method, "sound_enabled": sound_enabled,
@@ -8507,72 +7894,35 @@ finally:
     joystick_threshold = cfg.get("joystick_threshold", joystick_threshold)
     xsge_gui.joystick_threshold = joystick_threshold
 
-    if cfg_version >= 1:
-        keys_cfg = cfg.get("keys", {})
-        left_key = keys_cfg.get("left", left_key)
-        right_key = keys_cfg.get("right", right_key)
-        up_key = keys_cfg.get("up", up_key)
-        down_key = keys_cfg.get("down", down_key)
-        jump_key = keys_cfg.get("jump", jump_key)
-        action_key = keys_cfg.get("action", action_key)
-        sneak_key = keys_cfg.get("sneak", sneak_key)
-        menu_key = keys_cfg.get("menu", menu_key)
-        pause_key = keys_cfg.get("pause", pause_key)
+    keys_cfg = cfg.get("keys", {})
+    left_key = keys_cfg.get("left", left_key)
+    right_key = keys_cfg.get("right", right_key)
+    up_key = keys_cfg.get("up", up_key)
+    down_key = keys_cfg.get("down", down_key)
+    jump_key = keys_cfg.get("jump", jump_key)
+    shoot_key = keys_cfg.get("shoot", shoot_key)
+    mode_reset_key = keys_cfg.get("mode_reset", mode_reset_key)
+    mode_key = keys_cfg.get("mode", mode_key)
+    pause_key = keys_cfg.get("pause", pause_key)
 
-        js_cfg = cfg.get("joystick", {})
-        left_js = [[tuple(j) for j in js]
-                   for js in js_cfg.get("left", left_js)]
-        right_js = [[tuple(j) for j in js]
-                    for js in js_cfg.get("right", right_js)]
-        up_js = [[tuple(j) for j in js] for js in js_cfg.get("up", up_js)]
-        down_js = [[tuple(j) for j in js]
-                   for js in js_cfg.get("down", down_js)]
-        jump_js = [[tuple(j) for j in js]
-                   for js in js_cfg.get("jump", jump_js)]
-        action_js = [[tuple(j) for j in js]
-                     for js in js_cfg.get("action", action_js)]
-        sneak_js = [[tuple(j) for j in js]
-                    for js in js_cfg.get("sneak", sneak_js)]
-        menu_js = [[tuple(j) for j in js]
-                   for js in js_cfg.get("menu", menu_js)]
-        pause_js = [[tuple(j) for j in js]
-                    for js in js_cfg.get("pause", pause_js)]
-    else:
-        keys_cfg = cfg.get("keys", {})
-        if "left" in keys_cfg:
-            left_key = [keys_cfg["left"]]
-        if "right" in keys_cfg:
-            right_key = [keys_cfg["right"]]
-        if "up" in keys_cfg:
-            up_key = [keys_cfg["up"]]
-        if "down" in keys_cfg:
-            down_key = [keys_cfg["down"]]
-        if "jump" in keys_cfg:
-            jump_key = [keys_cfg["jump"]]
-        if "action" in keys_cfg:
-            action_key = [keys_cfg["action"]]
-        if "sneak" in keys_cfg:
-            sneak_key = [keys_cfg["sneak"]]
-        if "pause" in keys_cfg:
-            pause_key = [keys_cfg["pause"]]
-
-        js_cfg = cfg.get("joystick", {})
-        if "left" in js_cfg:
-            left_js = [[tuple(j)] for j in js_cfg["left"]]
-        if "right" in js_cfg:
-            right_js = [[tuple(j)] for j in js_cfg["right"]]
-        if "up" in js_cfg:
-            up_js = [[tuple(j)] for j in js_cfg["up"]]
-        if "down" in js_cfg:
-            down_js = [[tuple(j)] for j in js_cfg["down"]]
-        if "jump" in js_cfg:
-            jump_js = [[tuple(j)] for j in js_cfg["jump"]]
-        if "action" in js_cfg:
-            action_js = [[tuple(j)] for j in js_cfg["action"]]
-        if "sneak" in js_cfg:
-            sneak_js = [[tuple(j)] for j in js_cfg["sneak"]]
-        if "pause" in js_cfg:
-            pause_js = [[tuple(j)] for j in js_cfg["pause"]]
+    js_cfg = cfg.get("joystick", {})
+    left_js = [[tuple(j) for j in js]
+               for js in js_cfg.get("left", left_js)]
+    right_js = [[tuple(j) for j in js]
+                for js in js_cfg.get("right", right_js)]
+    up_js = [[tuple(j) for j in js] for js in js_cfg.get("up", up_js)]
+    down_js = [[tuple(j) for j in js]
+               for js in js_cfg.get("down", down_js)]
+    jump_js = [[tuple(j) for j in js]
+               for js in js_cfg.get("jump", jump_js)]
+    shoot_js = [[tuple(j) for j in js]
+                for js in js_cfg.get("shoot", shoot_js)]
+    mode_reset_js = [[tuple(j) for j in js]
+                     for js in js_cfg.get("mode_reset", mode_reset_js)]
+    mode_js = [[tuple(j) for j in js]
+               for js in js_cfg.get("mode", mode_js)]
+    pause_js = [[tuple(j) for j in js]
+                for js in js_cfg.get("pause", pause_js)]
 
     set_gui_controls()
 

@@ -7,6 +7,28 @@ information.
 
 ========================================================================
 
+images/objects/doors/door_h-0.png
+images/objects/doors/door_h-1.png
+images/objects/doors/door_h-2.png
+images/objects/doors/door_h-3.png
+images/objects/doors/door_h-4.png
+images/objects/doors/door_h-5.png
+images/objects/doors/door_h-6.png
+images/objects/doors/door_h-7.png
+images/objects/doors/door_h-8.png
+images/objects/doors/door_v-0.png
+images/objects/doors/door_v-1.png
+images/objects/doors/door_v-2.png
+images/objects/doors/door_v-3.png
+images/objects/doors/door_v-4.png
+images/objects/doors/door_v-5.png
+images/objects/doors/door_v-6.png
+images/objects/doors/door_v-7.png
+images/objects/doors/door_v-8.png
+images/objects/doors/regular_h_closed.png
+images/objects/doors/regular_h_open.png
+images/objects/doors/regular_v_closed.png
+images/objects/doors/regular_v_open.png
 images/tiles/extras.png
 images/tiles/main_blue.png
 images/tiles/main_green.png
@@ -19,8 +41,9 @@ Source: http://adamatomic.com/abandonauts/
 Details:
   The "white" variations of the rock tiles were derived from the green
   tiles by desaturating two of the colors. Similarly, the tiles on the
-  far right were derived from "pit.png", but recolored in the orange,
-  green, and white colors.
+  far right of main_green, main_orange, and main_white were derived from
+  "pit.png", but recolored in the orange, green, and white colors,
+  respectively.
 
 ------------------------------------------------------------------------
 

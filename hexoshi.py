@@ -151,6 +151,7 @@ PLAYER_FRICTION = 0.5
 PLAYER_AIR_FRICTION = 0.01
 PLAYER_JUMP_HEIGHT = 5 * TILE_SIZE + 2
 PLAYER_FALL_SPEED = 4
+PLAYER_SLIDE_SPEED = 0.5
 PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
 PLAYER_HITSTUN_SPEED = 0.5
@@ -1410,42 +1411,19 @@ class LevelEnd(sge.dsp.Object):
 
 class Player(xsge_physics.Collider):
 
-    name = "Tux"
+    name = "Ian C."
     max_hp = PLAYER_MAX_HP
-    walk_speed = PLAYER_WALK_SPEED
-    run_speed = PLAYER_RUN_SPEED
     max_speed = PLAYER_MAX_SPEED
     acceleration = PLAYER_ACCELERATION
     air_acceleration = PLAYER_AIR_ACCELERATION
     friction = PLAYER_FRICTION
     air_friction = PLAYER_AIR_FRICTION
     jump_height = PLAYER_JUMP_HEIGHT
-    run_jump_height = PLAYER_RUN_JUMP_HEIGHT
-    stomp_height = PLAYER_STOMP_HEIGHT
     gravity = GRAVITY
     fall_speed = PLAYER_FALL_SPEED
-    slide_accel = PLAYER_SLIDE_ACCEL
     slide_speed = PLAYER_SLIDE_SPEED
     hitstun_time = PLAYER_HITSTUN
-    carry_x = 0
-    carry_y = 20
-
-    @property
-    def warping(self):
-        return self.__warping
-
-    @warping.setter
-    def warping(self, value):
-        self.__warping = value
-        if self.held_object is not None:
-            if value:
-                self.held_object.x = -666
-                self.held_object.y = -666 * (self.player + 1)
-            else:
-                self.held_object.x = self.x + self.held_object.image_origin_x
-                self.held_object.y = self.y
-                if self.image_xscale < 0:
-                    self.held_object.x -= self.held_object.sprite.width
+    hitstun_speed = PLAYER_HITSTUN_SPEED
 
     def __init__(self, x, y, z=0, sprite=None, visible=True, active=True,
                  checks_collisions=True, tangible=True, bbox_x=-13, bbox_y=2,
@@ -1456,27 +1434,21 @@ class Player(xsge_physics.Collider):
                  image_origin_x=None, image_origin_y=None, image_fps=None,
                  image_xscale=1, image_yscale=1, image_rotation=0,
                  image_alpha=255, image_blend=None, ID="player", player=0,
-                 human=True, lose_on_death=True, view_frozen=False,
-                 view_is_barrier=True):
+                 human=True, lose_on_death=True, view_frozen=False):
         self.ID = ID
         self.player = player
         self.human = human
         self.lose_on_death = lose_on_death
         self.view_frozen = view_frozen
-        self.view_is_barrier = view_is_barrier
 
-        self.held_object = None
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
         self.jump_pressed = False
-        self.action_pressed = False
-        self.sneak_pressed = False
+        self.shoot_pressed = False
         self.hp = self.max_hp
-        self.coins = 0
         self.hitstun = False
-        self.warping = False
         self.facing = 1
         self.view = None
 
@@ -1501,9 +1473,9 @@ class Player(xsge_physics.Collider):
     def refresh_input(self):
         if self.human:
             key_controls = [left_key, right_key, up_key, down_key, jump_key,
-                            action_key, sneak_key]
+                            shoot_key]
             js_controls = [left_js, right_js, up_js, down_js, jump_js,
-                           action_js, sneak_js]
+                           shoot_js]
             states = [0 for i in key_controls]
 
             for i in six.moves.range(len(key_controls)):
@@ -1523,15 +1495,10 @@ class Player(xsge_physics.Collider):
             self.up_pressed = states[2]
             self.down_pressed = states[3]
             self.jump_pressed = states[4]
-            self.action_pressed = states[5]
-            self.sneak_pressed = states[6]
+            self.shoot_pressed = states[5]
 
     def jump(self):
-        if not self.warping and (self.on_floor or self.was_on_floor):
-            for thin_ice in self.collision(ThinIce, y=(self.y + 1)):
-                thin_ice.crack()
-                thin_ice.crack()
-
+        if self.on_floor or self.was_on_floor:
             if abs(self.xvelocity) >= self.run_speed:
                 self.yvelocity = get_jump_speed(self.run_jump_height,
                                                 self.gravity)
@@ -1545,40 +1512,14 @@ class Player(xsge_physics.Collider):
         if self.yvelocity < 0:
             self.yvelocity /= 2
 
-    def action(self):
-        if not self.warping and self.held_object is not None:
-            if self.up_pressed:
-                self.held_object.kick_up()
-            elif self.down_pressed:
-                self.held_object.drop()
-            else:
-                self.held_object.kick()
+    def shoot(self):
+        pass
 
-    def press_up(self):
-        if self.on_floor and self.was_on_floor:
-            for door in sorted(self.collision(Door),
-                               key=lambda o, x=self.x: -abs(x - o.x)):
-                if self.y == door.y and abs(self.x - door.x) <= WARP_LAX:
-                    self.move_x(door.x - self.x)
-                    if abs(self.x - door.x) < 1:
-                        self.x = door.x
-                        door.warp(self)
-                        break
+    def hurt(self, damage=1):
+        if not self.hitstun:
+            if not GOD:
+                self.hp -= damage
 
-    def stomp_jump(self, other, jump_height=None):
-        if jump_height is None:
-            jump_height = self.jump_height
-
-        if self.jump_pressed:
-            self.yvelocity = get_jump_speed(jump_height, self.gravity)
-        else:
-            self.yvelocity = get_jump_speed(self.stomp_height, self.gravity)
-        T = math.floor(other.bbox_top / TILE_SIZE) * TILE_SIZE
-        self.move_y(T - self.bbox_bottom)
-
-    def hurt(self):
-        if not GOD and not self.hitstun and not sge.game.current_room.won:
-            self.hp -= 1
             if self.hp <= 0:
                 self.kill()
             else:
@@ -1587,69 +1528,17 @@ class Player(xsge_physics.Collider):
                 self.image_alpha = 128
                 self.alarms["hitstun"] = self.hitstun_time
 
-    def kill(self, show_fall=True):
-        if GOD:
-            self.yvelocity = get_jump_speed(SCREEN_SIZE[1], self.gravity)
-            play_sound(hurt_sound, self.x, self.y)
-        else:
-            if self.held_object is not None:
-                self.held_object.drop()
-            play_sound(kill_sound, self.x, self.y)
-            if show_fall:
-                DeadMan.create(self.x, self.y, 100000, sprite=tux_die_sprite,
-                               yvelocity=get_jump_speed(PLAYER_DIE_HEIGHT))
+    def kill(self):
+        play_sound(kill_sound, self.x, self.y)
 
-            if self.lose_on_death and not sge.game.current_room.won:
-                sge.game.current_room.die()
+        if self.lose_on_death:
+            sge.game.current_room.die()
 
-            self.destroy()
-
-    def pickup(self, other):
-        if self.held_object is None and other.parent is None:
-            other.visible = False
-            self.held_object = other
-            other.parent = self
-            return True
-        else:
-            return False
-
-    def drop_object(self):
-        if self.held_object is not None:
-            self.held_object.visible = True
-            self.held_object = None
-
-    def do_kick(self):
-        play_sound(kick_sound, self.x, self.y)
-        self.alarms["fixed_sprite"] = TUX_KICK_TIME
-        if self.held_object is not None:
-            self.sprite = self.get_grab_sprite(tux_body_kick_sprite)
-        else:
-            self.sprite = tux_kick_sprite
-
-    def kick_object(self):
-        self.drop_object()
-        self.do_kick()
+        self.destroy()
 
     def show_hud(self):
         if not NO_HUD:
-            y = 0
-            sge.game.project_text(font, self.name, 0, y,
-                                  color=sge.gfx.Color("white"))
-
-            x = 0
-            y += 36
-            for i in six.moves.range(self.max_hp):
-                if self.hp >= i + 1:
-                    sge.game.project_sprite(heart_full_sprite, 0, x, y)
-                else:
-                    sge.game.project_sprite(heart_empty_sprite, 0, x, y)
-                x += heart_empty_sprite.width
-
-            y += 18
-            sge.game.project_sprite(coin_icon_sprite,
-                                    coin_animation.image_index, 0, y)
-            sge.game.project_text(font, "x{}".format(self.coins), 16, y,
-                                  color=sge.gfx.Color("white"))
+            # TODO: Show HUD
 
             if not self.human:
                 room = sge.game.current_room
@@ -1659,163 +1548,8 @@ class Player(xsge_physics.Collider):
                 else:
                     room.status_text = _("Cinematic mode enabled")
 
-    def get_grab_sprite(self, body_sprite, arms_sprite=None):
-        if arms_sprite is None: arms_sprite = tux_arms_grab_sprite
-
-        if self.held_object is not None:
-            obj_sprite = self.held_object.sprite
-            obj_image_index = self.held_object.image_index
-            obj_image_xscale = self.held_object.image_xscale
-            obj_image_yscale = self.held_object.image_yscale
-
-            i = (id(body_sprite), id(obj_sprite), obj_image_index,
-                 obj_image_xscale, obj_image_yscale)
-            if i in tux_grab_sprites:
-                return tux_grab_sprites[i]
-            else:
-                if abs(obj_image_xscale) != 1 or abs(obj_image_yscale) != 1:
-                    obj_sprite = obj_sprite.copy()
-                    obj_sprite.width *= abs(obj_image_xscale)
-                    obj_sprite.height *= abs(obj_image_yscale)
-
-                origin_x = body_sprite.origin_x
-                origin_y = body_sprite.origin_y
-                width = body_sprite.width
-                height = body_sprite.height
-
-                left = body_sprite.origin_x + self.carry_x
-                if left < 0:
-                    origin_x -= left
-                    width -= left
-                width = max(width, left + obj_sprite.width)
-
-                top = (body_sprite.origin_y + self.carry_y -
-                       obj_sprite.origin_y - obj_sprite.height)
-                if top < 0:
-                    origin_y -= top
-                    height -= top
-                height = max(height, top + obj_sprite.height)
-
-                grab_sprite = sge.gfx.Sprite(
-                    width=width, height=height, origin_x=origin_x,
-                    origin_y=origin_y)
-                for j in six.moves.range(1, body_sprite.frames):
-                    grab_sprite.append_frame()
-                grab_sprite.draw_lock()
-                for j in six.moves.range(grab_sprite.frames):
-                    x = origin_x + obj_sprite.origin_x
-                    y = (origin_y + self.carry_y + obj_sprite.origin_y -
-                         obj_sprite.height)
-                    grab_sprite.draw_sprite(obj_sprite, obj_image_index, x, y,
-                                            j)
-                    grab_sprite.draw_sprite(body_sprite, j, origin_x, origin_y,
-                                            j)
-                    grab_sprite.draw_sprite(arms_sprite, j, origin_x, origin_y,
-                                            j)
-                grab_sprite.draw_unlock()
-                tux_grab_sprites[i] = grab_sprite
-                return grab_sprite
-        else:
-            i = id(body_sprite)
-            if i in tux_grab_sprites:
-                return tux_grab_sprites[i]
-            else:
-                grab_sprite = body_sprite.copy()
-                grab_sprite.draw_lock()
-                for j in six.moves.range(grab_sprite.frames):
-                    grab_sprite.draw_sprite(arms_sprite, j,
-                                            grab_sprite.origin_x,
-                                            grab_sprite.origin_y, j)
-                grab_sprite.draw_unlock()
-                tux_grab_sprites[i] = grab_sprite
-                return grab_sprite
-
     def set_image(self):
-        h_control = bool(self.right_pressed) - bool(self.left_pressed)
-        hands_free = (self.held_object is None)
-
-        if self.on_floor and self.was_on_floor:
-            xm = (self.xvelocity > 0) - (self.xvelocity < 0)
-            speed = abs(self.xvelocity)
-            if speed > 0:
-                if xm != self.facing:
-                    skidding = skid_sound.playing
-                    if (not skidding and h_control and
-                            speed >= PLAYER_SKID_THRESHOLD):
-                        skidding = True
-                        play_sound(skid_sound, self.x, self.y)
-                else:
-                    skidding = False
-
-                if skidding:
-                    if hands_free:
-                        self.sprite = tux_skid_sprite
-                    else:
-                        self.sprite = self.get_grab_sprite(
-                            tux_body_skid_sprite, tux_arms_skid_grab_sprite)
-                else:
-                    if (xm != self.facing or
-                            abs(self.xvelocity) < self.run_speed):
-                        if hands_free:
-                            self.sprite = tux_walk_sprite
-                        else:
-                            self.sprite = self.get_grab_sprite(
-                                tux_body_walk_sprite)
-
-                        self.image_speed = speed * PLAYER_WALK_FRAMES_PER_PIXEL
-                        if xm != self.facing:
-                            self.image_speed *= -1
-                    else:
-                        if hands_free:
-                            self.sprite = tux_run_sprite
-                        else:
-                            self.sprite = self.get_grab_sprite(
-                                tux_body_run_sprite)
-
-                        self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
-            else:
-                if hands_free:
-                    self.sprite = tux_stand_sprite
-                else:
-                    self.sprite = self.get_grab_sprite(
-                        tux_body_stand_sprite)
-        else:
-            if self.yvelocity < 0:
-                if hands_free:
-                    self.sprite = tux_jump_sprite
-                else:
-                    self.sprite = self.get_grab_sprite(tux_body_jump_sprite)
-            else:
-                if hands_free:
-                    self.sprite = tux_fall_sprite
-                else:
-                    self.sprite = self.get_grab_sprite(tux_body_fall_sprite)
-
-    def set_warp_image(self):
-        hands_free = (self.held_object is None)
-
-        if abs(self.xvelocity) >= WARP_SPEED / 2:
-            if hands_free:
-                self.sprite = tux_walk_sprite
-            else:
-                self.sprite = self.get_grab_sprite(tux_body_walk_sprite)
-
-            self.image_speed = WARP_SPEED * PLAYER_WALK_FRAMES_PER_PIXEL
-            if self.xvelocity > 0:
-                self.image_xscale = abs(self.image_xscale)
-            else:
-                self.image_xscale = -abs(self.image_xscale)
-        else:
-            if self.on_floor and self.was_on_floor and abs(self.yvelocity) < 1:
-                if hands_free:
-                    self.sprite = tux_stand_sprite
-                else:
-                    self.sprite = self.get_grab_sprite(tux_body_stand_sprite)
-            else:
-                if hands_free:
-                    self.sprite = tux_jump_sprite
-                else:
-                    self.sprite = self.get_grab_sprite(tux_body_jump_sprite)
+        pass
 
     def event_create(self):
         sge.game.current_room.add_timeline_object(self)
@@ -1830,89 +1564,74 @@ class Player(xsge_physics.Collider):
         self.view.x = self.x - self.view.width / 2
         self.view.y = self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
 
-    def event_update_position(self, delta_mult):
-        super(Player, self).event_update_position(delta_mult)
-
-        held_object = self.held_object
-        if not self.warping and held_object is not None:
-            target_x = self.x + held_object.sprite.origin_x + self.carry_x
-            h = held_object.sprite.height * abs(held_object.image_yscale)
-            target_y = self.y + held_object.sprite.origin_y - h + self.carry_y
-            if self.image_xscale < 0:
-                target_x -= (held_object.sprite.width *
-                             abs(held_object.image_xscale))
-                target_x -= 2 * self.carry_x
-            if isinstance(held_object, xsge_physics.Collider):
-                held_object.move_x(target_x - held_object.x)
-                held_object.move_y(target_y - held_object.y)
-            else:
-                held_object.x = target_x
-                held_object.y = target_y
-
-            held_object.image_xscale = math.copysign(held_object.image_xscale,
-                                                     self.image_xscale)
-            held_object.image_yscale = math.copysign(held_object.image_yscale,
-                                                     self.image_yscale)
-
     def event_begin_step(self, time_passed, delta_mult):
-        if not self.warping:
-            self.refresh_input()
+        self.refresh_input()
 
-            h_control = bool(self.right_pressed) - bool(self.left_pressed)
-            current_h_movement = (self.xvelocity > 0) - (self.xvelocity < 0)
+        h_control = bool(self.right_pressed) - bool(self.left_pressed)
+        current_h_movement = (self.xvelocity > 0) - (self.xvelocity < 0)
 
-            self.xacceleration = 0
-            self.yacceleration = 0
-            self.xdeceleration = 0
+        self.xacceleration = 0
+        self.yacceleration = 0
+        self.xdeceleration = 0
 
-            if abs(self.xvelocity) >= self.max_speed:
-                self.xvelocity = self.max_speed * current_h_movement
+        if abs(self.xvelocity) >= self.max_speed:
+            self.xvelocity = self.max_speed * current_h_movement
 
-            if h_control:
-                self.facing = h_control
-                self.image_xscale = h_control * abs(self.image_xscale)
-                h_factor = abs(self.right_pressed - self.left_pressed)
-                target_speed = min(h_factor * self.max_speed, self.max_speed)
-                if self.sneak_pressed:
-                    target_speed = min(target_speed, self.walk_speed)
-                if (abs(self.xvelocity) < target_speed or
-                        h_control != current_h_movement):
-                    if self.on_floor or self.was_on_floor:
-                        self.xacceleration = self.acceleration * h_control
-                    else:
-                        self.xacceleration = self.air_acceleration * h_control
-                else:
-                    if self.on_floor or self.was_on_floor:
-                        dc = self.friction
-                    else:
-                        dc = self.air_friction
-
-                    if abs(self.xvelocity) - dc * delta_mult > target_speed:
-                        self.xdeceleration = dc
-                    else:
-                        self.xvelocity = target_speed * current_h_movement
-
-            if current_h_movement and h_control != current_h_movement:
+        if h_control:
+            self.facing = h_control
+            self.image_xscale = h_control * abs(self.image_xscale)
+            h_factor = abs(self.right_pressed - self.left_pressed)
+            target_speed = min(h_factor * self.max_speed, self.max_speed)
+            if self.sneak_pressed:
+                target_speed = min(target_speed, self.walk_speed)
+            if (abs(self.xvelocity) < target_speed or
+                    h_control != current_h_movement):
                 if self.on_floor or self.was_on_floor:
-                    self.xdeceleration = self.friction
+                    self.xacceleration = self.acceleration * h_control
                 else:
-                    self.xdeceleration = self.air_friction
+                    self.xacceleration = self.air_acceleration * h_control
+            else:
+                if self.on_floor or self.was_on_floor:
+                    dc = self.friction
+                else:
+                    dc = self.air_friction
 
-            if not self.on_floor and not self.was_on_floor:
-                if self.yvelocity < self.fall_speed:
-                    self.yacceleration = self.gravity
+                if abs(self.xvelocity) - dc * delta_mult > target_speed:
+                    self.xdeceleration = dc
                 else:
-                    self.yvelocity = self.fall_speed
-            elif self.on_slope:
-                self.yvelocity = (self.slide_speed *
-                                  (self.on_slope[0].bbox_height /
-                                   self.on_slope[0].bbox_width))
+                    self.xvelocity = target_speed * current_h_movement
+
+        if current_h_movement and h_control != current_h_movement:
+            if self.on_floor or self.was_on_floor:
+                self.xdeceleration = self.friction
+            else:
+                self.xdeceleration = self.air_friction
+
+        if not self.on_floor and not self.was_on_floor:
+            if self.yvelocity < self.fall_speed:
+                self.yacceleration = self.gravity
+            else:
+                self.yvelocity = self.fall_speed
+        elif self.on_slope:
+            self.yvelocity = (self.slide_speed *
+                              (self.on_slope[0].bbox_height /
+                               self.on_slope[0].bbox_width))
 
     def event_step(self, time_passed, delta_mult):
-        if self.warping:
-            self.event_step_warp(time_passed, delta_mult)
-        else:
-            self.event_step_normal(time_passed, delta_mult)
+        on_floor = self.get_bottom_touching_wall()
+        self.on_slope = self.get_bottom_touching_slope() if not on_floor else []
+        self.was_on_floor = self.on_floor
+        self.on_floor = on_floor + self.on_slope
+        h_control = bool(self.right_pressed) - bool(self.left_pressed)
+        v_control = bool(self.down_pressed) - bool(self.up_pressed)
+
+        for block in self.on_floor:
+            if block in self.was_on_floor and isinstance(block, HurtTop):
+                self.hurt()
+
+        # Set image
+        if "fixed_sprite" not in self.alarms:
+            self.set_image()
 
         # Move view
         if not self.view_frozen:
@@ -1927,7 +1646,7 @@ class Player(xsge_physics.Collider):
             view_min_y = self.y - self.view.height + CAMERA_MARGIN_BOTTOM
             view_max_y = self.y - CAMERA_MARGIN_TOP
 
-            if self.warping or (self.on_floor and self.was_on_floor):
+            if self.on_floor and self.was_on_floor:
                 view_target_y = (self.y - self.view.height +
                                  CAMERA_TARGET_MARGIN_BOTTOM)
                 if abs(view_target_y - self.view.y) > 0.5:
@@ -1944,80 +1663,7 @@ class Player(xsge_physics.Collider):
         self.last_x = self.x
         self.last_y = self.y
 
-        if self.bbox_bottom <= self.view.y:
-            sge.game.current_room.project_sprite(tux_offscreen_sprite, 0,
-                                                 self.x, 0, self.z)
-
-        while self.coins >= HEAL_COINS:
-            self.coins -= HEAL_COINS
-            play_sound(heal_sound)
-            if self.hp < self.max_hp:
-                self.hp += 1
-            else:
-                sge.game.current_room.add_points(HP_POINTS)
-
         self.show_hud()
-
-    def event_step_normal(self, time_passed, delta_mult):
-        on_floor = self.get_bottom_touching_wall()
-        self.on_slope = self.get_bottom_touching_slope() if not on_floor else []
-        self.was_on_floor = self.on_floor
-        self.on_floor = on_floor + self.on_slope
-        h_control = bool(self.right_pressed) - bool(self.left_pressed)
-        v_control = bool(self.down_pressed) - bool(self.up_pressed)
-
-        for block in self.on_floor:
-            if block in self.was_on_floor and isinstance(block, HurtTop):
-                self.hurt()
-
-        # Set image
-        if "fixed_sprite" not in self.alarms:
-            self.set_image()
-
-        # Enter warp pipes
-        if h_control > 0 and self.xvelocity >= 0:
-            for warp in sge.game.current_room.warps:
-                if (warp.direction == "right" and self.bbox_right == warp.x and
-                        abs(self.y - warp.y) < WARP_LAX):
-                    self.y = warp.y
-                    warp.warp(self)
-        elif h_control < 0 and self.xvelocity <= 0:
-            for warp in sge.game.current_room.warps:
-                if (warp.direction == "left" and self.bbox_left == warp.x and
-                        abs(self.y - warp.y) < WARP_LAX):
-                    self.y = warp.y
-                    warp.warp(self)
-
-        if v_control > 0 and self.yvelocity >= 0:
-            for warp in sge.game.current_room.warps:
-                if (warp.direction == "down" and self.bbox_bottom == warp.y and
-                        abs(self.x - warp.x) < WARP_LAX):
-                    self.x = warp.x
-                    warp.warp(self)
-        elif v_control < 0 and self.yvelocity <= 0:
-            for warp in sge.game.current_room.warps:
-                if (warp.direction == "up" and self.bbox_top == warp.y and
-                        abs(self.x - warp.x) < WARP_LAX):
-                    self.x = warp.x
-                    warp.warp(self)
-
-        # Prevent moving off-screen to the right or left
-        if self.view_is_barrier:
-            if self.bbox_left < self.view.x:
-                self.move_x(self.view.x - self.bbox_left, True)
-                self.bbox_left = self.view.x
-            elif self.bbox_right > self.view.x + self.view.width:
-                self.move_x(self.view.x + self.view.width - self.bbox_right,
-                            True)
-                self.bbox_right = self.view.x + self.view.width
-
-        # Off-screen death
-        if (not sge.game.current_room.won and
-                self.bbox_top > self.view.y + self.view.height + DEATHZONE):
-            self.kill(False)
-
-    def event_step_warp(self, time_passed, delta_mult):
-        self.set_warp_image()
 
     def event_paused_step(self, time_passed, delta_mult):
         self.show_hud()
@@ -2031,14 +1677,11 @@ class Player(xsge_physics.Collider):
         if self.human:
             if key in jump_key[self.player]:
                 self.jump()
-            if key in action_key[self.player]:
-                self.action()
-            if key in up_key[self.player]:
-                self.press_up()
+            if key in shoot_key[self.player]:
+                self.shoot()
 
         if not isinstance(sge.game.current_room, SpecialScreen):
-            if (key == "escape" or key in pause_key[self.player] or
-                    key in menu_key[self.player]):
+            if key == "escape" or key in pause_key[self.player]:
                 sge.game.current_room.pause()
 
     def event_key_release(self, key):
@@ -2052,83 +1695,36 @@ class Player(xsge_physics.Collider):
             if value >= joystick_threshold:
                 if js in jump_js[self.player]:
                     self.jump()
-                if js in action_js[self.player]:
-                    self.action()
-                if js in up_js[self.player]:
-                    self.press_up()
-                if js in pause_js[self.player] or js in menu_js[self.player]:
+                if js in shoot_js[self.player]:
+                    self.shoot()
+                if js in pause_js[self.player]:
                     sge.game.current_room.pause()
             else:
                 if js in jump_js[self.player]:
                     self.jump_release()
 
     def event_collision(self, other, xdirection, ydirection):
-        if isinstance(other, Death):
-            self.kill()
-        elif isinstance(other, LevelEnd):
-            sge.game.current_room.win_level()
-            other.destroy()
-        elif isinstance(other, Explosion):
+        if isinstance(other, InteractiveObject):
             other.touch(self)
-        elif isinstance(other, InteractiveObject):
-            if (ydirection == 1 or
-                    (xdirection and not ydirection and
-                     self.bbox_bottom - other.bbox_top <= STOMP_LAX)):
-                other.stomp(self)
-            # This check is necessary to allow the player to drop held
-            # objects. It also has a nice side-effect of preventing the
-            # player from being hurt by the same object more than once
-            # until the collision stops.
-            elif xdirection or ydirection:
-                other.touch(self)
-        elif isinstance(other, HiddenItemBlock):
-            if ydirection == -1 and not xdirection:
-                move_loss = max(0, other.bbox_bottom - self.bbox_top)
-                self.move_y(move_loss, absolute=True, do_events=False)
-                self.event_physics_collision_top(other, move_loss)
 
     def event_physics_collision_left(self, other, move_loss):
         for block in self.get_left_touching_wall():
             if isinstance(block, HurtRight):
                 self.hurt()
-            elif isinstance(block, RockWall):
-                rock = block.parent()
-                if rock is not None:
-                    rock.touch(self)
 
         if isinstance(other, xsge_physics.SolidRight):
             self.xvelocity = max(self.xvelocity, 0)
-
-        if self.left_pressed:
-            for warp in sge.game.current_room.warps:
-                if (warp.direction == "left" and self.bbox_left == warp.x and
-                        abs(self.y - warp.y) < WARP_LAX):
-                    warp.warp(self)
 
     def event_physics_collision_right(self, other, move_loss):
         for block in self.get_right_touching_wall():
             if isinstance(block, HurtLeft):
                 self.hurt()
-            elif isinstance(block, RockWall):
-                rock = block.parent()
-                if rock is not None:
-                    rock.touch(self)
 
         if isinstance(other, xsge_physics.SolidLeft):
             self.xvelocity = min(self.xvelocity, 0)
 
-        if self.right_pressed:
-            for warp in sge.game.current_room.warps:
-                if (warp.direction == "right" and self.bbox_right == warp.x and
-                        abs(self.y - warp.y) < WARP_LAX):
-                    warp.warp(self)
-
     def event_physics_collision_top(self, other, move_loss):
         top_touching = self.get_top_touching_wall()
-
-        for hblock in self.collision(HiddenItemBlock, y=(self.y - 1)):
-            if not self.collision(hblock):
-                hblock.hit(self)
 
         tmv = 0
         for i in six.moves.range(CEILING_LAX):
@@ -2158,21 +1754,8 @@ class Player(xsge_physics.Collider):
                 self.yvelocity = max(self.yvelocity, 0)
 
         for block in top_touching:
-            if isinstance(block, HittableBlock):
-                block.hit(self)
-            elif isinstance(block, HurtBottom):
+            if isinstance(block, HurtBottom):
                 self.hurt()
-            elif isinstance(block, RockWall):
-                rock = block.parent()
-                if rock is not None:
-                    rock.touch(self)
-
-        if self.up_pressed:
-            for warp in sge.game.current_room.warps:
-                if (warp.direction == "up" and self.bbox_top == warp.y and
-                        abs(self.x - warp.x) < WARP_LAX):
-                    warp.warp(self)
-                    break
 
     def event_physics_collision_bottom(self, other, move_loss):
         for block in self.get_bottom_touching_wall():
@@ -2187,11 +1770,57 @@ class Player(xsge_physics.Collider):
                                                      other.bbox_width),
                                  self.yvelocity)
 
-        if self.down_pressed:
-            for warp in sge.game.current_room.warps:
-                if (warp.direction == "down" and self.bbox_bottom == warp.y and
-                        abs(self.x - warp.x) < WARP_LAX):
-                    warp.warp(self)
+
+class Anneroy(Player):
+
+    name = "Anneroy"
+
+    def set_image(self):
+        h_control = bool(self.right_pressed) - bool(self.left_pressed)
+
+        if self.on_floor and self.was_on_floor:
+            xm = (self.xvelocity > 0) - (self.xvelocity < 0)
+            speed = abs(self.xvelocity)
+            if speed > 0:
+                # TODO: Set running animation
+
+                self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
+                if xm != self.facing:
+                    self.image_speed *= -1
+            else:
+                # TODO: Set standing animation
+                pass
+        else:
+            if self.yvelocity < 0:
+                # TODO: Set jumping up animation
+                pass
+            else:
+                # TODO: Set falling animation
+                pass
+
+    def event_update_position(self, delta_mult):
+        super(Anneroy, self).event_update_position(delta_mult)
+
+        held_object = self.held_object
+        if not self.warping and held_object is not None:
+            target_x = self.x + held_object.sprite.origin_x + self.carry_x
+            h = held_object.sprite.height * abs(held_object.image_yscale)
+            target_y = self.y + held_object.sprite.origin_y - h + self.carry_y
+            if self.image_xscale < 0:
+                target_x -= (held_object.sprite.width *
+                             abs(held_object.image_xscale))
+                target_x -= 2 * self.carry_x
+            if isinstance(held_object, xsge_physics.Collider):
+                held_object.move_x(target_x - held_object.x)
+                held_object.move_y(target_y - held_object.y)
+            else:
+                held_object.x = target_x
+                held_object.y = target_y
+
+            held_object.image_xscale = math.copysign(held_object.image_xscale,
+                                                     self.image_xscale)
+            held_object.image_yscale = math.copysign(held_object.image_yscale,
+                                                     self.image_yscale)
 
 
 class DeadMan(sge.dsp.Object):

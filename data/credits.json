@@ -13,56 +13,25 @@
     {
         "title": "Graphics",
         "lines": [
-            "SuperTux development team",
-            "Connie Cartwright",
-            "2D-Retroperspectives",
-            "Pow Studios",
-            "C.Nilsson",
+            "Luke Bunday",
+            "Adam Atomic",
             "Julie Marchant"
         ]
     },
     {
         "title": "Sounds",
         "lines": [
-            "wansti",
-            "MatzeB",
-            "Some_Person",
-            "Nathan McCoy",
-            "lmh.0013@gmail.com",
-            "Yaniel",
-            "gwater",
-            "Bastian Zapf",
-            "Ricardo Cruz",
-            "cameron",
-            "theundecided",
-            "RMAudio",
-            "Imitatia Dei",
-            "NenadSimic",
-            "originaljun.deviantart.com",
-            "Julie Marchant"
         ]
     },
     {
         "title": "Music",
         "lines": [
-            "SuperTux development team",
-            "wansti",
-            "Lukas Nystrand",
-            "Mortimer Twang",
-            "Chris Huelsbeck",
-            "Mystical"
         ]
     },
     {
-        "title": "Level Design",
+        "title": "World Design",
         "lines": [
             "Julie Marchant"
-        ]
-    },
-    {
-        "title": "Bonus Level Design",
-        "lines": [
-            "EricxDu"
         ]
     },
     {
@@ -75,12 +44,6 @@
             "GIMP",
             "KolourPaint",
             "Sfxr"
-        ]
-    },
-    {
-        "title": "Special Thanks",
-        "lines": [
-            "Jason Self"
         ]
     },
     {

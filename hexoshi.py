@@ -194,8 +194,11 @@ left_key = [["left", "a"]]
 right_key = [["right", "d"]]
 up_key = [["up", "w"]]
 down_key = [["down", "s"]]
+halt_key = [["alt_left", "alt_right"]]
 jump_key = [["space"]]
 shoot_key = [["ctrl_left", "ctrl_right"]]
+aim_up_key = [["x"]]
+aim_down_key = [["z"]]
 mode_reset_key = [["shift_left", "shift_right"]]
 mode_key = [["tab"]]
 pause_key = [["enter", "p"]]
@@ -203,8 +206,11 @@ left_js = [[(0, "axis-", 0), (0, "hat_left", 0)]]
 right_js = [[(0, "axis+", 0), (0, "hat_right", 0)]]
 up_js = [[(0, "axis-", 1), (0, "hat_up", 0)]]
 down_js = [[(0, "axis+", 1), (0, "hat_down", 0)]]
+halt_js = [[(0, "button", 10), (0, "button", 11)]]
 jump_js = [[(0, "button", 1), (0, "button", 3)]]
 action_js = [[(0, "button", 0)]]
+aim_up_js = [[(0, "button", 5), (0, "button", 7)]]
+aim_down_js = [[(0, "button", 4), (0, "button", 6)]]
 mode_reset_js = [[(0, "button", 2)]]
 mode_js = [[(0, "button", 8)]]
 pause_js = [[(0, "button", 9)]]
@@ -1445,8 +1451,11 @@ class Player(xsge_physics.Collider):
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
+        self.halt_pressed = False
         self.jump_pressed = False
         self.shoot_pressed = False
+        self.aim_up_pressed = False
+        self.aim_down_pressed = False
         self.hp = self.max_hp
         self.hitstun = False
         self.facing = 1
@@ -1472,10 +1481,10 @@ class Player(xsge_physics.Collider):
 
     def refresh_input(self):
         if self.human:
-            key_controls = [left_key, right_key, up_key, down_key, jump_key,
-                            shoot_key]
-            js_controls = [left_js, right_js, up_js, down_js, jump_js,
-                           shoot_js]
+            key_controls = [left_key, right_key, up_key, down_key, halt_key,
+                            jump_key, shoot_key, aim_up_key, aim_down_key]
+            js_controls = [left_js, right_js, up_js, down_js, halt_js, jump_js,
+                           shoot_js, aim_up_js, aim_down_js]
             states = [0 for i in key_controls]
 
             for i in six.moves.range(len(key_controls)):
@@ -1494,8 +1503,11 @@ class Player(xsge_physics.Collider):
             self.right_pressed = states[1]
             self.up_pressed = states[2]
             self.down_pressed = states[3]
-            self.jump_pressed = states[4]
-            self.shoot_pressed = states[5]
+            self.halt_pressed = states[4]
+            self.jump_pressed = states[5]
+            self.shoot_pressed = states[6]
+            self.aim_up_pressed = states[7]
+            self.aim_down_pressed = states[8]
 
     def jump(self):
         if self.on_floor or self.was_on_floor:
@@ -1580,10 +1592,13 @@ class Player(xsge_physics.Collider):
         if h_control:
             self.facing = h_control
             self.image_xscale = h_control * abs(self.image_xscale)
-            h_factor = abs(self.right_pressed - self.left_pressed)
-            target_speed = min(h_factor * self.max_speed, self.max_speed)
-            if self.sneak_pressed:
-                target_speed = min(target_speed, self.walk_speed)
+
+            if self.halt_pressed:
+                target_speed = 0
+            else:
+                h_factor = abs(self.right_pressed - self.left_pressed)
+                target_speed = min(h_factor * self.max_speed, self.max_speed)
+
             if (abs(self.xvelocity) < target_speed or
                     h_control != current_h_movement):
                 if self.on_floor or self.was_on_floor:
@@ -1799,6 +1814,8 @@ class Anneroy(Player):
             else:
                 # TODO: Set falling animation
                 pass
+
+        # TODO: Set torso animation
 
     def event_create(self):
         super(Anneroy, self).event_create()
@@ -3363,7 +3380,8 @@ class KeyboardMenu(Menu):
     @classmethod
     def create_page(cls, default=0, page=0):
         page %= min(len(left_key), len(right_key), len(up_key), len(down_key),
-                    len(jump_key), len(shoot_key), len(mode_reset_key),
+                    len(halt_key), len(jump_key), len(shoot_key),
+                    len(aim_up_key), len(aim_down_key), len(mode_reset_key),
                     len(mode_key), len(pause_key))
 
         def format_key(key):
@@ -3377,8 +3395,11 @@ class KeyboardMenu(Menu):
                      _("Right: {}").format(format_key(right_key[page])),
                      _("Up: {}").format(format_key(up_key[page])),
                      _("Down: {}").format(format_key(down_key[page])),
+                     _("Halt: {}").format(format_key(halt_key[page])),
                      _("Jump: {}").format(format_key(jump_key[page])),
                      _("Shoot: {}").format(format_key(shoot_key[page])),
+                     _("Aim Up: {}").format(format_key(aim_up_key[page])),
+                     _("Aim Down: {}").format(format_key(aim_down_key[page])),
                      _("Reset Mode: {}").format(format_key(mode_reset_key[page])),
                      _("Mode: {}").format(format_key(mode_key[page])),
                      _("Pause: {}").format(format_key(pause_key[page])),
@@ -3438,7 +3459,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 5:
             k = wait_key()
             if k is not None:
-                toggle_key(jump_key[self.page], k)
+                toggle_key(halt_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3447,7 +3468,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 6:
             k = wait_key()
             if k is not None:
-                toggle_key(shoot_key[self.page], k)
+                toggle_key(jump_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3456,7 +3477,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 7:
             k = wait_key()
             if k is not None:
-                toggle_key(mode_reset_key[self.page], k)
+                toggle_key(shoot_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3465,13 +3486,40 @@ class KeyboardMenu(Menu):
         elif self.choice == 8:
             k = wait_key()
             if k is not None:
-                toggle_key(mode_key[self.page], k)
+                toggle_key(aim_up_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             KeyboardMenu.create_page(default=self.choice, page=self.page)
         elif self.choice == 9:
+            k = wait_key()
+            if k is not None:
+                toggle_key(aim_down_key[self.page], k)
+                set_gui_controls()
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            KeyboardMenu.create_page(default=self.choice, page=self.page)
+        elif self.choice == 10:
+            k = wait_key()
+            if k is not None:
+                toggle_key(mode_reset_key[self.page], k)
+                set_gui_controls()
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            KeyboardMenu.create_page(default=self.choice, page=self.page)
+        elif self.choice == 11:
+            k = wait_key()
+            if k is not None:
+                toggle_key(mode_key[self.page], k)
+                set_gui_controls()
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            KeyboardMenu.create_page(default=self.choice, page=self.page)
+        elif self.choice == 12:
             k = wait_key()
             if k is not None:
                 toggle_key(pause_key[self.page], k)
@@ -3492,7 +3540,8 @@ class JoystickMenu(Menu):
     @classmethod
     def create_page(cls, default=0, page=0):
         page %= min(len(left_js), len(right_js), len(up_js), len(down_js),
-                    len(jump_js), len(shoot_js), len(mode_reset_js),
+                    len(halt_js), len(jump_js), len(shoot_js),
+                    len(aim_up_js), len(aim_down_js), len(mode_reset_js),
                     len(mode_js), len(pause_js))
 
         def format_js(js):
@@ -3510,8 +3559,11 @@ class JoystickMenu(Menu):
                      _("Right: {}").format(format_js(right_js[page])),
                      _("Up: {}").format(format_js(up_js[page])),
                      _("Down: {}").format(format_js(down_js[page])),
+                     _("Halt: {}").format(format_js(halt_js[page])),
                      _("Jump: {}").format(format_js(jump_js[page])),
                      _("Shoot: {}").format(format_js(shoot_js[page])),
+                     _("Aim Up: {}").format(format_js(aim_up_js[page])),
+                     _("Aim Down: {}").format(format_js(aim_down_js[page])),
                      _("Reset Mode: {}").format(format_js(mode_reset_js[page])),
                      _("Mode: {}").format(format_js(mode_js[page])),
                      _("Pause: {}").format(format_js(pause_js[page])),
@@ -3571,7 +3623,7 @@ class JoystickMenu(Menu):
         elif self.choice == 5:
             js = wait_js()
             if js is not None:
-                toggle_js(jump_js[self.page], js)
+                toggle_js(halt_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3580,7 +3632,7 @@ class JoystickMenu(Menu):
         elif self.choice == 6:
             js = wait_js()
             if js is not None:
-                toggle_js(shoot_js[self.page], js)
+                toggle_js(jump_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3589,7 +3641,7 @@ class JoystickMenu(Menu):
         elif self.choice == 7:
             js = wait_js()
             if js is not None:
-                toggle_js(mode_reset_js[self.page], js)
+                toggle_js(shoot_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3598,13 +3650,40 @@ class JoystickMenu(Menu):
         elif self.choice == 8:
             js = wait_js()
             if js is not None:
-                toggle_js(mode_js[self.page], js)
+                toggle_js(aim_up_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             JoystickMenu.create_page(default=self.choice, page=self.page)
         elif self.choice == 9:
+            js = wait_js()
+            if js is not None:
+                toggle_js(aim_down_js[self.page], js)
+                set_gui_controls()
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            JoystickMenu.create_page(default=self.choice, page=self.page)
+        elif self.choice == 10:
+            js = wait_js()
+            if js is not None:
+                toggle_js(mode_reset_js[self.page], js)
+                set_gui_controls()
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            JoystickMenu.create_page(default=self.choice, page=self.page)
+        elif self.choice == 11:
+            js = wait_js()
+            if js is not None:
+                toggle_js(mode_js[self.page], js)
+                set_gui_controls()
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            JoystickMenu.create_page(default=self.choice, page=self.page)
+        elif self.choice == 12:
             js = wait_js()
             if js is not None:
                 toggle_js(pause_js[self.page], js)
@@ -4361,11 +4440,13 @@ def set_new_game():
 def write_to_disk():
     # Write our saves and settings to disk.
     keys_cfg = {"left": left_key, "right": right_key, "up": up_key,
-                "down": down_key, "jump": jump_key, "shoot": shoot_key,
-                "mode_reset": mode_reset_key, "mode": mode_key,
-                "pause": pause_key}
+                "down": down_key, "halt": halt_key, "jump": jump_key,
+                "shoot": shoot_key, "aim_up": aim_up_key,
+                "aim_down": aim_down_key, "mode_reset": mode_reset_key,
+                "mode": mode_key, "pause": pause_key}
     js_cfg = {"left": left_js, "right": right_js, "up": up_js,
-              "down": down_js, "jump": jump_js, "shoot": shoot_js,
+              "down": down_js, "halt": halt_js, "jump": jump_js,
+              "shoot": shoot_js, "aim_up": aim_up_js, "aim_down": aim_down_js,
               "mode_reset": mode_reset_js, "mode": mode_js, "pause": pause_js}
 
     cfg = {"version": 1, "fullscreen": fullscreen,
@@ -5200,31 +5281,32 @@ finally:
     left_key = keys_cfg.get("left", left_key)
     right_key = keys_cfg.get("right", right_key)
     up_key = keys_cfg.get("up", up_key)
+    halt_key = keys_cfg.get("halt", halt_key)
     down_key = keys_cfg.get("down", down_key)
     jump_key = keys_cfg.get("jump", jump_key)
     shoot_key = keys_cfg.get("shoot", shoot_key)
+    aim_up_key = keys_cfg.get("aim_up", aim_up_key)
+    aim_down_key = keys_cfg.get("aim_down", aim_down_key)
     mode_reset_key = keys_cfg.get("mode_reset", mode_reset_key)
     mode_key = keys_cfg.get("mode", mode_key)
     pause_key = keys_cfg.get("pause", pause_key)
 
     js_cfg = cfg.get("joystick", {})
-    left_js = [[tuple(j) for j in js]
-               for js in js_cfg.get("left", left_js)]
-    right_js = [[tuple(j) for j in js]
-                for js in js_cfg.get("right", right_js)]
+    left_js = [[tuple(j) for j in js] for js in js_cfg.get("left", left_js)]
+    right_js = [[tuple(j) for j in js] for js in js_cfg.get("right", right_js)]
     up_js = [[tuple(j) for j in js] for js in js_cfg.get("up", up_js)]
-    down_js = [[tuple(j) for j in js]
-               for js in js_cfg.get("down", down_js)]
-    jump_js = [[tuple(j) for j in js]
-               for js in js_cfg.get("jump", jump_js)]
-    shoot_js = [[tuple(j) for j in js]
-                for js in js_cfg.get("shoot", shoot_js)]
+    down_js = [[tuple(j) for j in js] for js in js_cfg.get("down", down_js)]
+    halt_js = [[tuple(j) for j in js] for js in js_cfg.get("halt", halt_js)]
+    jump_js = [[tuple(j) for j in js] for js in js_cfg.get("jump", jump_js)]
+    shoot_js = [[tuple(j) for j in js] for js in js_cfg.get("shoot", shoot_js)]
+    aim_up_js = [[tuple(j) for j in js]
+                 for js in js_cfg.get("aim_up", aim_up_js)]
+    aim_down_js = [[tuple(j) for j in js]
+                   for js in js_cfg.get("aim_down", aim_down_js)]
     mode_reset_js = [[tuple(j) for j in js]
                      for js in js_cfg.get("mode_reset", mode_reset_js)]
-    mode_js = [[tuple(j) for j in js]
-               for js in js_cfg.get("mode", mode_js)]
-    pause_js = [[tuple(j) for j in js]
-                for js in js_cfg.get("pause", pause_js)]
+    mode_js = [[tuple(j) for j in js] for js in js_cfg.get("mode", mode_js)]
+    pause_js = [[tuple(j) for j in js] for js in js_cfg.get("pause", pause_js)]
 
     set_gui_controls()
 

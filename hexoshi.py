@@ -4694,18 +4694,32 @@ print(_("Loading images..."))
 d = os.path.join(DATA, "images", "objects", "anneroy")
 
 fname = os.path.join(d, "anneroy_sheet.png")
+
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)
-anneroy_torso_right_aim_right = sge.gfx.Sprite.from_tileset(
-    fname, 234, 45, width=26, height=20, origin_x=4, origin_y=19)
-anneroy_torso_right_aim_up = sge.gfx.Sprite.from_tileset(
-    fname, 293, 38, width=20, height=27, origin_x=5, origin_y=26)
-anneroy_torso_right_aim_down = sge.gfx.Sprite.from_tileset(
-    fname, 182, 52, width=20, height=30, origin_x=0, origin_y=12)
-anneroy_torso_right_aim_upright = sge.gfx.Sprite.from_tileset(
-    fname, 264, 39, width=25, height=26, origin_x=4, origin_y=25)
-anneroy_torso_right_aim_downright = sge.gfx.Sprite.from_tileset(
-    fname, 207, 45, width=23, height=26, origin_x=4, origin_y=19)
+anneroy_torso_right_aim_right_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 234, 45, width=26, height=20, origin_x=5, origin_y=19)
+anneroy_torso_right_aim_up_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 293, 38, width=20, height=27, origin_x=6, origin_y=26)
+anneroy_torso_right_aim_down_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 182, 52, width=20, height=30, origin_x=1, origin_y=12)
+anneroy_torso_right_aim_upright_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 264, 39, width=25, height=26, origin_x=5, origin_y=25)
+anneroy_torso_right_aim_downright_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 207, 45, width=23, height=26, origin_x=5, origin_y=19)
+
+anneroy_torso_left_idle_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 14, 45, width=27, height=25, origin_x=18, origin_y=19)
+anneroy_torso_left_aim_left_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 95, 45, width=26, height=20, origin_x=20, origin_y=19)
+anneroy_torso_left_aim_up_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 45, 38, width=17, height=27, origin_x=11, origin_y=26)
+anneroy_torso_left_aim_down_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 154, 52, width=20, height=30, origin_x=18, origin_y=12)
+anneroy_torso_left_aim_upleft_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 66, 39, width=25, height=26, origin_x=19, origin_y=25)
+anneroy_torso_left_aim_downleft_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 125, 45, width=23, height=26, origin_x=17, origin_y=19)
 
 anneroy_legs_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 45, 76, width=21, height=24, origin_x=8, origin_y=0)

@@ -156,6 +156,11 @@ PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
 PLAYER_HITSTUN_SPEED = 0.5
 
+ANNEROY_BBOX_X = -6
+ANNEROY_BBOX_Y = -16
+ANNEROY_BBOX_WIDTH = 13
+ANNEROY_STAND_BBOX_HEIGHT = 40
+
 CEILING_LAX = 2
 
 CAMERA_HSPEED_FACTOR = 1 / 2
@@ -1459,6 +1464,8 @@ class Player(xsge_physics.Collider):
         self.hp = self.max_hp
         self.hitstun = False
         self.facing = 1
+        self.aim_direction = None
+        self.fixed_sprite = False
         self.view = None
 
         if GOD:
@@ -1580,7 +1587,31 @@ class Player(xsge_physics.Collider):
         self.refresh_input()
 
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
+        v_control = bool(self.down_pressed) - bool(self.up_pressed)
         current_h_movement = (self.xvelocity > 0) - (self.xvelocity < 0)
+
+        if "shooting" in self.alarms:
+            self.aim_direction = 0
+        else:
+            self.aim_direction = None
+
+        if self.halt_pressed and h_control:
+            if v_control:
+                self.aim_direction = 1 * -v_control
+            else:
+                self.aim_direction = 0
+        elif v_control:
+            if h_control:
+                self.aim_direction = 1 * -v_control
+            else:
+                self.aim_direction = 2 * -v_control
+
+        if self.aim_up_pressed and self.aim_down_pressed:
+            self.aim_direction = 2
+        elif self.aim_up_pressed:
+            self.aim_direction = 1
+        elif self.aim_down_pressed:
+            self.aim_direction = -1
 
         self.xacceleration = 0
         self.yacceleration = 0
@@ -1590,9 +1621,6 @@ class Player(xsge_physics.Collider):
             self.xvelocity = self.max_speed * current_h_movement
 
         if h_control:
-            self.facing = h_control
-            self.image_xscale = h_control * abs(self.image_xscale)
-
             if self.halt_pressed:
                 target_speed = 0
             else:
@@ -1645,7 +1673,7 @@ class Player(xsge_physics.Collider):
                 self.hurt()
 
         # Set image
-        if "fixed_sprite" not in self.alarms:
+        if not self.fixed_sprite and "fixed_sprite" not in self.alarms:
             self.set_image()
 
         # Move view
@@ -1791,47 +1819,89 @@ class Anneroy(Player):
     name = "Anneroy"
 
     torso = None
+    turning = False
 
     def set_image(self):
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
 
-        if self.on_floor and self.was_on_floor:
-            xm = (self.xvelocity > 0) - (self.xvelocity < 0)
-            speed = abs(self.xvelocity)
-            if speed > 0:
-                # TODO: Set running animation
+        # Turn Anneroy around. A custom "turning" variable is used so
+        # that the player can revert the turn in the middle of it
+        # without causing graphical glitches.
+        if self.facing < 0 and h_control > 0:
+            if not self.turning:
+                self.sprite = anneroy_turn_sprite
+                self.image_index = 0
+            self.image_speed = anneroy_turn_sprite.speed
+            self.image_xscale = abs(self.image_xscale)
+            self.facing = 1
+            self.turning = True
+        elif self.facing > 0 and h_control < 0:
+            if not self.turning:
+                self.sprite = anneroy_turn_sprite
+                self.image_index = anneroy_turn_sprite.frames - 1
+            self.image_speed = -anneroy_turn_sprite.speed
+            self.image_xscale = abs(self.image_xscale)
+            self.facing = -1
+            self.turning = True
 
-                self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
-                if xm != self.facing:
-                    self.image_speed *= -1
-            else:
-                # TODO: Set standing animation
-                pass
-        else:
-            if self.yvelocity < 0:
-                # TODO: Set jumping up animation
-                pass
-            else:
-                # TODO: Set falling animation
-                pass
+        if not self.turning:
+            if self.on_floor and self.was_on_floor:
+                xm = (self.xvelocity > 0) - (self.xvelocity < 0)
+                speed = abs(self.xvelocity)
+                if speed > 0:
+                    self.sprite = anneroy_legs_run_sprite
+                    self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
+                    if xm != self.facing:
+                        self.image_speed *= -1
 
-        # TODO: Set torso animation
+                    if self.aim_direction is None:
+                        self.aim_direction = 0
+                else:
+                    self.sprite = anneroy_legs_stand_sprite
+            else:
+                if self.yvelocity < 0:
+                    # TODO: Set jumping up animation
+                    pass
+                else:
+                    # TODO: Set falling animation
+                    pass
+
+            if self.torso is not None:
+                if self.facing > 0:
+                    self.torso.sprite = {
+                        0: anneroy_torso_right_aim_right_sprite,
+                        1: anneroy_torso_right_aim_upright_sprite,
+                        2: anneroy_torso_right_aim_up_sprite,
+                        -1: anneroy_torso_right_aim_downright_sprite,
+                        -2: anneroy_torso_right_aim_down_sprite}.get(
+                            self.aim_direction,
+                            anneroy_torso_right_idle_sprite)
+                else:
+                    self.torso.sprite = {
+                        0: anneroy_torso_left_aim_left_sprite,
+                        1: anneroy_torso_left_aim_upleft_sprite,
+                        2: anneroy_torso_left_aim_up_sprite,
+                        -1: anneroy_torso_left_aim_downleft_sprite,
+                        -2: anneroy_torso_left_aim_down_sprite}.get(
+                            self.aim_direction,
+                            anneroy_torso_left_idle_sprite)
+                x, y = anneroy_torso_offset.setdefault(
+                    (id(self.sprite), self.image_index), (0, 0))
+                self.torso.x = self.x + x * self.image_xscale
+                self.torso.y = self.y + y * self.image_yscale
+                self.torso.image_xscale = abs(self.image_xscale)
+                self.torso.image_yscale = self.image_yscale
 
     def event_create(self):
         super(Anneroy, self).event_create()
-        self.torso = sge.dsp.Object.create(self.x, self.y, self.z + 0.1)
+        self.torso = sge.dsp.Object.create(self.x, self.y, self.z + 0.1,
+                                           regulate_origin=True)
 
-    def event_update_position(self, delta_mult):
-        super(Anneroy, self).event_update_position(delta_mult)
-
-        if self.torso is not None:
-            # TODO: Adjust x and y
-            self.torso.x = self.x
-            self.torso.y = self.y
-            self.torso.image_xscale = math.copysign(self.torso.image_xscale,
-                                                    self.image_xscale)
-            self.torso.image_yscale = math.copysign(self.torso.image_yscale,
-                                                    self.image_yscale)
+    def event_animation_end(self):
+        if self.turning:
+            self.turning = False
+            self.image_xscale = abs(self.image_xscale) * self.facing
+            self.set_image()
 
 
 class DeadMan(sge.dsp.Object):
@@ -4692,8 +4762,12 @@ menu_color = sge.gfx.Color((128, 128, 255, 192))
 print(_("Loading images..."))
 
 d = os.path.join(DATA, "images", "objects", "anneroy")
+anneroy_torso_offset = {}
 
 fname = os.path.join(d, "anneroy_sheet.png")
+
+anneroy_turn_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 2, 109, 3, xsep=3, width=39, height=43, origin_x=19, origin_y=19)
 
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)
@@ -4723,6 +4797,19 @@ anneroy_torso_left_aim_downleft_sprite = sge.gfx.Sprite.from_tileset(
 
 anneroy_legs_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 45, 76, width=21, height=24, origin_x=8, origin_y=0)
+anneroy_legs_run_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 9, 299, 5, 2, xsep=8, ysep=31, width=40, height=24, origin_x=17,
+    origin_y=0)
+
+n = id(anneroy_legs_run_sprite)
+anneroy_torso_offset[(n, 1)] = (0, 1)
+anneroy_torso_offset[(n, 2)] = (0, 3)
+anneroy_torso_offset[(n, 3)] = (0, 4)
+anneroy_torso_offset[(n, 4)] = (0, 2)
+anneroy_torso_offset[(n, 6)] = (0, 1)
+anneroy_torso_offset[(n, 7)] = (0, 3)
+anneroy_torso_offset[(n, 8)] = (0, 5)
+anneroy_torso_offset[(n, 9)] = (0, 3)
 
 d = os.path.join(DATA, "images", "portraits")
 portrait_sprites = {}

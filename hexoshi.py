@@ -52,6 +52,8 @@ if getattr(sys, "frozen", False):
 DATA = os.path.join(os.path.dirname(__file__), "data")
 CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
 
+gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
+
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "-p", "--print-errors",
@@ -140,6 +142,8 @@ CAMERA_MARGIN_TOP = 4 * TILE_SIZE
 CAMERA_MARGIN_BOTTOM = 5 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = CAMERA_MARGIN_BOTTOM + TILE_SIZE
 
+LIGHT_RANGE = 600
+
 SHAKE_FRAME_TIME = FPS / DELTA_MIN
 SHAKE_AMOUNT = 3
 
@@ -183,7 +187,7 @@ up_js = [[(0, "axis-", 1), (0, "hat_up", 0)]]
 down_js = [[(0, "axis+", 1), (0, "hat_down", 0)]]
 halt_js = [[(0, "button", 10), (0, "button", 11)]]
 jump_js = [[(0, "button", 1), (0, "button", 3)]]
-action_js = [[(0, "button", 0)]]
+shoot_js = [[(0, "button", 0)]]
 aim_up_js = [[(0, "button", 5), (0, "button", 7)]]
 aim_down_js = [[(0, "button", 4), (0, "button", 6)]]
 mode_reset_js = [[(0, "button", 2)]]
@@ -370,43 +374,21 @@ class Level(sge.dsp.Room):
         play_music(self.music)
 
         players = []
-        spawn_point = None
+        spawn_obj = None
 
         for obj in self.objects:
-            if isinstance(obj, (Spawn, Door, WarpSpawn)):
-                if self.spawn is not None and obj.spawn_id == self.spawn:
-                    spawn_point = obj
-
-                if isinstance(obj, Warp) and obj not in self.warps:
-                    self.warps.append(obj)
-            elif isinstance(obj, Player):
+            if isinstance(obj, Player):
                 players.append(obj)
 
-        del_warps = []
-        for warp in self.warps:
-            if warp not in self.objects:
-                del_warps.append(warp)
-        for warp in del_warps:
-            self.warps.remove(warp)
-
-        if spawn_point is not None:
+        if spawn_obj is not None:
             for player in players:
-                player.x = spawn_point.x
-                player.y = spawn_point.y
+                player.x = spawn_obj.x
+                player.y = spawn_obj.y
+                player.z = spawn_obj.z + 0.5
                 if player.view is not None:
                     player.view.x = player.x - player.view.width / 2
                     player.view.y = (player.y - player.view.height +
                                      CAMERA_TARGET_MARGIN_BOTTOM)
-
-                if isinstance(spawn_point, WarpSpawn):
-                    player.visible = False
-                    player.tangible = False
-                    player.warping = True
-                    spawn_point.follow_start(player, WARP_SPEED)
-                else:
-                    player.visible = True
-                    player.tangible = True
-                    player.warping = False
 
     def event_step(self, time_passed, delta_mult):
         global watched_timelines
@@ -620,7 +602,7 @@ class Level(sge.dsp.Room):
                 print(_("Loading \"{}\"...").format(fname))
 
         try:
-            r = xsge_tmx.load(os.path.join(DATA, "levels", fname), cls=cls,
+            r = xsge_tmx.load(os.path.join(DATA, "rooms", fname), cls=cls,
                               types=TYPES)
         except Exception as e:
             m = _("An error occurred when trying to load the level:\n\n{}").format(
@@ -804,7 +786,7 @@ class CreditsScreen(SpecialScreen):
                 for obj in self.sections:
                     obj.yvelocity += 0.25
         elif (key in itertools.chain.from_iterable(jump_key) or
-                key in itertools.chain.from_iterable(action_key) or
+                key in itertools.chain.from_iterable(shoot_key) or
                 key in itertools.chain.from_iterable(pause_key)):
             sge.game.start_room.start()
 
@@ -820,7 +802,7 @@ class CreditsScreen(SpecialScreen):
                     for obj in self.sections:
                         obj.yvelocity += 0.25
             elif (js in itertools.chain.from_iterable(jump_js) or
-                    js in itertools.chain.from_iterable(action_js) or
+                    js in itertools.chain.from_iterable(shoot_js) or
                     js in itertools.chain.from_iterable(pause_js)):
                 sge.game.start_room.start()
 
@@ -1084,11 +1066,7 @@ class Player(xsge_physics.Collider):
 
     def jump(self):
         if self.on_floor or self.was_on_floor:
-            if abs(self.xvelocity) >= self.run_speed:
-                self.yvelocity = get_jump_speed(self.run_jump_height,
-                                                self.gravity)
-            else:
-                self.yvelocity = get_jump_speed(self.jump_height, self.gravity)
+            self.yvelocity = get_jump_speed(self.jump_height, self.gravity)
             self.on_floor = []
             self.was_on_floor = []
             self.event_jump()
@@ -1394,10 +1372,6 @@ class Anneroy(Player):
 
     name = "Anneroy"
 
-    torso = None
-    fixed_sprite = False
-    crouching = False
-
     @property
     def can_move(self):
         if self.crouching:
@@ -1412,6 +1386,10 @@ class Anneroy(Player):
         kwargs["bbox_height"] = ANNEROY_STAND_BBOX_HEIGHT
         super(Anneroy, self).__init__(*args, **kwargs)
 
+        self.torso = None
+        self.fixed_sprite = False
+        self.crouching = False
+
     def press_up(self):
         if self.crouching:
             for other in sge.collision.rectangle(
@@ -1423,7 +1401,7 @@ class Anneroy(Player):
                     if not self.collision(other):
                         break
             else:
-                self.animation_end()
+                self.event_animation_end()
                 self.sprite = anneroy_legs_crouch_sprite
                 self.image_speed = -anneroy_legs_crouch_sprite.speed
                 self.image_index = anneroy_legs_crouch_sprite.frames - 1
@@ -1433,55 +1411,60 @@ class Anneroy(Player):
                 self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
 
     def press_down(self):
-        if not self.crouching:
+        h_control = bool(self.right_pressed) - bool(self.left_pressed)
+        if (not self.crouching and not h_control and self.on_floor and
+                self.was_on_floor):
             self.event_animation_end()
             self.sprite = anneroy_legs_crouch_sprite
-            self.image_speed = None
+            self.image_speed = anneroy_legs_crouch_sprite.speed
             self.image_index = 0
             self.fixed_sprite = True
             self.crouching = True
             self.bbox_y = ANNEROY_CROUCH_BBOX_Y
             self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
 
-    def crouch(self):
-        if not self.crouching:
-            pass
-
-    def uncrouch(self):
+    def jump(self):
         if self.crouching:
-            pass
+            self.press_up()
+
+        if not self.crouching:
+            super(Anneroy, self).jump()
 
     def set_image(self):
         assert self.torso is not None
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
 
         # Turn Anneroy around.
-        if self.facing < 0 and h_control > 0:
-            if self.fixed_sprite != "turn":
-                self.event_animation_end()
-                self.sprite = anneroy_turn_sprite
-                self.image_index = 0
-            self.image_speed = anneroy_turn_sprite.speed
-            self.image_xscale = abs(self.image_xscale)
-            self.torso.visible = False
-            self.facing = 1
-            self.fixed_sprite = "turn"
-        elif self.facing > 0 and h_control < 0:
-            if self.fixed_sprite != "turn":
-                self.event_animation_end()
-                self.sprite = anneroy_turn_sprite
-                self.image_index = anneroy_turn_sprite.frames - 1
-            self.image_speed = -anneroy_turn_sprite.speed
-            self.image_xscale = abs(self.image_xscale)
-            self.torso.visible = False
-            self.facing = -1
-            self.fixed_sprite = "turn"
+        if not self.crouching:
+            if self.facing < 0 and h_control > 0:
+                self.facing = 1
+                if self.fixed_sprite != "turn":
+                    self.sprite = anneroy_turn_sprite
+                    self.image_index = 0
+                self.image_speed = anneroy_turn_sprite.speed
+                self.image_xscale = abs(self.image_xscale)
+                self.torso.visible = False
+                self.fixed_sprite = "turn"
+            elif self.facing > 0 and h_control < 0:
+                self.facing = -1
+                if self.fixed_sprite != "turn":
+                    self.sprite = anneroy_turn_sprite
+                    self.image_index = anneroy_turn_sprite.frames - 1
+                self.image_speed = -anneroy_turn_sprite.speed
+                self.image_xscale = abs(self.image_xscale)
+                self.torso.visible = False
+                self.fixed_sprite = "turn"
+        elif h_control:
+            self.facing = h_control
 
         if not self.fixed_sprite:
+            self.image_xscale = self.facing * abs(self.image_xscale)
+            self.image_speed = 0
+
             # Set legs
             if self.on_floor and self.was_on_floor:
                 if self.crouching:
-                    self.sprite = anneroy_legs_crouching_sprite
+                    self.sprite = anneroy_legs_crouched_sprite
                 else:
                     xm = (self.xvelocity > 0) - (self.xvelocity < 0)
                     speed = abs(self.xvelocity)
@@ -1496,38 +1479,36 @@ class Anneroy(Player):
                     else:
                         self.sprite = anneroy_legs_stand_sprite
             else:
-                if self.yvelocity < 0:
-                    self.sprite = anneroy_legs_jump_sprite
-                    self.image_speed = 0
-                    self.image_index = -1
-                else:
-                    self.sprite = anneroy_legs_fall_sprite
+                self.sprite = anneroy_legs_jump_sprite
+                self.image_index = -1
 
-            # Set torso
-            if self.facing > 0:
-                self.torso.sprite = {
-                    0: anneroy_torso_right_aim_right_sprite,
-                    1: anneroy_torso_right_aim_upright_sprite,
-                    2: anneroy_torso_right_aim_up_sprite,
-                    -1: anneroy_torso_right_aim_downright_sprite,
-                    -2: anneroy_torso_right_aim_down_sprite}.get(
-                        self.aim_direction,
-                        anneroy_torso_right_idle_sprite)
-            else:
-                self.torso.sprite = {
-                    0: anneroy_torso_left_aim_left_sprite,
-                    1: anneroy_torso_left_aim_upleft_sprite,
-                    2: anneroy_torso_left_aim_up_sprite,
-                    -1: anneroy_torso_left_aim_downleft_sprite,
-                    -2: anneroy_torso_left_aim_down_sprite}.get(
-                        self.aim_direction,
-                        anneroy_torso_left_idle_sprite)
-            x, y = anneroy_torso_offset.setdefault(
-                (id(self.sprite), self.image_index), (0, 0))
-            self.torso.x = self.x + x * self.image_xscale
-            self.torso.y = self.y + y * self.image_yscale
-            self.torso.image_xscale = abs(self.image_xscale)
-            self.torso.image_yscale = self.image_yscale
+        # Set torso
+        if self.facing > 0:
+            self.torso.sprite = {
+                0: anneroy_torso_right_aim_right_sprite,
+                1: anneroy_torso_right_aim_upright_sprite,
+                2: anneroy_torso_right_aim_up_sprite,
+                -1: anneroy_torso_right_aim_downright_sprite,
+                -2: anneroy_torso_right_aim_down_sprite}.get(
+                    self.aim_direction,
+                    anneroy_torso_right_idle_sprite)
+        else:
+            self.torso.sprite = {
+                0: anneroy_torso_left_aim_left_sprite,
+                1: anneroy_torso_left_aim_upleft_sprite,
+                2: anneroy_torso_left_aim_up_sprite,
+                -1: anneroy_torso_left_aim_downleft_sprite,
+                -2: anneroy_torso_left_aim_down_sprite}.get(
+                    self.aim_direction,
+                    anneroy_torso_left_idle_sprite)
+
+        # Position torso
+        x, y = anneroy_torso_offset.setdefault(
+            (id(self.sprite), self.image_index % self.sprite.frames), (0, 0))
+        self.torso.x = self.x + x * self.image_xscale
+        self.torso.y = self.y + y * self.image_yscale
+        self.torso.image_xscale = abs(self.image_xscale)
+        self.torso.image_yscale = self.image_yscale
 
     def event_create(self):
         super(Anneroy, self).event_create()
@@ -1538,7 +1519,6 @@ class Anneroy(Player):
         assert self.torso is not None
 
         if self.fixed_sprite == "turn":
-            self.image_xscale = abs(self.image_xscale) * self.facing
             self.torso.visible = True
 
         if self.fixed_sprite:
@@ -1569,7 +1549,7 @@ class DeadMan(sge.dsp.Object):
     """Object which falls off the screen, then gets destroyed."""
 
     gravity = GRAVITY
-    fall_speed = PLAYER_DIE_FALL_SPEED
+    fall_speed = PLAYER_FALL_SPEED
 
     def event_begin_step(self, time_passed, delta_mult):
         if self.yvelocity < self.fall_speed:
@@ -1588,7 +1568,7 @@ class Corpse(xsge_physics.Collider):
     """Like DeadMan, but just falls to the floor, not off-screen."""
 
     gravity = GRAVITY
-    fall_speed = ENEMY_FALL_SPEED
+    fall_speed = PLAYER_FALL_SPEED
 
     def event_create(self):
         self.alarms["die"] = 90
@@ -1716,8 +1696,8 @@ class FallingObject(InteractiveCollider):
     """
 
     gravity = GRAVITY
-    fall_speed = ENEMY_FALL_SPEED
-    slide_speed = ENEMY_SLIDE_SPEED
+    fall_speed = PLAYER_FALL_SPEED
+    slide_speed = PLAYER_SLIDE_SPEED
 
     was_on_floor = False
 
@@ -1750,7 +1730,7 @@ class WalkingObject(FallingObject):
     to turn around at ledges with the stayonplatform attribute.
     """
 
-    walk_speed = ENEMY_WALK_SPEED
+    walk_speed = PLAYER_MAX_SPEED
     stayonplatform = False
 
     def deactivate(self):
@@ -1834,7 +1814,7 @@ class FreezableObject(InteractiveObject):
 
     freezable = True
     frozen_sprite = None
-    frozen_time = THAW_TIME_DEFAULT
+    frozen_time = 120
     frozen = False
 
     def permafreeze(self):
@@ -1924,142 +1904,6 @@ class FlyingEnemy(CrowdBlockingObject):
                     self.image_xscale = -abs(self.image_xscale)
 
 
-class Crusher(FallingObject, xsge_physics.MobileColliderWall,
-              xsge_physics.Solid):
-
-    nonstick_left = True
-    nonstick_right = True
-    nonstick_top = True
-    nonstick_bottom = True
-    sticky_top = True
-    burnable = True
-    freezable = True
-    gravity = 0
-    fall_speed = CRUSHER_FALL_SPEED
-    crushing = False
-
-    def touch(self, other):
-        other.hurt()
-
-    def touch_death(self):
-        pass
-
-    def touch_hurt(self):
-        pass
-
-    def stop_up(self):
-        self.yvelocity = 0
-        self.crushing = False
-
-    def stop_down(self):
-        play_sound(brick_sound, self.x, self.y)
-        self.yvelocity = 0
-        self.gravity = 0
-        sge.game.current_room.shake(CRUSHER_SHAKE_NUM)
-        self.alarms["crush_end"] = CRUSHER_CRUSH_TIME
-
-    def event_step(self, time_passed, delta_mult):
-        if not self.crushing:
-            super(Crusher, self).event_step(time_passed, delta_mult)
-            if self.active:
-                players = []
-                crash_y = sge.game.current_room.height
-                objects = (
-                    sge.game.current_room.get_objects_at(
-                        self.bbox_left - CRUSHER_LAX, self.bbox_bottom,
-                        self.bbox_width + 2 * CRUSHER_LAX,
-                        (sge.game.current_room.height - self.bbox_bottom +
-                         sge.game.current_room.object_area_height)) |
-                    sge.game.current_room.object_area_void)
-                for obj in objects:
-                    if (obj.bbox_top > self.bbox_bottom and
-                            self.bbox_right > obj.bbox_left and
-                            self.bbox_left < obj.bbox_right):
-                        if isinstance(obj, xsge_physics.SolidTop):
-                            crash_y = min(crash_y, obj.bbox_top)
-                        elif isinstance(obj, xsge_physics.SlopeTopLeft):
-                            crash_y = min(crash_y,
-                                          obj.get_slope_y(self.bbox_right))
-                        elif isinstance(obj, xsge_physics.SlopeTopRight):
-                            crash_y = min(crash_y,
-                                          obj.get_slope_y(self.bbox_left))
-                    if (obj.bbox_top > self.bbox_bottom and
-                            self.bbox_right + CRUSHER_LAX > obj.bbox_left and
-                            self.bbox_left - CRUSHER_LAX < obj.bbox_right):
-                        if isinstance(obj, Player):
-                            players.append(obj)
-
-                for player in players:
-                    if player.bbox_top < crash_y + CRUSHER_LAX:
-                        self.crushing = True
-                        self.gravity = CRUSHER_GRAVITY
-                        break
-
-    def event_alarm(self, alarm_id):
-        if alarm_id == "crush_end":
-            self.yvelocity = -CRUSHER_RISE_SPEED
-
-    def event_collision(self, other, xdirection, ydirection):
-        if isinstance(other, InteractiveObject) and other.knockable:
-            other.knock(self)
-
-        super(Crusher, self).event_collision(other, xdirection, ydirection)
-
-
-class Circoflame(InteractiveObject):
-
-    killed_by_void = False
-    active_range = 0
-    burnable = True
-    freezable = True
-
-    def __init__(self, center, x, y, z=0, **kwargs):
-        self.center = weakref.ref(center)
-        kwargs["sprite"] = circoflame_sprite
-        kwargs["checks_collisions"] = False
-        sge.dsp.Object.__init__(self, x, y, z, **kwargs)
-
-    def touch(self, other):
-        other.hurt()
-
-    def freeze(self):
-        play_sound(sizzle_sound, self.x, self.y)
-        center = self.center()
-        if center is not None:
-            center.destroy()
-        self.destroy()
-
-    def project_light(self):
-        xsge_lighting.project_light(self.x, self.y, circoflame_light_sprite)
-
-
-class CircoflameCenter(InteractiveObject):
-
-    killed_by_void = False
-    always_active = True
-    never_tangible = True
-
-    def __init__(self, x, y, z=0, radius=(TILE_SIZE * 4), pos=180,
-                 rvelocity=2):
-        self.radius = radius
-        self.pos = pos
-        self.rvelocity = rvelocity
-        self.flame = Circoflame(self, x, y, z)
-        super(CircoflameCenter, self).__init__(x, y, z, visible=False,
-                                               tangible=False)
-
-    def event_create(self):
-        sge.game.current_room.add(self.flame)
-
-    def event_step(self, time_passed, delta_mult):
-        self.pos += self.rvelocity * delta_mult
-        self.pos %= 360
-        x = math.cos(math.radians(self.pos)) * self.radius
-        y = math.sin(math.radians(self.pos)) * self.radius
-        self.flame.x = self.x + x
-        self.flame.y = self.y + y
-
-
 class Boss(InteractiveObject):
 
     def __init__(self, x, y, ID="boss", death_timeline=None, stage=0,
@@ -2135,7 +1979,7 @@ class TimelineSwitcher(InteractiveObject):
 class MovingObjectPath(xsge_path.PathLink):
 
     cls = None
-    default_speed = ENEMY_WALK_SPEED
+    default_speed = PLAYER_MAX_SPEED
     default_accel = None
     default_decel = None
     default_loop = None
@@ -2911,9 +2755,7 @@ def get_jump_speed(height, gravity=GRAVITY):
 
 def set_gui_controls():
     # Set the controls for xsge_gui based on the player controls.
-    xsge_gui.next_widget_keys = (
-        list(itertools.chain.from_iterable(down_key)) +
-        list(itertools.chain.from_iterable(sneak_key)))
+    xsge_gui.next_widget_keys = list(itertools.chain.from_iterable(down_key))
     if not xsge_gui.next_widget_keys:
         xsge_gui.next_widget_keys = ["tab"]
     xsge_gui.previous_widget_keys = list(itertools.chain.from_iterable(up_key))
@@ -2929,8 +2771,7 @@ def set_gui_controls():
     xsge_gui.escape_keys = (list(itertools.chain.from_iterable(mode_key)) +
                             ["escape"])
     xsge_gui.next_widget_joystick_events = (
-        list(itertools.chain.from_iterable(down_js)) +
-        list(itertools.chain.from_iterable(sneak_js)))
+        list(itertools.chain.from_iterable(down_js)))
     if not xsge_gui.next_widget_joystick_events:
         xsge_gui.next_widget_joystick_events = [(0, "axis+", 1)]
     xsge_gui.previous_widget_joystick_events = (
@@ -3284,10 +3125,10 @@ anneroy_legs_fall_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_legs_land_sprite = sge.gfx.Sprite.from_tileset(
     fname, 242, 234, 2, xsep=15, width=23, height=29, origin_x=8, origin_y=5,
     fps=10)
-anneroy_crouched_sprite = sge.gfx.Sprite.from_tileset(
+anneroy_legs_crouched_sprite = sge.gfx.Sprite.from_tileset(
     fname, 23, 85, width=21, height=15, origin_x=7, origin_y=-9)
-anneroy_crouch_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 9, 189, 2, xsep=7, width=21, height=21, origin_x=8, origin_y=-8,
+anneroy_legs_crouch_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 9, 189, 2, xsep=7, width=21, height=21, origin_x=8, origin_y=-3,
     fps=10)
 
 n = id(anneroy_legs_run_sprite)
@@ -3308,7 +3149,7 @@ anneroy_torso_offset[(n, 3)] = (0, -2)
 anneroy_torso_offset[(n, 4)] = (0, -3)
 
 n = id(anneroy_legs_fall_sprite)
-anneroy_torso_offset[(n, 0)] = (0, -1)
+anneroy_torso_offset[(n, 0)] = (0, -2)
 
 n = id(anneroy_legs_land_sprite)
 anneroy_torso_offset[(n, 0)] = (0, -5)
@@ -3333,146 +3174,20 @@ for fname in os.listdir(d):
         portrait_sprites[root] = portrait
 
 # Load backgrounds
-d = os.path.join(DATA, "images", "backgrounds")
-layers = []
-
-if not NO_BACKGROUNDS:
-    layers = [
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("arctis1-middle", d), 0, 0, -100000,
-            xscroll_rate=0.5, yscroll_rate=0.5, repeat_left=True,
-            repeat_right=True),
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("arctis1-bottom", d, transparent=False), 0, 352,
-            -100000, xscroll_rate=0.5, yscroll_rate=0.5, repeat_left=True,
-            repeat_right=True, repeat_down=True),
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("arctis2-middle", d), 0, 0, -100010,
-            xscroll_rate=0.25, yscroll_rate=0.25, repeat_left=True,
-            repeat_right=True),
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("arctis2-bottom", d, transparent=False), 0, 352,
-            -100010, xscroll_rate=0.25, yscroll_rate=0.25, repeat_left=True,
-            repeat_right=True, repeat_down=True),
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("arctis3", d, transparent=False), 0, 0, -100020,
-            xscroll_rate=0, yscroll_rate=0.25, repeat_left=True,
-            repeat_right=True)]
-
-backgrounds["arctis"] = sge.gfx.Background(layers,
-                                           sge.gfx.Color((109, 92, 230)))
-
-if not NO_BACKGROUNDS:
-    cave_edge_spr = sge.gfx.Sprite("cave-edge", d, transparent=False)
-    layers = [
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("cave-middle", d, transparent=False), 0, 128,
-            -100000, xscroll_rate=0.7, yscroll_rate=0.7, repeat_left=True,
-            repeat_right=True),
-        sge.gfx.BackgroundLayer(
-            cave_edge_spr, 0, 0, -100000, xscroll_rate=0.7, yscroll_rate=0.7,
-            repeat_left=True, repeat_right=True, repeat_up=True),
-        sge.gfx.BackgroundLayer(
-            cave_edge_spr, 0, 256, -100000, xscroll_rate=0.7, yscroll_rate=0.7,
-            repeat_left=True, repeat_right=True, repeat_down=True)]
-    del cave_edge_spr
-
-backgrounds["cave"] = sge.gfx.Background(layers, sge.gfx.Color("#024"))
-
-if not NO_BACKGROUNDS:
-    nightsky_bottom_spr = sge.gfx.Sprite("nightsky-bottom", d,
-                                         transparent=False)
-    layers = [
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("nightsky1-middle", d), 0, 306, -100000,
-            xscroll_rate=0.5, yscroll_rate=0.5, repeat_left=True,
-            repeat_right=True),
-        sge.gfx.BackgroundLayer(
-            nightsky_bottom_spr, 0, 664, -100000, xscroll_rate=0.5,
-            yscroll_rate=0.5, repeat_left=True, repeat_right=True,
-            repeat_down=True),
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("nightsky2-middle", d, transparent=False), 0, 0,
-            -100010, xscroll_rate=0.25, yscroll_rate=0.25, repeat_left=True,
-            repeat_right=True),
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("nightsky2-top", d, transparent=False), 0, -600,
-            -100010, xscroll_rate=0.25, yscroll_rate=0.25, repeat_left=True,
-            repeat_right=True, repeat_up=True),
-        sge.gfx.BackgroundLayer(
-            nightsky_bottom_spr, 0, 600, -100010, xscroll_rate=0.25,
-            yscroll_rate=0.25, repeat_left=True, repeat_right=True,
-            repeat_down=True)]
-    del nightsky_bottom_spr
-
-backgrounds["nightsky"] = sge.gfx.Background(layers, sge.gfx.Color("#002"))
-
-if not NO_BACKGROUNDS:
-    layers = [
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("bluemountain-middle", d, transparent=False), 0,
-            -128, -100000, xscroll_rate=0.1, yscroll_rate=0.1,
-            repeat_left=True, repeat_right=True),
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("bluemountain-top", d, transparent=False), 0, -704,
-            -100000, xscroll_rate=0.1, yscroll_rate=0.1, repeat_left=True,
-            repeat_right=True, repeat_up=True),
-        sge.gfx.BackgroundLayer(
-            sge.gfx.Sprite("bluemountain-bottom", d, transparent=False), 0,
-            448, -100000, xscroll_rate=0.1, yscroll_rate=0.1, repeat_left=True,
-            repeat_right=True, repeat_down=True)]
-
-backgrounds["bluemountain"] = sge.gfx.Background(layers,
-                                                 sge.gfx.Color((86, 142, 206)))
-
-castle_spr = sge.gfx.Sprite("castle", d)
-castle_bottom_spr = sge.gfx.Sprite("castle-bottom", d, transparent=False)
-for i in list(backgrounds.keys()):
-    if not NO_BACKGROUNDS:
-        layers = backgrounds[i].layers + [
-            sge.gfx.BackgroundLayer(castle_spr, 0, -64, -99000,
-                                    xscroll_rate=0.75, yscroll_rate=1,
-                                    repeat_left=True, repeat_right=True,
-                                    repeat_up=True),
-            sge.gfx.BackgroundLayer(castle_bottom_spr, 0, 544, -99000,
-                                    xscroll_rate=0.75, yscroll_rate=1,
-                                    repeat_left=True, repeat_right=True,
-                                    repeat_down=True)]
-
-        backgrounds["{}_castle".format(i)] = sge.gfx.Background(
-            layers, backgrounds[i].color)
-    else:
-        backgrounds["{}_castle".format(i)] = sge.gfx.Background(
-            [], sge.gfx.Color("#221833"))
-del castle_spr
-del castle_bottom_spr
+# TODO
 
 # Load fonts
 print(_("Loading fonts..."))
-chars = (['\x00'] + [six.unichr(i) for i in six.moves.range(33, 128)] +
-         [six.unichr(i) for i in six.moves.range(160, 384)])
-
-font_sprite = sge.gfx.Sprite.from_tileset(
-    os.path.join(DATA, "images", "misc", "font.png"), columns=16, rows=20,
-    width=16, height=18)
-font = sge.gfx.Font.from_sprite(font_sprite, chars, size=18)
-
-font_small_sprite = sge.gfx.Sprite.from_tileset(
-    os.path.join(DATA, "images", "misc", "font_small.png"), columns=16,
-    rows=20, width=8, height=9)
-font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=9)
-
-font_big_sprite = sge.gfx.Sprite.from_tileset(
-    os.path.join(DATA, "images", "misc", "font_big.png"), columns=16, rows=20,
-    width=20, height=22)
-font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=22)
+font = sge.gfx.Font("Droid Sans Mono", size=9)
+font_small = sge.gfx.Font("Droid Sans Mono", size=4)
+font_big = sge.gfx.Font("Droid Sans Mono", size=11)
 
 # Load sounds
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
-confirm_sound = sge.snd.Sound()
-cancel_sound = sge.snd.Sound()
-error_sound = sge.snd.Sound()
+confirm_sound = sge.snd.Sound(None)
+cancel_sound = sge.snd.Sound(None)
+error_sound = sge.snd.Sound(None)
 type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
 
 # Create objects

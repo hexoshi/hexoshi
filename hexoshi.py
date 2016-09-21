@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-__version__ = "1.1"
+__version__ = "0.1a0"
 
 import argparse
 import datetime
@@ -106,7 +106,7 @@ if args.lang:
 
 SCREEN_SIZE = [400, 224]
 TILE_SIZE = 16
-FPS = 56
+FPS = 60
 DELTA_MIN = FPS / 2
 DELTA_MAX = FPS * 4
 TRANSITION_TIME = 750
@@ -142,7 +142,7 @@ CAMERA_MARGIN_TOP = 4 * TILE_SIZE
 CAMERA_MARGIN_BOTTOM = 5 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = CAMERA_MARGIN_BOTTOM + TILE_SIZE
 
-LIGHT_RANGE = 600
+LIGHT_RANGE = 300
 
 SHAKE_FRAME_TIME = FPS / DELTA_MIN
 SHAKE_AMOUNT = 3
@@ -1008,6 +1008,7 @@ class Player(xsge_physics.Collider):
         self.hitstun = False
         self.facing = 1
         self.aim_direction = None
+        self.aim_direction_time = 0
         self.view = None
 
         if GOD:
@@ -1134,6 +1135,8 @@ class Player(xsge_physics.Collider):
         v_control = bool(self.down_pressed) - bool(self.up_pressed)
         current_h_movement = (self.xvelocity > 0) - (self.xvelocity < 0)
 
+        prev_aim_direction = self.aim_direction
+
         if "shooting" in self.alarms:
             self.aim_direction = 0
         else:
@@ -1145,7 +1148,7 @@ class Player(xsge_physics.Collider):
             else:
                 self.aim_direction = 0
         elif v_control:
-            if h_control:
+            if h_control and self.on_floor:
                 self.aim_direction = 1 * -v_control
             else:
                 self.aim_direction = 2 * -v_control
@@ -1156,6 +1159,11 @@ class Player(xsge_physics.Collider):
             self.aim_direction = 1
         elif self.aim_down_pressed:
             self.aim_direction = -1
+
+        if self.aim_direction == prev_aim_direction:
+            self.aim_direction_time += 1
+        else:
+            self.aim_direction_time = 0
 
         self.xacceleration = 0
         self.yacceleration = 0
@@ -1434,6 +1442,10 @@ class Anneroy(Player):
         assert self.torso is not None
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
 
+        aim_direction = self.aim_direction
+        idle_torso_right = anneroy_torso_right_idle_sprite
+        idle_torso_left = anneroy_torso_left_idle_sprite
+
         # Turn Anneroy around.
         if not self.crouching:
             if self.facing < 0 and h_control > 0:
@@ -1474,13 +1486,22 @@ class Anneroy(Player):
                         if xm != self.facing:
                             self.image_speed *= -1
 
-                        if self.aim_direction is None:
-                            self.aim_direction = 0
+                        idle_torso_right = anneroy_torso_right_aim_right_sprite
+                        idle_torso_left = anneroy_torso_left_aim_left_sprite
                     else:
                         self.sprite = anneroy_legs_stand_sprite
             else:
                 self.sprite = anneroy_legs_jump_sprite
                 self.image_index = -1
+
+            if self.aim_direction_time < 4 and self.aim_direction is not None:
+                aim_direction = max(-1, min(self.aim_direction, 1))
+        else:
+            if self.aim_direction_time < 16:
+                aim_direction = None
+            elif (self.aim_direction_time < 20 and
+                  self.aim_direction is not None):
+                aim_direction = max(-1, min(self.aim_direction, 1))
 
         # Set torso
         if self.facing > 0:
@@ -1490,8 +1511,7 @@ class Anneroy(Player):
                 2: anneroy_torso_right_aim_up_sprite,
                 -1: anneroy_torso_right_aim_downright_sprite,
                 -2: anneroy_torso_right_aim_down_sprite}.get(
-                    self.aim_direction,
-                    anneroy_torso_right_idle_sprite)
+                    aim_direction, idle_torso_right)
         else:
             self.torso.sprite = {
                 0: anneroy_torso_left_aim_left_sprite,
@@ -1499,8 +1519,7 @@ class Anneroy(Player):
                 2: anneroy_torso_left_aim_up_sprite,
                 -1: anneroy_torso_left_aim_downleft_sprite,
                 -2: anneroy_torso_left_aim_down_sprite}.get(
-                    self.aim_direction,
-                    anneroy_torso_left_idle_sprite)
+                    aim_direction, idle_torso_left)
 
         # Position torso
         x, y = anneroy_torso_offset.setdefault(
@@ -3113,7 +3132,7 @@ anneroy_torso_left_aim_downleft_sprite = sge.gfx.Sprite.from_tileset(
     fname, 125, 45, width=23, height=26, origin_x=17, origin_y=19)
 
 anneroy_legs_stand_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 45, 76, width=21, height=24, origin_x=8, origin_y=0)
+    fname, 47, 76, width=19, height=24, origin_x=8, origin_y=0)
 anneroy_legs_run_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 299, 5, 2, xsep=8, ysep=31, width=40, height=24, origin_x=17,
     origin_y=0)

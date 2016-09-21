@@ -31,13 +31,10 @@ import json
 import math
 import os
 import random
-import shutil
 import sys
-import tempfile
 import traceback
 import warnings
 import weakref
-import zipfile
 
 import sge
 import six
@@ -48,43 +45,12 @@ import xsge_path
 import xsge_physics
 import xsge_tmx
 
-try:
-    from six.moves.tkinter import Tk
-    # six.moves.tkinter_filedialog doesn't work correctly.
-    if six.PY2:
-        import tkFileDialog as tkinter_filedialog
-    else:
-        import tkinter.filedialog as tkinter_filedialog
-except ImportError:
-    HAVE_TK = False
-else:
-    HAVE_TK = True
-
 
 if getattr(sys, "frozen", False):
     __file__ = sys.executable
 
-DATA = tempfile.mkdtemp("hexoshi-data")
+DATA = os.path.join(os.path.dirname(__file__), "data")
 CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
-
-dirs = [os.path.join(os.path.dirname(__file__), "data"),
-        os.path.join(CONFIG, "data")]
-for d in dirs:
-    if os.path.isdir(d):
-        for dirpath, dirnames, filenames in os.walk(d, True, None, True):
-            dirtail = os.path.relpath(dirpath, d)
-            nd = os.path.join(DATA, dirtail)
-
-            for dirname in dirnames:
-                dp = os.path.join(nd, dirname)
-                if not os.path.exists(dp):
-                    os.makedirs(dp)
-
-            for fname in filenames:
-                shutil.copy2(os.path.join(dirpath, fname), nd)
-del dirs
-
-gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -128,6 +94,8 @@ NO_BACKGROUNDS = args.no_backgrounds
 NO_HUD = args.no_hud
 GOD = (args.god and args.god.lower() == "plz4giv")
 
+gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
+
 if args.lang:
     lang = gettext.translation("hexoshi",
                                os.path.abspath(os.path.join(DATA, "locale")),
@@ -157,9 +125,10 @@ PLAYER_HITSTUN = FPS
 PLAYER_HITSTUN_SPEED = 0.5
 
 ANNEROY_BBOX_X = -6
-ANNEROY_BBOX_Y = -16
 ANNEROY_BBOX_WIDTH = 13
+ANNEROY_STAND_BBOX_Y = -16
 ANNEROY_STAND_BBOX_HEIGHT = 40
+ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
 
 CEILING_LAX = 2
@@ -225,32 +194,11 @@ save_slots = [None for i in six.moves.range(SAVE_NSLOTS)]
 abort = False
 
 current_save_slot = None
-current_levelset = None
-start_cutscene = None
-worldmap = None
-loaded_worldmaps = {}
-levels = []
-loaded_levels = {}
-level_names = {}
-level_timers = {}
-cleared_levels = []
-tuxdolls_available = []
-tuxdolls_found = []
 watched_timelines = []
-level_time_bonus = 0
-current_worldmap = None
-worldmap_entry_space = None
-current_worldmap_space = None
-current_level = 0
-current_checkpoints = {}
+current_level = None
+spawn_point = None
 
-score = 0
-
-current_areas = {}
-main_area = None
-level_cleared = False
-mapdest = None
-mapdest_space = None
+player = None
 
 
 class Game(sge.dsp.Game):
@@ -286,7 +234,7 @@ class Game(sge.dsp.Game):
             self.event_close()
 
     def event_close(self):
-        rush_save()
+        save_game()
         self.end()
 
     def event_paused_close(self):
@@ -301,22 +249,14 @@ class Level(sge.dsp.Room):
                  background=None, background_x=0, background_y=0,
                  object_area_width=TILE_SIZE * 2,
                  object_area_height=TILE_SIZE * 2,
-                 name=None, bgname=None, music=None,
-                 time_bonus=DEFAULT_LEVEL_TIME_BONUS, spawn=None,
-                 timeline=None, ambient_light=None, disable_lights=False,
-                 persistent=True):
+                 name=None, bgname=None, music=None, timeline=None,
+                 ambient_light=None, disable_lights=False):
         self.fname = None
         self.name = name
         self.music = music
-        self.time_bonus = time_bonus
-        self.spawn = spawn
-        self.persistent = persistent
-        self.points = 0
         self.timeline_objects = {}
-        self.warps = []
         self.shake_queue = 0
         self.pause_delay = TRANSITION_TIME
-        self.game_won = False
         self.status_text = None
 
         if bgname is not None:
@@ -365,10 +305,6 @@ class Level(sge.dsp.Room):
             i = t_keys.pop(0)
             self.timeline[i] = []
 
-    def add_points(self, x):
-        if main_area not in cleared_levels:
-            self.points += x
-
     def show_hud(self):
         # Show darkness
         if self.ambient_light:
@@ -378,25 +314,7 @@ class Level(sge.dsp.Room):
             xsge_lighting.clear_lights()
 
         if not NO_HUD:
-            if self.points:
-                score_text = "{}+{}".format(score, self.points)
-            else:
-                score_text = str(score)
-            time_bonus = level_timers.get(main_area, 0)
-            text = "{}\n{}\n\n{}\n{}".format(
-                _("Score"), score_text,
-                _("Time Bonus") if time_bonus >= 0 else _("Time Penalty"),
-                abs(time_bonus))
-            sge.game.project_text(font, text, sge.game.width / 2, 0,
-                                  color=sge.gfx.Color("white"),
-                                  halign="center")
-
-            if main_area in tuxdolls_available or main_area in tuxdolls_found:
-                if main_area in tuxdolls_found:
-                    s = tuxdoll_sprite
-                else:
-                    s = tuxdoll_transparent_sprite
-                sge.game.project_sprite(s, 0, sge.game.width / 2, font.size * 6)
+            # TODO: Add HUD showing health, ammo, etc.
 
             if self.status_text:
                 sge.game.project_text(font, self.status_text,
@@ -417,133 +335,39 @@ class Level(sge.dsp.Room):
                 obj.check_shake(True)
 
     def pause(self):
-        global level_timers
-        global score
-
         if self.death_time is not None or "death" in self.alarms:
-            if level_timers.setdefault(main_area, 0) >= 0:
-                sge.snd.Music.stop()
-                self.alarms["death"] = 0
+            sge.snd.Music.stop()
+            self.alarms["death"] = 0
         elif (self.timeline_skip_target is not None and
               self.timeline_step < self.timeline_skip_target):
             self.timeline_skipto(self.timeline_skip_target)
-        elif self.pause_delay <= 0 and not self.won:
+        elif self.pause_delay <= 0:
             sge.snd.Music.pause()
             play_sound(pause_sound)
             PauseMenu.create()
 
     def die(self):
-        global current_areas
-        current_areas = {}
         self.death_time = DEATH_FADE_TIME
-        self.death_time_bonus = level_timers.setdefault(main_area, 0)
-        if "timer" in self.alarms:
-            del self.alarms["timer"]
         sge.snd.Music.clear_queue()
         sge.snd.Music.stop(DEATH_FADE_TIME)
 
-    def return_to_map(self, completed=False):
-        global current_worldmap
-        global current_worldmap_space
-        global mapdest
-        global mapdest_space
-
-        if completed:
-            if mapdest:
-                current_worldmap = mapdest
-            if mapdest_space:
-                current_worldmap_space = mapdest_space
-                worldmap_entry_space = mapdest_space
-
-        mapdest = None
-        mapdest_space = None
-
-        save_game()
-        if current_worldmap:
-            m = Worldmap.load(current_worldmap)
-            m.start(transition="iris_out", transition_time=TRANSITION_TIME)
-        else:
-            sge.game.start_room.start()
-
-    def win_level(self, victory_walk=True):
-        global current_checkpoints
-
-        for obj in self.objects[:]:
-            if isinstance(obj, WinPuffObject) and obj.active:
-                obj.win_puff()
-
-        for obj in self.objects:
-            if isinstance(obj, Player):
-                obj.human = False
-                obj.left_pressed = False
-                obj.right_pressed = False
-                obj.up_pressed = False
-                obj.down_pressed = False
-                obj.jump_pressed = False
-                obj.action_pressed = False
-                obj.sneak_pressed = True
-                obj.jump_release()
-
-                if victory_walk:
-                    if obj.xvelocity >= 0:
-                        obj.right_pressed = True
-                    else:
-                        obj.left_pressed = True
-
-        if "timer" in self.alarms:
-            del self.alarms["timer"]
-
-        self.won = True
-        self.alarms["win_count_points"] = WIN_COUNT_START_TIME
-        current_checkpoints[main_area] = None
-        sge.snd.Music.clear_queue()
-        sge.snd.Music.stop()
-        if music_enabled:
-            level_win_music.play()
-
     def win_game(self):
-        global current_level
-        current_level = 0
         save_game()
         credits_room = CreditsScreen.load(os.path.join("special",
                                                        "credits.tmx"))
         credits_room.start()
 
     def event_room_start(self):
-        self.add(coin_animation)
-        self.add(bonus_animation)
-        self.add(lava_animation)
-        self.add(goal_animation)
+        ##self.add(lava_animation)
 
         self.event_room_resume()
 
     def event_room_resume(self):
-        global main_area
-        global level_time_bonus
-
         xsge_lighting.clear_lights()
 
-        self.won = False
-        self.win_count_points = False
-        self.win_count_time = False
         self.death_time = None
-        self.alarms["timer"] = TIMER_FRAMES
         self.pause_delay = TRANSITION_TIME
         play_music(self.music)
-
-        if main_area is None:
-            main_area = self.fname
-
-        if main_area == self.fname:
-            level_time_bonus = self.time_bonus
-
-        if GOD:
-            level_timers[main_area] = min(0, level_timers.get(main_area, 0))
-        elif main_area not in level_timers:
-            if main_area in levels:
-                level_timers[main_area] = level_time_bonus
-            else:
-                level_timers[main_area] = 0
 
         players = []
         spawn_point = None
@@ -586,37 +410,22 @@ class Level(sge.dsp.Room):
 
     def event_step(self, time_passed, delta_mult):
         global watched_timelines
-        global level_timers
-        global current_level
-        global score
-        global current_areas
-        global main_area
-        global level_cleared
 
         if self.pause_delay > 0:
             self.pause_delay -= time_passed
 
-        # Handle inactive objects and lighting
-        if self.ambient_light:
-            range_ = max(ACTIVATE_RANGE, LIGHT_RANGE)
-        else:
-            range_ = ACTIVATE_RANGE
-
         for view in self.views:
             for obj in self.get_objects_at(
-                    view.x - range_, view.y - range_, view.width + range_ * 2,
-                    view.height + range_ * 2):
+                    view.x - LIGHT_RANGE, view.y - LIGHT_RANGE,
+                    view.width + LIGHT_RANGE * 2,
+                    view.height + LIGHT_RANGE * 2):
                 if isinstance(obj, InteractiveObject):
                     if not self.disable_lights:
                         obj.project_light()
 
-                if not obj.active:
-                    if isinstance(obj, InteractiveObject):
-                        obj.update_active()
-                    elif isinstance(obj, (Lava, LavaSurface)):
-                        obj.image_index = lava_animation.image_index
-                    elif isinstance(obj, (Goal, GoalTop)):
-                        obj.image_index = goal_animation.image_index
+                ##if not obj.active:
+                    ##if isinstance(obj, (Lava, LavaSurface)):
+                    ##    obj.image_index = lava_animation.image_index
 
         # Show HUD
         self.show_hud()
@@ -756,94 +565,17 @@ class Level(sge.dsp.Room):
             sge.game.project_rectangle(
                 0, 0, sge.game.width, sge.game.height, z=100,
                 fill=sge.gfx.Color((0, 0, 0, min(a, 255))))
-
-            time_bonus = level_timers.setdefault(main_area, 0)
-            if time_bonus < 0 and cleared_levels:
-                amt = int(math.copysign(
-                    min(math.ceil(abs(self.death_time_bonus) * 3 * time_passed /
-                                  DEATH_FADE_TIME),
-                        abs(time_bonus)),
-                    time_bonus))
-                if amt:
-                    score += amt
-                    level_timers[main_area] -= amt
-                    play_sound(coin_sound)
-
-            if self.death_time < 0:
-                self.death_time = None
-                self.alarms["death"] = DEATH_RESTART_WAIT
-            else:
-                self.death_time -= time_passed
         elif "death" in self.alarms:
             sge.game.project_rectangle(0, 0, sge.game.width, sge.game.height,
                                        z=100, fill=sge.gfx.Color("black"))
 
-        if self.won:
-            if self.win_count_points:
-                if self.points:
-                    amt = int(math.copysign(
-                        min(delta_mult * WIN_COUNT_POINTS_MULT,
-                            abs(self.points)),
-                        self.points))
-                    score += amt
-                    self.points -= amt
-                    play_sound(coin_sound)
-                else:
-                    self.win_count_points = False
-                    self.alarms["win_count_time"] = WIN_COUNT_CONTINUE_TIME
-            elif self.win_count_time:
-                time_bonus = level_timers.setdefault(main_area, 0)
-                if time_bonus:
-                    amt = int(math.copysign(
-                        min(delta_mult * WIN_COUNT_TIME_MULT,
-                            abs(time_bonus)),
-                        time_bonus))
-                    score += amt
-                    level_timers[main_area] -= amt
-                    play_sound(coin_sound)
-                else:
-                    self.win_count_time = False
-                    if main_area not in cleared_levels:
-                        self.alarms["win_count_hp"] = WIN_COUNT_CONTINUE_TIME
-                    else:
-                        self.alarms["win"] = WIN_FINISH_DELAY
-            elif (not level_win_music.playing and
-                  "win_count_points" not in self.alarms and
-                  "win_count_time" not in self.alarms and
-                  "win_count_hp" not in self.alarms and
-                  "win" not in self.alarms):
-                if main_area not in cleared_levels:
-                    cleared_levels.append(main_area)
-
-                current_areas = {}
-                level_cleared = True
-
-                if self.game_won:
-                    self.win_game()
-                elif current_worldmap:
-                    self.return_to_map(True)
-                else:
-                    main_area = None
-                    current_level += 1
-                    if current_level < len(levels):
-                        save_game()
-                        level = self.__class__.load(levels[current_level],
-                                                    True)
-                        level.start(transition="fade")
-                    else:
-                        self.win_game()
-
     def event_paused_step(self, time_passed, delta_mult):
         # Handle lighting
-        if self.ambient_light:
-            range_ = max(ACTIVATE_RANGE, LIGHT_RANGE)
-        else:
-            range_ = ACTIVATE_RANGE
-
         for view in self.views:
             for obj in self.get_objects_at(
-                    view.x - range_, view.y - range_, view.width + range_ * 2,
-                    view.height + range_ * 2):
+                    view.x - LIGHT_RANGE, view.y - LIGHT_RANGE,
+                    view.width + LIGHT_RANGE * 2,
+                    view.height + LIGHT_RANGE * 2):
                 if isinstance(obj, InteractiveObject):
                     if not self.disable_lights:
                         obj.project_light()
@@ -851,16 +583,7 @@ class Level(sge.dsp.Room):
         self.show_hud()
 
     def event_alarm(self, alarm_id):
-        global level_timers
-        global score
-
-        if alarm_id == "timer":
-            if main_area in levels:
-                level_timers.setdefault(main_area, 0)
-                if main_area not in cleared_levels:
-                    level_timers[main_area] -= SECOND_POINTS
-                self.alarms["timer"] = TIMER_FRAMES
-        elif alarm_id == "shake_down":
+        if alarm_id == "shake_down":
             self.shake_queue -= 1
             for view in self.views:
                 view.yport += SHAKE_AMOUNT
@@ -876,112 +599,36 @@ class Level(sge.dsp.Room):
             sge.game.project_rectangle(0, 0, sge.game.width, sge.game.height,
                                        z=100, fill=sge.gfx.Color("black"))
 
-            if (not cleared_levels and
-                    current_checkpoints.get(main_area) is None):
-                level_timers[main_area] = level_time_bonus
-
-            if current_worldmap:
-                self.return_to_map()
-            elif main_area is not None:
-                save_game()
-                r = self.__class__.load(main_area, True)
-                checkpoint = current_checkpoints.get(self.fname)
-                if checkpoint is not None:
-                    area_name, area_spawn = checkpoint.split(':', 1)
-                    r = self.__class__.load(area_name, True)
-                    r.spawn = area_spawn
-                r.start()
-        elif alarm_id == "win_count_points":
-            if self.points > 0:
-                self.win_count_points = True
-            else:
-                self.win_count_time = True
-        elif alarm_id == "win_count_time":
-            self.win_count_time = True
-        elif alarm_id == "win_count_hp":
-            if GOD:
-                self.alarms["win"] = WIN_FINISH_DELAY
-            else:
-                for obj in self.objects:
-                    if isinstance(obj, Player) and obj.hp > 0:
-                        obj.hp -= 1
-                        score += HP_POINTS
-                        play_sound(heal_sound)
-                        self.alarms["win_count_hp"] = WIN_COUNT_CONTINUE_TIME
-                        break
-                else:
-                    self.alarms["win"] = WIN_FINISH_DELAY
+            start_game()
 
     @classmethod
     def load(cls, fname, show_prompt=False):
-        global level_names
-        global tuxdolls_available
-
-        if fname in current_areas:
-            r = current_areas[fname]
-        elif fname in loaded_levels:
-            r = loaded_levels.pop(fname)
-        else:
-            if show_prompt:
-                text = "Loading level..."
-                if isinstance(sge.game.current_room, Worldmap):
-                    sge.game.refresh()
-                    sge.game.current_room.level_text = text
-                    sge.game.current_room.event_step(0, 0)
-                    sge.game.refresh()
-                elif sge.game.current_room is not None:
-                    x = sge.game.width / 2
-                    y = sge.game.height / 2
-                    w = font.get_width(text) + 32
-                    h = font.get_height(text) + 32
-                    sge.game.project_rectangle(x - w / 2, y - h / 2, w, h,
-                                               fill=sge.gfx.Color("black"))
-                    sge.game.project_text(font, text, x, y,
-                                          color=sge.gfx.Color("white"),
-                                          halign="center", valign="middle")
-                    sge.game.refresh()
-                else:
-                    print(_("Loading \"{}\"...").format(fname))
-
-            try:
-                r = xsge_tmx.load(os.path.join(DATA, "levels", fname), cls=cls,
-                                  types=TYPES)
-            except Exception as e:
-                m = _("An error occurred when trying to load the level:\n\n{}").format(
-                    traceback.format_exc())
-                show_error(m)
-                r = None
+        if show_prompt:
+            text = "Loading level..."
+            if sge.game.current_room is not None:
+                x = sge.game.width / 2
+                y = sge.game.height / 2
+                w = font.get_width(text) + 32
+                h = font.get_height(text) + 32
+                sge.game.project_rectangle(x - w / 2, y - h / 2, w, h,
+                                           fill=sge.gfx.Color("black"))
+                sge.game.project_text(font, text, x, y,
+                                      color=sge.gfx.Color("white"),
+                                      halign="center", valign="middle")
+                sge.game.refresh()
             else:
-                r.fname = fname
+                print(_("Loading \"{}\"...").format(fname))
 
-        if r is not None:
-            if r.persistent:
-                current_areas[fname] = r
-
-            if fname not in level_names:
-                name = r.name
-                if name:
-                    level_names[fname] = name
-                elif fname in levels:
-                    level_names[fname] = "Level {}".format(
-                        levels.index(fname) + 1)
-                else:
-                    level_names[fname] = "???"
-
-            if main_area in levels and main_area not in tuxdolls_available:
-                for obj in r.objects:
-                    if (isinstance(obj, TuxDoll) or
-                            (isinstance(obj, (ItemBlock, HiddenItemBlock)) and
-                             obj.item == "tuxdoll")):
-                        tuxdolls_available.append(main_area)
-                        break
-            elif fname in levels and fname not in tuxdolls_available:
-                for obj in r.objects:
-                    if (isinstance(obj, TuxDoll) or
-                            (isinstance(obj, (ItemBlock, HiddenItemBlock)) and
-                             obj.item == "tuxdoll")):
-                        tuxdolls_available.append(fname)
-                        break
+        try:
+            r = xsge_tmx.load(os.path.join(DATA, "levels", fname), cls=cls,
+                              types=TYPES)
+        except Exception as e:
+            m = _("An error occurred when trying to load the level:\n\n{}").format(
+                traceback.format_exc())
+            show_error(m)
+            r = None
+        else:
+            r.fname = fname
 
         return r
 
@@ -1035,6 +682,7 @@ class LevelRecorder(LevelTester):
                     self.add_recording_event(
                         "setattr {} up_pressed 1".format(obj.ID))
                 if key in down_key[obj.player]:
+                    self.add_recording_event("call {} press_down".format(obj.ID))
                     self.add_recording_event(
                         "setattr {} down_pressed 1".format(obj.ID))
                 if key in jump_key[obj.player]:
@@ -1100,12 +748,6 @@ class CreditsScreen(SpecialScreen):
 
     def event_room_start(self):
         super(CreditsScreen, self).event_room_start()
-
-        if self.fname in current_areas:
-            del current_areas[self.fname]
-
-        if self.fname in loaded_levels:
-            del loaded_levels[self.fname]
 
         with open(os.path.join(DATA, "credits.json"), 'r') as f:
             sections = json.load(f)
@@ -1181,89 +823,6 @@ class CreditsScreen(SpecialScreen):
                     js in itertools.chain.from_iterable(action_js) or
                     js in itertools.chain.from_iterable(pause_js)):
                 sge.game.start_room.start()
-
-
-class Worldmap(sge.dsp.Room):
-
-    """Handles worldmaps."""
-
-    def __init__(self, objects=(), width=None, height=None, views=None,
-                 background=None, background_x=0, background_y=0,
-                 object_area_width=TILE_SIZE * 2,
-                 object_area_height=TILE_SIZE * 2, music=None):
-        self.music = music
-        super(Worldmap, self).__init__(objects, width, height, views,
-                                       background, background_x, background_y,
-                                       object_area_width, object_area_height)
-
-    def show_menu(self):
-        sge.snd.Music.pause()
-        play_sound(pause_sound)
-        WorldmapMenu.create()
-
-    def event_room_start(self):
-        self.level_text = None
-        self.level_tuxdoll_available = False
-        self.level_tuxdoll_found = False
-        self.event_room_resume()
-
-    def event_room_resume(self):
-        global loaded_levels
-        global main_area
-        global current_areas
-        global level_cleared
-
-        main_area = None
-
-        for obj in self.objects:
-            if isinstance(obj, MapSpace):
-                obj.update_sprite()
-
-        play_music(self.music)
-        level_cleared = False
-
-    def event_step(self, time_passed, delta_mult):
-        text = " {}/{}".format(len(tuxdolls_found), len(tuxdolls_available))
-        w = tuxdoll_sprite.width + font.get_width(text)
-
-        x = sge.game.width / 2 + tuxdoll_sprite.origin_x - w / 2
-        y = tuxdoll_sprite.origin_y + 16
-        sge.game.project_sprite(tuxdoll_shadow_sprite, 0, x + 2, y + 2)
-        sge.game.project_sprite(tuxdoll_sprite, 0, x, y)
-
-        x += tuxdoll_sprite.width - tuxdoll_sprite.origin_x
-        sge.game.project_text(font, text, x + 2, y + 2,
-                              color=sge.gfx.Color("black"), halign="left",
-                              valign="middle")
-        sge.game.project_text(font, text, x, y, color=sge.gfx.Color("white"),
-                              halign="left", valign="middle")
-
-        if self.level_text:
-            x = sge.game.width / 2
-            y = sge.game.height - font.size
-            sge.game.project_text(font, self.level_text, x + 2, y + 2,
-                                  color=sge.gfx.Color("black"),
-                                  halign="center", valign="bottom")
-            sge.game.project_text(font, self.level_text, x, y,
-                                  color=sge.gfx.Color("white"),
-                                  halign="center", valign="bottom")
-
-        if self.level_tuxdoll_available:
-            x = sge.game.width / 2
-            y = sge.game.height - font.size * 4
-            if self.level_tuxdoll_found:
-                sge.game.project_sprite(tuxdoll_shadow_sprite, 0, x + 2, y + 2)
-                sge.game.project_sprite(tuxdoll_sprite, 0, x, y)
-            else:
-                sge.game.project_sprite(tuxdoll_transparent_sprite, 0, x, y)
-
-    @classmethod
-    def load(cls, fname):
-        if fname in loaded_worldmaps:
-            return loaded_worldmaps.pop(fname)
-        else:
-            return xsge_tmx.load(os.path.join(DATA, "worldmaps", fname),
-                                 cls=cls, types=TYPES)
 
 
 class SolidLeft(xsge_physics.SolidLeft):
@@ -1436,10 +995,11 @@ class Player(xsge_physics.Collider):
     slide_speed = PLAYER_SLIDE_SPEED
     hitstun_time = PLAYER_HITSTUN
     hitstun_speed = PLAYER_HITSTUN_SPEED
+    can_move = True
 
     def __init__(self, x, y, z=0, sprite=None, visible=True, active=True,
-                 checks_collisions=True, tangible=True, bbox_x=-13, bbox_y=2,
-                 bbox_width=26, bbox_height=30, regulate_origin=True,
+                 checks_collisions=True, tangible=True, bbox_x=8, bbox_y=0,
+                 bbox_width=16, bbox_height=16, regulate_origin=True,
                  collision_ellipse=False, collision_precise=False, xvelocity=0,
                  yvelocity=0, xacceleration=0, yacceleration=0,
                  xdeceleration=0, ydeceleration=0, image_index=0,
@@ -1519,13 +1079,7 @@ class Player(xsge_physics.Collider):
     def press_up(self):
         pass
 
-    def release_up(self):
-        pass
-
     def press_down(self):
-        pass
-
-    def release_down(self):
         pass
 
     def jump(self):
@@ -1633,7 +1187,7 @@ class Player(xsge_physics.Collider):
             self.xvelocity = self.max_speed * current_h_movement
 
         if h_control:
-            if self.halt_pressed:
+            if self.halt_pressed or not self.can_move:
                 target_speed = 0
             else:
                 h_factor = abs(self.right_pressed - self.left_pressed)
@@ -1744,10 +1298,6 @@ class Player(xsge_physics.Collider):
 
     def event_key_release(self, key):
         if self.human:
-            if key in up_key[self.player]:
-                self.release_up()
-            if key in down_key[self.player]:
-                self.release_down()
             if key in jump_key[self.player]:
                 self.jump_release()
 
@@ -1766,10 +1316,6 @@ class Player(xsge_physics.Collider):
                 if js in pause_js[self.player]:
                     sge.game.current_room.pause()
             else:
-                if js in up_js[self.player]:
-                    self.release_up()
-                if js in down_js[self.player]:
-                    self.release_down()
                 if js in jump_js[self.player]:
                     self.jump_release()
 
@@ -1850,32 +1396,66 @@ class Anneroy(Player):
 
     torso = None
     fixed_sprite = False
-    up_locked = False
-    down_locked = False
+    crouching = False
+
+    @property
+    def can_move(self):
+        if self.crouching:
+            self.press_up()
+
+        return not self.crouching
+
+    def __init__(self, *args, **kwargs):
+        kwargs["bbox_x"] = ANNEROY_BBOX_X
+        kwargs["bbox_width"] = ANNEROY_BBOX_WIDTH
+        kwargs["bbox_y"] = ANNEROY_STAND_BBOX_Y
+        kwargs["bbox_height"] = ANNEROY_STAND_BBOX_HEIGHT
+        super(Anneroy, self).__init__(*args, **kwargs)
 
     def press_up(self):
-        if not self.up_locked and self.up_pressed > self.down_pressed:
-            h_control = bool(self.right_pressed) - bool(self.left_pressed)
-            # TODO: Stand up
-
-    def release_up(self):
-        self.up_locked = False
+        if self.crouching:
+            for other in sge.collision.rectangle(
+                    ANNEROY_BBOX_X, ANNEROY_STAND_BBOX_Y, ANNEROY_BBOX_WIDTH,
+                    ANNEROY_STAND_BBOX_HEIGHT):
+                if isinstance(other, (xsge_physics.SolidBottom,
+                                      xsge_physics.SlopeBottomLeft,
+                                      xsge_physics.SlopeBottomRight)):
+                    if not self.collision(other):
+                        break
+            else:
+                self.animation_end()
+                self.sprite = anneroy_legs_crouch_sprite
+                self.image_speed = -anneroy_legs_crouch_sprite.speed
+                self.image_index = anneroy_legs_crouch_sprite.frames - 1
+                self.fixed_sprite = True
+                self.crouching = False
+                self.bbox_y = ANNEROY_STAND_BBOX_Y
+                self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
 
     def press_down(self):
-        if not self.down_locked and self.down_pressed > self.up_pressed:
-            h_control = bool(self.right_pressed) - bool(self.left_pressed)
-            # TODO: Crouch down
+        if not self.crouching:
+            self.event_animation_end()
+            self.sprite = anneroy_legs_crouch_sprite
+            self.image_speed = None
+            self.image_index = 0
+            self.fixed_sprite = True
+            self.crouching = True
+            self.bbox_y = ANNEROY_CROUCH_BBOX_Y
+            self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
 
-    def release_down(self):
-        self.down_locked = False
+    def crouch(self):
+        if not self.crouching:
+            pass
+
+    def uncrouch(self):
+        if self.crouching:
+            pass
 
     def set_image(self):
         assert self.torso is not None
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
 
-        # Turn Anneroy around. A custom "turning" variable is used so
-        # that the player can revert the turn in the middle of it
-        # without causing graphical glitches.
+        # Turn Anneroy around.
         if self.facing < 0 and h_control > 0:
             if self.fixed_sprite != "turn":
                 self.event_animation_end()
@@ -1898,19 +1478,23 @@ class Anneroy(Player):
             self.fixed_sprite = "turn"
 
         if not self.fixed_sprite:
+            # Set legs
             if self.on_floor and self.was_on_floor:
-                xm = (self.xvelocity > 0) - (self.xvelocity < 0)
-                speed = abs(self.xvelocity)
-                if speed > 0:
-                    self.sprite = anneroy_legs_run_sprite
-                    self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
-                    if xm != self.facing:
-                        self.image_speed *= -1
-
-                    if self.aim_direction is None:
-                        self.aim_direction = 0
+                if self.crouching:
+                    self.sprite = anneroy_legs_crouching_sprite
                 else:
-                    self.sprite = anneroy_legs_stand_sprite
+                    xm = (self.xvelocity > 0) - (self.xvelocity < 0)
+                    speed = abs(self.xvelocity)
+                    if speed > 0:
+                        self.sprite = anneroy_legs_run_sprite
+                        self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
+                        if xm != self.facing:
+                            self.image_speed *= -1
+
+                        if self.aim_direction is None:
+                            self.aim_direction = 0
+                    else:
+                        self.sprite = anneroy_legs_stand_sprite
             else:
                 if self.yvelocity < 0:
                     self.sprite = anneroy_legs_jump_sprite
@@ -1919,30 +1503,31 @@ class Anneroy(Player):
                 else:
                     self.sprite = anneroy_legs_fall_sprite
 
-        if self.facing > 0:
-            self.torso.sprite = {
-                0: anneroy_torso_right_aim_right_sprite,
-                1: anneroy_torso_right_aim_upright_sprite,
-                2: anneroy_torso_right_aim_up_sprite,
-                -1: anneroy_torso_right_aim_downright_sprite,
-                -2: anneroy_torso_right_aim_down_sprite}.get(
-                    self.aim_direction,
-                    anneroy_torso_right_idle_sprite)
-        else:
-            self.torso.sprite = {
-                0: anneroy_torso_left_aim_left_sprite,
-                1: anneroy_torso_left_aim_upleft_sprite,
-                2: anneroy_torso_left_aim_up_sprite,
-                -1: anneroy_torso_left_aim_downleft_sprite,
-                -2: anneroy_torso_left_aim_down_sprite}.get(
-                    self.aim_direction,
-                    anneroy_torso_left_idle_sprite)
-        x, y = anneroy_torso_offset.setdefault(
-            (id(self.sprite), self.image_index), (0, 0))
-        self.torso.x = self.x + x * self.image_xscale
-        self.torso.y = self.y + y * self.image_yscale
-        self.torso.image_xscale = abs(self.image_xscale)
-        self.torso.image_yscale = self.image_yscale
+            # Set torso
+            if self.facing > 0:
+                self.torso.sprite = {
+                    0: anneroy_torso_right_aim_right_sprite,
+                    1: anneroy_torso_right_aim_upright_sprite,
+                    2: anneroy_torso_right_aim_up_sprite,
+                    -1: anneroy_torso_right_aim_downright_sprite,
+                    -2: anneroy_torso_right_aim_down_sprite}.get(
+                        self.aim_direction,
+                        anneroy_torso_right_idle_sprite)
+            else:
+                self.torso.sprite = {
+                    0: anneroy_torso_left_aim_left_sprite,
+                    1: anneroy_torso_left_aim_upleft_sprite,
+                    2: anneroy_torso_left_aim_up_sprite,
+                    -1: anneroy_torso_left_aim_downleft_sprite,
+                    -2: anneroy_torso_left_aim_down_sprite}.get(
+                        self.aim_direction,
+                        anneroy_torso_left_idle_sprite)
+            x, y = anneroy_torso_offset.setdefault(
+                (id(self.sprite), self.image_index), (0, 0))
+            self.torso.x = self.x + x * self.image_xscale
+            self.torso.y = self.y + y * self.image_yscale
+            self.torso.image_xscale = abs(self.image_xscale)
+            self.torso.image_yscale = self.image_yscale
 
     def event_create(self):
         super(Anneroy, self).event_create()
@@ -2547,511 +2132,6 @@ class TimelineSwitcher(InteractiveObject):
         self.destroy()
 
 
-class Iceblock(xsge_physics.Solid):
-
-    def __init__(self, x, y, **kwargs):
-        kwargs["checks_collisions"] = False
-        sge.dsp.Object.__init__(self, x, y, **kwargs)
-
-    def burn(self):
-        play_sound(sizzle_sound, self.x, self.y)
-        Smoke.create(self.x, self.y, self.z, sprite=iceblock_melt_sprite)
-        self.destroy()
-
-
-class BossBlock(InteractiveObject):
-
-    never_active = True
-    never_tangible = True
-
-    def __init__(self, x, y, ID=None, **kwargs):
-        self.ID = ID
-        kwargs["visible"] = False
-        sge.dsp.Object.__init__(self, x, y, **kwargs)
-
-    def event_create(self):
-        super(BossBlock, self).event_create()
-        sge.game.current_room.add_timeline_object(self)
-
-    def activate(self):
-        self.child = xsge_physics.Solid.create(
-            self.x, self.y, self.z, sprite=boss_block_sprite)
-        self.child.x += self.child.image_origin_x
-        self.child.y += self.child.image_origin_y
-        Smoke.create(self.child.x, self.child.y, z=(self.child.z + 0.5),
-                     sprite=item_spawn_cloud_sprite)
-        play_sound(pop_sound, self.x, self.y)
-
-    def deactivate(self):
-        if self.child is not None:
-            Smoke.create(self.child.x, self.child.y, z=self.child.z,
-                         sprite=smoke_plume_sprite)
-            self.child.destroy()
-            self.child = None
-            play_sound(pop_sound, self.x, self.y)
-
-    def update_active(self):
-        pass
-
-
-class InfoBlock(HittableBlock, xsge_physics.Solid):
-
-    def __init__(self, x, y, text="(null)", **kwargs):
-        super(InfoBlock, self).__init__(x, y, **kwargs)
-        self.text = text.replace("\\n", "\n")
-
-    def event_hit_end(self):
-        DialogBox(gui_handler, _(self.text), self.sprite).show()
-
-
-class ThinIce(xsge_physics.Solid):
-
-    def __init__(self, x, y, z=0, permanent=False, **kwargs):
-        kwargs["sprite"] = thin_ice_sprite
-        kwargs["checks_collisions"] = False
-        kwargs["image_fps"] = 0
-        sge.dsp.Object.__init__(self, x, y, z, **kwargs)
-        self.permanent = permanent
-        self.crack_time = 0
-        self.freeze_time = 0
-
-    def burn(self):
-        self.crack()
-
-    def freeze(self):
-        if self.image_index > 0:
-            self.image_index -= 1
-
-    def event_step(self, time_passed, delta_mult):
-        if self.sprite is thin_ice_sprite:
-            players = self.collision(Player, y=(self.y - 1))
-            if players:
-                if not GOD:
-                    for player in players:
-                        self.crack_time += delta_mult
-                        while self.crack_time >= ICE_CRACK_TIME:
-                            self.crack_time -= ICE_CRACK_TIME
-                            self.crack()
-            elif not self.permanent:
-                if self.image_index > 0:
-                    rfa = delta_mult * ICE_REFREEZE_RATE
-                    self.crack_time -= rfa
-                    self.rfa = max(0, -self.crack_time)
-                    self.crack_time = max(0, self.crack_time)
-                    self.freeze_time += rfa
-                    while self.freeze_time >= ICE_CRACK_TIME:
-                        self.freeze_time -= ICE_CRACK_TIME
-                        if self.image_index > 0:
-                            self.image_index -= 1
-                else:
-                    self.crack_time -= delta_mult * ICE_REFREEZE_RATE
-                    self.crack_time = max(0, self.crack_time)
-
-    def event_animation_end(self):
-        self.destroy()
-
-    def shatter(self):
-        if self.sprite != thin_ice_break_sprite:
-            self.sprite = thin_ice_break_sprite
-            self.image_index = 0
-            self.image_fps = None
-            play_sound(ice_shatter_sound, self.x, self.y)
-
-    def crack(self):
-        if self.image_index + 1 < self.sprite.frames:
-            play_sound(random.choice(ice_crack_sounds), self.x, self.y)
-            self.image_index += 1
-            self.freeze_time = 0
-        else:
-            self.shatter()
-
-
-class Spawn(sge.dsp.Object):
-
-    def __init__(self, x, y, spawn_id=None, **kwargs):
-        kwargs["visible"] = False
-        kwargs["tangible"] = False
-        super(Spawn, self).__init__(x, y, **kwargs)
-        self.spawn_id = spawn_id
-
-
-class Checkpoint(InteractiveObject):
-
-    def __init__(self, x, y, dest=None, **kwargs):
-        kwargs["visible"] = False
-        super(Checkpoint, self).__init__(x, y, **kwargs)
-        self.dest = dest
-
-    def event_create(self):
-        if self.dest is not None:
-            if ":" not in self.dest:
-                self.dest = "{}:{}".format(sge.game.current_room.fname,
-                                           self.dest)
-        self.reset()
-
-    def reset(self):
-        pass
-
-    def touch(self, other):
-        global current_checkpoints
-        current_checkpoints[main_area] = self.dest
-
-        for obj in sge.game.current_room.objects:
-            if isinstance(obj, Checkpoint):
-                obj.reset()
-
-
-class Bell(Checkpoint):
-
-    def __init__(self, x, y, dest=None, **kwargs):
-        kwargs["sprite"] = bell_sprite
-        InteractiveObject.__init__(self, x, y, **kwargs)
-        self.dest = dest
-
-    def reset(self):
-        if current_checkpoints.get(main_area) == self.dest:
-            self.image_fps = None
-        else:
-            self.image_fps = 0
-            self.image_index = 0
-
-    def touch(self, other):
-        super(Bell, self).touch(other)
-        play_sound(bell_sound, self.x, self.y)
-
-
-class Door(sge.dsp.Object):
-
-    def __init__(self, x, y, dest=None, spawn_id=None, **kwargs):
-        y += 64
-        kwargs["sprite"] = door_sprite
-        kwargs["checks_collisions"] = False
-        kwargs["image_fps"] = 0
-        super(Door, self).__init__(x, y, **kwargs)
-        self.dest = dest
-        self.spawn_id = spawn_id
-        self.occupant = None
-
-    def warp(self, other):
-        if self.occupant is None and self.image_index == 0:
-            self.occupant = other
-            play_sound(door_sound, self.x, self.y)
-            self.image_fps = self.sprite.fps
-
-            other.visible = False
-            other.tangible = False
-            other.warping = True
-            other.xvelocity = 0
-            other.yvelocity = 0
-            other.xacceleration = 0
-            other.yacceleration = 0
-            other.xdeceleration = 0
-            other.ydeceleration = 0
-
-    def warp_end(self):
-        warp(self.dest)
-
-    def event_step(self, time_passed, delta_mult):
-        if self.occupant is not None:
-            s = get_scaled_copy(self.occupant)
-            if self.image_fps > 0:
-                sge.game.current_room.project_sprite(
-                    door_back_sprite, 0, self.x, self.y, self.z - 0.5)
-                sge.game.current_room.project_sprite(s, 0, self.x, self.y,
-                                                     self.occupant.z)
-            else:
-                dbs = door_back_sprite.copy()
-                dbs.draw_sprite(s, 0, dbs.origin_x, dbs.origin_y)
-                sge.game.current_room.project_sprite(dbs, 0, self.x, self.y,
-                                                     self.z - 0.5)
-        elif self.image_index != 0:
-            sge.game.current_room.project_sprite(door_back_sprite, 0, self.x,
-                                                 self.y, self.z - 0.5)
-
-    def event_animation_end(self):
-        if self.image_fps > 0:
-            if self.dest and (':' in self.dest or self.dest == "__map__"):
-                self.image_fps = -self.image_fps
-                self.image_index = self.sprite.frames - 1
-            else:
-                self.image_fps = 0
-                self.image_index = self.sprite.frames - 1
-                self.occupant.visible = True
-                self.occupant.tangible = True
-                self.occupant.warping = False
-                self.occupant.xvelocity = 0
-                self.occupant.yvelocity = 0
-                self.occupant = None
-        elif self.image_fps < 0:
-            play_sound(door_shut_sound, self.x, self.y)
-            self.image_fps = 0
-            self.image_index = 0
-            self.occupant = None
-            self.warp_end()
-
-
-class WarpSpawn(xsge_path.Path):
-
-    silent = False
-
-    def __init__(self, x, y, points=(), dest=None, spawn_id=None, **kwargs):
-        super(WarpSpawn, self).__init__(x, y, points=points, **kwargs)
-        self.dest = dest
-        self.spawn_id = spawn_id
-        self.direction = None
-        self.end_direction = None
-        self.warps_out = []
-
-        if points:
-            xm, ym = points[0]
-            if abs(xm) > abs(ym):
-                self.direction = "right" if xm > 0 else "left"
-            elif ym:
-                self.direction = "down" if ym > 0 else "up"
-            else:
-                warnings.warn("Warp at position ({}, {}) has no direction".format(x, y))
-
-            if len(points) >= 2:
-                x1, y1 = points[-2]
-                x2, y2 = points[-1]
-                xm = x2 - x1
-                ym = y2 - y1
-                if abs(xm) > abs(ym):
-                    self.end_direction = "right" if xm > 0 else "left"
-                elif ym:
-                    self.end_direction = "down" if ym > 0 else "up"
-                else:
-                    warnings.warn("Warp at position ({}, {}) has no end direction".format(x, y))
-            else:
-                self.end_direction = self.direction
-
-    def event_step(self, time_passed, delta_mult):
-        super(WarpSpawn, self).event_step(time_passed, delta_mult)
-
-        x, y = self.points[-1]
-        x += self.x
-        y += self.y
-        finished = []
-        for obj in self.warps_out:
-            left_edge = obj.x - obj.image_origin_x
-            top_edge = obj.y - obj.image_origin_y
-            if self.end_direction == "left":
-                if obj.bbox_right <= x:
-                    obj.bbox_right = x
-                    finished.append(obj)
-                else:
-                    warp_sprite = get_scaled_copy(obj)
-                    warp_sprite.draw_erase(
-                        math.ceil(x - left_edge), 0, warp_sprite.width,
-                        warp_sprite.height)
-                    sge.game.current_room.project_sprite(
-                        warp_sprite, obj.image_index, obj.x, obj.y, self.z)
-            elif self.end_direction == "right":
-                if obj.bbox_left >= x:
-                    obj.bbox_left = x
-                    finished.append(obj)
-                else:
-                    warp_sprite = get_scaled_copy(obj)
-                    warp_sprite.draw_erase(0, 0, math.floor(x - left_edge),
-                                           warp_sprite.height)
-                    sge.game.current_room.project_sprite(
-                        warp_sprite, obj.image_index, obj.x, obj.y, self.z)
-            elif self.end_direction == "up":
-                if obj.bbox_bottom <= y:
-                    obj.bbox_bottom = y
-                    finished.append(obj)
-                else:
-                    warp_sprite = get_scaled_copy(obj)
-                    warp_sprite.draw_erase(
-                        0, math.ceil(y - top_edge), warp_sprite.width,
-                        warp_sprite.height)
-                    sge.game.current_room.project_sprite(
-                        warp_sprite, obj.image_index, obj.x, obj.y, self.z)
-            elif self.end_direction == "down":
-                if obj.bbox_top >= y:
-                    obj.bbox_top = y
-                    finished.append(obj)
-                else:
-                    warp_sprite = get_scaled_copy(obj)
-                    warp_sprite.draw_erase(0, 0, warp_sprite.width,
-                                           math.floor(y - top_edge))
-                    sge.game.current_room.project_sprite(
-                        warp_sprite, obj.image_index, obj.x, obj.y, self.z)
-
-        for obj in finished:
-            obj.visible = True
-            obj.tangible = True
-            obj.warping = False
-            obj.speed = 0
-            self.warps_out.remove(obj)
-
-    def event_follow_end(self, obj):
-        global level_timers
-        global score
-
-        if self.dest and (':' in self.dest or self.dest == "__map__"):
-            warp(self.dest)
-        else:
-            if not self.silent:
-                play_sound(pipe_sound, obj.x, obj.y)
-
-            self.warps_out.append(obj)
-            x, y = self.points[-1]
-            x += self.x
-            y += self.y
-            if self.end_direction == "left":
-                obj.x = x + obj.sprite.origin_x
-                obj.y = y
-                obj.move_direction = 180
-            elif self.end_direction == "right":
-                obj.x = x + obj.sprite.origin_x - obj.sprite.width
-                obj.y = y
-                obj.move_direction = 0
-            elif self.end_direction == "up":
-                obj.x = x
-                obj.y = y + obj.sprite.origin_y
-                obj.move_direction = 270
-            elif self.end_direction == "down":
-                obj.x = x
-                obj.y = y + obj.sprite.origin_y - obj.sprite.height
-                obj.move_direction = 90
-
-            obj.speed = WARP_SPEED
-            obj.xacceleration = 0
-            obj.yacceleration = 0
-            obj.xdeceleration = 0
-            obj.ydeceleration = 0
-
-
-class Warp(WarpSpawn):
-
-    def __init__(self, x, y, **kwargs):
-        super(Warp, self).__init__(x, y, **kwargs)
-        self.warps_in = []
-
-    def warp(self, other):
-        if not self.silent:
-            play_sound(pipe_sound, other.x, other.y)
-
-        self.warps_in.append(other)
-
-        if getattr(other, "held_object") is not None:
-            other.held_object.drop()
-
-        other.visible = False
-        other.tangible = False
-        other.warping = True
-        other.move_direction = {"right": 0, "up": 270, "left": 180,
-                                "down": 90}.get(self.direction, 0)
-        other.speed = WARP_SPEED
-        other.xacceleration = 0
-        other.yacceleration = 0
-        other.xdeceleration = 0
-        other.ydeceleration = 0
-
-    def event_create(self):
-        if self not in sge.game.current_room.warps:
-            sge.game.current_room.warps.append(self)
-
-    def event_end_step(self, time_passed, delta_mult):
-        super(Warp, self).event_step(time_passed, delta_mult)
-
-        finished = []
-        for obj in self.warps_in:
-            left_edge = obj.x - obj.image_origin_x
-            top_edge = obj.y - obj.image_origin_y
-            if self.direction == "left":
-                if obj.x <= self.x + obj.image_origin_x - obj.sprite.width:
-                    finished.append(obj)
-                else:
-                    warp_sprite = get_scaled_copy(obj)
-                    warp_sprite.draw_erase(
-                        0, 0, math.floor(self.x - left_edge),
-                        warp_sprite.height)
-                    sge.game.current_room.project_sprite(
-                        warp_sprite, obj.image_index, obj.x, obj.y, self.z)
-            elif self.direction == "right":
-                if obj.x >= self.x + obj.image_origin_x:
-                    finished.append(obj)
-                else:
-                    warp_sprite = get_scaled_copy(obj)
-                    warp_sprite.draw_erase(
-                        math.ceil(self.x - left_edge), 0, warp_sprite.width,
-                        warp_sprite.height)
-                    sge.game.current_room.project_sprite(
-                        warp_sprite, obj.image_index, obj.x, obj.y, self.z)
-            elif self.direction == "up":
-                if obj.y <= self.y + obj.image_origin_y - obj.sprite.height:
-                    finished.append(obj)
-                else:
-                    warp_sprite = get_scaled_copy(obj)
-                    warp_sprite.draw_erase(0, 0, warp_sprite.width,
-                                           math.floor(self.y - top_edge))
-                    sge.game.current_room.project_sprite(
-                        warp_sprite, obj.image_index, obj.x, obj.y, self.z)
-            elif self.direction == "down":
-                if obj.y >= self.y + obj.image_origin_y:
-                    finished.append(obj)
-                else:
-                    warp_sprite = get_scaled_copy(obj)
-                    warp_sprite.draw_erase(
-                        0, math.ceil(self.y - top_edge), warp_sprite.width,
-                        warp_sprite.height)
-                    sge.game.current_room.project_sprite(
-                        warp_sprite, obj.image_index, obj.x, obj.y, self.z)
-
-        for obj in finished:
-            obj.x = self.x
-            obj.y = self.y
-            self.follow_start(obj, WARP_SPEED)
-            self.warps_in.remove(obj)
-
-    def event_destroy(self):
-        while self in sge.game.current_room.warps:
-            sge.game.current_room.warps.remove(self)
-
-
-class ObjectWarpSpawn(WarpSpawn):
-
-    def __init__(self, x, y, points=(), cls=None, interval=180, limit=None,
-                 silent=False, **kwargs):
-        self.cls = TYPES.get(cls)
-        self.kwargs = kwargs
-        self.interval = interval
-        self.limit = limit
-        self.silent = silent
-        self.__steps_passed = interval
-        self.__objects = []
-        super(ObjectWarpSpawn, self).__init__(x, y, points=points)
-
-    def event_begin_step(self, time_passed, delta_mult):
-        in_view = False
-        for view in sge.game.current_room.views:
-            if (self.x <= view.x + view.width and self.x >= view.x and
-                    self.y <= view.y + view.height and self.y >= view.y):
-                in_view = True
-                break
-
-        if in_view and self.cls is not None:
-            self.__steps_passed += delta_mult
-            
-            self.__objects = [ref for ref in self.__objects
-                              if (ref() is not None and
-                                  ref() in sge.game.current_room.objects)]
-            if self.limit and len(self.__objects) >= self.limit:
-                self.__steps_passed = 0
-
-            while self.__steps_passed >= self.interval:
-                self.__steps_passed -= self.interval
-                obj = self.cls.create(self.x, self.y, **self.kwargs)
-                obj.activate()
-                obj.warping = True
-                obj.visible = False
-                obj.tangible = False
-                self.follow_start(obj, WARP_SPEED)
-                self.__objects.append(weakref.ref(obj))
-
-
 class MovingObjectPath(xsge_path.PathLink):
 
     cls = None
@@ -3181,8 +2261,8 @@ class Menu(xsge_gui.MenuWindow):
 
 class MainMenu(Menu):
 
-    items = [_("New Game"), _("Load Game"), _("Select Levelset"), _("Options"),
-             _("Credits"), _("Quit")]
+    items = [_("New Game"), _("Load Game"), _("Options"), _("Credits"),
+             _("Quit")]
 
     def event_choose(self):
         if self.choice == 0:
@@ -3193,11 +2273,8 @@ class MainMenu(Menu):
             LoadGameMenu.create_page()
         elif self.choice == 2:
             play_sound(confirm_sound)
-            LevelsetMenu.create_page(refreshlist=True)
-        elif self.choice == 3:
-            play_sound(confirm_sound)
             OptionsMenu.create_page()
-        elif self.choice == 4:
+        elif self.choice == 3:
             credits_room = CreditsScreen.load(os.path.join("special",
                                                            "credits.tmx"))
             credits_room.start()
@@ -3213,21 +2290,9 @@ class NewGameMenu(Menu):
         for slot in save_slots:
             if slot is None:
                 cls.items.append(_("-Empty-"))
-            elif slot.get("levelset") is None:
-                cls.items.append(_("-No Levelset-"))
             else:
-                fname = os.path.join(DATA, "levelsets", slot["levelset"])
-                try:
-                    with open(fname, 'r') as f:
-                        data = json.load(f)
-                except (IOError, ValueError):
-                    cls.items.append(_("-Corrupt Levelset-"))
-                    continue
-                else:
-                    levelset_name = data.get("name", slot["levelset"])
-                    completion = slot.get("completion", 0)
-                    cls.items.append("{} ({}%)".format(levelset_name,
-                                                       completion))
+                # TODO: Better information
+                cls.items.append(slot.get("current_level"))
 
         cls.items.append(_("Back"))
 
@@ -3245,7 +2310,7 @@ class NewGameMenu(Menu):
             if save_slots[current_save_slot] is None:
                 set_new_game()
                 if not abort:
-                    start_levelset()
+                    start_game()
                 else:
                     NewGameMenu.create(default=self.choice)
             else:
@@ -3268,7 +2333,7 @@ class OverwriteConfirmMenu(Menu):
             play_sound(confirm_sound)
             set_new_game()
             if not abort:
-                start_levelset()
+                start_game()
             else:
                 play_sound(cancel_sound)
                 NewGameMenu.create(default=current_save_slot)
@@ -3291,77 +2356,13 @@ class LoadGameMenu(NewGameMenu):
             load_game()
             if abort:
                 MainMenu.create(default=1)
-            elif not start_levelset():
+            elif not start_game():
                 play_sound(error_sound)
                 show_error(_("An error occurred when trying to load the game."))
                 MainMenu.create(default=1)
         else:
             play_sound(cancel_sound)
             MainMenu.create(default=1)
-
-
-class LevelsetMenu(Menu):
-
-    levelsets = []
-    current_levelsets = []
-    page = 0
-
-    @classmethod
-    def create_page(cls, default=0, page=0, refreshlist=False):
-        if refreshlist or not cls.levelsets:
-            cls.levelsets = []
-            for fname in os.listdir(os.path.join(DATA, "levelsets")):
-                try:
-                    with open(os.path.join(DATA, "levelsets", fname), 'r') as f:
-                        data = json.load(f)
-                except (IOError, ValueError):
-                    continue
-                else:
-                    cls.levelsets.append((fname, str(data.get("name", "???"))))
-
-            def sort_key(T):
-                # The current levelset has top priority, followed by the
-                # ReTux levelset, and every other levelset is sorted
-                # alphabetically based first on their displayed names
-                # and secondly on their file names.
-                return (T[0] != current_levelset, T[0] != "retux.json",
-                        T[1].lower(), T[0].lower())
-            cls.levelsets.sort(key=sort_key)
-
-        cls.current_levelsets = []
-        cls.items = []
-        if cls.levelsets:
-            page_size = MENU_MAX_ITEMS - 2
-            n_pages = math.ceil(len(cls.levelsets) / page_size)
-            page = int(page % n_pages)
-            page_start = page * page_size
-            page_end = min(page_start + page_size, len(cls.levelsets))
-            current_page = cls.levelsets[page_start:page_end]
-            cls.current_levelsets = []
-            cls.items = []
-            for fname, name in current_page:
-                cls.current_levelsets.append(fname)
-                cls.items.append(name)
-
-        cls.items.append(_("Next page"))
-        cls.items.append(_("Back"))
-
-        self = cls.create(default)
-        self.page = page
-        return self
-
-    def event_choose(self):
-        if self.choice == len(self.items) - 2:
-            play_sound(select_sound)
-            self.create_page(default=-2, page=self.page)
-        else:
-            if self.choice is not None and self.choice < len(self.items) - 2:
-                play_sound(confirm_sound)
-                load_levelset(self.current_levelsets[self.choice])
-            else:
-                play_sound(cancel_sound)
-
-            MainMenu.create(default=2)
 
 
 class OptionsMenu(Menu):
@@ -3378,8 +2379,7 @@ class OptionsMenu(Menu):
             _("Show FPS: {}").format(_("On") if fps_enabled else _("Off")),
             _("Joystick Threshold: {}%").format(int(joystick_threshold * 100)),
             _("Configure keyboard"), _("Configure joysticks"),
-            _("Detect joysticks"), _("Import levelset"), _("Export levelset"),
-            _("Back")]
+            _("Detect joysticks"), _("Back")]
         return cls.create(default)
 
     def event_choose(self):
@@ -3445,73 +2445,6 @@ class OptionsMenu(Menu):
             sge.joystick.refresh()
             play_sound(heal_sound)
             OptionsMenu.create_page(default=self.choice)
-        elif self.choice == 10:
-            if HAVE_TK:
-                play_sound(confirm_sound)
-                fname = tkinter_filedialog.askopenfilename(
-                    filetypes=[(_("ReTux levelset files"), ".rtz"),
-                               (_("all files"), ".*")])
-
-                w = 400
-                h = 128
-                margin = 16
-                x = SCREEN_SIZE[0] / 2 - w / 2
-                y = SCREEN_SIZE[1] / 2 - h / 2
-                c = sge.gfx.Color("black")
-                window = xsge_gui.Window(gui_handler, x, y, w, h,
-                                         background_color=c, border=False)
-
-                x = margin
-                y = margin
-                text = _("Importing levelset...")
-                c = sge.gfx.Color("white")
-                xsge_gui.Label(
-                    window, x, y, 1, text, font=font, width=(w - 2 * margin),
-                    height=(h - 3 * margin -
-                            xsge_gui.progressbar_container_sprite.height),
-                    color=c)
-
-                x = margin
-                y = h - margin - xsge_gui.progressbar_container_sprite.height
-                progressbar = xsge_gui.ProgressBar(window, x, y, 0,
-                                                   width=(w - 2 * margin))
-
-                window.show()
-                gui_handler.event_step(0, 0)
-                sge.game.refresh()
-
-                with zipfile.ZipFile(fname, 'r') as rtz:
-                    infolist = rtz.infolist()
-                    for i in six.moves.range(len(infolist)):
-                        member = infolist[i]
-                        rtz.extract(member, DATA)
-                        rtz.extract(member, os.path.join(CONFIG, "data"))
-                        progressbar.progress = (i + 1) / len(infolist)
-                        progressbar.redraw()
-                        sge.game.pump_input()
-                        gui_handler.event_step(0, 0)
-                        sge.game.refresh()
-
-                window.destroy()
-                sge.game.pump_input()
-                gui_handler.event_step(0, 0)
-                sge.game.refresh()
-                sge.game.pump_input()
-                sge.game.input_events = []
-            else:
-                play_sound(kill_sound)
-                e = _("This feature requires Tkinter, which was not successfully imported. Please make sure Tkinter is installed and try again.")
-                show_error(e)
-            OptionsMenu.create_page(default=self.choice)
-        elif self.choice == 11:
-            if HAVE_TK:
-                play_sound(confirm_sound)
-                ExportLevelsetMenu.create_page(refreshlist=True)
-            else:
-                play_sound(kill_sound)
-                e = _("This feature requires Tkinter, which was not successfully imported. Please make sure Tkinter is installed and try again.")
-                show_error(e)
-                OptionsMenu.create_page(default=self.choice)
         else:
             play_sound(cancel_sound)
             write_to_disk()
@@ -3842,242 +2775,6 @@ class JoystickMenu(Menu):
             OptionsMenu.create_page(default=6)
 
 
-class ExportLevelsetMenu(LevelsetMenu):
-
-    def event_choose(self):
-        if self.choice == len(self.items) - 2:
-            play_sound(select_sound)
-            self.create_page(default=-2, page=self.page)
-        else:
-            if self.choice is not None and self.choice < len(self.items) - 2:
-                play_sound(confirm_sound)
-
-                fname = tkinter_filedialog.asksaveasfilename(
-                    defaultextension=".rtz",
-                    filetypes=[(_("ReTux levelset files"), ".rtz"),
-                               (_("all files"), ".*")])
-
-                w = 400
-                h = 128
-                margin = 16
-                x = SCREEN_SIZE[0] / 2 - w / 2
-                y = SCREEN_SIZE[1] / 2 - h / 2
-                c = sge.gfx.Color("black")
-                window = xsge_gui.Window(gui_handler, x, y, w, h,
-                                         background_color=c, border=False)
-
-                x = margin
-                y = margin
-                text = _("Exporting levelset...")
-                c = sge.gfx.Color("white")
-                xsge_gui.Label(
-                    window, x, y, 1, text, font=font, width=(w - 2 * margin),
-                    height=(h - 3 * margin -
-                            xsge_gui.progressbar_container_sprite.height),
-                    color=c)
-
-                x = margin
-                y = h - margin - xsge_gui.progressbar_container_sprite.height
-                progressbar = xsge_gui.ProgressBar(window, x, y, 0,
-                                                   width=(w - 2 * margin))
-
-                window.show()
-                gui_handler.event_step(0, 0)
-                sge.game.refresh()
-
-                levelset = self.current_levelsets[self.choice]
-                levelset_fname = os.path.join(DATA, "levelsets", levelset)
-                with open(levelset_fname, 'r') as f:
-                    data = json.load(f)
-                start_cutscene = data.get("start_cutscene")
-                worldmap = data.get("worldmap")
-                levels = data.get("levels", [])
-                include_files = data.get("include_files", [])
-
-                def get_extra_files(fd, exclude_files):
-                    if fd in exclude_files:
-                        return set()
-
-                    tmx_dir = os.path.relpath(os.path.dirname(fd), DATA)
-                    extra_files = {fd}
-                    exclude_files.add(fd)
-                    try:
-                        tilemap = tmx.TileMap.load(fd)
-                    except IOError as e:
-                        show_error(str(e))
-                        return extra_files
-
-                    for prop in tilemap.properties:
-                        if prop.name == "music":
-                            extra_files.add(os.path.join(DATA, "music",
-                                                         prop.value))
-                        elif prop.name == "timeline":
-                            extra_files.add(os.path.join(DATA, "timelines",
-                                                         prop.value))
-
-                    for tileset in tilemap.tilesets:
-                        ts_dir = tmx_dir
-                        if tileset.source is not None:
-                            extra_files.add(os.path.join(DATA, tmx_dir,
-                                                         tileset.source))
-                            ts_dir = os.path.dirname(os.path.join(
-                                tmx_dir, tileset.source))
-
-                        if (tileset.image is not None and
-                                tileset.image.source is not None):
-                            extra_files.add(os.path.join(DATA, ts_dir,
-                                                         tileset.image.source))
-
-                    def check_obj(cls, properties, exclude_files,
-                                  get_extra_files=get_extra_files):
-                        if cls == get_object:
-                            for prop in properties:
-                                if prop.name == "cls":
-                                    cls = TYPES.get(prop.value,
-                                                    xsge_tmx.Decoration)
-
-                        extra_files = set()
-                        for prop in properties:
-                            if prop.name == "dest":
-                                if ":" in prop.value:
-                                    level_f, _ = prop.value.split(':', 1)
-                                elif cls in {Warp, MapWarp}:
-                                    level_f = prop.value
-                                else:
-                                    level_f = None
-
-                                if level_f and level_f not in {
-                                        "__main__", "__map__"}:
-                                    if cls == MapWarp:
-                                        sdir = "worldmaps"
-                                    else:
-                                        sdir = "levels"
-
-                                    fname = os.path.join(DATA, sdir, level_f)
-                                    extra_files |= get_extra_files(
-                                        fname, exclude_files)
-                            elif prop.name.endswith("timeline"):
-                                extra_files.add(
-                                    os.path.join(DATA, "timelines", prop.value))
-                            elif prop.name == "level":
-                                fname = os.path.join(DATA, "levels",
-                                                     prop.value)
-                                extra_files |= get_extra_files(fname,
-                                                               exclude_files)
-
-                        return extra_files
-
-                    for layer in tilemap.layers:
-                        if isinstance(layer, tmx.Layer):
-                            layer_cls = TYPES.get(layer.name)
-                            layer_prop = layer.properties
-                            for tile in layer.tiles:
-                                if tile.gid:
-                                    tile_ts = None
-                                    for ts in sorted(tilemap.tilesets,
-                                                     key=lambda x: x.firstgid):
-                                        if ts.firstgid <= tile.gid:
-                                            tile_ts = ts
-                                        else:
-                                            break
-
-                                    if tile_ts is not None:
-                                        ts_cls = TYPES.get(tile_ts.name)
-                                        ts_prop = tile_ts.properties
-                                        tile_prop = []
-                                        i = tile.gid - tile_ts.firstgid
-                                        for tile_def in tile_ts.tiles:
-                                            if tile_def.id == i:
-                                                tile_prop = tile_def.properties
-                                                break
-                                        cls = ts_cls or layer_cls
-                                        prop = layer_prop + ts_prop + tile_prop
-                                        extra_files |= check_obj(cls, prop,
-                                                                 exclude_files)
-                        elif isinstance(layer, tmx.ObjectGroup):
-                            layer_cls = TYPES.get(layer.name)
-                            layer_prop = layer.properties
-                            for obj in layer.objects:
-                                cls = TYPES.get(obj.name) or TYPES.get(obj.type)
-                                prop = obj.properties
-                                if obj.gid:
-                                    obj_ts = None
-                                    for ts in sorted(tilemap.tilesets,
-                                                     key=lambda x: x.firstgid):
-                                        if ts.firstgid <= obj.gid:
-                                            obj_ts = ts
-                                        else:
-                                            break
-
-                                    if obj_ts is not None:
-                                        ts_cls = TYPES.get(obj_ts.name)
-                                        ts_prop = obj_ts.properties
-                                        tile_prop = []
-                                        i = obj.gid - obj_ts.firstgid
-                                        for tile_def in obj_ts.tiles:
-                                            if tile_def.id == i:
-                                                tile_prop = tile_def.properties
-                                                break
-                                        cls = cls or ts_cls
-                                        prop = tile_prop + prop
-                                cls = cls or layer_cls
-                                prop = layer_prop + prop
-                                extra_files |= check_obj(cls, prop,
-                                                         exclude_files)
-                        elif isinstance(layer, tmx.ImageLayer):
-                            extra_files |= check_obj(TYPES.get(layer.name),
-                                                     layer.properties,
-                                                     exclude_files)
-                            if (layer.image is not None and
-                                    layer.image.source is not None):
-                                extra_files.add(
-                                    os.path.join(DATA, tmx_dir,
-                                                 layer.image.source))
-
-                    return extra_files
-
-                files = {levelset_fname}
-                exclude_files = set()
-                if start_cutscene:
-                    fd = os.path.join(DATA, "levels", start_cutscene)
-                    files |= get_extra_files(fd, exclude_files)
-                if worldmap:
-                    fd = os.path.join(DATA, "worldmaps", worldmap)
-                    files |= get_extra_files(fd, exclude_files)
-                for level in levels:
-                    fd = os.path.join(DATA, "levels", level)
-                    files |= get_extra_files(fd, exclude_files)
-                for include_file in include_files:
-                    files.add(os.path.join(DATA, include_file))
-
-                files = list(files)
-                inst_dir = os.path.join(os.path.dirname(__file__), "data")
-
-                with zipfile.ZipFile(fname, 'w') as rtz:
-                    for i in six.moves.range(len(files)):
-                        fname = files[i]
-                        aname = os.path.relpath(fname, DATA)
-                        if not os.path.exists(os.path.join(inst_dir, aname)):
-                            rtz.write(fname, aname)
-
-                        progressbar.progress = (i + 1) / len(files)
-                        progressbar.redraw()
-                        sge.game.pump_input()
-                        gui_handler.event_step(0, 0)
-                        sge.game.refresh()
-
-                window.destroy()
-                sge.game.pump_input()
-                gui_handler.event_step(0, 0)
-                sge.game.refresh()
-                sge.game.pump_input()
-                sge.game.input_events = []
-            else:
-                play_sound(cancel_sound)
-
-            OptionsMenu.create(default=10)
-
-
 class ModalMenu(xsge_gui.MenuDialog):
 
     items = []
@@ -4107,9 +2804,6 @@ class PauseMenu(ModalMenu):
     def create(cls, default=0):
         if LEVEL or RECORD:
             items = [_("Continue"), _("Abort")]
-        elif current_worldmap:
-            items = [_("Continue"), _("Return to Map"),
-                     _("Return to Title Screen")]
         else:
             items = [_("Continue"), _("Return to Title Screen")]
 
@@ -4128,27 +2822,7 @@ class PauseMenu(ModalMenu):
         sge.snd.Music.unpause()
 
         if self.choice == 1:
-            rush_save()
-            if current_worldmap:
-                play_sound(kill_sound)
-
-            sge.game.current_room.return_to_map()
-        elif self.choice == 2:
-            rush_save()
-            sge.game.start_room.start()
-        else:
-            play_sound(select_sound)
-
-
-class WorldmapMenu(ModalMenu):
-
-    items = [_("Continue"), _("Return to Title Screen")]
-
-    def event_choose(self):
-        sge.snd.Music.unpause()
-
-        if self.choice == 1:
-            rush_save()
+            save_game()
             sge.game.start_room.start()
         else:
             play_sound(select_sound)
@@ -4455,131 +3129,14 @@ def play_music(music, force_restart=False):
         sge.snd.Music.stop()
 
 
-def load_levelset(fname, preload_start=0):
-    global current_levelset
-    global start_cutscene
-    global worldmap
-    global loaded_worldmaps
-    global levels
-    global loaded_levels
-    global tuxdolls_available
-    global main_area
-
-    def do_refresh():
-        # Refresh the screen, return whether the user pressed a key.
-        sge.game.pump_input()
-        r = False
-        while sge.game.input_events:
-            event = sge.game.input_events.pop(0)
-            if isinstance(event, sge.input.QuitRequest):
-                sge.game.end()
-                r = True
-            elif isinstance(event, (sge.input.KeyPress,
-                                    sge.input.JoystickButtonPress)):
-                r = True
-
-        gui_handler.event_step(0, 0)
-        sge.game.refresh()
-        return r
-
-    if current_levelset != fname:
-        current_levelset = fname
-
-        with open(os.path.join(DATA, "levelsets", fname), 'r') as f:
-            data = json.load(f)
-
-        start_cutscene = data.get("start_cutscene")
-        worldmap = data.get("worldmap")
-        levels = data.get("levels", [])
-        tuxdolls_available = data.get("tuxdolls_available", [])
-
-        main_area = None
-
-        w = 400
-        h = 128
-        margin = 16
-        x = SCREEN_SIZE[0] / 2 - w / 2
-        y = SCREEN_SIZE[1] / 2 - h / 2
-        c = sge.gfx.Color("black")
-        window = xsge_gui.Window(gui_handler, x, y, w, h,
-                                 background_color=c, border=False)
-
-        x = margin
-        y = margin
-        text = _("Preloading levels...\n\n(press any key to skip)")
-        c = sge.gfx.Color("white")
-        xsge_gui.Label(
-            window, x, y, 1, text, font=font, width=(w - 2 * margin),
-            height=(h - 3 * margin -
-                    xsge_gui.progressbar_container_sprite.height), color=c)
-
-        x = margin
-        y = h - margin - xsge_gui.progressbar_container_sprite.height
-        progressbar = xsge_gui.ProgressBar(window, x, y, 0,
-                                           width=(w - 2 * margin))
-
-        window.show()
-        gui_handler.event_step(0, 0)
-        sge.game.refresh()
-
-        sorted_levels = levels[preload_start:] + levels[:preload_start]
-        for level in sorted_levels:
-            subrooms = [level]
-            already_checked = []
-            done = False
-
-            while subrooms:
-                subroom = subrooms.pop(0)
-                already_checked.append(subroom)
-                r = Level.load(subroom)
-                if r is not None:
-                    loaded_levels[subroom] = r
-                    for obj in r.objects:
-                        if isinstance(obj, (Door, Warp)):
-                            if obj.dest and ':' in obj.dest:
-                                map_f = obj.dest.split(':', 1)[0]
-                                if (map_f not in subrooms and
-                                        map_f not in already_checked and
-                                        map_f not in {"__main__", "__map__"}):
-                                    subrooms.append(map_f)
-                if do_refresh():
-                    done = True
-                    break
-            else:
-                progressbar.progress = ((sorted_levels.index(level) + 1) /
-                                        len(sorted_levels))
-                progressbar.redraw()
-
-            if done or do_refresh():
-                break
-
-        window.destroy()
-        do_refresh()
-        sge.game.pump_input()
-        sge.game.input_events = []
-
-
 def set_new_game():
-    global level_timers
-    global cleared_levels
-    global tuxdolls_found
     global watched_timelines
-    global current_worldmap
-    global current_worldmap_space
     global current_level
-    global score
+    global spawn_point
 
-    if current_levelset is None:
-        load_levelset(DEFAULT_LEVELSET)
-
-    level_timers = {}
-    cleared_levels = []
-    tuxdolls_found = []
     watched_timelines = []
-    current_worldmap = worldmap
-    current_worldmap_space = None
     current_level = None
-    score = 0
+    spawn_point = None
 
 
 def write_to_disk():
@@ -4612,175 +3169,44 @@ def save_game():
     global save_slots
 
     if current_save_slot is not None:
-        if levels:
-            completion = int(100 * (len(cleared_levels) + len(tuxdolls_found)) /
-                             (len(levels) + len(tuxdolls_available)))
-            if completion == 0 and (cleared_levels or tuxdolls_found):
-                completion = 1
-            elif (completion == 100 and
-                  (len(cleared_levels) < len(levels) or
-                   len(tuxdolls_found) < len(tuxdolls_available))):
-                completion = 99
-        else:
-            completion = 100
-
         save_slots[current_save_slot] = {
-            "levelset": current_levelset, "level_timers": level_timers,
-            "cleared_levels": cleared_levels, "tuxdolls_found": tuxdolls_found,
             "watched_timelines": watched_timelines,
-            "current_worldmap": current_worldmap,
-            "current_worldmap_space": current_worldmap_space,
-            "worldmap_entry_space": worldmap_entry_space,
             "current_level": current_level,
-            "current_checkpoints": current_checkpoints, "score": score,
-            "completion": completion}
+            "spawn_point": spawn_point}
 
     write_to_disk()
 
 
 def load_game():
-    global level_timers
-    global cleared_levels
-    global tuxdolls_found
     global watched_timelines
-    global current_worldmap
-    global current_worldmap_space
-    global worldmap_entry_space
     global current_level
-    global current_checkpoints
-    global score
+    global spawn_point
 
     if (current_save_slot is not None and
-            save_slots[current_save_slot] is not None and
-            save_slots[current_save_slot].get("levelset") is not None):
+            save_slots[current_save_slot] is not None):
         slot = save_slots[current_save_slot]
-        level_timers = slot.get("level_timers", {})
-        cleared_levels = slot.get("cleared_levels", [])
-        tuxdolls_found = slot.get("tuxdolls_found", [])
         watched_timelines = slot.get("watched_timelines", [])
-        current_worldmap = slot.get("current_worldmap")
-        current_worldmap_space = slot.get("current_worldmap_space")
-        worldmap_entry_space = slot.get("worldmap_entry_space")
-        current_level = slot.get("current_level", 0)
-        current_checkpoints = slot.get("current_checkpoints", {})
-        score = slot.get("score", 0)
-        load_levelset(slot["levelset"], current_level)
+        current_level = slot.get("current_level")
+        spawn_point = slot.get("spawn_point")
     else:
         set_new_game()
 
 
-def rush_save():
-    global level_timers
-    global cleared_levels
-    global score
-    global main_area
+def start_game():
+    global player
+    player = Anneroy(0, 0)
 
-    if main_area is not None:
-        if not cleared_levels and current_checkpoints.get(main_area) is None:
-            level_timers[main_area] = level_time_bonus
-
-        won = (isinstance(sge.game.current_room, Level) and
-               sge.game.current_room.won)
-
-        if won:
-            score += sge.game.current_room.points
-            sge.game.current_room.points = 0
-            if main_area not in cleared_levels:
-                cleared_levels.append(main_area)
-
-        if won or level_timers.setdefault(main_area, 0) < 0:
-            score += level_timers[main_area]
-            level_timers[main_area] = 0
-
-    save_game()
-    main_area = None
-
-
-def start_levelset():
-    global current_level
-    global main_area
-    global level_cleared
-    global current_areas
-    current_areas = {}
-    main_area = None
-    level_cleared = True
-
-    if start_cutscene and current_level is None:
-        current_level = 0
-        level = Level.load(start_cutscene, True)
-        if level is not None:
-            level.start()
-        else:
-            return False
-    elif current_worldmap:
-        m = Worldmap.load(current_worldmap)
-        m.start()
+    if current_level is None:
+        level = Level.load("0.tmx")
     else:
-        if current_level is None:
-            current_level = 0
+        level = Level.load(current_level)
 
-        if current_level < len(levels):
-            level = Level.load(levels[current_level], True)
-            if level is not None:
-                level.start()
-            else:
-                return False
-        else:
-            print("Invalid save file: current level does not exist.")
-            return False
+    if level is not None:
+        level.start()
+    else:
+        return False
 
     return True
-
-
-def warp(dest):
-    if dest == "__map__":
-        sge.game.current_room.return_to_map(True)
-    else:
-        cr = sge.game.current_room
-
-        if ":" in dest:
-            level_f, spawn = dest.split(':', 1)
-        else:
-            level_f = None
-            spawn = dest
-
-        if level_f == "__main__":
-            level_f = main_area
-
-        if level_f:
-            level = sge.game.current_room.__class__.load(level_f, True)
-        else:
-            level = cr
-
-        if level is not None:
-            level.spawn = spawn
-            level.points = cr.points
-
-            for nobj in level.objects[:]:
-                if isinstance(nobj, Player):
-                    for cobj in cr.objects[:]:
-                        if (isinstance(cobj, Player) and
-                                cobj.player == nobj.player):
-                            nobj.hp = cobj.hp
-                            nobj.coins = cobj.coins
-                            nobj.facing = cobj.facing
-                            nobj.image_xscale = cobj.image_xscale
-                            nobj.image_yscale = cobj.image_yscale
-
-                            held_object = cobj.held_object
-                            if held_object is not None:
-                                cobj.drop_object()
-                                cr.remove(held_object)
-                                level.add(held_object)
-                                nobj.pickup(held_object)
-
-                            break
-
-            level.start()
-        else:
-            # Error occurred; restart the game.
-            rush_save()
-            sge.game.start_room.start()
 
 
 TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
@@ -4790,42 +3216,16 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "slope_bottomright": SlopeBottomRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
-         "spike_bottom": SpikeBottom, "death": Death, "level_end": LevelEnd,
-         "creatures": get_object, "hazards": get_object,
-         "special_blocks": get_object, "decoration_small": get_object,
-         "map_objects": get_object, "player": Player,
-         "walking_snowball": WalkingSnowball,
-         "bouncing_snowball": BouncingSnowball,
-         "walking_iceblock": WalkingIceblock, "spiky": Spiky,
-         "bomb": WalkingBomb, "jumpy": Jumpy,
-         "flying_snowball": FlyingSnowball, "flying_spiky": FlyingSpiky,
-         "icicle": Icicle, "steady_icicle": SteadyIcicle,
-         "raccot_icicle": RaccotIcicle, "krush": Krush, "krosh": Krosh,
-         "circoflame": CircoflamePath, "circoflamecenter": CircoflameCenter,
-         "snowman": Snowman, "raccot": Raccot, "fireflower": FireFlower,
-         "iceflower": IceFlower, "tuxdoll": TuxDoll, "rock": Rock,
-         "fixed_spring": FixedSpring, "spring": Spring,
-         "rusty_spring": RustySpring, "lantern": Lantern,
-         "timeline_switcher": TimelineSwitcher, "iceblock": Iceblock,
-         "boss_block": BossBlock, "brick": Brick, "coinbrick": CoinBrick,
-         "emptyblock": EmptyBlock, "itemblock": ItemBlock,
-         "hiddenblock": HiddenItemBlock, "infoblock": InfoBlock,
-         "thin_ice": ThinIce, "lava": Lava, "lava_surface": LavaSurface,
-         "goal": Goal, "goal_top": GoalTop, "coin": Coin, "warp": Warp,
+         "spike_bottom": SpikeBottom, "death": Death, "player": Player,
+         "anneroy": Anneroy, "timeline_switcher": TimelineSwitcher,
          "moving_platform_path": MovingPlatformPath,
-         "triggered_moving_platform_path": TriggeredMovingPlatformPath,
-         "flying_snowball_path": FlyingSnowballPath,
-         "flying_spiky_path": FlyingSpikyPath, "spawn": Spawn,
-         "checkpoint": Checkpoint, "bell": Bell, "door": Door,
-         "warp_spawn": WarpSpawn, "object_warp_spawn": ObjectWarpSpawn,
-         "map_player": MapPlayer, "map_level": MapSpace, "map_warp": MapWarp,
-         "map_path": MapPath, "map_water": MapWater}
+         "triggered_moving_platform_path": TriggeredMovingPlatformPath}
 
 
 print(_("Initializing game system..."))
 Game(SCREEN_SIZE[0], SCREEN_SIZE[1], fps=FPS, delta=DELTA, delta_min=DELTA_MIN,
-     delta_max=DELTA_MAX, window_text="Hexoshi {}".format(__version__),
-     window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
+     delta_max=DELTA_MAX, window_text="Hexoshi {}".format(__version__))
+     #window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
 
 print(_("Initializing GUI system..."))
 xsge_gui.init()
@@ -4884,6 +3284,11 @@ anneroy_legs_fall_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_legs_land_sprite = sge.gfx.Sprite.from_tileset(
     fname, 242, 234, 2, xsep=15, width=23, height=29, origin_x=8, origin_y=5,
     fps=10)
+anneroy_crouched_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 23, 85, width=21, height=15, origin_x=7, origin_y=-9)
+anneroy_crouch_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 9, 189, 2, xsep=7, width=21, height=21, origin_x=8, origin_y=-8,
+    fps=10)
 
 n = id(anneroy_legs_run_sprite)
 anneroy_torso_offset[(n, 1)] = (0, 1)
@@ -4908,6 +3313,13 @@ anneroy_torso_offset[(n, 0)] = (0, -1)
 n = id(anneroy_legs_land_sprite)
 anneroy_torso_offset[(n, 0)] = (0, -5)
 anneroy_torso_offset[(n, 1)] = (0, 3)
+
+n = id(anneroy_legs_crouched_sprite)
+anneroy_torso_offset[(n, 0)] = (0, 11)
+
+n = id(anneroy_legs_crouch_sprite)
+anneroy_torso_offset[(n, 0)] = (0, 3)
+anneroy_torso_offset[(n, 1)] = (0, 9)
 
 d = os.path.join(DATA, "images", "portraits")
 portrait_sprites = {}
@@ -5056,71 +3468,16 @@ font_big_sprite = sge.gfx.Sprite.from_tileset(
 font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=22)
 
 # Load sounds
-jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "jump.wav"))
-bigjump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "bigjump.wav"))
-skid_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "skid.wav"), 50)
-hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
-kill_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "kill.wav"))
-brick_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "brick.wav"))
-coin_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "coin.wav"))
-find_powerup_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "upgrade.wav"))
-tuxdoll_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "tuxdoll.wav"))
-ice_crack_sounds = [
-    sge.snd.Sound(os.path.join(DATA, "sounds", "ice_crack-0.wav")),
-    sge.snd.Sound(os.path.join(DATA, "sounds", "ice_crack-1.wav")),
-    sge.snd.Sound(os.path.join(DATA, "sounds", "ice_crack-2.wav")),
-    sge.snd.Sound(os.path.join(DATA, "sounds", "ice_crack-3.wav"))]
-ice_shatter_sound = sge.snd.Sound(os.path.join(DATA, "sounds",
-                                               "ice_shatter.wav"))
-heal_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "heal.wav"))
-shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
-fire_dissipate_sound = sge.snd.Sound(os.path.join(DATA, "sounds",
-                                                  "fire_dissipate.wav"))
-icebullet_break_sound = sge.snd.Sound(os.path.join(DATA, "sounds",
-                                                   "icebullet_break.wav"))
-squish_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "squish.wav"))
-stomp_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "stomp.wav"))
-sizzle_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "sizzle.ogg"))
-spring_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "spring.wav"))
-rusty_spring_sound = sge.snd.Sound(os.path.join(DATA, "sounds",
-                                                "rusty_spring.wav"))
-kick_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "kick.wav"))
-iceblock_bump_sound = sge.snd.Sound(os.path.join(DATA, "sounds",
-                                                 "iceblock_bump.wav"))
-icicle_shake_sound = sge.snd.Sound(os.path.join(DATA, "sounds",
-                                                "icicle_shake.wav"))
-icicle_crash_sound = sge.snd.Sound(os.path.join(DATA, "sounds",
-                                                "icicle_crash.wav"))
-explosion_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "explosion.wav"))
-fall_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "fall.wav"))
-yeti_gna_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "yeti_gna.wav"))
-yeti_roar_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "yeti_roar.wav"))
-pop_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "pop.wav"))
-bell_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "bell.wav"))
-pipe_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "pipe.ogg"))
-warp_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "warp.wav"))
-door_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "door.wav"))
-door_shut_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "door_shut.wav"))
-pause_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
-confirm_sound = coin_sound
-cancel_sound = pop_sound
-error_sound = hurt_sound
+pause_sound = select_sound
+confirm_sound = sge.snd.Sound()
+cancel_sound = sge.snd.Sound()
+error_sound = sge.snd.Sound()
 type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
 
-# Load music
-level_win_music = sge.snd.Music(os.path.join(DATA, "music", "leveldone.ogg"))
-loaded_music["leveldone.ogg"] = level_win_music
-
 # Create objects
-coin_animation = sge.dsp.Object(0, 0, sprite=coin_sprite, visible=False,
-                                tangible=False)
-bonus_animation = sge.dsp.Object(0, 0, sprite=bonus_empty_sprite,
-                                 visible=False, tangible=False)
-lava_animation = sge.dsp.Object(0, 0, sprite=lava_body_sprite, visible=False,
-                                tangible=False)
-goal_animation = sge.dsp.Object(0, 0, sprite=goal_sprite, visible=False,
-                                tangible=False)
+##lava_animation = sge.dsp.Object(0, 0, sprite=lava_body_sprite, visible=False,
+##                                tangible=False)
 
 # Create rooms
 if LEVEL:
@@ -5217,12 +3574,7 @@ else:
 if __name__ == '__main__':
     print(_("Starting game..."))
 
-    if HAVE_TK:
-        tkwindow = Tk()
-        tkwindow.withdraw()
-
     try:
         sge.game.start()
     finally:
         write_to_disk()
-        shutil.rmtree(DATA)

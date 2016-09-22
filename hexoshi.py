@@ -1403,8 +1403,8 @@ class Anneroy(Player):
     def press_up(self):
         if self.crouching:
             for other in sge.collision.rectangle(
-                    ANNEROY_BBOX_X, ANNEROY_STAND_BBOX_Y, ANNEROY_BBOX_WIDTH,
-                    ANNEROY_STAND_BBOX_HEIGHT):
+                    self.x + ANNEROY_BBOX_X, self.y + ANNEROY_STAND_BBOX_Y,
+                    ANNEROY_BBOX_WIDTH, ANNEROY_STAND_BBOX_HEIGHT):
                 if isinstance(other, (xsge_physics.SolidBottom,
                                       xsge_physics.SlopeBottomLeft,
                                       xsge_physics.SlopeBottomRight)):
@@ -1449,10 +1449,10 @@ class Anneroy(Player):
 
             x = 0
             y = 0
-            shoot_angle = 0
-            image_rotation = 0
             xv = 0
             yv = 0
+            image_rotation = 0
+
             if self.facing > 0:
                 if self.aim_direction == 0:
                     x = 21
@@ -1464,12 +1464,12 @@ class Anneroy(Player):
                     y = -24
                     xv = ANNEROY_BULLET_DSPEED
                     yv = -ANNEROY_BULLET_DSPEED
-                    image_rotation = -45
+                    image_rotation = 315
                 elif self.aim_direction == 2:
                     x = 6
                     y = -27
                     yv = -ANNEROY_BULLET_SPEED
-                    image_rotation = -90
+                    image_rotation = 270
                 elif self.aim_direction == -1:
                     x = 16
                     y = 6
@@ -1486,38 +1486,44 @@ class Anneroy(Player):
                     x = -21
                     y = -4
                     xv = -ANNEROY_BULLET_SPEED
-                    image_rotation = 0
+                    image_rotation = 180
                 elif self.aim_direction == 1:
                     x = -19
                     y = -24
                     xv = -ANNEROY_BULLET_DSPEED
                     yv = -ANNEROY_BULLET_DSPEED
-                    image_rotation = 45
+                    image_rotation = 225
                 elif self.aim_direction == 2:
                     x = -6
                     y = -27
                     yv = -ANNEROY_BULLET_SPEED
-                    image_rotation = 90
+                    image_rotation = 270
                 elif self.aim_direction == -1:
                     x = -16
                     y = 6
                     xv = -ANNEROY_BULLET_DSPEED
                     yv = ANNEROY_BULLET_DSPEED
-                    image_rotation = -45
+                    image_rotation = 135
                 elif self.aim_direction == -2:
                     x = -9
                     y = 17
                     yv = ANNEROY_BULLET_SPEED
-                    image_rotation = -90
+                    image_rotation = 90
 
             bs = AnneroyBullet.create(
-                self.x + x, self.y + y, 10000,
-                sprite=anneroy_bullet_sprite, xvelocity=self.xvelocity + xv,
-                yvelocity=self.yvelocity + yv, regulate_origin=True,
-                image_xscale=abs(self.image_xscale) * self.facing,
+                self.torso.x + x, self.torso.y + y, 10000,
+                sprite=anneroy_bullet_sprite, xvelocity=xv,
+                yvelocity=yv, regulate_origin=True,
+                image_xscale=abs(self.image_xscale),
                 image_yscale=self.image_yscale,
                 image_rotation=image_rotation, image_blend=self.image_blend)
-            bs.shoot_angle = shoot_angle
+            Smoke.create(
+                self.torso.x + x, self.torso.y + y, 10000,
+                sprite=anneroy_bullet_dust_sprite, xvelocity=self.xvelocity,
+                yvelocity=self.yvelocity, regulate_origin=True,
+                image_xscale=abs(self.image_xscale),
+                image_yscale=self.image_yscale,
+                image_rotation=image_rotation, image_blend=self.image_blend)
 
     def set_image(self):
         assert self.torso is not None
@@ -1649,29 +1655,6 @@ class Anneroy(Player):
         self.image_speed = None
         self.image_index = 0
         self.fixed_sprite = True
-
-
-class AnneroyBulletStart(sge.dsp.Object):
-
-    shoot_angle = 0
-
-    def event_animation_end(self):
-        self.destroy()
-        Smoke.create(
-            self.x, self.y, self.z, sprite=anneroy_bullet_dust_sprite,
-            xvelocity=self.xvelocity, yvelocity=self.yvelocity,
-            image_xscale=self.image_xscale, image_yscale=self.image_yscale,
-            image_rotation=self.image_rotation, image_blend=self.image_blend)
-
-        xf = self.image_xscale * math.cos(math.radians(self.shoot_angle))
-        yf = self.image_yscale * -math.sin(math.radians(self.shoot_angle))
-        xv = self.xvelocity + xf * ANNEROY_BULLET_SPEED
-        yv = self.yvelocity + yf * ANNEROY_BULLET_SPEED
-        AnneroyBullet.create(
-            self.x + xv, self.y + yv, self.z, sprite=anneroy_bullet_sprite,
-            xvelocity=xv, yvelocity=yv, regulate_origin=True,
-            image_xscale=self.image_xscale, image_yscale=self.image_yscale,
-            image_rotation=self.image_rotation, image_blend=self.image_blend)
 
 
 class DeadMan(sge.dsp.Object):
@@ -2074,7 +2057,7 @@ class AnneroyBullet(InteractiveObject, xsge_physics.Collider):
 
     def event_collision(self, other, xdirection, ydirection):
         if isinstance(other, InteractiveObject) and other.shootable:
-            other.freeze()
+            other.shoot()
             self.dissipate()
 
         super(AnneroyBullet, self).event_collision(other, xdirection, ydirection)
@@ -3270,7 +3253,7 @@ anneroy_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
     fname, 249, 119, width=26, height=16, origin_x=-2, origin_y=7, fps=10)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 287, 123, width=17, height=6, origin_x=11, origin_y=3, bbox_x=-4,
+    fname, 287, 123, width=17, height=6, origin_x=-4, origin_y=3, bbox_x=-4,
     bbox_y=-4, bbox_width=8, bbox_height=8)
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=19, origin_y=23,

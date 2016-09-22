@@ -132,6 +132,8 @@ ANNEROY_STAND_BBOX_Y = -16
 ANNEROY_STAND_BBOX_HEIGHT = 40
 ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
+ANNEROY_BULLET_SPEED = 5
+ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 
 CEILING_LAX = 2
 
@@ -1137,10 +1139,10 @@ class Player(xsge_physics.Collider):
 
         prev_aim_direction = self.aim_direction
 
-        if "shooting" in self.alarms:
-            self.aim_direction = 0
-        else:
+        if "shooting" not in self.alarms:
             self.aim_direction = None
+        elif h_control:
+            self.aim_direction = 0
 
         if self.halt_pressed and h_control:
             if v_control:
@@ -1438,6 +1440,85 @@ class Anneroy(Player):
         if not self.crouching:
             super(Anneroy, self).jump()
 
+    def shoot(self):
+        if "shoot_lock" not in self.alarms:
+            if self.aim_direction is None:
+                self.aim_direction = 0
+            self.alarms["shooting"] = 60
+            self.alarms["shoot_lock"] = 15
+
+            x = 0
+            y = 0
+            shoot_angle = 0
+            image_rotation = 0
+            xv = 0
+            yv = 0
+            if self.facing > 0:
+                if self.aim_direction == 0:
+                    x = 21
+                    y = -4
+                    xv = ANNEROY_BULLET_SPEED
+                    image_rotation = 0
+                elif self.aim_direction == 1:
+                    x = 19
+                    y = -24
+                    xv = ANNEROY_BULLET_DSPEED
+                    yv = -ANNEROY_BULLET_DSPEED
+                    image_rotation = -45
+                elif self.aim_direction == 2:
+                    x = 6
+                    y = -27
+                    yv = -ANNEROY_BULLET_SPEED
+                    image_rotation = -90
+                elif self.aim_direction == -1:
+                    x = 16
+                    y = 6
+                    xv = ANNEROY_BULLET_DSPEED
+                    yv = ANNEROY_BULLET_DSPEED
+                    image_rotation = 45
+                elif self.aim_direction == -2:
+                    x = 9
+                    y = 17
+                    yv = ANNEROY_BULLET_SPEED
+                    image_rotation = 90
+            else:
+                if self.aim_direction == 0:
+                    x = -21
+                    y = -4
+                    xv = -ANNEROY_BULLET_SPEED
+                    image_rotation = 0
+                elif self.aim_direction == 1:
+                    x = -19
+                    y = -24
+                    xv = -ANNEROY_BULLET_DSPEED
+                    yv = -ANNEROY_BULLET_DSPEED
+                    image_rotation = 45
+                elif self.aim_direction == 2:
+                    x = -6
+                    y = -27
+                    yv = -ANNEROY_BULLET_SPEED
+                    image_rotation = 90
+                elif self.aim_direction == -1:
+                    x = -16
+                    y = 6
+                    xv = -ANNEROY_BULLET_DSPEED
+                    yv = ANNEROY_BULLET_DSPEED
+                    image_rotation = -45
+                elif self.aim_direction == -2:
+                    x = -9
+                    y = 17
+                    yv = ANNEROY_BULLET_SPEED
+                    image_rotation = -90
+
+            bs = AnneroyBullet.create(
+                self.x + x, self.y + y, 10000,
+                sprite=anneroy_bullet_sprite, xvelocity=self.xvelocity + xv,
+                yvelocity=self.yvelocity + yv, regulate_origin=True,
+                image_xscale=abs(self.image_xscale) * self.facing,
+                image_yscale=self.image_yscale,
+                image_rotation=image_rotation, image_blend=self.image_blend)
+            bs.shoot_angle = shoot_angle
+
     def set_image(self):
         assert self.torso is not None
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
@@ -1534,6 +1615,13 @@ class Anneroy(Player):
         self.torso = sge.dsp.Object.create(self.x, self.y, self.z + 0.1,
                                            regulate_origin=True)
 
+    def event_alarm(self, alarm_id):
+        super(Anneroy, self).event_alarm(alarm_id)
+
+        if alarm_id == "shoot_lock":
+            if self.shoot_pressed:
+                self.shoot()
+
     def event_animation_end(self):
         assert self.torso is not None
 
@@ -1561,6 +1649,29 @@ class Anneroy(Player):
         self.image_speed = None
         self.image_index = 0
         self.fixed_sprite = True
+
+
+class AnneroyBulletStart(sge.dsp.Object):
+
+    shoot_angle = 0
+
+    def event_animation_end(self):
+        self.destroy()
+        Smoke.create(
+            self.x, self.y, self.z, sprite=anneroy_bullet_dust_sprite,
+            xvelocity=self.xvelocity, yvelocity=self.yvelocity,
+            image_xscale=self.image_xscale, image_yscale=self.image_yscale,
+            image_rotation=self.image_rotation, image_blend=self.image_blend)
+
+        xf = self.image_xscale * math.cos(math.radians(self.shoot_angle))
+        yf = self.image_yscale * -math.sin(math.radians(self.shoot_angle))
+        xv = self.xvelocity + xf * ANNEROY_BULLET_SPEED
+        yv = self.yvelocity + yf * ANNEROY_BULLET_SPEED
+        AnneroyBullet.create(
+            self.x + xv, self.y + yv, self.z, sprite=anneroy_bullet_sprite,
+            xvelocity=xv, yvelocity=yv, regulate_origin=True,
+            image_xscale=self.image_xscale, image_yscale=self.image_yscale,
+            image_rotation=self.image_rotation, image_blend=self.image_blend)
 
 
 class DeadMan(sge.dsp.Object):
@@ -1616,6 +1727,7 @@ class Smoke(sge.dsp.Object):
 class InteractiveObject(sge.dsp.Object):
 
     killed_by_void = True
+    shootable = False
     freezable = False
 
     def get_nearest_player(self):
@@ -1636,6 +1748,9 @@ class InteractiveObject(sge.dsp.Object):
         pass
 
     def touch(self, other):
+        pass
+
+    def shoot(self):
         pass
 
     def freeze(self):
@@ -1945,25 +2060,24 @@ class Boss(InteractiveObject):
                 sge.game.current_room.load_timeline(self.death_timeline)
 
 
-class IceBullet(InteractiveObject, xsge_physics.Collider):
-
-    def deactivate(self):
-        self.destroy()
+class AnneroyBullet(InteractiveObject, xsge_physics.Collider):
 
     def dissipate(self):
         if self in sge.game.current_room.objects:
-            Smoke.create(self.x, self.y, self.z,
-                         sprite=ice_bullet_break_sprite)
-            play_sound(icebullet_break_sound, self.x, self.y)
+            Smoke.create(
+                self.x, self.y, self.z, sprite=anneroy_bullet_dissipate_sprite,
+                regulate_origin=True, image_xscale=self.image_xscale,
+                image_yscale=self.image_yscale,
+                image_rotation=self.image_rotation,
+                image_blend=self.image_blend)
             self.destroy()
 
     def event_collision(self, other, xdirection, ydirection):
-        if ((isinstance(other, InteractiveObject) and other.freezable) or
-                isinstance(other, ThinIce)):
+        if isinstance(other, InteractiveObject) and other.shootable:
             other.freeze()
             self.dissipate()
 
-        super(IceBullet, self).event_collision(other, xdirection, ydirection)
+        super(AnneroyBullet, self).event_collision(other, xdirection, ydirection)
 
     def event_physics_collision_left(self, other, move_loss):
         self.event_collision(other, -1, 0)
@@ -3148,6 +3262,18 @@ anneroy_legs_crouched_sprite = sge.gfx.Sprite.from_tileset(
     fname, 23, 85, width=21, height=15, origin_x=7, origin_y=-9)
 anneroy_legs_crouch_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 189, 2, xsep=7, width=21, height=21, origin_x=8, origin_y=-3,
+    fps=10)
+
+anneroy_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 150, 119, 3, xsep=7, width=26, height=16, origin_x=-2, origin_y=7,
+    fps=10)
+anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 249, 119, width=26, height=16, origin_x=-2, origin_y=7, fps=10)
+anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 287, 123, width=17, height=6, origin_x=11, origin_y=3, bbox_x=-4,
+    bbox_y=-4, bbox_width=8, bbox_height=8)
+anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=19, origin_y=23,
     fps=10)
 
 n = id(anneroy_legs_run_sprite)

@@ -1139,10 +1139,10 @@ class Player(xsge_physics.Collider):
 
         prev_aim_direction = self.aim_direction
 
-        if "shooting" not in self.alarms:
-            self.aim_direction = None
-        elif h_control:
+        if "shooting" in self.alarms:
             self.aim_direction = 0
+        else:
+            self.aim_direction = None
 
         if self.halt_pressed and h_control:
             if v_control:
@@ -1444,7 +1444,7 @@ class Anneroy(Player):
         if "shoot_lock" not in self.alarms:
             if self.aim_direction is None:
                 self.aim_direction = 0
-            self.alarms["shooting"] = 60
+            self.alarms["shooting"] = 20
             self.alarms["shoot_lock"] = 15
 
             x = 0
@@ -1455,58 +1455,58 @@ class Anneroy(Player):
 
             if self.facing > 0:
                 if self.aim_direction == 0:
-                    x = 21
-                    y = -4
+                    x = 39
+                    y = -3
                     xv = ANNEROY_BULLET_SPEED
                     image_rotation = 0
                 elif self.aim_direction == 1:
-                    x = 19
-                    y = -24
+                    x = 32
+                    y = -37
                     xv = ANNEROY_BULLET_DSPEED
                     yv = -ANNEROY_BULLET_DSPEED
                     image_rotation = 315
                 elif self.aim_direction == 2:
                     x = 6
-                    y = -27
+                    y = -45
                     yv = -ANNEROY_BULLET_SPEED
                     image_rotation = 270
                 elif self.aim_direction == -1:
-                    x = 16
-                    y = 6
+                    x = 29
+                    y = 19
                     xv = ANNEROY_BULLET_DSPEED
                     yv = ANNEROY_BULLET_DSPEED
                     image_rotation = 45
                 elif self.aim_direction == -2:
                     x = 9
-                    y = 17
+                    y = 35
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
             else:
                 if self.aim_direction == 0:
-                    x = -21
-                    y = -4
+                    x = -39
+                    y = -3
                     xv = -ANNEROY_BULLET_SPEED
                     image_rotation = 180
                 elif self.aim_direction == 1:
-                    x = -19
-                    y = -24
+                    x = -32
+                    y = -37
                     xv = -ANNEROY_BULLET_DSPEED
                     yv = -ANNEROY_BULLET_DSPEED
                     image_rotation = 225
                 elif self.aim_direction == 2:
                     x = -6
-                    y = -27
+                    y = -45
                     yv = -ANNEROY_BULLET_SPEED
                     image_rotation = 270
                 elif self.aim_direction == -1:
-                    x = -16
-                    y = 6
+                    x = -29
+                    y = 19
                     xv = -ANNEROY_BULLET_DSPEED
                     yv = ANNEROY_BULLET_DSPEED
                     image_rotation = 135
                 elif self.aim_direction == -2:
                     x = -9
-                    y = 17
+                    y = 35
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
 
@@ -3251,9 +3251,9 @@ anneroy_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 150, 119, 3, xsep=7, width=26, height=16, origin_x=-2, origin_y=7,
     fps=10)
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 249, 119, width=26, height=16, origin_x=-2, origin_y=7, fps=10)
+    fname, 249, 119, width=26, height=16, origin_x=16, origin_y=7, fps=10)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 287, 123, width=17, height=6, origin_x=-4, origin_y=3, bbox_x=-4,
+    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-4,
     bbox_y=-4, bbox_width=8, bbox_height=8)
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=19, origin_y=23,

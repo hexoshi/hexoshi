@@ -1524,6 +1524,7 @@ class Anneroy(Player):
                 image_xscale=abs(self.image_xscale),
                 image_yscale=self.image_yscale,
                 image_rotation=image_rotation, image_blend=self.image_blend)
+            play_sound(shoot_sound, self.x, self.y)
 
     def set_image(self):
         assert self.torso is not None
@@ -2043,7 +2044,7 @@ class Boss(InteractiveObject):
                 sge.game.current_room.load_timeline(self.death_timeline)
 
 
-class AnneroyBullet(InteractiveObject, xsge_physics.Collider):
+class AnneroyBullet(InteractiveObject):
 
     def dissipate(self):
         if self in sge.game.current_room.objects:
@@ -2056,27 +2057,75 @@ class AnneroyBullet(InteractiveObject, xsge_physics.Collider):
             self.destroy()
 
     def event_collision(self, other, xdirection, ydirection):
+        super(AnneroyBullet, self).event_collision(other, xdirection, ydirection)
+
         if isinstance(other, InteractiveObject) and other.shootable:
             other.shoot()
             self.dissipate()
+        elif isinstance(other, (xsge_physics.SolidLeft,
+                                xsge_physics.SolidRight,
+                                xsge_physics.SolidTop,
+                                xsge_physics.SolidBottom,
+                                xsge_physics.SlopeTopLeft,
+                                xsge_physics.SlopeTopRight,
+                                xsge_physics.SlopeBottomLeft,
+                                xsge_physics.SlopeBottomRight)):
+            if self.xvelocity:
+                collisions1 = sge.collision.rectangle(
+                    self.bbox_left, self.bbox_top, self.bbox_width, 1)
+                collisions2 = sge.collision.rectangle(
+                    self.bbox_left, self.bbox_bottom - 1, self.bbox_width, 1)
+                if self.xvelocity > 0:
+                    cls = (xsge_physics.SolidLeft, xsge_physics.SlopeTopLeft,
+                           xsge_physics.SlopeBottomLeft)
+                else:
+                    cls = (xsge_physics.SolidRight, xsge_physics.SlopeTopRight,
+                           xsge_physics.SlopeBottomRight)
 
-        super(AnneroyBullet, self).event_collision(other, xdirection, ydirection)
+                touching1 = False
+                touching2 = False
+                if collisions1 and collisions2:
+                    for obj in collisions1:
+                        if isinstance(obj, cls):
+                            touching1 = True
+                            break
+                    if touching1:
+                        for obj in collisions2:
+                            if isinstance(obj, cls):
+                                touching2 = True
+                                break
 
-    def event_physics_collision_left(self, other, move_loss):
-        self.event_collision(other, -1, 0)
-        self.dissipate()
+                if touching1 and touching2:
+                    self.dissipate()
 
-    def event_physics_collision_right(self, other, move_loss):
-        self.event_collision(other, 1, 0)
-        self.dissipate()
+            if self.yvelocity:
+                collisions1 = sge.collision.rectangle(
+                    self.bbox_left, self.bbox_top, 1, self.bbox_height)
+                collisions2 = sge.collision.rectangle(
+                    self.bbox_right - 1, self.bbox_top, 1, self.bbox_height)
+                if self.yvelocity > 0:
+                    cls = (xsge_physics.SolidTop, xsge_physics.SlopeTopLeft,
+                           xsge_physics.SlopeTopRight)
+                else:
+                    cls = (xsge_physics.SolidBottom,
+                           xsge_physics.SlopeBottomLeft,
+                           xsge_physics.SlopeBottomRight)
 
-    def event_physics_collision_top(self, other, move_loss):
-        self.event_collision(other, 0, -1)
-        self.dissipate()
+                touching1 = False
+                touching2 = False
+                if collisions1 and collisions2:
+                    for obj in collisions1:
+                        if isinstance(obj, cls):
+                            touching1 = True
+                            break
+                    if touching1:
+                        for obj in collisions2:
+                            if isinstance(obj, cls):
+                                touching2 = True
+                                break
 
-    def event_physics_collision_bottom(self, other, move_loss):
-        self.event_collision(other, 0, 1)
-        self.dissipate()
+                if touching1 and touching2:
+                    self.dissipate()
 
 
 class TimelineSwitcher(InteractiveObject):
@@ -3311,6 +3360,7 @@ font_small = sge.gfx.Font("Droid Sans Mono", size=4)
 font_big = sge.gfx.Font("Droid Sans Mono", size=11)
 
 # Load sounds
+shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
 confirm_sound = sge.snd.Sound(None)

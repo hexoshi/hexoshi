@@ -1386,7 +1386,12 @@ class Anneroy(Player):
     @property
     def can_move(self):
         if self.crouching:
-            self.press_up()
+            h_control = bool(self.right_pressed) - bool(self.left_pressed)
+            if h_control != self.facing:
+                self.alarms["autostand_lock"] = 10
+
+            if "autostand_lock" not in self.alarms:
+                self.press_up()
 
         return not self.crouching
 

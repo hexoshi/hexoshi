@@ -94,7 +94,7 @@ LEVEL = args.level
 RECORD = args.record
 NO_BACKGROUNDS = args.no_backgrounds
 NO_HUD = args.no_hud
-GOD = (args.god and args.god.lower() == "plz4giv")
+GOD = (args.god and args.god.lower() == "inbailey")
 
 gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
 
@@ -1405,6 +1405,7 @@ class Anneroy(Player):
         self.torso = None
         self.fixed_sprite = False
         self.crouching = False
+        self.last_aim_direction = 0
 
     def press_up(self):
         if self.crouching:
@@ -1450,8 +1451,13 @@ class Anneroy(Player):
         if "shoot_lock" not in self.alarms:
             if self.aim_direction is None:
                 self.aim_direction = 0
-            self.alarms["shooting"] = 20
+            self.alarms["shooting"] = 30
             self.alarms["shoot_lock"] = 15
+
+            if self.aim_direction is not None:
+                self.last_aim_direction = self.aim_direction
+            else:
+                self.last_aim_direction = 0
 
             x = 0
             y = 0
@@ -1588,6 +1594,9 @@ class Anneroy(Player):
                 self.sprite = anneroy_legs_jump_sprite
                 self.image_index = -1
 
+        if "shooting" in self.alarms:
+            aim_direction = self.last_aim_direction
+        elif not self.fixed_sprite:
             if self.aim_direction_time < 4 and self.aim_direction is not None:
                 aim_direction = max(-1, min(self.aim_direction, 1))
         else:
@@ -1741,7 +1750,7 @@ class InteractiveObject(sge.dsp.Object):
     def touch(self, other):
         pass
 
-    def shoot(self):
+    def shoot(self, damage=1):
         pass
 
     def freeze(self):
@@ -2156,6 +2165,17 @@ class AnneroyBullet(InteractiveObject):
 
                 if touching1 and touching2:
                     self.dissipate(xdirection, ydirection)
+
+
+class Door(InteractiveObject):
+
+    shootable = True
+
+    def shoot(self, damage=1):
+        pass
+
+    def event_create(self):
+        pass
 
 
 class TimelineSwitcher(InteractiveObject):

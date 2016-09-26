@@ -2049,13 +2049,34 @@ class Boss(InteractiveObject):
 
 class AnneroyBullet(InteractiveObject):
 
-    def dissipate(self):
+    def dissipate(self, xdirection=0, ydirection=0):
         if self in sge.game.current_room.objects:
+            image_rotation = 0
+            if abs(xdirection) > abs(ydirection):
+                if xdirection < 0:
+                    image_rotation = 180
+                else:
+                    image_rotation = 0
+            elif abs(ydirection) > abs(xdirection):
+                if ydirection < 0:
+                    image_rotation = 270
+                else:
+                    image_rotation = 90
+            elif abs(self.xvelocity) > abs(self.yvelocity):
+                if self.xvelocity < 0:
+                    image_rotation = 180
+                else:
+                    image_rotation = 0
+            else:
+                if self.yvelocity < 0:
+                    image_rotation = 270
+                else:
+                    image_rotation = 90
+
             Smoke.create(
                 self.x, self.y, self.z, sprite=anneroy_bullet_dissipate_sprite,
                 regulate_origin=True, image_xscale=self.image_xscale,
-                image_yscale=self.image_yscale,
-                image_rotation=self.image_rotation,
+                image_yscale=self.image_yscale, image_rotation=image_rotation,
                 image_blend=self.image_blend)
             self.destroy()
 
@@ -2070,7 +2091,7 @@ class AnneroyBullet(InteractiveObject):
 
         if isinstance(other, InteractiveObject) and other.shootable:
             other.shoot()
-            self.dissipate()
+            self.dissipate(xdirection, ydirection)
         elif isinstance(other, (xsge_physics.SolidLeft,
                                 xsge_physics.SolidRight,
                                 xsge_physics.SolidTop,
@@ -2105,7 +2126,7 @@ class AnneroyBullet(InteractiveObject):
                                 break
 
                 if touching1 and touching2:
-                    self.dissipate()
+                    self.dissipate(xdirection, ydirection)
 
             if self.yvelocity:
                 collisions1 = sge.collision.rectangle(
@@ -2134,7 +2155,7 @@ class AnneroyBullet(InteractiveObject):
                                 break
 
                 if touching1 and touching2:
-                    self.dissipate()
+                    self.dissipate(xdirection, ydirection)
 
 
 class TimelineSwitcher(InteractiveObject):
@@ -3311,8 +3332,8 @@ anneroy_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
     fname, 249, 119, width=26, height=16, origin_x=16, origin_y=7, fps=10)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-4,
-    bbox_y=-4, bbox_width=8, bbox_height=8)
+    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-3,
+    bbox_y=-3, bbox_width=5, bbox_height=5)
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=19, origin_y=23,
     fps=10)

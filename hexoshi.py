@@ -1182,7 +1182,8 @@ class Player(xsge_physics.Collider):
                 target_speed = min(h_factor * self.max_speed, self.max_speed)
 
             if (abs(self.xvelocity) < target_speed or
-                    h_control != current_h_movement):
+                    (self.xvelocity > 0 and h_control < 0) or
+                    (self.xvelocity < 0 and h_control > 0)):
                 if self.on_floor or self.was_on_floor:
                     self.xacceleration = self.acceleration * h_control
                 else:

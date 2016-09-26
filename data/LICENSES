@@ -59,6 +59,8 @@ objecttypes.xml
 rooms/base.tmx
 sounds/shoot.sfxr
 sounds/shoot.wav
+sounds/teleport.sfxr
+sounds/teleport.wav
 
 Author: onpon4 <https://onpon4.github.io>
 License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>

@@ -1014,7 +1014,7 @@ class Player(xsge_physics.Collider):
         self.view = None
 
         if GOD:
-            image_blend = sge.gfx.Color("yellow")
+            image_blend = sge.gfx.Color("olive")
 
         super(Player, self).__init__(
             x, y, z=z, sprite=sprite, visible=visible, active=active,
@@ -1617,6 +1617,7 @@ class Anneroy(Player):
         self.torso.y = self.y + y * self.image_yscale
         self.torso.image_xscale = abs(self.image_xscale)
         self.torso.image_yscale = self.image_yscale
+        self.torso.image_blend = self.image_blend
 
     def event_create(self):
         super(Anneroy, self).event_create()
@@ -1852,10 +1853,6 @@ class WalkingObject(FallingObject):
     walk_speed = PLAYER_MAX_SPEED
     stayonplatform = False
 
-    def deactivate(self):
-        super(WalkingObject, self).deactivate()
-        self.xvelocity = 0
-
     def set_direction(self, direction):
         self.xvelocity = self.walk_speed * direction
         self.image_xscale = abs(self.image_xscale) * direction
@@ -2055,6 +2052,12 @@ class AnneroyBullet(InteractiveObject):
                 image_yscale=self.image_yscale,
                 image_rotation=self.image_rotation,
                 image_blend=self.image_blend)
+            self.destroy()
+
+    def event_step(self, time_passed, delta_mult):
+        room = sge.game.current_room
+        if (self.bbox_right < 0 or self.bbox_left > room.width or
+                self.bbox_bottom < 0 or self.bbox_top > room.height):
             self.destroy()
 
     def event_collision(self, other, xdirection, ydirection):

@@ -1144,16 +1144,16 @@ class Player(xsge_physics.Collider):
         else:
             self.aim_direction = None
 
-        if self.halt_pressed and h_control:
-            if v_control:
-                self.aim_direction = 1 * -v_control
-            else:
-                self.aim_direction = 0
-        elif v_control:
-            if h_control and self.on_floor:
-                self.aim_direction = 1 * -v_control
-            else:
+        if self.halt_pressed:
+            if h_control:
+                if v_control:
+                    self.aim_direction = 1 * -v_control
+                else:
+                    self.aim_direction = 0
+            elif v_control:
                 self.aim_direction = 2 * -v_control
+        elif v_control:
+            self.aim_direction = 2 * -v_control
 
         if self.aim_up_pressed and self.aim_down_pressed:
             self.aim_direction = 2

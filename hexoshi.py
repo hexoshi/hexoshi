@@ -364,6 +364,8 @@ class Level(sge.dsp.Room):
         credits_room.start()
 
     def event_room_start(self):
+        if player is not None:
+            self.add(player)
         ##self.add(lava_animation)
 
         self.event_room_resume()
@@ -1750,7 +1752,7 @@ class InteractiveObject(sge.dsp.Object):
     def touch(self, other):
         pass
 
-    def shoot(self, damage=1):
+    def shoot(self, other):
         pass
 
     def freeze(self):
@@ -2099,7 +2101,7 @@ class AnneroyBullet(InteractiveObject):
         super(AnneroyBullet, self).event_collision(other, xdirection, ydirection)
 
         if isinstance(other, InteractiveObject) and other.shootable:
-            other.shoot()
+            other.shoot(self)
             self.dissipate(xdirection, ydirection)
         elif isinstance(other, (xsge_physics.SolidLeft,
                                 xsge_physics.SolidRight,
@@ -2167,15 +2169,104 @@ class AnneroyBullet(InteractiveObject):
                     self.dissipate(xdirection, ydirection)
 
 
-class Door(InteractiveObject):
+class Tunnel(InteractiveObject):
+
+    def __init__(self, x, y, dest=None, spawn_id=None, **kwargs):
+        self.dest = dest
+        self.spawn_id = spawn_id
+        if not spawn_id and dest:
+            if ':' in dest:
+                level_f, spawn = dest.split(':', 1)
+                if level_f:
+                    self.spawn_id = level_f
+            else:
+                self.spawn_id = dest
+
+        kwargs["checks_collisions"] = False
+        sge.dsp.Object.__init__(self, x, y, **kwargs)
+
+
+class DoorBarrier(InteractiveObject, xsge_physics.Solid):
 
     shootable = True
 
-    def shoot(self, damage=1):
-        pass
+    parent = None
+
+    def shoot(self, other):
+        if self.parent is not None:
+            self.parent.shoot(other)
+
+    def event_animation_end(self):
+        self.image_speed = 0
+        if self.tangible:
+            self.image_index = 0
+        else:
+            self.image_index = self.sprite.frames - 1
+
+
+class DoorFrame(InteractiveObject):
+
+    shootable = True
+
+    closed_sprite = None
+    open_sprite = None
+    barrier_sprite = None
+    edge1_area = (0, 0, 8, 8)
+    edge2_area = (0, 56, 8, 8)
+
+    def __init__(self, x, y, do_close=False, **kwargs):
+        self.do_close = do_close
+        self.edge1 = None
+        self.edge2 = None
+        self.barrier = None
+        kwargs["tangible"] = False
+        sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def event_create(self):
-        pass
+        self.sprite = self.closed_sprite
+        x, y, w, h = self.edge1_area
+        self.edge1 = Solid.create(self.x + x, self.y + y, bbox_width=w,
+                                  bbox_height=h)
+        x, y, w, h = self.edge2_area
+        self.edge2 = Solid.create(self.x + x, self.y + y, bbox_width=w,
+                                  bbox_height=h)
+
+        if self.do_close:
+            image_fps = -self.barrier.sprite.fps
+            image_index = self.barrier.sprite.frames - 1
+        else:
+            image_fps = 0
+            image_index = 0
+
+        self.barrier = DoorBarrier.create(self.x, self.y, self.z,
+                                          sprite=self.barrier_sprite,
+                                          image_index=image_index,
+                                          image_fps=image_fps)
+
+    def shoot(self, other):
+        if self.barrier is not None:
+            self.barrier.tangible = False
+            self.barrier.image_speed = self.barrier.sprite.speed
+
+
+class DoorFrameX(DoorFrame):
+
+    def event_create(self):
+        self.closed_sprite = doorframe_regular_x_closed_sprite
+        self.open_sprite = doorframe_regular_x_open_sprite
+        self.barrier_sprite = door_barrier_x_sprite
+        super(DoorFrameX, self).event_create()
+
+
+class DoorFrameY(DoorFrame):
+
+    edge2_area = (56, 0, 8, 8)
+
+    def event_create(self):
+        self.closed_sprite = doorframe_regular_y_closed_sprite
+        self.open_sprite = doorframe_regular_y_open_sprite
+        self.barrier_sprite = door_barrier_y_sprite
+        super(DoorFrameY, self).event_create()
 
 
 class TimelineSwitcher(InteractiveObject):
@@ -2968,6 +3059,26 @@ def get_jump_speed(height, gravity=GRAVITY):
     return -math.sqrt(2 * gravity * height)
 
 
+def warp(dest):
+    global spawn_point
+
+    if ":" in dest:
+        level_f, spawn_point = dest.split(':', 1)
+    else:
+        level_f = dest
+        spawn_point = None
+
+    if level_f:
+        level = sge.game.current_room.__class__.load(level_f)
+    else:
+        level = sge.game.current_room
+
+    if level is not None:
+        level.start()
+    else:
+        sge.game.start_room.start()
+
+
 def set_gui_controls():
     # Set the controls for xsge_gui based on the player controls.
     xsge_gui.next_widget_keys = list(itertools.chain.from_iterable(down_key))
@@ -3273,8 +3384,9 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "player": Player,
-         "anneroy": Anneroy, "timeline_switcher": TimelineSwitcher,
-         "moving_platform_path": MovingPlatformPath,
+         "anneroy": Anneroy, "doorframe_x": DoorFrameX,
+         "doorframe_y": DoorFrameY, "timeline_switcher": TimelineSwitcher,
+         "doors": get_object, "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath}
 
 
@@ -3388,6 +3500,16 @@ anneroy_torso_offset[(n, 0)] = (0, 11)
 n = id(anneroy_legs_crouch_sprite)
 anneroy_torso_offset[(n, 0)] = (0, 3)
 anneroy_torso_offset[(n, 1)] = (0, 9)
+
+d = os.path.join(DATA, "images", "objects", "doors")
+door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=10,
+                                       bbox_y=8, bbox_width=8, bbox_height=48)
+door_barrier_y_sprite = sge.gfx.Sprite("barrier_y", d, origin_x=-8, fps=10,
+                                       bbox_x=8, bbox_width=48, bbox_height=8)
+doorframe_regular_x_closed_sprite = sge.gfx.Sprite("regular_x_closed", d)
+doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)
+doorframe_regular_y_closed_sprite = sge.gfx.Sprite("regular_y_closed", d)
+doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
 
 d = os.path.join(DATA, "images", "portraits")
 portrait_sprites = {}

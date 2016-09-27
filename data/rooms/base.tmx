@@ -6,9 +6,19 @@
  <tileset firstgid="89" name="extras" tilewidth="8" tileheight="8" tilecount="77">
   <image source="../images/tiles/extras.png" width="88" height="56"/>
  </tileset>
+ <tileset firstgid="166" source="../tilesets/doors.tsx"/>
+ <objectgroup name="Enemies"/>
+ <objectgroup name="Player Objects"/>
+ <objectgroup name="Special Blocks"/>
+ <layer name="fake_tile" width="50" height="28">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
+  </data>
+ </layer>
  <layer name="Tile Layer 1" width="50" height="28">
   <data encoding="base64" compression="zlib">
    eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
   </data>
  </layer>
+ <objectgroup name="solid"/>
 </map>

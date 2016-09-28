@@ -126,8 +126,8 @@ PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
 PLAYER_HITSTUN_SPEED = 0.5
 
-ANNEROY_BBOX_X = -6
-ANNEROY_BBOX_WIDTH = 13
+ANNEROY_BBOX_X = -8
+ANNEROY_BBOX_WIDTH = 17
 ANNEROY_STAND_BBOX_Y = -16
 ANNEROY_STAND_BBOX_HEIGHT = 40
 ANNEROY_CROUCH_BBOX_Y = -5
@@ -1524,13 +1524,29 @@ class Anneroy(Player):
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
 
+            guide = xsge_physics.Collider.create(
+                self.torso.x, self.torso.y, sprite=anneroy_bullet_sprite)
+            xsteps = int(abs(x) / guide.bbox_width)
+            ysteps = int(abs(y) / guide.bbox_height)
+            xfinal = math.copysign(abs(x) - xsteps * guide.bbox_width, x)
+            yfinal = math.copysign(abs(y) - ysteps * guide.bbox_height, y)
+            for i in six.moves.range(xsteps):
+                guide.move_x(math.copysign(guide.bbox_width, x))
+            for i in six.moves.range(ysteps):
+                guide.move_y(math.copysign(guide.bbox_height, y))
+            guide.move_x(xfinal)
+            guide.move_y(yfinal)
+
             bs = AnneroyBullet.create(
-                self.torso.x + x, self.torso.y + y, 10000,
+                guide.x, guide.y, 10000,
                 sprite=anneroy_bullet_sprite, xvelocity=xv,
                 yvelocity=yv, regulate_origin=True,
                 image_xscale=abs(self.image_xscale),
                 image_yscale=self.image_yscale,
                 image_rotation=image_rotation, image_blend=self.image_blend)
+
+            guide.destroy()
+
             Smoke.create(
                 self.torso.x + x, self.torso.y + y, 10000,
                 sprite=anneroy_bullet_dust_sprite, xvelocity=self.xvelocity,

@@ -1410,7 +1410,7 @@ class Anneroy(Player):
         self.last_aim_direction = 0
 
     def press_up(self):
-        if self.crouching:
+        if self.crouching and not self.halt_pressed:
             for other in sge.collision.rectangle(
                     self.x + ANNEROY_BBOX_X, self.y + ANNEROY_STAND_BBOX_Y,
                     ANNEROY_BBOX_WIDTH, ANNEROY_STAND_BBOX_HEIGHT):
@@ -1432,7 +1432,7 @@ class Anneroy(Player):
     def press_down(self):
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
         if (not self.crouching and not h_control and self.on_floor and
-                self.was_on_floor):
+                self.was_on_floor and not self.halt_pressed):
             self.event_animation_end()
             self.sprite = anneroy_legs_crouch_sprite
             self.image_speed = anneroy_legs_crouch_sprite.speed
@@ -2654,13 +2654,28 @@ class KeyboardMenu(Menu):
         return self
 
     def event_choose(self):
-        def toggle_key(key, new_key):
+        def toggle_key(key, new_key, self=self):
             if new_key in key:
-                key.remove(new_key)
+                if len(key) > 1:
+                    key.remove(new_key)
             else:
-                key.append(new_key)
-                while len(key) > 2:
-                    key.pop(0)
+                refused = False
+                for other_key in [
+                        left_key[self.page], right_key[self.page],
+                        up_key[self.page], down_key[self.page],
+                        jump_key[self.page], action_key[self.page],
+                        sneak_key[self.page], menu_key[self.page],
+                        pause_key[self.page]]:
+                    if new_key in other_key:
+                        if len(other_key) > 1:
+                            other_key.remove(new_key)
+                        else:
+                            refused = True
+
+                if not refused:
+                    key.append(new_key)
+                    while len(key) > 2:
+                        key.pop(0)
 
         if self.choice == 0:
             play_sound(select_sound)
@@ -2818,10 +2833,19 @@ class JoystickMenu(Menu):
         return self
 
     def event_choose(self):
-        def toggle_js(js, new_js):
+        def toggle_js(js, new_js, self=self):
             if new_js in js:
                 js.remove(new_js)
             else:
+                for other_js in [
+                        left_js[self.page], right_js[self.page],
+                        up_js[self.page], down_js[self.page],
+                        jump_js[self.page], action_js[self.page],
+                        sneak_js[self.page], menu_js[self.page],
+                        pause_js[self.page]]:
+                    if new_js in other_js:
+                        other_key.remove(new_js)
+
                 js.append(new_js)
                 while len(js) > 2:
                     js.pop(0)
@@ -3099,8 +3123,6 @@ def warp(dest):
 def set_gui_controls():
     # Set the controls for xsge_gui based on the player controls.
     xsge_gui.next_widget_keys = list(itertools.chain.from_iterable(down_key))
-    if not xsge_gui.next_widget_keys:
-        xsge_gui.next_widget_keys = ["tab"]
     xsge_gui.previous_widget_keys = list(itertools.chain.from_iterable(up_key))
     xsge_gui.left_keys = list(itertools.chain.from_iterable(left_key))
     xsge_gui.right_keys = list(itertools.chain.from_iterable(right_key))
@@ -3109,14 +3131,10 @@ def set_gui_controls():
     xsge_gui.enter_keys = (list(itertools.chain.from_iterable(jump_key)) +
                            list(itertools.chain.from_iterable(shoot_key)) +
                            list(itertools.chain.from_iterable(pause_key)))
-    if not xsge_gui.enter_keys:
-        xsge_gui.enter_keys = ["enter"]
     xsge_gui.escape_keys = (list(itertools.chain.from_iterable(mode_key)) +
                             ["escape"])
     xsge_gui.next_widget_joystick_events = (
         list(itertools.chain.from_iterable(down_js)))
-    if not xsge_gui.next_widget_joystick_events:
-        xsge_gui.next_widget_joystick_events = [(0, "axis+", 1)]
     xsge_gui.previous_widget_joystick_events = (
         list(itertools.chain.from_iterable(up_js)))
     xsge_gui.left_joystick_events = list(itertools.chain.from_iterable(left_js))
@@ -3128,12 +3146,8 @@ def set_gui_controls():
         list(itertools.chain.from_iterable(jump_js)) +
         list(itertools.chain.from_iterable(shoot_js)) +
         list(itertools.chain.from_iterable(pause_js)))
-    if not xsge_gui.enter_joystick_events:
-        xsge_gui.enter_joystick_events = [(0, "button", 9)]
     xsge_gui.escape_joystick_events = (
         list(itertools.chain.from_iterable(mode_js)))
-    if not xsge_gui.escape_joystick_events:
-        xsge_gui.escape_joystick_events = [(0, "button", 8)]
 
 
 def wait_key():

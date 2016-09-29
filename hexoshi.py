@@ -2238,6 +2238,11 @@ class DoorFrame(InteractiveObject):
         kwargs["tangible"] = False
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
+    def shoot(self, other):
+        if self.barrier is not None:
+            self.barrier.tangible = False
+            self.barrier.image_speed = self.barrier.sprite.speed
+
     def event_create(self):
         self.sprite = self.closed_sprite
         x, y, w, h = self.edge1_area
@@ -2258,11 +2263,7 @@ class DoorFrame(InteractiveObject):
                                           sprite=self.barrier_sprite,
                                           image_index=image_index,
                                           image_fps=image_fps)
-
-    def shoot(self, other):
-        if self.barrier is not None:
-            self.barrier.tangible = False
-            self.barrier.image_speed = self.barrier.sprite.speed
+        self.barrier.parent = self
 
 
 class DoorFrameX(DoorFrame):
@@ -3518,9 +3519,9 @@ anneroy_torso_offset[(n, 0)] = (0, 3)
 anneroy_torso_offset[(n, 1)] = (0, 9)
 
 d = os.path.join(DATA, "images", "objects", "doors")
-door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=10,
+door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,
                                        bbox_y=8, bbox_width=8, bbox_height=48)
-door_barrier_y_sprite = sge.gfx.Sprite("barrier_y", d, origin_x=-8, fps=10,
+door_barrier_y_sprite = sge.gfx.Sprite("barrier_y", d, origin_x=-8, fps=30,
                                        bbox_x=8, bbox_width=48, bbox_height=8)
 doorframe_regular_x_closed_sprite = sge.gfx.Sprite("regular_x_closed", d)
 doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)

@@ -175,7 +175,7 @@ left_key = [["left", "a"]]
 right_key = [["right", "d"]]
 up_key = [["up", "w"]]
 down_key = [["down", "s"]]
-halt_key = [["alt_left", "alt_right"]]
+aim_diag_key = [["alt_left", "alt_right"]]
 jump_key = [["space"]]
 shoot_key = [["ctrl_left", "ctrl_right"]]
 aim_up_key = [["x"]]
@@ -187,7 +187,7 @@ left_js = [[(0, "axis-", 0), (0, "hat_left", 0)]]
 right_js = [[(0, "axis+", 0), (0, "hat_right", 0)]]
 up_js = [[(0, "axis-", 1), (0, "hat_up", 0)]]
 down_js = [[(0, "axis+", 1), (0, "hat_down", 0)]]
-halt_js = [[(0, "button", 10), (0, "button", 11)]]
+aim_diag_js = [[(0, "button", 10), (0, "button", 11)]]
 jump_js = [[(0, "button", 1), (0, "button", 3)]]
 shoot_js = [[(0, "button", 0)]]
 aim_up_js = [[(0, "button", 5), (0, "button", 7)]]
@@ -1003,9 +1003,9 @@ class Player(xsge_physics.Collider):
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
-        self.halt_pressed = False
         self.jump_pressed = False
         self.shoot_pressed = False
+        self.aim_diag_pressed = False
         self.aim_up_pressed = False
         self.aim_down_pressed = False
         self.hp = self.max_hp
@@ -1035,10 +1035,10 @@ class Player(xsge_physics.Collider):
 
     def refresh_input(self):
         if self.human:
-            key_controls = [left_key, right_key, up_key, down_key, halt_key,
+            key_controls = [left_key, right_key, up_key, down_key, aim_diag_key,
                             jump_key, shoot_key, aim_up_key, aim_down_key]
-            js_controls = [left_js, right_js, up_js, down_js, halt_js, jump_js,
-                           shoot_js, aim_up_js, aim_down_js]
+            js_controls = [left_js, right_js, up_js, down_js, aim_diag_js,
+                           jump_js, shoot_js, aim_up_js, aim_down_js]
             states = [0 for i in key_controls]
 
             for i in six.moves.range(len(key_controls)):
@@ -1057,7 +1057,7 @@ class Player(xsge_physics.Collider):
             self.right_pressed = states[1]
             self.up_pressed = states[2]
             self.down_pressed = states[3]
-            self.halt_pressed = states[4]
+            self.aim_diag_pressed = states[4]
             self.jump_pressed = states[5]
             self.shoot_pressed = states[6]
             self.aim_up_pressed = states[7]
@@ -1146,16 +1146,11 @@ class Player(xsge_physics.Collider):
         else:
             self.aim_direction = None
 
-        if self.halt_pressed:
-            if h_control:
-                if v_control:
-                    self.aim_direction = 1 * -v_control
-                else:
-                    self.aim_direction = 0
-            elif v_control:
+        if v_control:
+            if self.aim_diag_pressed:
+                self.aim_direction = 1 * -v_control
+            else:
                 self.aim_direction = 2 * -v_control
-        elif v_control:
-            self.aim_direction = 2 * -v_control
 
         if self.aim_up_pressed and self.aim_down_pressed:
             self.aim_direction = 2
@@ -1177,7 +1172,7 @@ class Player(xsge_physics.Collider):
             self.xvelocity = self.max_speed * current_h_movement
 
         if h_control:
-            if self.halt_pressed or not self.can_move:
+            if not self.can_move:
                 target_speed = 0
             else:
                 h_factor = abs(self.right_pressed - self.left_pressed)
@@ -1410,7 +1405,7 @@ class Anneroy(Player):
         self.last_aim_direction = 0
 
     def press_up(self):
-        if self.crouching and not self.halt_pressed:
+        if self.crouching and not self.aim_diag_pressed:
             for other in sge.collision.rectangle(
                     self.x + ANNEROY_BBOX_X, self.y + ANNEROY_STAND_BBOX_Y,
                     ANNEROY_BBOX_WIDTH, ANNEROY_STAND_BBOX_HEIGHT):
@@ -1432,7 +1427,7 @@ class Anneroy(Player):
     def press_down(self):
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
         if (not self.crouching and not h_control and self.on_floor and
-                self.was_on_floor and not self.halt_pressed):
+                self.was_on_floor and not self.aim_diag_pressed):
             self.event_animation_end()
             self.sprite = anneroy_legs_crouch_sprite
             self.image_speed = anneroy_legs_crouch_sprite.speed
@@ -2197,7 +2192,7 @@ class Tunnel(InteractiveObject):
         warp(self.dest)
 
 
-class SpawnPoint(sge.Object):
+class SpawnPoint(sge.dsp.Object):
 
     def __init__(self, x, y, spawn_id=None, spawn_direction=None, barrier=None,
                  **kwargs):
@@ -2284,7 +2279,7 @@ class DoorFrameY(DoorFrame):
         super(DoorFrameY, self).event_create()
 
 
-class Door(sge.Object):
+class Door(sge.dsp.Object):
 
     def __init__(self, x, y, dest=None, spawn_id=None, **kwargs):
         self.dest = dest
@@ -2299,6 +2294,9 @@ class Door(sge.Object):
         kwargs["visible"] = False
         kwargs["tangible"] = False
         sge.dsp.Object.__init__(self, x, y, **kwargs)
+
+    def event_create(self):
+        self.destroy()
 
 
 class LeftDoor(Door):
@@ -2698,7 +2696,7 @@ class KeyboardMenu(Menu):
     @classmethod
     def create_page(cls, default=0, page=0):
         page %= min(len(left_key), len(right_key), len(up_key), len(down_key),
-                    len(halt_key), len(jump_key), len(shoot_key),
+                    len(jump_key), len(shoot_key), len(aim_diag_key),
                     len(aim_up_key), len(aim_down_key), len(mode_reset_key),
                     len(mode_key), len(pause_key))
 
@@ -2713,9 +2711,9 @@ class KeyboardMenu(Menu):
                      _("Right: {}").format(format_key(right_key[page])),
                      _("Up: {}").format(format_key(up_key[page])),
                      _("Down: {}").format(format_key(down_key[page])),
-                     _("Halt: {}").format(format_key(halt_key[page])),
                      _("Jump: {}").format(format_key(jump_key[page])),
                      _("Shoot: {}").format(format_key(shoot_key[page])),
+                     _("Aim Diagonal: {}").format(format_key(aim_diag_key[page])),
                      _("Aim Up: {}").format(format_key(aim_up_key[page])),
                      _("Aim Down: {}").format(format_key(aim_down_key[page])),
                      _("Reset Mode: {}").format(format_key(mode_reset_key[page])),
@@ -2792,7 +2790,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 5:
             k = wait_key()
             if k is not None:
-                toggle_key(halt_key[self.page], k)
+                toggle_key(aim_diag_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -2873,7 +2871,7 @@ class JoystickMenu(Menu):
     @classmethod
     def create_page(cls, default=0, page=0):
         page %= min(len(left_js), len(right_js), len(up_js), len(down_js),
-                    len(halt_js), len(jump_js), len(shoot_js),
+                    len(jump_js), len(shoot_js), len(aim_diag_js),
                     len(aim_up_js), len(aim_down_js), len(mode_reset_js),
                     len(mode_js), len(pause_js))
 
@@ -2892,9 +2890,9 @@ class JoystickMenu(Menu):
                      _("Right: {}").format(format_js(right_js[page])),
                      _("Up: {}").format(format_js(up_js[page])),
                      _("Down: {}").format(format_js(down_js[page])),
-                     _("Halt: {}").format(format_js(halt_js[page])),
                      _("Jump: {}").format(format_js(jump_js[page])),
                      _("Shoot: {}").format(format_js(shoot_js[page])),
+                     _("Aim Diagonal: {}").format(format_js(aim_diag_js[page])),
                      _("Aim Up: {}").format(format_js(aim_up_js[page])),
                      _("Aim Down: {}").format(format_js(aim_down_js[page])),
                      _("Reset Mode: {}").format(format_js(mode_reset_js[page])),
@@ -2965,7 +2963,7 @@ class JoystickMenu(Menu):
         elif self.choice == 5:
             js = wait_js()
             if js is not None:
-                toggle_js(halt_js[self.page], js)
+                toggle_js(aim_diag_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3413,12 +3411,12 @@ def set_new_game():
 def write_to_disk():
     # Write our saves and settings to disk.
     keys_cfg = {"left": left_key, "right": right_key, "up": up_key,
-                "down": down_key, "halt": halt_key, "jump": jump_key,
+                "down": down_key, "aim_diag": aim_diag_key, "jump": jump_key,
                 "shoot": shoot_key, "aim_up": aim_up_key,
                 "aim_down": aim_down_key, "mode_reset": mode_reset_key,
                 "mode": mode_key, "pause": pause_key}
     js_cfg = {"left": left_js, "right": right_js, "up": up_js,
-              "down": down_js, "halt": halt_js, "jump": jump_js,
+              "down": down_js, "aim_diag": aim_diag_js, "jump": jump_js,
               "shoot": shoot_js, "aim_up": aim_up_js, "aim_down": aim_down_js,
               "mode_reset": mode_reset_js, "mode": mode_js, "pause": pause_js}
 
@@ -3701,7 +3699,7 @@ finally:
     left_key = keys_cfg.get("left", left_key)
     right_key = keys_cfg.get("right", right_key)
     up_key = keys_cfg.get("up", up_key)
-    halt_key = keys_cfg.get("halt", halt_key)
+    aim_diag_key = keys_cfg.get("aim_diag", aim_diag_key)
     down_key = keys_cfg.get("down", down_key)
     jump_key = keys_cfg.get("jump", jump_key)
     shoot_key = keys_cfg.get("shoot", shoot_key)
@@ -3716,7 +3714,8 @@ finally:
     right_js = [[tuple(j) for j in js] for js in js_cfg.get("right", right_js)]
     up_js = [[tuple(j) for j in js] for js in js_cfg.get("up", up_js)]
     down_js = [[tuple(j) for j in js] for js in js_cfg.get("down", down_js)]
-    halt_js = [[tuple(j) for j in js] for js in js_cfg.get("halt", halt_js)]
+    aim_diag_js = [[tuple(j) for j in js]
+                   for js in js_cfg.get("aim_diag", aim_diag_js)]
     jump_js = [[tuple(j) for j in js] for js in js_cfg.get("jump", jump_js)]
     shoot_js = [[tuple(j) for j in js] for js in js_cfg.get("shoot", shoot_js)]
     aim_up_js = [[tuple(j) for j in js]

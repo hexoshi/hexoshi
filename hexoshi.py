@@ -2187,18 +2187,25 @@ class AnneroyBullet(InteractiveObject):
 
 class Tunnel(InteractiveObject):
 
-    def __init__(self, x, y, dest=None, spawn_id=None, **kwargs):
+    def __init__(self, x, y, dest=None, **kwargs):
         self.dest = dest
-        self.spawn_id = spawn_id
-        if not spawn_id and dest:
-            if ':' in dest:
-                level_f, spawn = dest.split(':', 1)
-                if level_f:
-                    self.spawn_id = level_f
-            else:
-                self.spawn_id = dest
-
+        kwargs["visible"] = False
         kwargs["checks_collisions"] = False
+        sge.dsp.Object.__init__(self, x, y, **kwargs)
+
+    def touch(self, other):
+        warp(self.dest)
+
+
+class SpawnPoint(sge.Object):
+
+    def __init__(self, x, y, spawn_id=None, spawn_direction=None, barrier=None,
+                 **kwargs):
+        self.spawn_id = spawn_id
+        self.spawn_direction = spawn_direction
+        self.barrier = barrier
+        kwargs["visible"] = False
+        kwargs["tangible"] = False
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
 
@@ -2230,8 +2237,7 @@ class DoorFrame(InteractiveObject):
     edge1_area = (0, 0, 8, 8)
     edge2_area = (0, 56, 8, 8)
 
-    def __init__(self, x, y, do_close=False, **kwargs):
-        self.do_close = do_close
+    def __init__(self, x, y, **kwargs):
         self.edge1 = None
         self.edge2 = None
         self.barrier = None
@@ -2252,17 +2258,9 @@ class DoorFrame(InteractiveObject):
         self.edge2 = Solid.create(self.x + x, self.y + y, bbox_width=w,
                                   bbox_height=h)
 
-        if self.do_close:
-            image_fps = -self.barrier.sprite.fps
-            image_index = self.barrier.sprite.frames - 1
-        else:
-            image_fps = 0
-            image_index = 0
-
         self.barrier = DoorBarrier.create(self.x, self.y, self.z,
                                           sprite=self.barrier_sprite,
-                                          image_index=image_index,
-                                          image_fps=image_fps)
+                                          image_index=0, image_fps=0)
         self.barrier.parent = self
 
 
@@ -2284,6 +2282,81 @@ class DoorFrameY(DoorFrame):
         self.open_sprite = doorframe_regular_y_open_sprite
         self.barrier_sprite = door_barrier_y_sprite
         super(DoorFrameY, self).event_create()
+
+
+class Door(sge.Object):
+
+    def __init__(self, x, y, dest=None, spawn_id=None, **kwargs):
+        self.dest = dest
+        self.spawn_id = spawn_id
+        if not spawn_id and dest:
+            if ':' in dest:
+                level_f, spawn = dest.split(':', 1)
+                if level_f:
+                    self.spawn_id = level_f
+            else:
+                self.spawn_id = dest
+        kwargs["visible"] = False
+        kwargs["tangible"] = False
+        sge.dsp.Object.__init__(self, x, y, **kwargs)
+
+
+class LeftDoor(Door):
+
+    def event_create(self):
+        frame = DoorFrameX.create(self.x, self.y, z=self.z)
+        Tunnel.create(frame.barrier.bbox_left - TILE_SIZE,
+                      frame.barrier.bbox_top, dest=self.dest,
+                      bbox_width=TILE_SIZE,
+                      bbox_height=frame.barrier.bbox_height)
+        SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
+                          spawn_direction=0, barrier=frame.barrier,
+                          bbox_width=frame.barrier.bbox_width,
+                          bbox_height=frame.barrier.bbox_height)
+        self.destroy()
+
+
+class RightDoor(Door):
+
+    def event_create(self):
+        frame = DoorFrameX.create(self.x, self.y, z=self.z)
+        Tunnel.create(frame.barrier.bbox_right, frame.barrier.bbox_top,
+                      dest=self.dest, bbox_width=TILE_SIZE,
+                      bbox_height=frame.barrier.bbox_height)
+        SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
+                          spawn_direction=180, barrier=frame.barrier,
+                          bbox_width=frame.barrier.bbox_width,
+                          bbox_height=frame.barrier.bbox_height)
+        self.destroy()
+
+
+class UpDoor(Door):
+
+    def event_create(self):
+        frame = DoorFrameY.create(self.x, self.y, z=self.z)
+        Tunnel.create(frame.barrier.bbox_left,
+                      frame.barrier.bbox_top - TILE_SIZE, dest=self.dest,
+                      bbox_width=frame.barrier.bbox_width,
+                      bbox_height=TILE_SIZE)
+        SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
+                          spawn_direction=270, barrier=frame.barrier,
+                          bbox_width=frame.barrier.bbox_width,
+                          bbox_height=frame.barrier.bbox_height)
+        self.destroy()
+
+
+class DownDoor(Door):
+
+    def event_create(self):
+        frame = DoorFrameY.create(self.x, self.y, z=self.z)
+        Tunnel.create(frame.barrier.bbox_left, frame.barrier.bbox_bottom,
+                      dest=self.dest, bbox_width=frame.barrier.bbox_width,
+                      bbox_height=TILE_SIZE)
+        SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
+                          spawn_direction=90, barrier=frame.barrier,
+                          bbox_width=frame.barrier.bbox_width,
+                          bbox_height=frame.barrier.bbox_height)
+        self.destroy()
 
 
 class TimelineSwitcher(InteractiveObject):

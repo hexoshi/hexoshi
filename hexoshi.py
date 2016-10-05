@@ -203,6 +203,8 @@ current_save_slot = None
 watched_timelines = []
 current_level = None
 spawn_point = None
+spawn_xoffset = 0
+spawn_yoffset = 0
 
 player = None
 
@@ -383,11 +385,24 @@ class Level(sge.dsp.Room):
         for obj in self.objects:
             if isinstance(obj, Player):
                 players.append(obj)
+            elif isinstance(obj, SpawnPoint):
+                if obj.spawn_id == spawn_point or (spawn_point is None and
+                                                   spawn_obj is None):
+                    spawn_obj = obj
 
         if spawn_obj is not None:
             for player in players:
-                player.x = spawn_obj.x
-                player.y = spawn_obj.y
+                player.x = spawn_obj.x + spawn_xoffset
+                player.y = spawn_obj.y + spawn_offset
+                if spawn_obj.spawn_direction == 0:
+                    player.bbox_left = spawn_obj.bbox_right
+                elif spawn_obj.spawn_direction == 90:
+                    player.bbox_top = spawn_obj.bbox_bottom
+                elif spawn_obj.spawn_direction == 180:
+                    player.bbox_right = spawn_obj.bbox_left
+                elif spawn_obj.spawn_direction == 270:
+                    player.bbox_bottom = spawn_obj.bbox_top
+
                 player.z = spawn_obj.z + 0.5
                 if player.view is not None:
                     player.view.x = player.x - player.view.width / 2
@@ -2189,6 +2204,10 @@ class Tunnel(InteractiveObject):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def touch(self, other):
+        global spawn_xoffset
+        global spawn_yoffset
+        spawn_xoffset = other.x - self.x
+        spawn_yoffset = other.y - self.y
         warp(self.dest)
 
 
@@ -2308,7 +2327,8 @@ class LeftDoor(Door):
                       bbox_width=TILE_SIZE,
                       bbox_height=frame.barrier.bbox_height)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
-                          spawn_direction=0, barrier=frame.barrier,
+                          spawn_id=self.spawn_id, spawn_direction=0,
+                          barrier=frame.barrier,
                           bbox_width=frame.barrier.bbox_width,
                           bbox_height=frame.barrier.bbox_height)
         self.destroy()
@@ -2322,7 +2342,8 @@ class RightDoor(Door):
                       dest=self.dest, bbox_width=TILE_SIZE,
                       bbox_height=frame.barrier.bbox_height)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
-                          spawn_direction=180, barrier=frame.barrier,
+                          spawn_id=self.spawn_id, spawn_direction=180,
+                          barrier=frame.barrier,
                           bbox_width=frame.barrier.bbox_width,
                           bbox_height=frame.barrier.bbox_height)
         self.destroy()
@@ -2337,7 +2358,8 @@ class UpDoor(Door):
                       bbox_width=frame.barrier.bbox_width,
                       bbox_height=TILE_SIZE)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
-                          spawn_direction=270, barrier=frame.barrier,
+                          spawn_id=self.spawn_id, spawn_direction=270,
+                          barrier=frame.barrier,
                           bbox_width=frame.barrier.bbox_width,
                           bbox_height=frame.barrier.bbox_height)
         self.destroy()
@@ -3186,7 +3208,7 @@ def warp(dest):
         level = sge.game.current_room
 
     if level is not None:
-        level.start()
+        level.start(transition="fade")
     else:
         sge.game.start_room.start()
 
@@ -3471,7 +3493,7 @@ def start_game():
         level = Level.load(current_level)
 
     if level is not None:
-        level.start()
+        level.start(transition="fade")
     else:
         return False
 
@@ -3487,8 +3509,10 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "player": Player,
          "anneroy": Anneroy, "doorframe_x": DoorFrameX,
-         "doorframe_y": DoorFrameY, "timeline_switcher": TimelineSwitcher,
-         "doors": get_object, "moving_platform_path": MovingPlatformPath,
+         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
+         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
+         "timeline_switcher": TimelineSwitcher, "doors": get_object,
+         "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath}
 
 

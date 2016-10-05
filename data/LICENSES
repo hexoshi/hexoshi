@@ -25,6 +25,10 @@ images/objects/doors/barrier_y-5.png
 images/objects/doors/barrier_y-6.png
 images/objects/doors/barrier_y-7.png
 images/objects/doors/barrier_y-8.png
+images/objects/doors/regular_down.png
+images/objects/doors/regular_left.png
+images/objects/doors/regular_right.png
+images/objects/doors/regular_up.png
 images/objects/doors/regular_x_closed.png
 images/objects/doors/regular_x_open.png
 images/objects/doors/regular_y_closed.png
@@ -57,8 +61,14 @@ License: CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0/>
 credits.json
 objecttypes.xml
 rooms/base.tmx
+rooms/0.tmx
 rooms/special/title_screen.tmx
 tilesets/doors.tsx
+tilesets/extras.tsx
+tilesets/main_blue.tsx
+tilesets/main_green.tsx
+tilesets/main_orange.tsx
+tilesets/main_white.tsx
 sounds/shoot.sfxr
 sounds/shoot.wav
 sounds/teleport.sfxr

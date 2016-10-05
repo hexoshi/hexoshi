@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="4">
+ <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
+ <tileset firstgid="89" source="../tilesets/extras.tsx"/>
+ <tileset firstgid="166" source="../tilesets/doors.tsx"/>
+ <objectgroup name="Enemies"/>
+ <objectgroup name="Player Objects"/>
+ <objectgroup name="Special Blocks">
+  <object id="1" gid="169" x="1192" y="216" width="8" height="64">
+   <properties>
+    <property name="dest" value="0.tmx:1.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="fake_tile" width="150" height="28">
+  <data encoding="base64" compression="zlib">
+   eJztwYEAAAAAw6D5U9/gBFUBAAAAAAAAAAAAAAAAAAAA8AxBoAAB
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="150" height="28">
+  <data encoding="base64" compression="zlib">
+   eJzt1ksKwjAUBdBWqvazDV2ADnX/+zLBVyiFipMSbc+By8uvJYNAUlUAAAAAwCXlWnoTbM4j5Vl6EwA/zh3MGtzBAPwrbyPW4G0EQCneNqzB2wYAAL7Xl94Am9Sl3Bbm7rO65PbhH+xTHzmmnFKGSc3jXdQ21uR6jozfdDHeTvrsW5NSV+8zMZ6j3B6i1rGmjbmcw2Ru7Dezfm6/ABwABTI=
+  </data>
+ </layer>
+ <objectgroup color="#000000" name="solid">
+  <object id="3" x="1024" y="208" width="176" height="16"/>
+ </objectgroup>
+</map>

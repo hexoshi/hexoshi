@@ -379,35 +379,20 @@ class Level(sge.dsp.Room):
         self.pause_delay = TRANSITION_TIME
         play_music(self.music)
 
-        players = []
-        spawn_obj = None
-
         for obj in self.objects:
             if isinstance(obj, Player):
-                players.append(obj)
-            elif isinstance(obj, SpawnPoint):
-                if obj.spawn_id == spawn_point or (spawn_point is None and
-                                                   spawn_obj is None):
-                    spawn_obj = obj
+                self.add_timeline_object(obj)
 
-        if spawn_obj is not None:
-            for player in players:
-                player.x = spawn_obj.x + spawn_xoffset
-                player.y = spawn_obj.y + spawn_offset
-                if spawn_obj.spawn_direction == 0:
-                    player.bbox_left = spawn_obj.bbox_right
-                elif spawn_obj.spawn_direction == 90:
-                    player.bbox_top = spawn_obj.bbox_bottom
-                elif spawn_obj.spawn_direction == 180:
-                    player.bbox_right = spawn_obj.bbox_left
-                elif spawn_obj.spawn_direction == 270:
-                    player.bbox_bottom = spawn_obj.bbox_top
+                obj.last_x = obj.x
+                obj.last_y = obj.y
+                obj.on_slope = obj.get_bottom_touching_slope()
+                obj.on_floor = obj.get_bottom_touching_wall() + obj.on_slope
+                obj.was_on_floor = obj.on_floor
 
-                player.z = spawn_obj.z + 0.5
-                if player.view is not None:
-                    player.view.x = player.x - player.view.width / 2
-                    player.view.y = (player.y - player.view.height +
-                                     CAMERA_TARGET_MARGIN_BOTTOM)
+                obj.view = self.views[obj.player]
+                obj.view.x = obj.x - obj.view.width / 2
+                obj.view.y = (obj.y - obj.view.height +
+                              CAMERA_TARGET_MARGIN_BOTTOM)
 
     def event_step(self, time_passed, delta_mult):
         global watched_timelines
@@ -1135,17 +1120,11 @@ class Player(xsge_physics.Collider):
         pass
 
     def event_create(self):
-        sge.game.current_room.add_timeline_object(self)
-
         self.last_x = self.x
         self.last_y = self.y
         self.on_slope = self.get_bottom_touching_slope()
         self.on_floor = self.get_bottom_touching_wall() + self.on_slope
         self.was_on_floor = self.on_floor
-
-        self.view = sge.game.current_room.views[self.player]
-        self.view.x = self.x - self.view.width / 2
-        self.view.y = self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
 
     def event_begin_step(self, time_passed, delta_mult):
         self.refresh_input()
@@ -1243,7 +1222,7 @@ class Player(xsge_physics.Collider):
         self.set_image()
 
         # Move view
-        if not self.view_frozen:
+        if self.view is not None and not self.view_frozen:
             view_target_x = (self.x - self.view.width / 2 +
                              self.xvelocity * CAMERA_OFFSET_FACTOR)
             if abs(view_target_x - self.view.x) > 0.5:
@@ -2224,6 +2203,27 @@ class SpawnPoint(sge.dsp.Object):
         kwargs["tangible"] = False
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
+    def event_create(self):
+        if spawn_point == self.spawn_id or spawn_point is None:
+            for obj in sge.game.current_room.objects:
+                if isinstance(obj, Player):
+                    obj.x = self.x + spawn_xoffset
+                    obj.y = self.y + spawn_yoffset
+                    if self.spawn_direction == 0:
+                        obj.bbox_left = self.bbox_right
+                    elif self.spawn_direction == 90:
+                        obj.bbox_top = self.bbox_bottom
+                    elif self.spawn_direction == 180:
+                        obj.bbox_right = self.bbox_left
+                    elif self.spawn_direction == 270:
+                        obj.bbox_bottom = self.bbox_top
+
+                    obj.z = self.z + 0.5
+
+            if self.barrier is not None:
+                self.barrier.image_index = self.barrier.sprite.frames - 1
+                self.barrier.image_speed = -self.barrier.sprite.speed
+
 
 class DoorBarrier(InteractiveObject, xsge_physics.Solid):
 
@@ -2262,6 +2262,7 @@ class DoorFrame(InteractiveObject):
 
     def shoot(self, other):
         if self.barrier is not None:
+            self.sprite = self.open_sprite
             self.barrier.tangible = False
             self.barrier.image_speed = self.barrier.sprite.speed
 
@@ -3210,7 +3211,7 @@ def warp(dest):
         level = sge.game.current_room
 
     if level is not None:
-        level.start(transition="fade")
+        level.start()
     else:
         sge.game.start_room.start()
 
@@ -3656,7 +3657,7 @@ for fname in os.listdir(d):
 # Load fonts
 print(_("Loading fonts..."))
 font = sge.gfx.Font("Droid Sans Mono", size=9)
-font_small = sge.gfx.Font("Droid Sans Mono", size=4)
+font_small = sge.gfx.Font("Droid Sans Mono", size=6)
 font_big = sge.gfx.Font("Droid Sans Mono", size=11)
 
 # Load sounds

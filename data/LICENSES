@@ -62,6 +62,7 @@ credits.json
 objecttypes.xml
 rooms/base.tmx
 rooms/0.tmx
+rooms/1.tmx
 rooms/special/title_screen.tmx
 tilesets/doors.tsx
 tilesets/extras.tsx

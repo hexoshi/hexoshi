@@ -6,7 +6,11 @@
  <objectgroup name="Enemies"/>
  <objectgroup name="Player Objects"/>
  <objectgroup name="Special Blocks">
-  <object id="1" gid="168" x="0" y="440" width="8" height="64"/>
+  <object id="1" gid="168" x="0" y="440" width="8" height="64">
+   <properties>
+    <property name="dest" value="1.tmx:0.tmx"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="fake_tile" width="50" height="56">
   <data encoding="base64" compression="zlib">
@@ -15,7 +19,7 @@
  </layer>
  <layer name="Tile Layer 1" width="50" height="56">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">

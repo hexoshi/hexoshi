@@ -2509,8 +2509,8 @@ class Menu(xsge_gui.MenuWindow):
             self = cls.from_text(
                 gui_handler, sge.game.width / 2, sge.game.height * 2 / 3,
                 cls.items, font_normal=font,
-                color_normal=sge.gfx.Color("white"),
-                color_selected=sge.gfx.Color((0, 128, 255)),
+                color_normal=menu_text_color,
+                color_selected=menu_text_selected_color,
                 background_color=menu_color, margin=9, halign="center",
                 valign="middle")
             default %= len(self.widgets)
@@ -3072,8 +3072,8 @@ class ModalMenu(xsge_gui.MenuDialog):
             self = cls.from_text(
                 gui_handler, sge.game.width / 2, sge.game.height / 2,
                 cls.items, font_normal=font,
-                color_normal=sge.gfx.Color("white"),
-                color_selected=sge.gfx.Color((0, 128, 255)),
+                color_normal=menu_text_color,
+                color_selected=menu_text_selected_color,
                 background_color=menu_color, margin=9, halign="center",
                 valign="middle")
             default %= len(self.widgets)
@@ -3096,8 +3096,8 @@ class PauseMenu(ModalMenu):
 
         self = cls.from_text(
             gui_handler, sge.game.width / 2, sge.game.height / 2,
-            items, font_normal=font, color_normal=sge.gfx.Color("white"),
-            color_selected=sge.gfx.Color((0, 128, 255)),
+            items, font_normal=font, color_normal=menu_text_color,
+            color_selected=menu_text_selected_color,
             background_color=menu_color, margin=9, halign="center",
             valign="middle")
         default %= len(self.widgets)
@@ -3151,7 +3151,7 @@ class DialogBox(xsge_gui.Dialog):
 
         self.label = DialogLabel(self, label_x, label_y, 0, text, font=font,
                                  width=label_w, height=label_h,
-                                 color=sge.gfx.Color("white"), rate=rate)
+                                 color=menu_text_color, rate=rate)
 
         if portrait is not None:
             xsge_gui.Widget(self, 8, 8, 0, sprite=portrait)
@@ -3528,7 +3528,9 @@ print(_("Initializing GUI system..."))
 xsge_gui.init()
 gui_handler = xsge_gui.Handler()
 
-menu_color = sge.gfx.Color((128, 128, 255, 192))
+menu_color = sge.gfx.Color("black")
+menu_text_color = sge.gfx.Color((64, 0, 255))
+menu_text_selected_color = sge.gfx.Color("white")
 
 # Load sprites
 print(_("Loading images..."))

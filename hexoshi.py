@@ -2759,9 +2759,10 @@ class KeyboardMenu(Menu):
                 for other_key in [
                         left_key[self.page], right_key[self.page],
                         up_key[self.page], down_key[self.page],
-                        jump_key[self.page], action_key[self.page],
-                        sneak_key[self.page], menu_key[self.page],
-                        pause_key[self.page]]:
+                        jump_key[self.page], shoot_key[self.page],
+                        aim_diag_key[self.page], aim_up_key[self.page],
+                        aim_down_key[self.page], mode_reset_key[self.page],
+                        mode_key[self.page], pause_key[self.page]]:
                     if new_key in other_key:
                         if len(other_key) > 1:
                             other_key.remove(new_key)
@@ -2815,7 +2816,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 5:
             k = wait_key()
             if k is not None:
-                toggle_key(aim_diag_key[self.page], k)
+                toggle_key(jump_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -2824,7 +2825,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 6:
             k = wait_key()
             if k is not None:
-                toggle_key(jump_key[self.page], k)
+                toggle_key(shoot_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -2833,7 +2834,7 @@ class KeyboardMenu(Menu):
         elif self.choice == 7:
             k = wait_key()
             if k is not None:
-                toggle_key(shoot_key[self.page], k)
+                toggle_key(aim_diag_key[self.page], k)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -2936,9 +2937,10 @@ class JoystickMenu(Menu):
                 for other_js in [
                         left_js[self.page], right_js[self.page],
                         up_js[self.page], down_js[self.page],
-                        jump_js[self.page], action_js[self.page],
-                        sneak_js[self.page], menu_js[self.page],
-                        pause_js[self.page]]:
+                        jump_js[self.page], shoot_js[self.page],
+                        aim_diag_js[self.page], aim_up_js[self.page],
+                        aim_down_js[self.page], mode_reset_js[self.page],
+                        mode_js[self.page], pause_js[self.page]]:
                     if new_js in other_js:
                         other_key.remove(new_js)
 
@@ -2988,7 +2990,7 @@ class JoystickMenu(Menu):
         elif self.choice == 5:
             js = wait_js()
             if js is not None:
-                toggle_js(aim_diag_js[self.page], js)
+                toggle_js(jump_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -2997,7 +2999,7 @@ class JoystickMenu(Menu):
         elif self.choice == 6:
             js = wait_js()
             if js is not None:
-                toggle_js(jump_js[self.page], js)
+                toggle_js(shoot_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3006,7 +3008,7 @@ class JoystickMenu(Menu):
         elif self.choice == 7:
             js = wait_js()
             if js is not None:
-                toggle_js(shoot_js[self.page], js)
+                toggle_js(aim_diag_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -3658,9 +3660,9 @@ for fname in os.listdir(d):
 
 # Load fonts
 print(_("Loading fonts..."))
-font = sge.gfx.Font("Droid Sans Mono", size=9)
-font_small = sge.gfx.Font("Droid Sans Mono", size=6)
-font_big = sge.gfx.Font("Droid Sans Mono", size=11)
+font = sge.gfx.Font("Flipside BRK", size=9)
+font_small = sge.gfx.Font("Flipside BRK", size=6)
+font_big = sge.gfx.Font("Flipside BRK", size=11)
 
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))

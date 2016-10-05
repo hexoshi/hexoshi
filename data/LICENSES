@@ -60,6 +60,8 @@ License: CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0/>
 
 credits.json
 objecttypes.xml
+images/misc/logo.png
+images/misc/logo-is.svg
 rooms/base.tmx
 rooms/0.tmx
 rooms/1.tmx

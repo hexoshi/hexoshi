@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" backgroundcolor="#808080" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" backgroundcolor="#250038" nextobjectid="1">
  <tileset firstgid="1" name="main" tilewidth="8" tileheight="8" tilecount="88">
   <image source="../../images/tiles/main_blue.png" width="176" height="32"/>
  </tileset>
  <tileset firstgid="89" name="extras" tilewidth="8" tileheight="8" tilecount="77">
   <image source="../../images/tiles/extras.png" width="88" height="56"/>
  </tileset>
+ <tileset firstgid="166" name="logo" tilewidth="250" tileheight="34" tilecount="1">
+  <tile id="0">
+   <image width="250" height="34" source="../../images/misc/logo.png"/>
+  </tile>
+ </tileset>
  <layer name="Tile Layer 1" width="50" height="28">
   <data encoding="base64" compression="zlib">
-   eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
+   eJztzgENAAAIA6D3D2JOW9zNQQISgF/mOgAAAABQsiG1AKc=
   </data>
  </layer>
 </map>

@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="56" tilewidth="8" tileheight="8" nextobjectid="30">
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/doors.tsx"/>
  <objectgroup name="Enemies"/>
  <objectgroup name="Player Objects"/>
- <objectgroup name="Special Blocks"/>
- <layer name="fake_tile" width="50" height="28">
+ <objectgroup name="Special Blocks">
+  <object id="1" gid="168" x="0" y="440" width="8" height="64"/>
+ </objectgroup>
+ <layer name="fake_tile" width="50" height="56">
   <data encoding="base64" compression="zlib">
-   eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
+   eJztwTEBAAAAwqD1T20LL6AAAAAAAAAAAAAAgJcBK8AAAQ==
   </data>
  </layer>
- <layer name="Tile Layer 1" width="50" height="28">
+ <layer name="Tile Layer 1" width="50" height="56">
   <data encoding="base64" compression="zlib">
-   eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
+   eJzVmglyozAQRYVDYpbM5CyT+x9uUEWv/KzYBpyA3b9KhYAGWqh3qU8pDVNrpnaY2ji1l6n15Xgo97pCl1ur66Zty/2u3O8KzVho6HeFttM7BtG1utbp6OvwwDODvunWl0bf9F313b56rhPtWI6m8TX6g+7Ruur7o745lrE01Xf9X/6mL7ynZVhKZ/y50l/y7swjspKPmXePqZt55zPgI53+O7LG3DHH/cO4W4c8FuTK/DfpJJ9RgK7Dt3U9ynxkMA7kCvsZbT74/0062XPs1PBAvtbi0hjwW7a5z47Me6Ojfen4QL7WAp0glrBvjCRXyBDxFPznYxR7lf0H+syc2J9EGUeG7RUxl8cUBY6bia+Yj0j+wz4c3+cYP4rdtU6Q++A7ItkrYvcsU8S49ulRgN/A/npuav34N/OuS/c/f8rgQjAO8hB8eq3nttHYhrHqM59vUzumfWNN5xzOadERg3yl13OjnmNMnO+JIZ37QuaC/37rOfgG5M6PyIWZC3hHN8hBbiHz/Sz5OzJN7O46TqS4BJlyXOLYJArQa+Sd2J3zaP78JZ38uX3JFpjzQ2vpMvB7tqWWs99CttnHdF7fHHXtqL7t+VJ5sD9zfYHrvwlqt3XNuPZJa2UZHw3PzAu10j3zD+bpXjvuuj4xI7q/p726p7ZteB2iSd99SRRYP4gRXceKAuu16+yR6u0Z8E5+bpsVqc5g3bbf2FvPfwp0oa3a0vmYy/d8f41/Xgv+PXx7LWQuvsr+x/mf10WHcq1Pp9zwHh+3FHXdjfmpc6Q5WKe8HuuYcyvgz5Er16nX6kfthzl/r45bwb7c8U+0erv3Hnj9IFr9in9Pc24bye4SE6IP9iGR5oP1KM8FbWvdNPAtn9X5JZpL8B4cy9Je9Rx8TK++6/3kiHN1c+eye8e32H37rHofEWsyc3Uo78Not2P5Jqi3Ou/BXiLz5KfX4gHXqQ8b87sE1slatm/pax1XRQW5R7R8w/AerGj5eA2vGVyaD9vzNbmGccvuX7u3dB0LOnTD+oHNy3kF+UW9V/MoGq+F9Om77XdOgp94Tefxj3MY18vJXd7S+foX76Dv+rrtNzFwvU6FPrGnFBriAdO7ll/vgzzom95vhM113gId/6PRN+Gj1fsz7X/KYRnP
   </data>
  </layer>
- <objectgroup name="solid"/>
+ <objectgroup color="#000000" name="solid">
+  <object id="2" x="0" y="432" width="400" height="16"/>
+  <object id="3" x="368" y="0" width="32" height="432"/>
+  <object id="4" x="224" y="368" width="96" height="16"/>
+  <object id="5" x="240" y="384" width="80" height="8"/>
+  <object id="8" x="96" y="304" width="96" height="8"/>
+  <object id="10" x="112" y="312" width="72" height="8"/>
+  <object id="11" x="184" y="232" width="80" height="8"/>
+  <object id="12" x="240" y="240" width="16" height="8"/>
+  <object id="13" x="184" y="224" width="104" height="8"/>
+  <object id="19" x="56" y="160" width="112" height="8"/>
+  <object id="20" x="64" y="168" width="88" height="8"/>
+  <object id="21" x="80" y="176" width="24" height="8"/>
+  <object id="23" x="0" y="0" width="32" height="360"/>
+  <object id="24" x="0" y="360" width="24" height="8"/>
+  <object id="25" x="0" y="368" width="8" height="8"/>
+  <object id="26" x="32" y="0" width="336" height="16"/>
+  <object id="28" x="360" y="16" width="8" height="16"/>
+  <object id="29" x="32" y="16" width="8" height="8"/>
+ </objectgroup>
 </map>

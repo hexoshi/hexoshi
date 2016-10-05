@@ -2208,7 +2208,9 @@ class Tunnel(InteractiveObject):
         global spawn_yoffset
         spawn_xoffset = other.x - self.x
         spawn_yoffset = other.y - self.y
-        warp(self.dest)
+
+        if self.dest:
+            warp(self.dest)
 
 
 class SpawnPoint(sge.dsp.Object):
@@ -2552,7 +2554,7 @@ class NewGameMenu(Menu):
                 cls.items.append(_("-Empty-"))
             else:
                 # TODO: Better information
-                cls.items.append(slot.get("current_level"))
+                cls.items.append(str(slot.get("current_level")))
 
         cls.items.append(_("Back"))
 

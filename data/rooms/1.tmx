@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="4">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="24">
  <properties>
   <property name="music" value="lines_of_code.ogg"/>
  </properties>
@@ -22,10 +22,25 @@
  </layer>
  <layer name="Tile Layer 1" width="150" height="28">
   <data encoding="base64" compression="zlib">
-   eJzt0kEKgzAQBdBYbJvoaez9D9cEJxAEuy3oe/CZTCYRF0kJAAAAAAAAAAAAAAAAAICrWP79A1xSqdlOZp9DPbP9+Ab3tESeNa+adahtv0TNcabVd6TfKbGfh557m2umtL+J/o7aeo06xZkcs5bHMOv9fOjb+gtFsQI6
+   eJztnAlu2zAQRakljpa0PUty/8M1AviQp7EUO5Hcouh8gJBIkcPh6HOxyPFUSmneQ1/D+B6Get/V+7GGvuYd6pW09j3MKjfVsnO9IhNZjeJNDXOoe65yG6U30mlSGGt6qzpa6TFJ90n1z7p3HbS3kdxW9bpdBPTt1CbyD6GOVmmT5CN7DulNeNZK1qSr28W7GTZ0QpdOcmm367Eujvs9N5KD3bHjpDzoiW6WO6i845Py8dz55o18s/I4DOW6fTGduGX7PU0hbdiQM4RgXZzfsuYgfwp1jhv380Z9tu1crtsb81rnSfFoF9vVebbejeueg2yHaOtRV2R57IDPjFFteP6zbONlJx38uPF8Dy87938Ct3R+hD636rzHjt/R6ztlPtPlV1mPVXCIcRVOJhJfxcJVxirGMq9fEonvYhm3mBf7sp4LE4kjYD7k9wG/v/bWVInEPfBvEH6H5niVOArWWf5ukkgchddYhETiDPg7dX5fSJyF+F051+yJo1jmQfjEXlMicQbYa2TfJ5E4Cu/psOeYSBwFvPI5hUTiDHh/MHmVOAs+65N7OImzkPNg4hGIZ0wTiaNgH2cB57FyHkycCXiV+MDrF9Mj3s5S5B8G5+UTpVzK2j9hiT/VEP0txvqcdcRzzXepzym7PN+aCxaOHuHfvRz/W+Ac8v+OZW0Qfdui70+nAPfwperLmnv2H3gq1z4x0V/H9cDvSwjwF1lwfkm7Zx0TufhIbj7q+9VXdD7S3jPnHHPCfnf2MyFuX72prPloP0P2X+1vN5dr3z6e4+dIWqsrsjgzZ/9L+ywsPIOHjJvEh7Lm5qPW1fgMHsWiKzr7bNdTWfdP5oaxfPS3LX8/p5HvInnMNVyx2/L8M1tFHhJnL95+qdG/LvrImnO8c5eHC5SPPq7Y3lzpy/qbtf1Te8Up35f1eNcrH3UiEy57Lt/rw2/huofXHRnYba9MrCeCPSH6lH1efQ4Hm/psvX2aoz3px1OQb9/Lrqz7tPfR4Thro8g9+gHyn8vHO2Es8lzmuc7+vvZptf8w7zv6sEb/aLetk1xzDXsiH05zdi76AmNPz9/25UOu+77HtyiTvo1NvZb0mpN4kQ3dbt6Bx/ko81l54pgc+6HleAxolO61jH3RbFP39z7U5/Ej8m5UGc87nfLBBfSA53CLec72MIc9d826moduu/sE9Td6tnWFY55T3T+jz7L/48Cc9zjm9+81nsdD9wePlbar48v9b5xHH3w=
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">
-  <object id="3" x="1024" y="208" width="176" height="16"/>
+  <object id="4" x="1184" y="16" width="16" height="144"/>
+  <object id="5" x="1160" y="16" width="24" height="8"/>
+  <object id="6" x="1168" y="24" width="16" height="8"/>
+  <object id="8" x="1176" y="32" width="8" height="24"/>
+  <object id="9" x="0" y="0" width="1200" height="16"/>
+  <object id="10" x="536" y="176" width="176" height="32"/>
+  <object id="11" x="0" y="16" width="48" height="8"/>
+  <object id="12" x="0" y="24" width="32" height="8"/>
+  <object id="14" x="0" y="32" width="24" height="32"/>
+  <object id="15" x="0" y="64" width="16" height="152"/>
+  <object id="16" x="0" y="216" width="424" height="8"/>
+  <object id="17" x="144" y="200" width="280" height="8"/>
+  <object id="18" x="136" y="208" width="288" height="8"/>
+  <object id="20" x="424" y="208" width="776" height="16"/>
+  <object id="21" x="712" y="184" width="200" height="24"/>
+  <object id="23" x="912" y="192" width="112" height="16"/>
  </objectgroup>
 </map>

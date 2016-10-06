@@ -114,9 +114,10 @@ License: CC BY-SA 3.0 <http://creativecommons.org/licenses/by-sa/3.0/>
 Source: http://opengameart.org/content/lines-of-code
 Details:
   Has been split up into two parts so that it can loop (much of the end
-  had to be left out) and converted from 48000 Hz to 44100 Hz. The exact
-  timestamps the looping portion was trimmed from are from 48.730
-  seconds to 2 minutes and 30.000 seconds of "Lines of Code.mp3".
+  had to be left out), converted from 48000 Hz to 44100 Hz, and reduced
+  in volume by 7 dB. The exact timestamps the looping portion was
+  trimmed from are from 48.730 seconds to 2 minutes and 30.000 seconds
+  of "Lines of Code.mp3".
 
 ------------------------------------------------------------------------
 

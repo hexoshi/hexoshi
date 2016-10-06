@@ -136,7 +136,7 @@ ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 
 CEILING_LAX = 2
 
-CAMERA_HSPEED_FACTOR = 1 / 4
+CAMERA_HSPEED_FACTOR = 1 / 8
 CAMERA_VSPEED_FACTOR = 1 / 20
 CAMERA_OFFSET_FACTOR = 10
 CAMERA_MARGIN_TOP = 4 * TILE_SIZE
@@ -372,21 +372,6 @@ class Level(sge.dsp.Room):
         xsge_lighting.clear_lights()
 
         play_music(self.music)
-
-        for obj in self.objects:
-            if isinstance(obj, Player):
-                self.add_timeline_object(obj)
-
-                obj.last_x = obj.x
-                obj.last_y = obj.y
-                obj.on_slope = obj.get_bottom_touching_slope()
-                obj.on_floor = obj.get_bottom_touching_wall() + obj.on_slope
-                obj.was_on_floor = obj.on_floor
-
-                obj.view = self.views[obj.player]
-                obj.view.x = obj.x - obj.view.width / 2
-                obj.view.y = (obj.y - obj.view.height +
-                              CAMERA_TARGET_MARGIN_BOTTOM)
 
     def event_step(self, time_passed, delta_mult):
         global watched_timelines
@@ -1114,12 +1099,21 @@ class Player(xsge_physics.Collider):
     def set_image(self):
         pass
 
+    def center_view(self):
+        self.view.x = self.x - self.view.width / 2
+        self.view.y = self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
+
     def event_create(self):
         self.last_x = self.x
         self.last_y = self.y
         self.on_slope = self.get_bottom_touching_slope()
         self.on_floor = self.get_bottom_touching_wall() + self.on_slope
         self.was_on_floor = self.on_floor
+        
+        sge.game.current_room.add_timeline_object(self)
+
+        self.view = sge.game.current_room.views[self.player]
+        self.center_view()
 
     def event_begin_step(self, time_passed, delta_mult):
         self.refresh_input()
@@ -2218,6 +2212,7 @@ class SpawnPoint(sge.dsp.Object):
                         obj.bbox_bottom = self.bbox_top
 
                     obj.z = self.z + 0.5
+                    obj.center_view()
 
             if self.barrier is not None:
                 self.barrier.image_index = self.barrier.sprite.frames - 1

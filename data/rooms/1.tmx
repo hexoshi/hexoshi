@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="4">
+ <properties>
+  <property name="music" value="lines_of_code.ogg"/>
+ </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/doors.tsx"/>
@@ -19,7 +22,7 @@
  </layer>
  <layer name="Tile Layer 1" width="150" height="28">
   <data encoding="base64" compression="zlib">
-   eJzt1ksKwjAUBdBWqvazDV2ADnX/+zLBVyiFipMSbc+By8uvJYNAUlUAAAAAwCXlWnoTbM4j5Vl6EwA/zh3MGtzBAPwrbyPW4G0EQCneNqzB2wYAAL7Xl94Am9Sl3Bbm7rO65PbhH+xTHzmmnFKGSc3jXdQ21uR6jozfdDHeTvrsW5NSV+8zMZ6j3B6i1rGmjbmcw2Ru7Dezfm6/ABwABTI=
+   eJzt0kEKgzAQBdBYbJvoaez9D9cEJxAEuy3oe/CZTCYRF0kJAAAAAAAAAAAAAAAAAICrWP79A1xSqdlOZp9DPbP9+Ab3tESeNa+adahtv0TNcabVd6TfKbGfh557m2umtL+J/o7aeo06xZkcs5bHMOv9fOjb+gtFsQI6
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">

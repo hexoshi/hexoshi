@@ -1657,6 +1657,10 @@ class Anneroy(Player):
             self.fixed_sprite = False
             self.set_image()
 
+    def event_physics_collision_top(self, other, move_loss):
+        super(Anneroy, self).event_physics_collision_top(other, move_loss)
+        self.fixed_sprite = False
+
     def event_physics_collision_bottom(self, other, move_loss):
         super(Anneroy, self).event_physics_collision_bottom(other, move_loss)
 
@@ -3574,12 +3578,12 @@ anneroy_legs_run_sprite = sge.gfx.Sprite.from_tileset(
     origin_y=0)
 anneroy_legs_jump_sprite = sge.gfx.Sprite.from_tileset(
     fname, 14, 234, 5, xsep=15, width=23, height=29, origin_x=8, origin_y=5,
-    fps=10)
+    fps=30)
 anneroy_legs_fall_sprite = sge.gfx.Sprite.from_tileset(
     fname, 204, 234, width=23, height=29, origin_x=8, origin_y=5)
 anneroy_legs_land_sprite = sge.gfx.Sprite.from_tileset(
     fname, 242, 234, 2, xsep=15, width=23, height=29, origin_x=8, origin_y=5,
-    fps=10)
+    fps=30)
 anneroy_legs_crouched_sprite = sge.gfx.Sprite.from_tileset(
     fname, 23, 85, width=21, height=15, origin_x=7, origin_y=-9)
 anneroy_legs_crouch_sprite = sge.gfx.Sprite.from_tileset(
@@ -3682,6 +3686,13 @@ confirm_sound = sge.snd.Sound(None)
 cancel_sound = sge.snd.Sound(None)
 error_sound = sge.snd.Sound(None)
 type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
+
+# Preload music
+d = os.path.join(DATA, "music")
+music = sge.snd.Music(os.path.join(d, "lines_of_code.ogg"), volume=0.2)
+loaded_music["lines_of_code.ogg"] = music
+music = sge.snd.Music(os.path.join(d, "lines_of_code-start.ogg"), volume=0.2)
+loaded_music["lines_of_code-start.ogg"] = music
 
 # Create objects
 ##lava_animation = sge.dsp.Object(0, 0, sprite=lava_body_sprite, visible=False,

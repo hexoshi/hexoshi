@@ -106,6 +106,20 @@ License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 
 ------------------------------------------------------------------------
 
+music/lines_of_code.ogg
+music/lines_of_code-start.ogg
+
+Author: Trevor Lentz <http://opengameart.org/users/trevor-lentz>
+License: CC BY-SA 3.0 <http://creativecommons.org/licenses/by-sa/3.0/>
+Source: http://opengameart.org/content/lines-of-code
+Details:
+  Has been split up into two parts so that it can loop (much of the end
+  had to be left out) and converted from 48000 Hz to 44100 Hz. The exact
+  timestamps the looping portion was trimmed from are from 48.730
+  seconds to 2 minutes and 30.000 seconds of "Lines of Code.mp3".
+
+------------------------------------------------------------------------
+
 sounds/select.ogg
 
 Author: NenadSimic <http://opengameart.org/users/nenadsimic>

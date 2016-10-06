@@ -109,7 +109,6 @@ TILE_SIZE = 16
 FPS = 60
 DELTA_MIN = FPS / 2
 DELTA_MAX = FPS * 4
-TRANSITION_TIME = 750
 
 GRAVITY = 0.4
 
@@ -264,7 +263,7 @@ class Level(sge.dsp.Room):
         self.music = music
         self.timeline_objects = {}
         self.shake_queue = 0
-        self.pause_delay = TRANSITION_TIME
+        self.death_time = None
         self.status_text = None
 
         if bgname is not None:
@@ -349,7 +348,7 @@ class Level(sge.dsp.Room):
         elif (self.timeline_skip_target is not None and
               self.timeline_step < self.timeline_skip_target):
             self.timeline_skipto(self.timeline_skip_target)
-        elif self.pause_delay <= 0:
+        else:
             sge.snd.Music.pause()
             play_sound(pause_sound)
             PauseMenu.create()
@@ -370,13 +369,8 @@ class Level(sge.dsp.Room):
             self.add(player)
         ##self.add(lava_animation)
 
-        self.event_room_resume()
-
-    def event_room_resume(self):
         xsge_lighting.clear_lights()
 
-        self.death_time = None
-        self.pause_delay = TRANSITION_TIME
         play_music(self.music)
 
         for obj in self.objects:
@@ -396,9 +390,6 @@ class Level(sge.dsp.Room):
 
     def event_step(self, time_passed, delta_mult):
         global watched_timelines
-
-        if self.pause_delay > 0:
-            self.pause_delay -= time_passed
 
         for view in self.views:
             for obj in self.get_objects_at(
@@ -722,6 +713,10 @@ class TitleScreen(SpecialScreen):
     def show_hud(self):
         pass
 
+    def event_room_start(self):
+        super(TitleScreen, self).event_room_start()
+        MainMenu.create()
+
     def event_room_resume(self):
         super(TitleScreen, self).event_room_resume()
         MainMenu.create()
@@ -765,7 +760,7 @@ class CreditsScreen(SpecialScreen):
                     self.sections.append(list_section)
 
         for obj in self.sections:
-            obj.yvelocity = -0.5
+            obj.yvelocity = -0.2
 
     def event_step(self, time_passed, delta_mult):
         if self.sections[0].yvelocity > 0 and self.sections[0].y > self.height:
@@ -784,11 +779,11 @@ class CreditsScreen(SpecialScreen):
         if key in itertools.chain.from_iterable(down_key):
             if "end" not in self.alarms:
                 for obj in self.sections:
-                    obj.yvelocity -= 0.25
+                    obj.yvelocity -= 0.1
         elif key in itertools.chain.from_iterable(up_key):
             if "end" not in self.alarms:
                 for obj in self.sections:
-                    obj.yvelocity += 0.25
+                    obj.yvelocity += 0.1
         elif (key in itertools.chain.from_iterable(jump_key) or
                 key in itertools.chain.from_iterable(shoot_key) or
                 key in itertools.chain.from_iterable(pause_key)):
@@ -800,11 +795,11 @@ class CreditsScreen(SpecialScreen):
             if js in itertools.chain.from_iterable(down_js):
                 if "end" not in self.alarms:
                     for obj in self.sections:
-                        obj.yvelocity -= 0.25
+                        obj.yvelocity -= 0.1
             elif js in itertools.chain.from_iterable(up_js):
                 if "end" not in self.alarms:
                     for obj in self.sections:
-                        obj.yvelocity += 0.25
+                        obj.yvelocity += 0.1
             elif (js in itertools.chain.from_iterable(jump_js) or
                     js in itertools.chain.from_iterable(shoot_js) or
                     js in itertools.chain.from_iterable(pause_js)):
@@ -3534,9 +3529,9 @@ menu_color = sge.gfx.Color("black")
 menu_text_color = sge.gfx.Color((64, 0, 255))
 menu_text_selected_color = sge.gfx.Color("white")
 
-# Load sprites
-print(_("Loading images..."))
+print(_("Loading resources..."))
 
+# Load sprites
 d = os.path.join(DATA, "images", "objects", "anneroy")
 anneroy_torso_offset = {}
 
@@ -3644,6 +3639,16 @@ doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)
 doorframe_regular_y_closed_sprite = sge.gfx.Sprite("regular_y_closed", d)
 doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
 
+d = os.path.join(DATA, "images", "misc")
+logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)
+font_sprite = sge.gfx.Sprite.from_tileset(
+    os.path.join(d, "font.png"), columns=18, rows=6, width=7, height=9)
+font_small_sprite = sge.gfx.Sprite.from_tileset(
+    os.path.join(d, "font_small.png"), columns=8, rows=12, width=7, height=7)
+font_big_sprite = sge.gfx.Sprite.from_tileset(
+    os.path.join(d, "font_big.png"), columns=8, rows=12, width=14, height=14,
+    xsep=2, ysep=2)
+
 d = os.path.join(DATA, "images", "portraits")
 portrait_sprites = {}
 for fname in os.listdir(d):
@@ -3659,10 +3664,15 @@ for fname in os.listdir(d):
 # TODO
 
 # Load fonts
-print(_("Loading fonts..."))
-font = sge.gfx.Font("Flipside BRK", size=9)
-font_small = sge.gfx.Font("Flipside BRK", size=6)
-font_big = sge.gfx.Font("Flipside BRK", size=11)
+chars = [six.unichr(i) for i in six.moves.range(32, 128)]
+font = sge.gfx.Font.from_sprite(font_sprite, chars, size=9)
+font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=14,
+                                    hsep=2, vsep=2)
+
+chars = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
+             "0123456789.,;:?!-_~#\"'&()[]|`\\/@^+=*$\xa3\x80<>")
+font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
+                                      hsep=-1)
 
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))

@@ -373,6 +373,9 @@ class Level(sge.dsp.Room):
 
         play_music(self.music)
 
+    def event_room_resume(self):
+        play_music(self.music)
+
     def event_step(self, time_passed, delta_mult):
         global watched_timelines
 

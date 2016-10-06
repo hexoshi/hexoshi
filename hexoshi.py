@@ -3320,8 +3320,8 @@ def show_error(message):
         sge.game.pump_input()
         sge.game.input_events = []
         sge.game.mouse.visible = True
-        xsge_gui.show_message(message=message, title="Error", buttons=["Ok"],
-                              width=640)
+        xsge_gui.show_message(message=message, title=_("Error"),
+                              buttons=[_("Ok")], width=392)
         sge.game.mouse.visible = False
     else:
         print(message)
@@ -3528,6 +3528,8 @@ Game(SCREEN_SIZE[0], SCREEN_SIZE[1], fps=FPS, delta=DELTA, delta_min=DELTA_MIN,
 print(_("Initializing GUI system..."))
 xsge_gui.init()
 gui_handler = xsge_gui.Handler()
+xsge_gui.default_font.size = 8
+xsge_gui.textbox_font.size = 8
 
 menu_color = sge.gfx.Color("black")
 menu_text_color = sge.gfx.Color((64, 0, 255))

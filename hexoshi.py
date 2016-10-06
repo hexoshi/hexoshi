@@ -3684,13 +3684,6 @@ cancel_sound = sge.snd.Sound(None)
 error_sound = sge.snd.Sound(None)
 type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
 
-# Preload music
-d = os.path.join(DATA, "music")
-music = sge.snd.Music(os.path.join(d, "lines_of_code.ogg"), volume=0.2)
-loaded_music["lines_of_code.ogg"] = music
-music = sge.snd.Music(os.path.join(d, "lines_of_code-start.ogg"), volume=0.2)
-loaded_music["lines_of_code-start.ogg"] = music
-
 # Create objects
 ##lava_animation = sge.dsp.Object(0, 0, sprite=lava_body_sprite, visible=False,
 ##                                tangible=False)

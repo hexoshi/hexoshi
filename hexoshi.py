@@ -1134,6 +1134,8 @@ class Player(xsge_physics.Collider):
                 self.aim_direction = 1 * -v_control
             else:
                 self.aim_direction = 2 * -v_control
+        elif self.aim_diag_pressed:
+            self.aim_direction = 1
 
         if self.aim_up_pressed and self.aim_down_pressed:
             self.aim_direction = 2
@@ -2505,7 +2507,7 @@ class Menu(xsge_gui.MenuWindow):
                 cls.items, font_normal=font,
                 color_normal=menu_text_color,
                 color_selected=menu_text_selected_color,
-                background_color=menu_color, margin=9, halign="center",
+                background_color=menu_color, margin=4, halign="center",
                 valign="middle")
             default %= len(self.widgets)
             self.keyboard_focused_widget = self.widgets[default]

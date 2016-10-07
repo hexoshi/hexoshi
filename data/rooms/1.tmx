@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="24">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="29">
  <properties>
   <property name="music" value="lines_of_code.ogg"/>
  </properties>
@@ -31,16 +31,21 @@
   <object id="6" x="1168" y="24" width="16" height="8"/>
   <object id="8" x="1176" y="32" width="8" height="24"/>
   <object id="9" x="0" y="0" width="1200" height="16"/>
-  <object id="10" x="536" y="176" width="176" height="32"/>
+  <object id="10" x="536" y="176" width="168" height="32"/>
   <object id="11" x="0" y="16" width="48" height="8"/>
   <object id="12" x="0" y="24" width="32" height="8"/>
   <object id="14" x="0" y="32" width="24" height="32"/>
   <object id="15" x="0" y="64" width="16" height="152"/>
-  <object id="16" x="0" y="216" width="424" height="8"/>
-  <object id="17" x="144" y="200" width="280" height="8"/>
-  <object id="18" x="136" y="208" width="288" height="8"/>
-  <object id="20" x="424" y="208" width="776" height="16"/>
-  <object id="21" x="712" y="184" width="200" height="24"/>
-  <object id="23" x="912" y="192" width="112" height="16"/>
+  <object id="16" x="0" y="216" width="416" height="8"/>
+  <object id="17" x="152" y="200" width="264" height="16"/>
+  <object id="20" x="416" y="208" width="784" height="16"/>
+  <object id="21" x="704" y="184" width="200" height="24"/>
+  <object id="23" x="904" y="192" width="120" height="16"/>
+ </objectgroup>
+ <objectgroup name="Collision Objects">
+  <object id="24" type="slope_topright" x="904" y="184" width="8" height="8"/>
+  <object id="26" type="slope_topright" x="704" y="176" width="8" height="8"/>
+  <object id="27" type="slope_topright" x="416" y="200" width="8" height="8"/>
+  <object id="28" type="slope_topleft" x="136" y="200" width="16" height="16"/>
  </objectgroup>
 </map>

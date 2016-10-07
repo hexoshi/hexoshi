@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="56" tilewidth="8" tileheight="8" nextobjectid="34">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="56" tilewidth="8" tileheight="8" nextobjectid="37">
  <properties>
   <property name="music" value="lines_of_code.ogg"/>
  </properties>
@@ -44,7 +44,9 @@
   <object id="26" x="32" y="0" width="336" height="16"/>
   <object id="28" x="360" y="16" width="8" height="16"/>
   <object id="29" x="32" y="16" width="8" height="8"/>
-  <object id="31" x="128" y="288" width="16" height="8"/>
-  <object id="33" x="120" y="296" width="24" height="8"/>
+  <object id="31" x="136" y="288" width="8" height="16"/>
+ </objectgroup>
+ <objectgroup name="Collision Objects">
+  <object id="34" type="slope_topleft" x="120" y="288" width="16" height="16"/>
  </objectgroup>
 </map>

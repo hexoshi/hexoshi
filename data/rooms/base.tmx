@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="1">
+ <properties>
+  <property name="music" value="lines_of_code.ogg"/>
+ </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/doors.tsx"/>
@@ -17,4 +20,5 @@
   </data>
  </layer>
  <objectgroup color="#000000" name="solid"/>
+ <objectgroup name="Collision Objects"/>
 </map>

@@ -1943,6 +1943,14 @@ class CrowdObject(WalkingObject, CrowdBlockingObject):
                                                      ydirection)
 
 
+class Enemy(InteractiveObject):
+
+    shootable = True
+
+    def kill(self):
+        self.destroy()
+
+
 class FreezableObject(InteractiveObject):
 
     """Provides basic freeze behavior."""
@@ -2022,21 +2030,67 @@ class FrozenObject(InteractiveObject, xsge_physics.Solid):
                 self.thaw()
 
 
-class FlyingEnemy(CrowdBlockingObject):
+class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 
-    def move(self):
-        if abs(self.xvelocity) > abs(self.yvelocity):
-            self.image_xscale = math.copysign(self.image_xscale, self.xvelocity)
-            self.had_xv = 5
-        elif self.had_xv > 0:
-            self.had_xv -= 1
+    charge_distance = 200
+    charge_speed = 3
+    return_speed = 2
+    return_delay = 15
+    repeat_delay = 60
+
+    def __init__(self, x, y, **kwargs):
+        self.returning = False
+        kwargs["sprite"] = bat_sprite
+        sge.dsp.Object.__init__(self, x, y, **kwargs)
+
+    def stop(self):
+        self.speed = 0
+        if self.returning:
+            self.returning = False
+            self.alarms["charge_wait"] = self.repeat_delay
         else:
-            player = self.get_nearest_player()
-            if player is not None:
-                if self.x < player.x:
-                    self.image_xscale = abs(self.image_xscale)
-                else:
-                    self.image_xscale = -abs(self.image_xscale)
+            self.returning = True
+            self.alarms["return"] = self.return_delay
+
+    def stop_left(self):
+        self.stop()
+
+    def stop_right(self):
+        self.stop()
+
+    def stop_up(self):
+        self.stop()
+
+    def stop_down(self):
+        self.stop()
+
+    def event_create(self):
+        self.image_xscale *= random.choice([1, -1])
+
+    def event_step(self, time_passed, delta_mult):
+        super(Bat, self).event_step(time_passed, delta_mult)
+
+        if (self.speed == 0 and "charge_wait" not in self.alarms and
+                not self.returning):
+            target = self.get_nearest_player()
+            xvec = target.x - self.x
+            yvec = target.y - self.y
+            dist = math.hypot(xvec, yvec)
+            if dist <= self.charge_distance:
+                self.speed = self.charge_speed
+                self.move_direction = math.degrees(math.atan2(yvec, xvec))
+
+        if self.xvelocity:
+            self.image_xscale = math.copysign(self.image_xscale, self.xvelocity)
+
+    def event_alarm(self, alarm_id):
+        if alarm_id == "return":
+            xvec = self.xstart - self.x
+            yvec = self.ystart - self.y
+            pth = xsge_path.Path.create(self.x, self.y, points=[(xvec, yvec)])
+            def evt_follow_end(obj, self=pth): obj.stop()
+            pth.event_follow_end = evt_follow_end
+            pth.follow_start(self, self.return_speed)
 
 
 class Boss(InteractiveObject):
@@ -3512,11 +3566,11 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "player": Player,
-         "anneroy": Anneroy, "doorframe_x": DoorFrameX,
+         "anneroy": Anneroy, "bat": Bat, "doorframe_x": DoorFrameX,
          "doorframe_y": DoorFrameY, "door_left": LeftDoor,
          "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
-         "timeline_switcher": TimelineSwitcher, "doors": get_object,
-         "moving_platform_path": MovingPlatformPath,
+         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
+         "doors": get_object, "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath}
 
 
@@ -3634,6 +3688,10 @@ anneroy_torso_offset[(n, 0)] = (0, 11)
 n = id(anneroy_legs_crouch_sprite)
 anneroy_torso_offset[(n, 0)] = (0, 3)
 anneroy_torso_offset[(n, 1)] = (0, 9)
+
+d = os.path.join(DATA, "images", "objects", "enemies")
+bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
+                            bbox_width=10, bbox_height=8)
 
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,

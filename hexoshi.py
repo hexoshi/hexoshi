@@ -3652,8 +3652,8 @@ anneroy_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
     fname, 249, 119, width=26, height=16, origin_x=16, origin_y=7, fps=10)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-3,
-    bbox_y=-3, bbox_width=5, bbox_height=5)
+    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-4,
+    bbox_y=-4, bbox_width=7, bbox_height=7)
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=19, origin_y=23,
     fps=10)

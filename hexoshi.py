@@ -2169,10 +2169,8 @@ class AnneroyBullet(InteractiveObject):
                                 xsge_physics.SlopeBottomLeft,
                                 xsge_physics.SlopeBottomRight)):
             if self.xvelocity:
-                collisions1 = sge.collision.rectangle(
-                    self.bbox_left, self.bbox_top, self.bbox_width, 1)
-                collisions2 = sge.collision.rectangle(
-                    self.bbox_left, self.bbox_bottom - 1, self.bbox_width, 1)
+                collisions = sge.collision.rectangle(
+                    self.bbox_left, self.y, self.bbox_width, 1)
                 if self.xvelocity > 0:
                     cls = (xsge_physics.SolidLeft, xsge_physics.SlopeTopLeft,
                            xsge_physics.SlopeBottomLeft)
@@ -2180,27 +2178,19 @@ class AnneroyBullet(InteractiveObject):
                     cls = (xsge_physics.SolidRight, xsge_physics.SlopeTopRight,
                            xsge_physics.SlopeBottomRight)
 
-                touching1 = False
-                touching2 = False
-                if collisions1 and collisions2:
-                    for obj in collisions1:
+                touching = False
+                if collisions:
+                    for obj in collisions:
                         if isinstance(obj, cls):
-                            touching1 = True
+                            touching = True
                             break
-                    if touching1:
-                        for obj in collisions2:
-                            if isinstance(obj, cls):
-                                touching2 = True
-                                break
 
-                if touching1 and touching2:
+                if touching:
                     self.dissipate(xdirection, ydirection)
 
             if self.yvelocity:
-                collisions1 = sge.collision.rectangle(
-                    self.bbox_left, self.bbox_top, 1, self.bbox_height)
-                collisions2 = sge.collision.rectangle(
-                    self.bbox_right - 1, self.bbox_top, 1, self.bbox_height)
+                collisions = sge.collision.rectangle(
+                    self.x, self.bbox_top, 1, self.bbox_height)
                 if self.yvelocity > 0:
                     cls = (xsge_physics.SolidTop, xsge_physics.SlopeTopLeft,
                            xsge_physics.SlopeTopRight)
@@ -2209,20 +2199,14 @@ class AnneroyBullet(InteractiveObject):
                            xsge_physics.SlopeBottomLeft,
                            xsge_physics.SlopeBottomRight)
 
-                touching1 = False
-                touching2 = False
-                if collisions1 and collisions2:
-                    for obj in collisions1:
+                touching = False
+                if collisions:
+                    for obj in collisions:
                         if isinstance(obj, cls):
-                            touching1 = True
+                            touching = True
                             break
-                    if touching1:
-                        for obj in collisions2:
-                            if isinstance(obj, cls):
-                                touching2 = True
-                                break
 
-                if touching1 and touching2:
+                if touching:
                     self.dissipate(xdirection, ydirection)
 
 
@@ -3652,10 +3636,10 @@ anneroy_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
     fname, 249, 119, width=26, height=16, origin_x=16, origin_y=7, fps=10)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-4,
-    bbox_y=-4, bbox_width=7, bbox_height=7)
+    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-6,
+    bbox_y=-6, bbox_width=11, bbox_height=9)
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=19, origin_y=23,
+    fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=15, origin_y=23,
     fps=10)
 
 n = id(anneroy_legs_run_sprite)

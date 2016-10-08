@@ -159,6 +159,8 @@ SOUND_CENTERED_RADIUS = 75
 SOUND_TILTED_RADIUS = 500
 SOUND_TILT_LIMIT = 0.75
 
+ETANK_CHAR = '\x80'
+
 backgrounds = {}
 loaded_music = {}
 tux_grab_sprites = {}
@@ -199,9 +201,12 @@ save_slots = [None for i in six.moves.range(SAVE_NSLOTS)]
 abort = False
 
 current_save_slot = None
+player_name = "Anneroy"
 watched_timelines = []
 current_level = None
 spawn_point = None
+etanks = 0
+
 spawn_xoffset = 0
 spawn_yoffset = 0
 
@@ -2591,8 +2596,13 @@ class NewGameMenu(Menu):
             if slot is None:
                 cls.items.append(_("-Empty-"))
             else:
-                # TODO: Better information
-                cls.items.append(str(slot.get("current_level")))
+                name = slot.get("player_name", "Anneroy")
+                etanks = slot.get("etanks", 0)
+                if etanks:
+                    text = "{} {}".format(name, ETANK_CHAR * etanks)
+                else:
+                    text = name
+                cls.items.append(text)
 
         cls.items.append(_("Back"))
 
@@ -3463,13 +3473,17 @@ def play_music(music, force_restart=False):
 
 
 def set_new_game():
+    global player_name
     global watched_timelines
     global current_level
     global spawn_point
+    global etanks
 
+    player_name = "Anneroy"
     watched_timelines = []
     current_level = None
     spawn_point = None
+    etanks = 0
 
 
 def write_to_disk():
@@ -3503,24 +3517,30 @@ def save_game():
 
     if current_save_slot is not None:
         save_slots[current_save_slot] = {
+            "player_name": player_name,
             "watched_timelines": watched_timelines,
             "current_level": current_level,
-            "spawn_point": spawn_point}
+            "spawn_point": spawn_point,
+            "etanks": etanks}
 
     write_to_disk()
 
 
 def load_game():
+    global player_name
     global watched_timelines
     global current_level
     global spawn_point
+    global etanks
 
     if (current_save_slot is not None and
             save_slots[current_save_slot] is not None):
         slot = save_slots[current_save_slot]
+        player_name = slot.get("player_name", "Anneroy")
         watched_timelines = slot.get("watched_timelines", [])
         current_level = slot.get("current_level")
         spawn_point = slot.get("spawn_point")
+        etanks = slot.get("etanks", 0)
     else:
         set_new_game()
 
@@ -3712,8 +3732,8 @@ for fname in os.listdir(d):
 # TODO
 
 # Load fonts
-chars = [six.unichr(i) for i in six.moves.range(32, 128)]
-font = sge.gfx.Font.from_sprite(font_sprite, chars, size=9)
+chars = [six.unichr(i) for i in six.moves.range(32, 127)] + [ETANK_CHAR]
+font = sge.gfx.Font.from_sprite(font_sprite, chars, size=9, hsep=-1)
 font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=14,
                                     hsep=2, vsep=2)
 

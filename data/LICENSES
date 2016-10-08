@@ -7,6 +7,8 @@ information.
 
 ========================================================================
 
+images/misc/etank_empty.png
+images/misc/etank_full.png
 images/objects/doors/barrier_x-0.png
 images/objects/doors/barrier_x-1.png
 images/objects/doors/barrier_x-2.png
@@ -48,6 +50,10 @@ Details:
   far right of main_green, main_orange, and main_white were derived from
   "pit.png", but recolored in the orange, green, and white colors,
   respectively.
+
+  The etank sprites are slight variations of "timerswitch.png";
+  the number of bars as been reduced from 3 to 2 and some colors have
+  been slightly tweaked.
 
 ------------------------------------------------------------------------
 

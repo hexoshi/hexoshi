@@ -101,6 +101,8 @@ Source: http://opengameart.org/content/type7r-spritefont
 
 credits.json
 objecttypes.xml
+images/misc/healthbar_back.png
+images/misc/healthbar_front.png
 images/misc/logo.png
 images/misc/logo-is.svg
 rooms/base.tmx

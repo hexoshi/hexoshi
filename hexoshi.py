@@ -698,7 +698,10 @@ class LevelRecorder(LevelTester):
 
 class SpecialScreen(Level):
 
-    pass
+    def event_room_start(self):
+        super(SpecialScreen, self).event_room_start()
+        if player is not None:
+            player.destroy()
 
 
 class TitleScreen(SpecialScreen):
@@ -971,6 +974,18 @@ class Player(xsge_physics.Collider):
     hitstun_speed = PLAYER_HITSTUN_SPEED
     can_move = True
 
+    @property
+    def hp(self):
+        return self.__hp
+
+    @hp.setter
+    def hp(self, value):
+        self.__hp = value
+        if value > 0:
+            new_w = healthbar_width * value / self.max_hp
+            healthbar_front_sprite.width = new_w
+        self.update_hud()
+
     def __init__(self, x, y, z=0, sprite=None, visible=True, active=True,
                  checks_collisions=True, tangible=True, bbox_x=8, bbox_y=0,
                  bbox_width=16, bbox_height=16, regulate_origin=True,
@@ -987,6 +1002,9 @@ class Player(xsge_physics.Collider):
         self.lose_on_death = lose_on_death
         self.view_frozen = view_frozen
 
+        self.hud_sprite = sge.gfx.Sprite(width=SCREEN_SIZE[0],
+                                         height=SCREEN_SIZE[1])
+
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
@@ -997,6 +1015,7 @@ class Player(xsge_physics.Collider):
         self.aim_up_pressed = False
         self.aim_down_pressed = False
         self.hp = self.max_hp
+        self.etanks_used = 0
         self.hitstun = False
         self.facing = 1
         self.aim_direction = None
@@ -1077,7 +1096,12 @@ class Player(xsge_physics.Collider):
                 self.hp -= damage
 
             if self.hp <= 0:
-                self.kill()
+                while self.etanks_emptied < etanks:
+                    self.etanks_used += 1
+                    self.hp += self.max_hp
+
+                if self.hp <= 0:
+                    self.kill()
             else:
                 play_sound(hurt_sound, self.x, self.y)
                 self.hitstun = True
@@ -1092,9 +1116,34 @@ class Player(xsge_physics.Collider):
 
         self.destroy()
 
+    def update_hud(self):
+        self.hud_sprite.draw_clear()
+        if not NO_HUD:
+            start_x = 4
+            start_y = 4
+            x = start_x
+            y = start_y
+            self.hud_sprite.draw_sprite(healthbar_back_sprite, 0, x, y)
+            if self.hp > 0:
+                self.hud_sprite.draw_sprite(healthbar_front_sprite, 0, x, y)
+
+            y += 8
+            w = etank_empty_sprite.width
+            h = etank_empty_sprite.height
+            for i in six.moves.range(etanks):
+                if i < etanks - self.etanks_used:
+                    self.hud_sprite.draw_sprite(etank_full_sprite, 0, x, y)
+                else:
+                    self.hud_sprite.draw_sprite(etank_empty_sprite, 0, x, y)
+
+                x += w
+                if x + w >= start_x + healthbar_width:
+                    x = start_x
+                    y += h
+
     def show_hud(self):
         if not NO_HUD:
-            # TODO: Show HUD
+            sge.game.project_sprite(self.hud_sprite, 0, 0, 0)
 
             if not self.human:
                 room = sge.game.current_room
@@ -3716,6 +3765,14 @@ font_small_sprite = sge.gfx.Sprite.from_tileset(
 font_big_sprite = sge.gfx.Sprite.from_tileset(
     os.path.join(d, "font_big.png"), columns=8, rows=12, width=14, height=14,
     xsep=2, ysep=2)
+healthbar_back_sprite = sge.gfx.Sprite("healthbar_back", d, origin_x=2,
+                                       origin_y=1)
+healthbar_front_sprite = sge.gfx.Sprite("healthbar_front", d,
+                                        transparent=False)
+healthbar_width = healthbar_front_sprite.width
+healthbar_height = healthbar_front_sprite.height
+etank_empty_sprite = sge.gfx.Sprite("etank_empty", d)
+etank_full_sprite = sge.gfx.Sprite("etank_full", d)
 
 d = os.path.join(DATA, "images", "portraits")
 portrait_sprites = {}

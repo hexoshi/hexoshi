@@ -140,6 +140,14 @@ Details:
 
 ------------------------------------------------------------------------
 
+sounds/hurt.wav
+
+Author: MatzeB
+License: GNU GPLv3 or later <https://gnu.org/licenses/gpl.html>
+Source: https://supertux.github.io
+
+------------------------------------------------------------------------
+
 sounds/select.ogg
 
 Author: NenadSimic <http://opengameart.org/users/nenadsimic>

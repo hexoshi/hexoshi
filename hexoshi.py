@@ -3802,7 +3802,7 @@ font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
 
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
-hurt_sound = sge.snd.Sound(None)
+hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 kill_sound = sge.snd.Sound(None)
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound

@@ -123,6 +123,7 @@ PLAYER_FALL_SPEED = 7
 PLAYER_SLIDE_SPEED = 0.25
 PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
+DEATH_TIME = 3 * FPS
 
 ANNEROY_BBOX_X = -8
 ANNEROY_BBOX_WIDTH = 17
@@ -357,9 +358,7 @@ class Level(sge.dsp.Room):
             PauseMenu.create()
 
     def die(self):
-        # TODO: Death sequence
-        load_game()
-        start_game()
+        self.alarms["death"] = DEATH_TIME
 
     def win_game(self):
         credits_room = CreditsScreen.load(os.path.join("special",
@@ -551,6 +550,8 @@ class Level(sge.dsp.Room):
                 view.yport -= SHAKE_AMOUNT
             if self.shake_queue:
                 self.alarms["shake_down"] = SHAKE_FRAME_TIME
+        elif alarm_id == "death":
+            sge.game.start_room.start(transition="fade")
 
     @classmethod
     def load(cls, fname, show_prompt=False):
@@ -1089,6 +1090,9 @@ class Player(xsge_physics.Collider):
                 self.alarms["hitstun"] = self.hitstun_time
 
     def kill(self):
+        sge.snd.Music.stop()
+        play_sound(death_sound, self.x, self.y)
+
         if self.lose_on_death:
             sge.game.current_room.die()
 
@@ -3803,7 +3807,7 @@ font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
-kill_sound = sge.snd.Sound(None)
+death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
 confirm_sound = sge.snd.Sound(None)

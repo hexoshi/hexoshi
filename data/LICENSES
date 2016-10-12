@@ -148,6 +148,14 @@ Source: https://supertux.github.io
 
 ------------------------------------------------------------------------
 
+sounds/death.wav
+
+Author: Little Robot Sound Factory <www.littlerobotsoundfactory.com>
+License: CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
+Source: http://opengameart.org/content/8-bit-sound-effects-library
+
+------------------------------------------------------------------------
+
 sounds/select.ogg
 
 Author: NenadSimic <http://opengameart.org/users/nenadsimic>

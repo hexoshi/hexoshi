@@ -123,7 +123,6 @@ PLAYER_FALL_SPEED = 7
 PLAYER_SLIDE_SPEED = 0.25
 PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
-PLAYER_HITSTUN_SPEED = 0.5
 
 ANNEROY_BBOX_X = -8
 ANNEROY_BBOX_WIDTH = 17
@@ -143,6 +142,7 @@ CAMERA_MARGIN_TOP = 4 * TILE_SIZE
 CAMERA_MARGIN_BOTTOM = 5 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = CAMERA_MARGIN_BOTTOM + TILE_SIZE
 
+DEATH_FADE_TIME = 2000
 LIGHT_RANGE = 300
 
 SHAKE_FRAME_TIME = FPS / DELTA_MIN
@@ -971,7 +971,6 @@ class Player(xsge_physics.Collider):
     fall_speed = PLAYER_FALL_SPEED
     slide_speed = PLAYER_SLIDE_SPEED
     hitstun_time = PLAYER_HITSTUN
-    hitstun_speed = PLAYER_HITSTUN_SPEED
     can_move = True
 
     @property
@@ -1096,7 +1095,7 @@ class Player(xsge_physics.Collider):
                 self.hp -= damage
 
             if self.hp <= 0:
-                while self.etanks_emptied < etanks:
+                while self.etanks_used < etanks:
                     self.etanks_used += 1
                     self.hp += self.max_hp
 
@@ -1686,6 +1685,7 @@ class Anneroy(Player):
         self.torso.y = self.y + y * self.image_yscale
         self.torso.image_xscale = abs(self.image_xscale)
         self.torso.image_yscale = self.image_yscale
+        self.torso.image_alpha = self.image_alpha
         self.torso.image_blend = self.image_blend
 
     def event_create(self):
@@ -2000,6 +2000,22 @@ class CrowdObject(WalkingObject, CrowdBlockingObject):
 class Enemy(InteractiveObject):
 
     shootable = True
+    touch_damage = 5
+    hp = 1
+
+    def touch(self, other):
+        other.hurt(self.touch_damage)
+
+    def shoot(self, other):
+        # TODO: Handle different kinds of bullets
+        self.hp -= 1
+        if self.hp <= 0:
+            self.kill()
+        else:
+            self.hurt()
+
+    def hurt(self):
+        pass
 
     def kill(self):
         self.destroy()
@@ -3801,6 +3817,8 @@ font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
 
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
+hurt_sound = sge.snd.Sound(None)
+kill_sound = sge.snd.Sound(None)
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
 confirm_sound = sge.snd.Sound(None)

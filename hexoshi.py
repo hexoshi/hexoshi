@@ -1073,6 +1073,7 @@ class Player(xsge_physics.Collider):
 
     def hurt(self, damage=1):
         if not self.hitstun:
+            play_sound(hurt_sound, self.x, self.y)
             if not GOD:
                 self.hp -= damage
 
@@ -1084,7 +1085,6 @@ class Player(xsge_physics.Collider):
                 if self.hp <= 0:
                     self.kill()
             else:
-                play_sound(hurt_sound, self.x, self.y)
                 self.hitstun = True
                 self.image_alpha = 128
                 self.alarms["hitstun"] = self.hitstun_time
@@ -3749,7 +3749,7 @@ anneroy_torso_offset[(n, 1)] = (0, 9)
 
 d = os.path.join(DATA, "images", "objects", "enemies")
 bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
-                            bbox_width=10, bbox_height=8)
+                            bbox_width=10, bbox_height=10)
 
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,

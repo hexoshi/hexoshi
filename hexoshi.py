@@ -142,7 +142,6 @@ CAMERA_MARGIN_TOP = 4 * TILE_SIZE
 CAMERA_MARGIN_BOTTOM = 5 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = CAMERA_MARGIN_BOTTOM + TILE_SIZE
 
-DEATH_FADE_TIME = 2000
 LIGHT_RANGE = 300
 
 SHAKE_FRAME_TIME = FPS / DELTA_MIN
@@ -246,7 +245,6 @@ class Game(sge.dsp.Game):
             self.event_close()
 
     def event_close(self):
-        save_game()
         self.end()
 
     def event_paused_close(self):
@@ -359,12 +357,11 @@ class Level(sge.dsp.Room):
             PauseMenu.create()
 
     def die(self):
-        self.death_time = DEATH_FADE_TIME
-        sge.snd.Music.clear_queue()
-        sge.snd.Music.stop(DEATH_FADE_TIME)
+        # TODO: Death sequence
+        load_game()
+        start_game()
 
     def win_game(self):
-        save_game()
         credits_room = CreditsScreen.load(os.path.join("special",
                                                        "credits.tmx"))
         credits_room.start()
@@ -530,15 +527,6 @@ class Level(sge.dsp.Room):
 
         self.timeline_step += delta_mult
 
-        if self.death_time is not None:
-            a = int(255 * (DEATH_FADE_TIME - self.death_time) / DEATH_FADE_TIME)
-            sge.game.project_rectangle(
-                0, 0, sge.game.width, sge.game.height, z=100,
-                fill=sge.gfx.Color((0, 0, 0, min(a, 255))))
-        elif "death" in self.alarms:
-            sge.game.project_rectangle(0, 0, sge.game.width, sge.game.height,
-                                       z=100, fill=sge.gfx.Color("black"))
-
     def event_paused_step(self, time_passed, delta_mult):
         # Handle lighting
         for view in self.views:
@@ -563,13 +551,6 @@ class Level(sge.dsp.Room):
                 view.yport -= SHAKE_AMOUNT
             if self.shake_queue:
                 self.alarms["shake_down"] = SHAKE_FRAME_TIME
-        elif alarm_id == "death":
-            # Project a black rectangle to prevent showing the level on
-            # the last frame.
-            sge.game.project_rectangle(0, 0, sge.game.width, sge.game.height,
-                                       z=100, fill=sge.gfx.Color("black"))
-
-            start_game()
 
     @classmethod
     def load(cls, fname, show_prompt=False):
@@ -1108,8 +1089,6 @@ class Player(xsge_physics.Collider):
                 self.alarms["hitstun"] = self.hitstun_time
 
     def kill(self):
-        play_sound(kill_sound, self.x, self.y)
-
         if self.lose_on_death:
             sge.game.current_room.die()
 
@@ -1155,21 +1134,20 @@ class Player(xsge_physics.Collider):
     def set_image(self):
         pass
 
-    def center_view(self):
-        self.view.x = self.x - self.view.width / 2
-        self.view.y = self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
-
-    def event_create(self):
+    def init_position(self):
         self.last_x = self.x
         self.last_y = self.y
         self.on_slope = self.get_bottom_touching_slope()
         self.on_floor = self.get_bottom_touching_wall() + self.on_slope
         self.was_on_floor = self.on_floor
-        
-        sge.game.current_room.add_timeline_object(self)
 
+        self.view.x = self.x - self.view.width / 2
+        self.view.y = self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
+
+    def event_create(self):
+        sge.game.current_room.add_timeline_object(self)
         self.view = sge.game.current_room.views[self.player]
-        self.center_view()
+        self.init_position()
 
     def event_begin_step(self, time_passed, delta_mult):
         self.refresh_input()
@@ -1732,6 +1710,10 @@ class Anneroy(Player):
         self.image_index = 0
         self.fixed_sprite = True
 
+    def event_destroy(self):
+        if self.torso is not None:
+            self.torso.destroy()
+
 
 class DeadMan(sge.dsp.Object):
 
@@ -2143,12 +2125,13 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
         if (self.speed == 0 and "charge_wait" not in self.alarms and
                 not self.returning):
             target = self.get_nearest_player()
-            xvec = target.x - self.x
-            yvec = target.y - self.y
-            dist = math.hypot(xvec, yvec)
-            if dist <= self.charge_distance:
-                self.speed = self.charge_speed
-                self.move_direction = math.degrees(math.atan2(yvec, xvec))
+            if target is not None:
+                xvec = target.x - self.x
+                yvec = target.y - self.y
+                dist = math.hypot(xvec, yvec)
+                if dist <= self.charge_distance:
+                    self.speed = self.charge_speed
+                    self.move_direction = math.degrees(math.atan2(yvec, xvec))
 
         if self.xvelocity:
             self.image_xscale = math.copysign(self.image_xscale, self.xvelocity)
@@ -2309,23 +2292,26 @@ class SpawnPoint(sge.dsp.Object):
         kwargs["tangible"] = False
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
+    def spawn(self, other):
+        other.x = self.x + spawn_xoffset
+        other.y = self.y + spawn_yoffset
+        if self.spawn_direction == 0:
+            other.bbox_left = self.bbox_right
+        elif self.spawn_direction == 90:
+            other.bbox_top = self.bbox_bottom
+        elif self.spawn_direction == 180:
+            other.bbox_right = self.bbox_left
+        elif self.spawn_direction == 270:
+            other.bbox_bottom = self.bbox_top
+
+        other.z = self.z + 0.5
+        other.init_position()
+
     def event_create(self):
         if spawn_point == self.spawn_id or spawn_point is None:
             for obj in sge.game.current_room.objects:
                 if isinstance(obj, Player):
-                    obj.x = self.x + spawn_xoffset
-                    obj.y = self.y + spawn_yoffset
-                    if self.spawn_direction == 0:
-                        obj.bbox_left = self.bbox_right
-                    elif self.spawn_direction == 90:
-                        obj.bbox_top = self.bbox_bottom
-                    elif self.spawn_direction == 180:
-                        obj.bbox_right = self.bbox_left
-                    elif self.spawn_direction == 270:
-                        obj.bbox_bottom = self.bbox_top
-
-                    obj.z = self.z + 0.5
-                    obj.center_view()
+                    self.spawn(obj)
 
             if self.barrier is not None:
                 self.barrier.image_index = self.barrier.sprite.frames - 1
@@ -3223,7 +3209,6 @@ class PauseMenu(ModalMenu):
         sge.snd.Music.unpause()
 
         if self.choice == 1:
-            save_game()
             sge.game.start_room.start()
         else:
             play_sound(select_sound)
@@ -3620,7 +3605,7 @@ def start_game():
         level = Level.load(current_level)
 
     if level is not None:
-        level.start(transition="fade")
+        level.start()
     else:
         return False
 

@@ -1438,11 +1438,11 @@ class Anneroy(Player):
                     if not self.collision(other):
                         break
             else:
-                self.event_animation_end()
-                self.sprite = anneroy_legs_crouch_sprite
+                if self.fixed_sprite != "crouch":
+                    self.sprite = anneroy_legs_crouch_sprite
+                    self.image_index = anneroy_legs_crouch_sprite.frames - 1
                 self.image_speed = -anneroy_legs_crouch_sprite.speed
-                self.image_index = anneroy_legs_crouch_sprite.frames - 1
-                self.fixed_sprite = True
+                self.fixed_sprite = "crouch"
                 self.crouching = False
                 self.bbox_y = ANNEROY_STAND_BBOX_Y
                 self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
@@ -1451,11 +1451,11 @@ class Anneroy(Player):
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
         if (not self.crouching and not h_control and self.on_floor and
                 self.was_on_floor and not self.aim_diag_pressed):
-            self.event_animation_end()
-            self.sprite = anneroy_legs_crouch_sprite
+            if self.fixed_sprite != "crouch":
+                self.sprite = anneroy_legs_crouch_sprite
+                self.image_index = 0
             self.image_speed = anneroy_legs_crouch_sprite.speed
-            self.image_index = 0
-            self.fixed_sprite = True
+            self.fixed_sprite = "crouch"
             self.crouching = True
             self.bbox_y = ANNEROY_CROUCH_BBOX_Y
             self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
@@ -1606,6 +1606,7 @@ class Anneroy(Player):
             self.facing = h_control
 
         if not self.fixed_sprite:
+            self.torso.visible = True
             self.image_xscale = self.facing * abs(self.image_xscale)
             self.image_speed = 0
 
@@ -1665,6 +1666,7 @@ class Anneroy(Player):
             (id(self.sprite), self.image_index % self.sprite.frames), (0, 0))
         self.torso.x = self.x + x * self.image_xscale
         self.torso.y = self.y + y * self.image_yscale
+        self.torso.z = self.z + 0.1
         self.torso.image_xscale = abs(self.image_xscale)
         self.torso.image_yscale = self.image_yscale
         self.torso.image_alpha = self.image_alpha
@@ -1683,24 +1685,16 @@ class Anneroy(Player):
                 self.shoot()
 
     def event_animation_end(self):
-        assert self.torso is not None
-
-        if self.fixed_sprite == "turn":
-            self.torso.visible = True
-
-        if self.fixed_sprite:
-            self.fixed_sprite = False
-            self.set_image()
+        self.fixed_sprite = False
 
     def event_physics_collision_top(self, other, move_loss):
         super(Anneroy, self).event_physics_collision_top(other, move_loss)
-        self.fixed_sprite = False
+        self.event_animation_end()
 
     def event_physics_collision_bottom(self, other, move_loss):
         super(Anneroy, self).event_physics_collision_bottom(other, move_loss)
 
         if not self.was_on_floor:
-            self.event_animation_end()
             self.sprite = anneroy_legs_land_sprite
             self.image_speed = None
             self.image_index = 0
@@ -1708,7 +1702,6 @@ class Anneroy(Player):
             # TODO: Play landing sound
 
     def event_jump(self):
-        self.event_animation_end()
         self.sprite = anneroy_legs_jump_sprite
         self.image_speed = None
         self.image_index = 0

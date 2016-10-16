@@ -52,7 +52,11 @@ if getattr(sys, "frozen", False):
 DATA = os.path.join(os.path.dirname(__file__), "data")
 CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
 
-gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
+if six.PY2:
+    gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")),
+                    unicode=True)
+else:
+    gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -96,13 +100,20 @@ NO_BACKGROUNDS = args.no_backgrounds
 NO_HUD = args.no_hud
 GOD = (args.god and args.god.lower() == "inbailey")
 
-gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
+if six.PY2:
+    gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")),
+                    unicode=True)
+else:
+    gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
 
 if args.lang:
     lang = gettext.translation("hexoshi",
                                os.path.abspath(os.path.join(DATA, "locale")),
                                [args.lang])
-    lang.install()
+    if six.PY2:
+        lang.install(unicode=True)
+    else:
+        lang.install()
 
 SCREEN_SIZE = [400, 224]
 TILE_SIZE = 16

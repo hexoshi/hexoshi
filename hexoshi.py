@@ -1450,6 +1450,7 @@ class Anneroy(Player):
                         break
             else:
                 if self.fixed_sprite != "crouch":
+                    self.reset_image()
                     self.sprite = anneroy_legs_crouch_sprite
                     self.image_index = anneroy_legs_crouch_sprite.frames - 1
                 self.image_speed = -anneroy_legs_crouch_sprite.speed
@@ -1463,6 +1464,7 @@ class Anneroy(Player):
         if (not self.crouching and not h_control and self.on_floor and
                 self.was_on_floor and not self.aim_diag_pressed):
             if self.fixed_sprite != "crouch":
+                self.reset_image()
                 self.sprite = anneroy_legs_crouch_sprite
                 self.image_index = 0
             self.image_speed = anneroy_legs_crouch_sprite.speed
@@ -1585,6 +1587,11 @@ class Anneroy(Player):
                 image_rotation=image_rotation, image_blend=self.image_blend)
             play_sound(shoot_sound, self.x, self.y)
 
+    def reset_image(self):
+        self.torso.visible = True
+        self.image_xscale = self.facing * abs(self.image_xscale)
+        self.image_speed = 0
+
     def set_image(self):
         assert self.torso is not None
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
@@ -1598,6 +1605,7 @@ class Anneroy(Player):
             if self.facing < 0 and h_control > 0:
                 self.facing = 1
                 if self.fixed_sprite != "turn":
+                    self.reset_image()
                     self.sprite = anneroy_turn_sprite
                     self.image_index = 0
                 self.image_speed = anneroy_turn_sprite.speed
@@ -1607,6 +1615,7 @@ class Anneroy(Player):
             elif self.facing > 0 and h_control < 0:
                 self.facing = -1
                 if self.fixed_sprite != "turn":
+                    self.reset_image()
                     self.sprite = anneroy_turn_sprite
                     self.image_index = anneroy_turn_sprite.frames - 1
                 self.image_speed = -anneroy_turn_sprite.speed
@@ -1617,9 +1626,7 @@ class Anneroy(Player):
             self.facing = h_control
 
         if not self.fixed_sprite:
-            self.torso.visible = True
-            self.image_xscale = self.facing * abs(self.image_xscale)
-            self.image_speed = 0
+            self.reset_image()
 
             # Set legs
             if self.on_floor and self.was_on_floor:
@@ -1706,6 +1713,7 @@ class Anneroy(Player):
         super(Anneroy, self).event_physics_collision_bottom(other, move_loss)
 
         if not self.was_on_floor:
+            self.reset_image()
             self.sprite = anneroy_legs_land_sprite
             self.image_speed = None
             self.image_index = 0
@@ -1713,6 +1721,7 @@ class Anneroy(Player):
             # TODO: Play landing sound
 
     def event_jump(self):
+        self.reset_image()
         self.sprite = anneroy_legs_jump_sprite
         self.image_speed = None
         self.image_index = 0

@@ -121,6 +121,7 @@ rooms/0.tmx
 rooms/1.tmx
 rooms/special/title_screen.tmx
 tilesets/doors.tsx
+tilesets/enemies.tsx
 tilesets/extras.tsx
 tilesets/main_blue.tsx
 tilesets/main_green.tsx

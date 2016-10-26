@@ -1109,6 +1109,10 @@ class Player(xsge_physics.Collider):
 
         self.destroy()
 
+    def refresh(self):
+        self.hp = self.max_hp
+        self.etanks_used = 0
+
     def update_hud(self):
         self.hud_sprite.draw_clear()
         if not NO_HUD:
@@ -2322,11 +2326,11 @@ class SpawnPoint(sge.dsp.Object):
         elif self.spawn_direction == 270:
             other.bbox_bottom = self.bbox_top
 
-        other.z = self.z + 0.5
+        other.z = self.z - 0.5
         other.init_position()
 
     def event_create(self):
-        if spawn_point == self.spawn_id or spawn_point is None:
+        if spawn_point == self.spawn_id:
             for obj in sge.game.current_room.objects:
                 if isinstance(obj, Player):
                     self.spawn(obj)
@@ -2335,6 +2339,54 @@ class SpawnPoint(sge.dsp.Object):
                 self.barrier.image_index = self.barrier.sprite.frames - 1
                 self.barrier.image_speed = -self.barrier.sprite.speed
                 play_sound(door_close_sound, self.barrier.x, self.barrier.y)
+
+
+class WarpPad(SpawnPoint):
+
+    def __init__(self, x, y, spawn_id="save", **kwargs):
+        self.spawn_id = spawn_id
+        self.spawn_direction = None
+        self.barrier = None
+        self.activated = False
+        kwargs["sprite"] = warp_pad_inactive_sprite
+        sge.dsp.Object.__init__(self, x, y, **kwargs)
+
+    def activate(self):
+        global spawn_point
+        global spawn_xoffset
+        global spawn_yoffset
+
+        self.activated = True
+        self.sprite = warp_pad_active_sprite
+        spawn_point = self.spawn_id
+        spawn_xoffset = 0
+        spawn_yoffset = 0
+        save_game()
+
+    def spawn(self, other):
+        other.x = self.x + self.sprite.width / 2
+        other.bbox_bottom = self.y
+        other.z = self.z - 0.5
+        other.init_position()
+        self.activate()
+
+    def event_create(self):
+        super(WarpPad, self).event_create()
+
+        self.bbox_x = 8
+        self.bbox_y = -4
+        self.bbox_width = 32
+        self.bbox_height = 4
+        Solid.create(self.x + 8, self.y, bbox_width=32, bbox_height=8)
+        SlopeTopLeft.create(self.x, self.y, bbox_width=8, bbox_height=8)
+        SlopeTopRight.create(self.x + 40, self.y, bbox_width=8, bbox_height=8)
+
+    def event_collision(self, other, xdirection, ydirection):
+        if isinstance(other, Player):
+            if not self.activated and (xdirection or ydirection):
+                self.activate()
+                other.refresh()
+                play_sound(warp_pad_sound, self.x, self.y)
 
 
 class DoorBarrier(InteractiveObject, xsge_physics.Solid):
@@ -3552,7 +3604,7 @@ def set_new_game():
     player_name = "Anneroy"
     watched_timelines = []
     current_level = None
-    spawn_point = None
+    spawn_point = "save"
     etanks = 0
 
 
@@ -3640,11 +3692,12 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "player": Player,
-         "anneroy": Anneroy, "bat": Bat, "doorframe_x": DoorFrameX,
-         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
-         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
-         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
-         "doors": get_object, "moving_platform_path": MovingPlatformPath,
+         "anneroy": Anneroy, "bat": Bat, "warp_pad": WarpPad,
+         "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
+         "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
+         "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
+         "enemies": get_object, "doors": get_object, "objects": get_object,
+         "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath}
 
 
@@ -3776,6 +3829,10 @@ doorframe_regular_x_closed_sprite = sge.gfx.Sprite("regular_x_closed", d)
 doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)
 doorframe_regular_y_closed_sprite = sge.gfx.Sprite("regular_y_closed", d)
 doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
+
+d = os.path.join(DATA, "images", "objects", "misc")
+warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)
+warp_pad_inactive_sprite = sge.gfx.Sprite("warp_pad_inactive", d)
 
 d = os.path.join(DATA, "images", "misc")
 logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)

@@ -7,6 +7,7 @@
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="167" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="173" source="../tilesets/objects.tsx"/>
  <objectgroup name="Enemies">
   <object id="29" gid="166" x="552" y="48" width="16" height="16"/>
   <object id="30" gid="166" x="680" y="48" width="16" height="16"/>

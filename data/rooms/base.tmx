@@ -7,6 +7,7 @@
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="167" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="173" source="../tilesets/objects.tsx"/>
  <objectgroup name="Enemies"/>
  <objectgroup name="Player Objects"/>
  <objectgroup name="Special Blocks"/>

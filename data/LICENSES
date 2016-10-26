@@ -126,12 +126,13 @@ tilesets/main_blue.tsx
 tilesets/main_green.tsx
 tilesets/main_orange.tsx
 tilesets/main_white.tsx
+tilesets/objects.tsx
 sounds/shoot.sfxr
 sounds/shoot.wav
 sounds/teleport.sfxr
 sounds/teleport.wav
 
-Author: onpon4 <https://onpon4.github.io>
+Author: Julie Marchant <https://onpon4.github.io>
 License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 
 ------------------------------------------------------------------------
@@ -188,7 +189,7 @@ Source: http://opengameart.org/content/menu-selection-click
 
 sounds/type.wav
 
-Author: onpon4 <https://onpon4.github.io>
+Author: Julie Marchant <https://onpon4.github.io>
 License: CC0 <http://creativecommons.org/publicdomain/zero/1.0/>
 Generated with Sfxr <http://www.drpetter.se/project_sfxr.html>
 

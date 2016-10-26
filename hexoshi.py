@@ -1589,7 +1589,7 @@ class Anneroy(Player):
                 image_xscale=abs(self.image_xscale),
                 image_yscale=self.image_yscale,
                 image_rotation=image_rotation, image_blend=self.image_blend)
-            play_sound(shoot_sound, self.x, self.y)
+            play_sound(shoot_sound, self.torso.x + x, self.torso.y + y)
 
     def reset_image(self):
         self.torso.visible = True
@@ -2338,7 +2338,8 @@ class SpawnPoint(sge.dsp.Object):
             if self.barrier is not None:
                 self.barrier.image_index = self.barrier.sprite.frames - 1
                 self.barrier.image_speed = -self.barrier.sprite.speed
-                play_sound(door_close_sound, self.barrier.x, self.barrier.y)
+                play_sound(door_close_sound, self.barrier.image_xcenter,
+                           self.barrier.image_ycenter)
 
 
 class WarpPad(SpawnPoint):
@@ -2364,8 +2365,8 @@ class WarpPad(SpawnPoint):
         save_game()
 
     def spawn(self, other):
-        other.x = self.x + self.sprite.width / 2
-        other.bbox_bottom = self.y
+        other.x = self.image_xcenter
+        other.bbox_bottom = self.image_top
         other.z = self.z - 0.5
         other.init_position()
         self.activate()
@@ -2386,7 +2387,8 @@ class WarpPad(SpawnPoint):
             if not self.activated and (xdirection or ydirection):
                 self.activate()
                 other.refresh()
-                play_sound(warp_pad_sound, self.x, self.y)
+                play_sound(warp_pad_sound, self.image_xcenter,
+                           self.image_ycenter)
 
 
 class DoorBarrier(InteractiveObject, xsge_physics.Solid):
@@ -2429,7 +2431,8 @@ class DoorFrame(InteractiveObject):
             self.sprite = self.open_sprite
             self.barrier.tangible = False
             self.barrier.image_speed = self.barrier.sprite.speed
-            play_sound(door_open_sound, self.barrier.x, self.barrier.y)
+            play_sound(door_open_sound, self.barrier.image_xcenter,
+                       self.barrier.image_ycenter)
 
     def event_create(self):
         self.sprite = self.closed_sprite

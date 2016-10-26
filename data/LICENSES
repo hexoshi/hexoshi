@@ -151,6 +151,17 @@ Details:
 
 ------------------------------------------------------------------------
 
+sounds/bullet_death.ogg
+sounds/door_close.ogg
+sounds/door_open.ogg
+sounds/warp_pad.ogg
+
+Author: Pumpkin Studios (Eidos)
+License: GNU GPLv2 or later <https://gnu.org/licenses/gpl.html>
+Source: https://github.com/Warzone2100/warzone2100
+
+------------------------------------------------------------------------
+
 sounds/hurt.wav
 
 Author: MatzeB

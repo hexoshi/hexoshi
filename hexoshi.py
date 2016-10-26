@@ -2211,6 +2211,7 @@ class AnneroyBullet(InteractiveObject):
                 else:
                     image_rotation = 90
 
+            play_sound(bullet_death_sound, self.x, self.y)
             Smoke.create(
                 self.x, self.y, self.z, sprite=anneroy_bullet_dissipate_sprite,
                 regulate_origin=True, image_xscale=self.image_xscale,
@@ -2333,6 +2334,7 @@ class SpawnPoint(sge.dsp.Object):
             if self.barrier is not None:
                 self.barrier.image_index = self.barrier.sprite.frames - 1
                 self.barrier.image_speed = -self.barrier.sprite.speed
+                play_sound(door_close_sound, self.barrier.x, self.barrier.y)
 
 
 class DoorBarrier(InteractiveObject, xsge_physics.Solid):
@@ -2375,6 +2377,7 @@ class DoorFrame(InteractiveObject):
             self.sprite = self.open_sprite
             self.barrier.tangible = False
             self.barrier.image_speed = self.barrier.sprite.speed
+            play_sound(door_open_sound, self.barrier.x, self.barrier.y)
 
     def event_create(self):
         self.sprite = self.closed_sprite
@@ -3819,8 +3822,15 @@ font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
 
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
+bullet_death_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "bullet_death.ogg"), volume=0.2)
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
+warp_pad_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "warp_pad.ogg"))
+door_open_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "door_open.ogg"), volume=0.5)
+door_close_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "door_close.ogg"), volume=0.5)
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
 confirm_sound = sge.snd.Sound(None)

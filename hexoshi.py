@@ -1695,9 +1695,9 @@ class Anneroy(Player):
         self.torso.image_blend = self.image_blend
 
     def event_create(self):
-        super(Anneroy, self).event_create()
         self.torso = sge.dsp.Object.create(self.x, self.y, self.z + 0.1,
                                            regulate_origin=True)
+        super(Anneroy, self).event_create()
 
     def event_alarm(self, alarm_id):
         super(Anneroy, self).event_alarm(alarm_id)

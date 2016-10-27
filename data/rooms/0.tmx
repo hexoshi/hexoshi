@@ -6,14 +6,15 @@
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="167" source="../tilesets/doors.tsx"/>
- <tileset firstgid="173" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="167" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="168" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="174" source="../tilesets/objects.tsx"/>
  <objectgroup name="Enemies"/>
  <objectgroup name="Player Objects">
-  <object id="39" gid="173" x="64" y="160" width="48" height="8"/>
+  <object id="39" gid="174" x="64" y="160" width="48" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="1" gid="169" x="0" y="440" width="8" height="64">
+  <object id="1" gid="170" x="0" y="440" width="8" height="64">
    <properties>
     <property name="dest" value="1.tmx:0.tmx"/>
    </properties>

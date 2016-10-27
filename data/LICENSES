@@ -75,6 +75,15 @@ Source: http://opengameart.org/content/chibi-monsters-set-01
 
 ------------------------------------------------------------------------
 
+images/objects/stones/stone_fragment.png
+images/objects/stones/weak_stone.png
+
+Author: SpiderDave <http://opengameart.org/users/spiderdave>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: http://opengameart.org/content/27-bricks
+
+------------------------------------------------------------------------
+
 images/objects/misc/warp_pad_active.png
 images/objects/misc/warp_pad_inactive.png
 
@@ -128,6 +137,7 @@ tilesets/main_green.tsx
 tilesets/main_orange.tsx
 tilesets/main_white.tsx
 tilesets/objects.tsx
+tilesets/stones.tsx
 sounds/shoot.sfxr
 sounds/shoot.wav
 sounds/teleport.sfxr

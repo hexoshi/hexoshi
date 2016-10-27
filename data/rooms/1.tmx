@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="32">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="49">
  <properties>
   <property name="music" value="lines_of_code.ogg"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="167" source="../tilesets/doors.tsx"/>
- <tileset firstgid="173" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="167" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="168" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="174" source="../tilesets/objects.tsx"/>
  <objectgroup name="Enemies">
   <object id="29" gid="166" x="552" y="48" width="16" height="16"/>
   <object id="30" gid="166" x="680" y="48" width="16" height="16"/>
@@ -15,7 +16,7 @@
  </objectgroup>
  <objectgroup name="Player Objects"/>
  <objectgroup name="Special Blocks">
-  <object id="1" gid="170" x="1192" y="216" width="8" height="64">
+  <object id="1" gid="171" x="1192" y="216" width="8" height="64">
    <properties>
     <property name="dest" value="0.tmx:1.tmx"/>
    </properties>

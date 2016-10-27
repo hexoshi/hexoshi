@@ -2000,6 +2000,37 @@ class CrowdObject(WalkingObject, CrowdBlockingObject):
                                                      ydirection)
 
 
+class Shard(FallingObject):
+
+    """Like Corpse, but bounces around a bit before disappearing."""
+
+    bounce = 0.5
+    friction = 0.9
+
+    def stop_left(self):
+        self.xvelocity *= -self.bounce
+
+    def stop_right(self):
+        self.xvelocity *= -self.bounce
+
+    def stop_up(self):
+        self.yvelocity *= -self.bounce
+
+    def stop_down(self):
+        self.yvelocity *= -self.bounce
+
+    def event_create(self):
+        self.alarms["die"] = 90
+
+    def move(self):
+        super(Shard, self).move()
+        self.speed *= self.friction
+
+    def event_alarm(self, alarm_id):
+        if alarm_id == "die":
+            self.destroy()
+
+
 class Enemy(InteractiveObject):
 
     shootable = True
@@ -2258,7 +2289,8 @@ class AnneroyBullet(InteractiveObject):
                     for obj in collisions:
                         if isinstance(obj, cls):
                             touching = True
-                            break
+                            if isinstance(obj, Stone):
+                                obj.destroy()
 
                 if touching:
                     self.dissipate(xdirection, ydirection)
@@ -2279,10 +2311,54 @@ class AnneroyBullet(InteractiveObject):
                     for obj in collisions:
                         if isinstance(obj, cls):
                             touching = True
-                            break
+                            if isinstance(obj, Stone):
+                                obj.destroy()
 
                 if touching:
                     self.dissipate(xdirection, ydirection)
+
+
+class FakeTile(sge.dsp.Object):
+
+    def event_create(self):
+        self.tangible = False
+
+
+class Stone(xsge_physics.Solid):
+
+    shard_num = 6
+    shard_speed = 3
+    shootable = False
+
+    fakes = ()
+
+    def event_create(self):
+        self.checks_collisions = False
+        self.fakes = []
+        for other in sge.game.current_room.get_objects_at(
+                self.image_left, self.image_top, self.image_width,
+                self.image_height):
+            if (isinstance(other, FakeTile) and
+                    self.image_left < other.image_right and
+                    self.image_right > other.image_left and
+                    self.image_top < other.image_bottom and
+                    self.image_bottom > other.image_top):
+                self.fakes.append(other)
+
+    def event_destroy(self):
+        for other in self.fakes:
+            other.destroy()
+
+        for i in six.moves.range(self.shard_num):
+            shard = Shard.create(self.x, self.y, self.z,
+                                 sprite=stone_fragment_sprite)
+            shard.speed = self.shard_speed
+            shard.move_direction = random.randrange(360)
+
+
+class WeakStone(Stone):
+
+    shootable = True
 
 
 class Tunnel(InteractiveObject):
@@ -3695,12 +3771,13 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "player": Player,
-         "anneroy": Anneroy, "bat": Bat, "warp_pad": WarpPad,
+         "anneroy": Anneroy, "bat": Bat, "fake_tile": FakeTile,
+         "weak_stone": WeakStone, "warp_pad": WarpPad,
          "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
          "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
          "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
-         "enemies": get_object, "doors": get_object, "objects": get_object,
-         "moving_platform_path": MovingPlatformPath,
+         "enemies": get_object, "doors": get_object, "stones": get_object,
+         "objects": get_object, "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath}
 
 
@@ -3832,6 +3909,9 @@ doorframe_regular_x_closed_sprite = sge.gfx.Sprite("regular_x_closed", d)
 doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)
 doorframe_regular_y_closed_sprite = sge.gfx.Sprite("regular_y_closed", d)
 doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
+
+d = os.path.join(DATA, "images", "objects", "stones")
+stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)

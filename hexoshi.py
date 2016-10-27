@@ -245,7 +245,7 @@ class Game(sge.dsp.Game):
                 self.fps_frames = 0
 
             self.project_text(font_small, self.fps_text, self.width - 8,
-                              self.height - 8, z=1000,
+                              self.height - 8, z=1000000,
                               color=sge.gfx.Color("yellow"), halign="right",
                               valign="bottom")
 
@@ -284,6 +284,8 @@ class Level(sge.dsp.Room):
         self.shake_queue = 0
         self.death_time = None
         self.status_text = None
+        self.player_z = 0
+        self.bullet_z = 10000
 
         if bgname is not None:
             background = backgrounds.get(bgname, background)
@@ -1179,6 +1181,7 @@ class Player(xsge_physics.Collider):
         self.view.y = self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
 
     def event_create(self):
+        self.z = sge.game.current_room.player_z
         sge.game.current_room.add_timeline_object(self)
         self.view = sge.game.current_room.views[self.player]
         self.init_position()
@@ -1590,7 +1593,7 @@ class Anneroy(Player):
             guide.move_y(yfinal)
 
             bs = AnneroyBullet.create(
-                guide.x, guide.y, 10000,
+                guide.x, guide.y, sge.game.current_room.bullet_z,
                 sprite=anneroy_bullet_sprite, xvelocity=xv,
                 yvelocity=yv, regulate_origin=True,
                 image_xscale=abs(self.image_xscale),
@@ -1600,7 +1603,7 @@ class Anneroy(Player):
             guide.destroy()
 
             Smoke.create(
-                self.torso.x + x, self.torso.y + y, 10000,
+                self.torso.x + x, self.torso.y + y, self.torso.z,
                 sprite=anneroy_bullet_dust_sprite, xvelocity=self.xvelocity,
                 yvelocity=self.yvelocity, regulate_origin=True,
                 image_xscale=abs(self.image_xscale),
@@ -2488,7 +2491,6 @@ class SpawnPoint(sge.dsp.Object):
         elif self.spawn_direction == 270:
             other.bbox_bottom = self.bbox_top
 
-        other.z = self.z - 0.5
         other.init_position()
 
     def event_create(self):
@@ -2835,6 +2837,23 @@ class CircoflamePath(xsge_path.Path):
             pos = math.degrees(math.atan2(fy, fx))
             CircoflameCenter.create(self.x, self.y, z=self.z, radius=radius,
                                     pos=pos, rvelocity=self.rvelocity)
+        self.destroy()
+
+
+class PlayerLayer(sge.dsp.Object):
+
+    def event_create(self):
+        sge.game.current_room.player_z = self.z
+        for obj in sge.game.current_room.objects:
+            if isinstance(obj, Player):
+                obj.z = self.z
+        self.destroy()
+
+
+class BulletLayer(sge.dsp.Object):
+
+    def event_create(self):
+        sge.game.current_room.bullet_z = self.z
         self.destroy()
 
 
@@ -3870,16 +3889,16 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "slope_bottomright": SlopeBottomRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
-         "spike_bottom": SpikeBottom, "death": Death, "player": Player,
-         "anneroy": Anneroy, "bat": Bat, "fake_tile": FakeTile,
-         "weak_stone": WeakStone, "etank": Etank, "warp_pad": WarpPad,
-         "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
-         "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
-         "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
-         "enemies": get_object, "doors": get_object, "stones": get_object,
-         "powerups": get_object, "objects": get_object,
-         "moving_platform_path": MovingPlatformPath,
-         "triggered_moving_platform_path": TriggeredMovingPlatformPath}
+         "spike_bottom": SpikeBottom, "death": Death, "bat": Bat,
+         "fake_tile": FakeTile, "weak_stone": WeakStone, "etank": Etank,
+         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
+         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
+         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
+         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
+         "doors": get_object, "stones": get_object, "powerups": get_object,
+         "objects": get_object, "moving_platform_path": MovingPlatformPath,
+         "triggered_moving_platform_path": TriggeredMovingPlatformPath,
+         "player": PlayerLayer, "bullets": BulletLayer}
 
 
 print(_("Initializing game system..."))

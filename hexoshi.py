@@ -2005,8 +2005,10 @@ class Shard(FallingObject):
 
     """Like Corpse, but bounces around a bit before disappearing."""
 
+    fall_speed = 99
     bounce = 0.5
-    friction = 0.9
+    friction = 0.95
+    life = 45
 
     def stop_left(self):
         self.xvelocity *= -self.bounce
@@ -2021,7 +2023,7 @@ class Shard(FallingObject):
         self.yvelocity *= -self.bounce
 
     def event_create(self):
-        self.alarms["die"] = 90
+        self.alarms["die"] = self.life
 
     def move(self):
         super(Shard, self).move()
@@ -2327,8 +2329,10 @@ class FakeTile(sge.dsp.Object):
 
 class Stone(xsge_physics.Solid):
 
-    shard_num = 6
-    shard_speed = 3
+    shard_num_min = 1
+    shard_num_max = 4
+    shard_speed_min = 2
+    shard_speed_max = 5
     shootable = False
 
     fakes = ()
@@ -2350,10 +2354,12 @@ class Stone(xsge_physics.Solid):
         for other in self.fakes:
             other.destroy()
 
-        for i in six.moves.range(self.shard_num):
+        shard_num = random.randint(self.shard_num_min, self.shard_num_max)
+        for i in six.moves.range(shard_num):
             shard = Shard.create(self.x, self.y, self.z,
                                  sprite=stone_fragment_sprite)
-            shard.speed = self.shard_speed
+            shard.speed = random.randint(self.shard_speed_min,
+                                         self.shard_speed_max)
             shard.move_direction = random.randrange(360)
 
 

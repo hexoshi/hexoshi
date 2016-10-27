@@ -216,6 +216,7 @@ player_name = "Anneroy"
 watched_timelines = []
 current_level = None
 spawn_point = None
+warp_pads = []
 etanks = 0
 
 spawn_xoffset = 0
@@ -2430,14 +2431,14 @@ class WarpPad(SpawnPoint):
 
     def activate(self):
         global spawn_point
-        global spawn_xoffset
-        global spawn_yoffset
+        global warp_pads
 
         self.activated = True
         self.sprite = warp_pad_active_sprite
         spawn_point = self.spawn_id
-        spawn_xoffset = 0
-        spawn_yoffset = 0
+        i = (sge.game.current_room.fname, self.spawn_id)
+        if i not in warp_pads:
+            warp_pads.append(i)
         save_game()
 
     def spawn(self, other):
@@ -3678,12 +3679,14 @@ def set_new_game():
     global watched_timelines
     global current_level
     global spawn_point
+    global warp_pads
     global etanks
 
     player_name = "Anneroy"
     watched_timelines = []
     current_level = None
     spawn_point = "save"
+    warp_pads = []
     etanks = 0
 
 
@@ -3722,6 +3725,7 @@ def save_game():
             "watched_timelines": watched_timelines,
             "current_level": current_level,
             "spawn_point": spawn_point,
+            "warp_pads": warp_pads,
             "etanks": etanks}
 
     write_to_disk()
@@ -3732,6 +3736,7 @@ def load_game():
     global watched_timelines
     global current_level
     global spawn_point
+    global warp_pads
     global etanks
 
     if (current_save_slot is not None and
@@ -3741,6 +3746,7 @@ def load_game():
         watched_timelines = slot.get("watched_timelines", [])
         current_level = slot.get("current_level")
         spawn_point = slot.get("spawn_point")
+        warp_pads = slot.get("warp_pads", [])
         etanks = slot.get("etanks", 0)
     else:
         set_new_game()

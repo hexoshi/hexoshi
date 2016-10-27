@@ -143,7 +143,7 @@ ANNEROY_STAND_BBOX_Y = -16
 ANNEROY_STAND_BBOX_HEIGHT = 40
 ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
-ANNEROY_BULLET_SPEED = 5
+ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_EXPLODE_TIME = 0.6 * FPS
 
@@ -3960,10 +3960,10 @@ anneroy_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
     fname, 249, 119, width=26, height=16, origin_x=16, origin_y=7, fps=10)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-6,
-    bbox_y=-6, bbox_width=11, bbox_height=9)
+    fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-8,
+    bbox_y=-8, bbox_width=15, bbox_height=15)
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=15, origin_y=23,
+    fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=13, origin_y=23,
     fps=10)
 
 n = id(anneroy_legs_run_sprite)

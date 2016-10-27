@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="49">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="52">
  <properties>
   <property name="music" value="lines_of_code.ogg"/>
  </properties>
@@ -8,13 +8,15 @@
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="231" source="../tilesets/stones.tsx"/>
- <tileset firstgid="232" source="../tilesets/doors.tsx"/>
- <tileset firstgid="238" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="232" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="233" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="239" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="150" height="28">
   <data encoding="base64" compression="zlib">
    eJzt1csKgkAUxnEfP6tN2WVRmbTqQj1GV2zfrkfpCCMMoSnDjJf8/+BjQKfT8YyU5wFAt4WStZZI4kvmKjMtobYnSz/j2kKyVBmpbL7WsY0HyRBIJo5qm0jmY6OnrDkn9LOMDGs3aV6pvOdN6e+YnpXjvpqiaD5l+YafCwru9wzrumZrbv9qWncDLcXcAACuRXU3AAAAAAAAAAAAAABARwwd1Dw6qInuyHsnY8m7wj72FX6XLQcLNbaSnYU6XXKWXEruvbtsxJFHiT2DgvtXyc1CL7+c1Mp/UPO0+Uyeao1r7aJ5XjnXi34LbOJMAFTlA+aIL9U=
   </data>
  </layer>
+ <objectgroup name="Powerups"/>
  <objectgroup name="Enemies">
   <object id="29" gid="230" x="552" y="48" width="16" height="16"/>
   <object id="30" gid="230" x="680" y="48" width="16" height="16"/>
@@ -22,7 +24,7 @@
  </objectgroup>
  <objectgroup name="Player Objects"/>
  <objectgroup name="Special Blocks">
-  <object id="1" gid="235" x="1192" y="216" width="8" height="64">
+  <object id="1" gid="236" x="1192" y="216" width="8" height="64">
    <properties>
     <property name="dest" value="0.tmx:1.tmx"/>
    </properties>

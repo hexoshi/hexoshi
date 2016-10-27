@@ -219,6 +219,7 @@ watched_timelines = []
 current_level = None
 spawn_point = None
 warp_pads = []
+powerups = []
 etanks = 0
 
 spawn_xoffset = 0
@@ -1001,13 +1002,13 @@ class Player(xsge_physics.Collider):
                                          height=SCREEN_SIZE[1])
 
         self.reset_input()
-        self.hp = self.max_hp
         self.etanks_used = 0
         self.hitstun = False
         self.facing = 1
         self.aim_direction = None
         self.aim_direction_time = 0
         self.view = None
+        self.hp = self.max_hp
 
         if GOD:
             image_blend = sge.gfx.Color("olive")
@@ -1117,6 +1118,7 @@ class Player(xsge_physics.Collider):
     def refresh(self):
         self.hp = self.max_hp
         self.etanks_used = 0
+        self.update_hud()
 
     def warp_in(self):
         self.alarms["input_lock"] = WARP_TIME
@@ -2411,6 +2413,40 @@ class WeakStone(Stone):
     shootable = True
 
 
+class Powerup(InteractiveObject):
+
+    message = ""
+
+    def collect(self):
+        pass
+
+    def touch(self, other):
+        global powerups
+        i = (self.__class__.__name__, sge.game.current_room.fname,
+             int(self.x), int(self.y))
+        powerups.append(i)
+        DialogBox(gui_handler, _(self.message), self.sprite).show()
+        self.collect()
+        other.refresh()
+        self.destroy()
+
+    def event_create(self):
+        global powerups
+        i = (self.__class__.__name__, sge.game.current_room.fname,
+             int(self.x), int(self.y))
+        if i in powerups:
+            self.destroy()
+
+
+class Etank(Powerup):
+
+    message = "ETANK\n\nExtra energy acquired"
+
+    def collect(self):
+        global etanks
+        etanks += 1
+
+
 class Tunnel(InteractiveObject):
 
     def __init__(self, x, y, dest=None, **kwargs):
@@ -3460,7 +3496,7 @@ class DialogBox(xsge_gui.Dialog):
 
         self.label = DialogLabel(self, label_x, label_y, 0, text, font=font,
                                  width=label_w, height=label_h,
-                                 color=menu_text_color, rate=rate)
+                                 color=sge.gfx.Color("white"), rate=rate)
 
         if portrait is not None:
             xsge_gui.Widget(self, 8, 8, 0, sprite=portrait)
@@ -3836,12 +3872,13 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "player": Player,
          "anneroy": Anneroy, "bat": Bat, "fake_tile": FakeTile,
-         "weak_stone": WeakStone, "warp_pad": WarpPad,
+         "weak_stone": WeakStone, "etank": Etank, "warp_pad": WarpPad,
          "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
          "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
          "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
          "enemies": get_object, "doors": get_object, "stones": get_object,
-         "objects": get_object, "moving_platform_path": MovingPlatformPath,
+         "powerups": get_object, "objects": get_object,
+         "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath}
 
 

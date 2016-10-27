@@ -85,6 +85,18 @@ Source: http://opengameart.org/content/27-bricks
 
 ------------------------------------------------------------------------
 
+images/objects/powerups/etank.png
+
+Authors:
+  Julie Marchant <https://onpon4.github.io>
+  Adam Atomic <http://www.adamatomic.com/>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: http://adamatomic.com/abandonauts/
+Details:
+  Made by putting together various images from the Abandonauts set.
+
+------------------------------------------------------------------------
+
 images/objects/misc/warp_pad_active.png
 images/objects/misc/warp_pad_inactive.png
 
@@ -138,6 +150,7 @@ tilesets/main_green.tsx
 tilesets/main_orange.tsx
 tilesets/main_white.tsx
 tilesets/objects.tsx
+tilesets/powerups.tsx
 tilesets/stones.tsx
 sounds/shoot.sfxr
 sounds/shoot.wav

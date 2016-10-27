@@ -8,19 +8,21 @@
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="231" source="../tilesets/stones.tsx"/>
- <tileset firstgid="232" source="../tilesets/doors.tsx"/>
- <tileset firstgid="238" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="232" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="233" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="239" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="56">
   <data encoding="base64" compression="zlib">
    eJzt1bERgzAQBEDat1Ps1JADbZjAkFARXwARIAR4d+YijV73kYqCKykjrw33P5EqUi+cPVfMe2zoksqaPc7oLnu8cxcAAAAAOKlvpM9dAgDwHwNcXJu7wE6G3AUA/lQT6RLNnhLNXfKLjAe+xz5moFENTw==
   </data>
  </layer>
+ <objectgroup name="Powerups"/>
  <objectgroup name="Enemies"/>
  <objectgroup name="Player Objects">
-  <object id="39" gid="238" x="64" y="160" width="48" height="8"/>
+  <object id="39" gid="239" x="64" y="160" width="48" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="1" gid="234" x="0" y="440" width="8" height="64">
+  <object id="1" gid="235" x="0" y="440" width="8" height="64">
    <properties>
     <property name="dest" value="1.tmx:0.tmx"/>
    </properties>

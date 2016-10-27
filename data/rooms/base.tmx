@@ -5,10 +5,16 @@
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
- <tileset firstgid="166" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="167" source="../tilesets/stones.tsx"/>
- <tileset firstgid="168" source="../tilesets/doors.tsx"/>
- <tileset firstgid="174" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="166" source="../tilesets/plants.tsx"/>
+ <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
+ <tileset firstgid="231" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="232" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="238" source="../tilesets/objects.tsx"/>
+ <layer name="Decorations" width="50" height="28">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
+  </data>
+ </layer>
  <objectgroup name="Enemies"/>
  <objectgroup name="Player Objects"/>
  <objectgroup name="Special Blocks"/>

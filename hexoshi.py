@@ -134,6 +134,7 @@ PLAYER_FALL_SPEED = 7
 PLAYER_SLIDE_SPEED = 0.25
 PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
+WARP_TIME = FPS / 2
 DEATH_TIME = 3 * FPS
 
 ANNEROY_BBOX_X = -8
@@ -144,6 +145,7 @@ ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
 ANNEROY_BULLET_SPEED = 5
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
+ANNEROY_EXPLODE_TIME = 0.6 * FPS
 
 CEILING_LAX = 2
 
@@ -370,7 +372,7 @@ class Level(sge.dsp.Room):
             PauseMenu.create()
 
     def die(self):
-        self.alarms["death"] = DEATH_TIME
+        sge.game.start_room.start(transition="fade")
 
     def win_game(self):
         credits_room = CreditsScreen.load(os.path.join("special",
@@ -563,7 +565,7 @@ class Level(sge.dsp.Room):
             if self.shake_queue:
                 self.alarms["shake_down"] = SHAKE_FRAME_TIME
         elif alarm_id == "death":
-            sge.game.start_room.start(transition="fade")
+            self.die()
 
     @classmethod
     def load(cls, fname, show_prompt=False):
@@ -998,15 +1000,7 @@ class Player(xsge_physics.Collider):
         self.hud_sprite = sge.gfx.Sprite(width=SCREEN_SIZE[0],
                                          height=SCREEN_SIZE[1])
 
-        self.left_pressed = False
-        self.right_pressed = False
-        self.up_pressed = False
-        self.down_pressed = False
-        self.jump_pressed = False
-        self.shoot_pressed = False
-        self.aim_diag_pressed = False
-        self.aim_up_pressed = False
-        self.aim_down_pressed = False
+        self.reset_input()
         self.hp = self.max_hp
         self.etanks_used = 0
         self.hitstun = False
@@ -1033,8 +1027,19 @@ class Player(xsge_physics.Collider):
             image_yscale=image_yscale, image_rotation=image_rotation,
             image_alpha=image_alpha, image_blend=image_blend)
 
+    def reset_input(self):
+        self.left_pressed = False
+        self.right_pressed = False
+        self.up_pressed = False
+        self.down_pressed = False
+        self.jump_pressed = False
+        self.shoot_pressed = False
+        self.aim_diag_pressed = False
+        self.aim_up_pressed = False
+        self.aim_down_pressed = False
+
     def refresh_input(self):
-        if self.human:
+        if self.human and "input_lock" not in self.alarms:
             key_controls = [left_key, right_key, up_key, down_key, aim_diag_key,
                             jump_key, shoot_key, aim_up_key, aim_down_key]
             js_controls = [left_js, right_js, up_js, down_js, aim_diag_js,
@@ -1102,17 +1107,24 @@ class Player(xsge_physics.Collider):
                 self.alarms["hitstun"] = self.hitstun_time
 
     def kill(self):
-        sge.snd.Music.stop()
-        play_sound(death_sound, self.x, self.y)
-
         if self.lose_on_death:
-            sge.game.current_room.die()
+            sge.snd.Music.stop()
+            sge.game.current_room.alarms["death"] = DEATH_TIME
 
+        play_sound(death_sound, self.x, self.y)
         self.destroy()
 
     def refresh(self):
         self.hp = self.max_hp
         self.etanks_used = 0
+
+    def warp_in(self):
+        self.alarms["input_lock"] = WARP_TIME
+        self.reset_input()
+
+    def warp_out(self):
+        self.alarms["input_lock"] = WARP_TIME
+        self.reset_input()
 
     def update_hud(self):
         self.hud_sprite.draw_clear()
@@ -1305,9 +1317,11 @@ class Player(xsge_physics.Collider):
         if alarm_id == "hitstun":
             self.hitstun = False
             self.image_alpha = 255
+        elif alarm_id == "input_lock":
+            self.refresh_input()
 
     def event_key_press(self, key, char):
-        if self.human:
+        if self.human and "input_lock" not in self.alarms:
             if key in up_key[self.player]:
                 self.press_up()
             if key in down_key[self.player]:
@@ -1322,12 +1336,12 @@ class Player(xsge_physics.Collider):
                 sge.game.current_room.pause()
 
     def event_key_release(self, key):
-        if self.human:
+        if self.human and "input_lock" not in self.alarms:
             if key in jump_key[self.player]:
                 self.jump_release()
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
-        if self.human:
+        if self.human and "input_lock" not in self.alarms:
             js = (js_id, input_type, input_id)
             if value >= joystick_threshold:
                 if js in up_js[self.player]:
@@ -1592,6 +1606,30 @@ class Anneroy(Player):
                 image_rotation=image_rotation, image_blend=self.image_blend)
             play_sound(shoot_sound, self.torso.x + x, self.torso.y + y)
 
+    def kill(self):
+        if self.lose_on_death:
+            sge.snd.Music.stop()
+            sge.game.current_room.alarms["death"] = DEATH_TIME
+
+        play_sound(death_sound, self.x, self.y)
+        self.alarms["death"] = ANNEROY_EXPLODE_TIME
+        self.alarms["input_lock"] = DEATH_TIME
+        self.tangible = False
+        self.xvelocity = 0
+        self.yvelocity = 0
+        self.gravity = 0
+        self.fixed_sprite = True
+        self.image_speed = 0
+
+    def warp_in(self):
+        super(Anneroy, self).warp_in()
+        self.alarms["fixed_sprite"] = WARP_TIME
+        self.sprite = anneroy_turn_sprite
+        self.image_index = 1
+        self.image_speed = 0
+        self.torso.visible = False
+        self.fixed_sprite = True
+
     def reset_image(self):
         self.torso.visible = True
         self.image_xscale = self.facing * abs(self.image_xscale)
@@ -1703,12 +1741,17 @@ class Anneroy(Player):
     def event_alarm(self, alarm_id):
         super(Anneroy, self).event_alarm(alarm_id)
 
-        if alarm_id == "shoot_lock":
+        if alarm_id == "fixed_sprite":
+            self.fixed_sprite = False
+        elif alarm_id == "shoot_lock":
             if self.shoot_pressed:
                 self.shoot()
+        elif alarm_id == "death":
+            self.destroy()
 
     def event_animation_end(self):
-        self.fixed_sprite = False
+        if self.fixed_sprite in {"turn", "crouch", "anim"}:
+            self.fixed_sprite = False
 
     def event_physics_collision_top(self, other, move_loss):
         super(Anneroy, self).event_physics_collision_top(other, move_loss)
@@ -1722,7 +1765,7 @@ class Anneroy(Player):
             self.sprite = anneroy_legs_land_sprite
             self.image_speed = None
             self.image_index = 0
-            self.fixed_sprite = True
+            self.fixed_sprite = "anim"
             # TODO: Play landing sound
 
     def event_jump(self):
@@ -1730,7 +1773,7 @@ class Anneroy(Player):
         self.sprite = anneroy_legs_jump_sprite
         self.image_speed = None
         self.image_index = 0
-        self.fixed_sprite = True
+        self.fixed_sprite = "anim"
 
     def event_destroy(self):
         if self.torso is not None:
@@ -2431,6 +2474,7 @@ class WarpPad(SpawnPoint):
         self.spawn_id = spawn_id
         self.spawn_direction = None
         self.barrier = None
+        self.created = False
         self.activated = False
         kwargs["sprite"] = warp_pad_inactive_sprite
         sge.dsp.Object.__init__(self, x, y, **kwargs)
@@ -2448,15 +2492,18 @@ class WarpPad(SpawnPoint):
         save_game()
 
     def spawn(self, other):
+        if not self.created:
+            self.create_children()
         other.x = self.image_xcenter
         other.bbox_bottom = self.image_top
         other.z = self.z - 0.5
         other.init_position()
+        other.warp_in()
         self.activate()
+        play_sound(teleport_sound, self.image_xcenter, self.image_ycenter)
 
-    def event_create(self):
-        super(WarpPad, self).event_create()
-
+    def create_children(self):
+        self.created = True
         self.bbox_x = 8
         self.bbox_y = -4
         self.bbox_width = 32
@@ -2464,6 +2511,11 @@ class WarpPad(SpawnPoint):
         Solid.create(self.x + 8, self.y, bbox_width=32, bbox_height=8)
         SlopeTopLeft.create(self.x, self.y, bbox_width=8, bbox_height=8)
         SlopeTopRight.create(self.x + 40, self.y, bbox_width=8, bbox_height=8)
+
+    def event_create(self):
+        super(WarpPad, self).event_create()
+        if not self.created:
+            self.create_children()
 
     def event_collision(self, other, xdirection, ydirection):
         if isinstance(other, Player):
@@ -3979,6 +4031,7 @@ bullet_death_sound = sge.snd.Sound(
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
 warp_pad_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "warp_pad.ogg"))
+teleport_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "teleport.wav"))
 door_open_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "door_open.ogg"), volume=0.5)
 door_close_sound = sge.snd.Sound(

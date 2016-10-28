@@ -177,6 +177,8 @@ tilesets/main_white.tsx
 tilesets/objects.tsx
 tilesets/powerups.tsx
 tilesets/stones.tsx
+sounds/heal.sfxr
+sounds/heal.wav
 sounds/shoot.sfxr
 sounds/shoot.wav
 sounds/teleport.sfxr

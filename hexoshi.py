@@ -2372,6 +2372,7 @@ class LifeForce(InteractiveObject):
 
     def touch(self, other):
         other.hp += LIFE_FORCE_HEAL
+        play_sound(heal_sound, other.x, other.y)
         self.destroy()
 
 
@@ -4216,6 +4217,7 @@ bullet_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "bullet_death.ogg"), volume=0.2)
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
+heal_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "heal.wav"))
 warp_pad_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "warp_pad.ogg"))
 teleport_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "teleport.wav"))
 door_open_sound = sge.snd.Sound(

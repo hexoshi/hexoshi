@@ -23,7 +23,7 @@
   <object id="44" gid="230" x="352" y="40" width="16" height="16"/>
   <object id="45" gid="230" x="168" y="320" width="16" height="16"/>
   <object id="64" gid="231" x="352" y="656" width="16" height="16"/>
-  <object id="65" gid="230" x="312" y="504" width="16" height="16"/>
+  <object id="65" gid="230" x="344" y="584" width="16" height="16"/>
   <object id="66" gid="230" x="40" y="448" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="player">

@@ -999,6 +999,7 @@ class Player(xsge_physics.Collider):
         self.human = human
         self.lose_on_death = lose_on_death
         self.view_frozen = view_frozen
+        self.input_lock = False
 
         self.hud_sprite = sge.gfx.Sprite(width=SCREEN_SIZE[0],
                                          height=SCREEN_SIZE[1])
@@ -1042,7 +1043,7 @@ class Player(xsge_physics.Collider):
         self.aim_down_pressed = False
 
     def refresh_input(self):
-        if self.human and "input_lock" not in self.alarms:
+        if self.human and not self.input_lock:
             key_controls = [left_key, right_key, up_key, down_key, aim_diag_key,
                             jump_key, shoot_key, aim_up_key, aim_down_key]
             js_controls = [left_js, right_js, up_js, down_js, aim_diag_js,
@@ -1123,12 +1124,18 @@ class Player(xsge_physics.Collider):
         self.update_hud()
 
     def warp_in(self):
+        self.input_lock = True
         self.alarms["input_lock"] = WARP_TIME
         self.reset_input()
+        self.xvelocity = 0
+        self.yvelocity = 0
 
     def warp_out(self):
+        self.input_lock = True
         self.alarms["input_lock"] = WARP_TIME
         self.reset_input()
+        self.xvelocity = 0
+        self.yvelocity = 0
 
     def update_hud(self):
         self.hud_sprite.draw_clear()
@@ -1327,10 +1334,11 @@ class Player(xsge_physics.Collider):
             self.hitstun = False
             self.image_alpha = 255
         elif alarm_id == "input_lock":
+            self.input_lock = False
             self.refresh_input()
 
     def event_key_press(self, key, char):
-        if self.human and "input_lock" not in self.alarms:
+        if self.human and not self.input_lock:
             if key in up_key[self.player]:
                 self.press_up()
             if key in down_key[self.player]:
@@ -1345,12 +1353,12 @@ class Player(xsge_physics.Collider):
                 sge.game.current_room.pause()
 
     def event_key_release(self, key):
-        if self.human and "input_lock" not in self.alarms:
+        if self.human and not self.input_lock:
             if key in jump_key[self.player]:
                 self.jump_release()
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
-        if self.human and "input_lock" not in self.alarms:
+        if self.human and not self.input_lock:
             js = (js_id, input_type, input_id)
             if value >= joystick_threshold:
                 if js in up_js[self.player]:
@@ -1622,8 +1630,9 @@ class Anneroy(Player):
 
         play_sound(death_sound, self.x, self.y)
         self.alarms["death"] = ANNEROY_EXPLODE_TIME
-        self.alarms["input_lock"] = DEATH_TIME
+        self.input_lock = True
         self.tangible = False
+        self.reset_input()
         self.xvelocity = 0
         self.yvelocity = 0
         self.gravity = 0

@@ -156,6 +156,9 @@ CAMERA_MARGIN_TOP = 4 * TILE_SIZE
 CAMERA_MARGIN_BOTTOM = 5 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = CAMERA_MARGIN_BOTTOM + TILE_SIZE
 
+LIFE_FORCE_SPEED = 1
+LIFE_FORCE_HEAL = 5
+
 LIGHT_RANGE = 300
 
 SHAKE_FRAME_TIME = FPS / DELTA_MIN
@@ -220,6 +223,7 @@ current_level = None
 spawn_point = None
 warp_pads = []
 powerups = []
+progress_flags = []
 etanks = 0
 
 spawn_xoffset = 0
@@ -979,8 +983,19 @@ class Player(xsge_physics.Collider):
     @hp.setter
     def hp(self, value):
         self.__hp = value
-        if value > 0:
-            new_w = healthbar_width * value / self.max_hp
+
+        while self.__hp > self.max_hp and self.etanks_used > 0:
+            self.etanks_used -= 1
+            self.__hp -= self.max_hp
+
+        while self.__hp <= 0 and self.etanks_used < etanks:
+            self.etanks_used += 1
+            self.__hp += self.max_hp
+
+        self.__hp = min(self.__hp, self.max_hp)
+
+        if self.__hp > 0:
+            new_w = healthbar_width * self.__hp / self.max_hp
             healthbar_front_sprite.width = new_w
         self.update_hud()
 
@@ -1099,12 +1114,7 @@ class Player(xsge_physics.Collider):
                 self.hp -= damage
 
             if self.hp <= 0:
-                while self.etanks_used < etanks:
-                    self.etanks_used += 1
-                    self.hp += self.max_hp
-
-                if self.hp <= 0:
-                    self.kill()
+                self.kill()
             else:
                 self.hitstun = True
                 self.image_alpha = 128
@@ -2116,6 +2126,9 @@ class Enemy(InteractiveObject):
         pass
 
     def kill(self):
+        if "life_orb" in progress_flags:
+            LifeForce.create(self.image_xcenter, self.image_ycenter, z=self.z)
+
         self.destroy()
 
 
@@ -2341,6 +2354,29 @@ class Boss(InteractiveObject):
                 sge.game.current_room.load_timeline(self.death_timeline)
 
 
+class LifeForce(InteractiveObject):
+
+    def __init__(self, *args, **kwargs):
+        kwargs["sprite"] = life_force_sprite
+        super(LifeForce, self).__init__(*args, **kwargs)
+
+    def move(self):
+        if "set_direction" not in self.alarms:
+            self.alarms["set_direction"] = FPS / 4
+            target = self.get_nearest_player()
+            if target is not None:
+                xvec = target.x - self.image_xcenter
+                yvec = target.y - self.image_ycenter
+                self.speed = LIFE_FORCE_SPEED
+                self.move_direction = math.degrees(math.atan2(yvec, xvec))
+            else:
+                self.speed = 0
+
+    def touch(self, other):
+        other.hp += LIFE_FORCE_HEAL
+        self.destroy()
+
+
 class AnneroyBullet(InteractiveObject):
 
     def dissipate(self, xdirection=0, ydirection=0):
@@ -2488,7 +2524,7 @@ class WeakStone(Stone):
 
 class Powerup(InteractiveObject):
 
-    message = ""
+    message = _("USELESS ARTIFACT\n\nIt doesn't seem to do anything")
 
     def collect(self):
         pass
@@ -2498,7 +2534,7 @@ class Powerup(InteractiveObject):
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
         powerups.append(i)
-        DialogBox(gui_handler, _(self.message), self.sprite).show()
+        DialogBox(gui_handler, self.message, self.sprite).show()
         self.collect()
         other.refresh()
         self.destroy()
@@ -2513,11 +2549,23 @@ class Powerup(InteractiveObject):
 
 class Etank(Powerup):
 
-    message = "ETANK\n\nExtra energy acquired"
+    message = _("E-TANK\n\nExtra energy acquired")
 
     def collect(self):
         global etanks
         etanks += 1
+
+
+class LifeOrb(Powerup):
+
+    message = _("LIFE ORB\n\nAbsorb life force from defeated enemies")
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["sprite"] = life_orb_sprite
+        super(LifeOrb, self).__init__(x, y, **kwargs)
+
+    def collect(self):
+        progress_flags.append("life_orb")
 
 
 class Tunnel(InteractiveObject):
@@ -3865,6 +3913,7 @@ def set_new_game():
     global current_level
     global spawn_point
     global warp_pads
+    global powerups
     global etanks
 
     player_name = "Anneroy"
@@ -3872,6 +3921,8 @@ def set_new_game():
     current_level = None
     spawn_point = "save"
     warp_pads = []
+    powerups = []
+    progress_flags = []
     etanks = 0
 
 
@@ -3911,6 +3962,8 @@ def save_game():
             "current_level": current_level,
             "spawn_point": spawn_point,
             "warp_pads": warp_pads,
+            "powerups": powerups,
+            "progress_flags": progress_flags,
             "etanks": etanks}
 
     write_to_disk()
@@ -3922,6 +3975,8 @@ def load_game():
     global current_level
     global spawn_point
     global warp_pads
+    global powerups
+    global progress_flags
     global etanks
 
     if (current_save_slot is not None and
@@ -3932,6 +3987,8 @@ def load_game():
         current_level = slot.get("current_level")
         spawn_point = slot.get("spawn_point")
         warp_pads = slot.get("warp_pads", [])
+        powerups = slot.get("powerups", [])
+        progress_flags = slot.get("progress_flags", [])
         etanks = slot.get("etanks", 0)
     else:
         set_new_game()
@@ -3963,7 +4020,7 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "frog": Frog, "bat": Bat,
          "fake_tile": FakeTile, "weak_stone": WeakStone, "etank": Etank,
-         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
+         "life_orb": LifeOrb, "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
          "doorframe_y": DoorFrameY, "door_left": LeftDoor,
          "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
          "timeline_switcher": TimelineSwitcher, "enemies": get_object,
@@ -4105,6 +4162,9 @@ doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
 d = os.path.join(DATA, "images", "objects", "stones")
 stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 
+d = os.path.join(DATA, "images", "objects", "powerups")
+life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
+
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)
 warp_pad_inactive_sprite = sge.gfx.Sprite("warp_pad_inactive", d)
@@ -4126,6 +4186,8 @@ healthbar_width = healthbar_front_sprite.width
 healthbar_height = healthbar_front_sprite.height
 etank_empty_sprite = sge.gfx.Sprite("etank_empty", d)
 etank_full_sprite = sge.gfx.Sprite("etank_full", d)
+life_force_sprite = sge.gfx.Sprite(
+    "life_force", d, origin_x=7, origin_y=7, fps=10)
 
 d = os.path.join(DATA, "images", "portraits")
 portrait_sprites = {}

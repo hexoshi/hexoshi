@@ -7,10 +7,10 @@
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="231" source="../tilesets/stones.tsx"/>
- <tileset firstgid="232" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="233" source="../tilesets/doors.tsx"/>
- <tileset firstgid="239" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="232" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="233" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="235" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="241" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="84">
   <data encoding="base64" compression="zlib">
    eJzt2r0KwjAUhuFcvopb/dlqJx3E29BBXNwUvBezFCK0NtTYLz19HzhQCKRfloakx7lp2vra+Jq1jJe+dkFVkfMuvryrSeFrFTn3kJrWMUZW1jFXB8jUSx0AACLlut8DiHdUB/jBMni+ylIAAIAuT3UAQKjv/afl83aZeL62fyFAbe/roA6RwNnXxX2ehQEAeTupA0S6d4zfBkmBKbN8/slB3SdWiXPEsNILtVYHMOqhDgAzCnWAxMK7MSvfUSvrYD8AAAAAAABqfXpM/t2XQt/LOLwBuAMgGA==
@@ -27,12 +27,16 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="3" gid="237" x="16" y="8" width="64" height="8">
+  <object id="3" gid="239" x="16" y="8" width="64" height="8">
    <properties>
     <property name="dest" value="1.tmx"/>
    </properties>
   </object>
-  <object id="19" gid="236" x="392" y="440" width="8" height="64"/>
+  <object id="19" gid="238" x="392" y="440" width="8" height="64">
+   <properties>
+    <property name="dest" value="3.tmx"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="fake_tile" width="50" height="84">
   <data encoding="base64" compression="zlib">

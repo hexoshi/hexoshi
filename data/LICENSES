@@ -7,6 +7,13 @@ information.
 
 ========================================================================
 
+images/objects/anneroy/anneroy_sheet.png
+
+Author: Luke Bunday <http://pixeljoint.com/p/43158.htm>
+License: CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0/>
+
+------------------------------------------------------------------------
+
 images/misc/etank_empty.png
 images/misc/etank_full.png
 images/objects/doors/barrier_x-0.png
@@ -57,13 +64,7 @@ Details:
 
 ------------------------------------------------------------------------
 
-images/objects/anneroy/anneroy_sheet.png
-
-Author: Luke Bunday <http://pixeljoint.com/p/43158.htm>
-License: CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0/>
-
-------------------------------------------------------------------------
-
+images/misc/life_force-strip4.png
 images/objects/enemies/bat-0.png
 images/objects/enemies/bat-1.png
 images/objects/enemies/bat-2.png
@@ -97,6 +98,25 @@ License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 Source: http://adamatomic.com/abandonauts/
 Details:
   Made by putting together various images from the Abandonauts set.
+
+------------------------------------------------------------------------
+
+images/objects/powerups/life_orb-0.png
+images/objects/powerups/life_orb-1.png
+images/objects/powerups/life_orb-2.png
+images/objects/powerups/life_orb-3.png
+images/objects/powerups/life_orb-4.png
+images/objects/powerups/life_orb-5.png
+images/objects/powerups/life_orb-6.png
+images/objects/powerups/life_orb-7.png
+images/objects/powerups/life_orb-8.png
+images/objects/powerups/life_orb-9.png
+images/objects/powerups/life_orb-10.png
+images/objects/powerups/life_orb-11.png
+
+Author: Cole K. Smith <http://opengameart.org/users/coleksmith>
+License: CC BY-SA 3.0 <http://creativecommons.org/licenses/by-sa/3.0/>
+Source: http://opengameart.org/content/sparkling-orb-gif
 
 ------------------------------------------------------------------------
 
@@ -144,6 +164,8 @@ images/misc/logo-is.svg
 rooms/base.tmx
 rooms/0.tmx
 rooms/1.tmx
+rooms/2.tmx
+rooms/3.tmx
 rooms/special/title_screen.tmx
 tilesets/doors.tsx
 tilesets/enemies.tsx

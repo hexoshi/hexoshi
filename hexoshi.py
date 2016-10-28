@@ -3985,8 +3985,8 @@ def load_game():
         watched_timelines = slot.get("watched_timelines", [])
         current_level = slot.get("current_level")
         spawn_point = slot.get("spawn_point")
-        warp_pads = slot.get("warp_pads", [])
-        powerups = slot.get("powerups", [])
+        warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
+        powerups = [tuple(i) for i in slot.get("powerups", [])]
         progress_flags = slot.get("progress_flags", [])
         etanks = slot.get("etanks", 0)
     else:

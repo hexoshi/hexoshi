@@ -1536,58 +1536,58 @@ class Anneroy(Player):
 
             if self.facing > 0:
                 if self.aim_direction == 0:
-                    x = 39
+                    x = 25
                     y = -3
                     xv = ANNEROY_BULLET_SPEED
                     image_rotation = 0
                 elif self.aim_direction == 1:
-                    x = 32
-                    y = -37
+                    x = 22
+                    y = -27
                     xv = ANNEROY_BULLET_DSPEED
                     yv = -ANNEROY_BULLET_DSPEED
                     image_rotation = 315
                 elif self.aim_direction == 2:
                     x = 6
-                    y = -45
+                    y = -31
                     yv = -ANNEROY_BULLET_SPEED
                     image_rotation = 270
                 elif self.aim_direction == -1:
-                    x = 29
-                    y = 19
+                    x = 19
+                    y = 9
                     xv = ANNEROY_BULLET_DSPEED
                     yv = ANNEROY_BULLET_DSPEED
                     image_rotation = 45
                 elif self.aim_direction == -2:
                     x = 9
-                    y = 35
+                    y = 21
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
             else:
                 if self.aim_direction == 0:
-                    x = -39
+                    x = -25
                     y = -3
                     xv = -ANNEROY_BULLET_SPEED
                     image_rotation = 180
                 elif self.aim_direction == 1:
-                    x = -32
-                    y = -37
+                    x = -22
+                    y = -27
                     xv = -ANNEROY_BULLET_DSPEED
                     yv = -ANNEROY_BULLET_DSPEED
                     image_rotation = 225
                 elif self.aim_direction == 2:
                     x = -6
-                    y = -45
+                    y = -31
                     yv = -ANNEROY_BULLET_SPEED
                     image_rotation = 270
                 elif self.aim_direction == -1:
-                    x = -29
-                    y = 19
+                    x = -19
+                    y = 9
                     xv = -ANNEROY_BULLET_DSPEED
                     yv = ANNEROY_BULLET_DSPEED
                     image_rotation = 135
                 elif self.aim_direction == -2:
                     x = -9
-                    y = 35
+                    y = 21
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
 
@@ -4045,11 +4045,8 @@ anneroy_legs_crouch_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 189, 2, xsep=7, width=21, height=21, origin_x=8, origin_y=-3,
     fps=10)
 
-anneroy_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 150, 119, 3, xsep=7, width=26, height=16, origin_x=-2, origin_y=7,
-    fps=10)
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 249, 119, width=26, height=16, origin_x=16, origin_y=7, fps=10)
+    fname, 249, 119, width=26, height=16, origin_x=2, origin_y=7, fps=10)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
     fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-8,
     bbox_y=-8, bbox_width=15, bbox_height=15)

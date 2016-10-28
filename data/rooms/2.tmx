@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="84" tilewidth="8" tileheight="8" nextobjectid="16">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="84" tilewidth="8" tileheight="8" nextobjectid="51">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -13,11 +13,16 @@
  <tileset firstgid="239" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="84">
   <data encoding="base64" compression="zlib">
-   eJzt1T0OQEAQBlDHR0vocDF3MaViyVZ28V7yVZPMTzVN809zZIq0F/Ulsp6yZfbtb2alDJExs/eTUne80Vfu6EovUKm99AIAmWr99wAAAAAAAAAAAAAAAABAvgOp0wtQ
+   eJzt2r0KwjAUhuFcvopb/dlqJx3E29BBXNwUvBezFCK0NtTYLz19HzhQCKRfloakx7lp2vra+Jq1jJe+dkFVkfMuvryrSeFrFTn3kJrWMUZW1jFXB8jUSx0AACLlut8DiHdUB/jBMni+ylIAAIAuT3UAQKjv/afl83aZeL62fyFAbe/roA6RwNnXxX2ehQEAeTupA0S6d4zfBkmBKbN8/slB3SdWiXPEsNILtVYHMOqhDgAzCnWAxMK7MSvfUSvrYD8AAAAAAABqfXpM/t2XQt/LOLwBuAMgGA==
   </data>
  </layer>
  <objectgroup name="Powerups"/>
- <objectgroup name="Enemies"/>
+ <objectgroup name="Enemies">
+  <object id="42" gid="230" x="24" y="208" width="16" height="16"/>
+  <object id="43" gid="230" x="208" y="192" width="16" height="16"/>
+  <object id="44" gid="230" x="352" y="40" width="16" height="16"/>
+  <object id="45" gid="230" x="168" y="320" width="16" height="16"/>
+ </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
@@ -27,6 +32,7 @@
     <property name="dest" value="1.tmx"/>
    </properties>
   </object>
+  <object id="19" gid="236" x="392" y="440" width="8" height="64"/>
  </objectgroup>
  <layer name="fake_tile" width="50" height="84">
   <data encoding="base64" compression="zlib">
@@ -35,19 +41,35 @@
  </layer>
  <layer name="Tile Layer 1" width="50" height="84">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">
   <object id="4" x="80" y="0" width="320" height="8"/>
   <object id="5" x="0" y="0" width="16" height="656"/>
   <object id="6" x="0" y="656" width="400" height="16"/>
-  <object id="8" x="384" y="8" width="16" height="648"/>
+  <object id="8" x="384" y="8" width="16" height="376"/>
   <object id="9" x="16" y="56" width="56" height="8"/>
   <object id="10" x="16" y="64" width="88" height="8"/>
   <object id="11" x="16" y="72" width="128" height="16"/>
   <object id="12" x="16" y="88" width="96" height="8"/>
   <object id="13" x="16" y="96" width="8" height="16"/>
+  <object id="21" x="288" y="432" width="112" height="16"/>
+  <object id="22" x="312" y="448" width="88" height="8"/>
+  <object id="23" x="360" y="456" width="40" height="8"/>
+  <object id="24" x="384" y="464" width="16" height="192"/>
+  <object id="25" x="16" y="304" width="48" height="104"/>
+  <object id="27" x="64" y="368" width="176" height="16"/>
+  <object id="28" x="64" y="384" width="112" height="8"/>
+  <object id="29" x="64" y="392" width="104" height="8"/>
+  <object id="33" x="16" y="408" width="8" height="8"/>
+  <object id="34" x="192" y="112" width="80" height="16"/>
+  <object id="36" x="336" y="144" width="48" height="32"/>
+  <object id="39" x="272" y="224" width="48" height="16"/>
+  <object id="40" x="192" y="240" width="48" height="8"/>
+  <object id="41" x="112" y="256" width="48" height="8"/>
+  <object id="49" x="320" y="176" width="64" height="72"/>
+  <object id="50" x="360" y="248" width="24" height="8"/>
  </objectgroup>
  <objectgroup name="Collision Objects">
   <object id="14" type="slope_topright" x="104" y="64" width="8" height="8"/>

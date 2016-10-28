@@ -35,9 +35,7 @@
     <property name="dest" value="2.tmx"/>
    </properties>
   </object>
-  <object id="25" gid="232" x="192" y="208" width="16" height="16"/>
-  <object id="26" gid="232" x="192" y="192" width="16" height="16"/>
-  <object id="27" gid="232" x="192" y="176" width="16" height="16"/>
+  <object id="26" gid="232" x="720" y="144" width="16" height="16"/>
  </objectgroup>
  <layer name="fake_tile" width="100" height="28">
   <data encoding="base64" compression="zlib">

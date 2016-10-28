@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="84" tilewidth="8" tileheight="8" nextobjectid="51">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="84" tilewidth="8" tileheight="8" nextobjectid="67">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -13,7 +13,7 @@
  <tileset firstgid="241" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="84">
   <data encoding="base64" compression="zlib">
-   eJzt2r0KwjAUhuFcvopb/dlqJx3E29BBXNwUvBezFCK0NtTYLz19HzhQCKRfloakx7lp2vra+Jq1jJe+dkFVkfMuvryrSeFrFTn3kJrWMUZW1jFXB8jUSx0AACLlut8DiHdUB/jBMni+ylIAAIAuT3UAQKjv/afl83aZeL62fyFAbe/roA6RwNnXxX2ehQEAeTupA0S6d4zfBkmBKbN8/slB3SdWiXPEsNILtVYHMOqhDgAzCnWAxMK7MSvfUSvrYD8AAAAAAABqfXpM/t2XQt/LOLwBuAMgGA==
+   eJzt27sOgjAUxnEe39uGlw2ZdDC+hg7GxcVo4rtYhybVFKlYOIfy/yUnMZDUrwu9ULJsmFamlqZGFfcLU2unysB2J1/+yyc3NQ9su0u+fvRRKv0YSwdQ6iEdAAACaR3vAYTbSQf4w8z5fRJLAQAA6tylAwCCmu5/przeLiK3V/UuBLA2prbSISI4mDpm72thAIBue+kAgS4198+dpMCQpbz+0cCeEyuFc4RI5SzUQjpAom7SAZCMXDpAZO7eWCrPUW39qJsvV2E8AOR9fjPx67cTfaTtGdoU/dClzTFt6rn2mvsP+V1In89zujjPiZjv8dk/BIBw9myJ1WReFWMudm25fbTvCf4dLu8=
   </data>
  </layer>
  <objectgroup name="Powerups"/>
@@ -22,6 +22,9 @@
   <object id="43" gid="230" x="208" y="192" width="16" height="16"/>
   <object id="44" gid="230" x="352" y="40" width="16" height="16"/>
   <object id="45" gid="230" x="168" y="320" width="16" height="16"/>
+  <object id="64" gid="231" x="352" y="656" width="16" height="16"/>
+  <object id="65" gid="230" x="312" y="504" width="16" height="16"/>
+  <object id="66" gid="230" x="40" y="448" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>
@@ -37,6 +40,11 @@
     <property name="dest" value="3.tmx"/>
    </properties>
   </object>
+  <object id="51" gid="237" x="0" y="664" width="8" height="64">
+   <properties>
+    <property name="dest" value="2.tmx"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="fake_tile" width="50" height="84">
   <data encoding="base64" compression="zlib">
@@ -45,12 +53,12 @@
  </layer>
  <layer name="Tile Layer 1" width="50" height="84">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">
   <object id="4" x="80" y="0" width="320" height="8"/>
-  <object id="5" x="0" y="0" width="16" height="656"/>
+  <object id="5" x="0" y="0" width="16" height="592"/>
   <object id="6" x="0" y="656" width="400" height="16"/>
   <object id="8" x="384" y="8" width="16" height="376"/>
   <object id="9" x="16" y="56" width="56" height="8"/>
@@ -74,10 +82,18 @@
   <object id="41" x="112" y="256" width="48" height="8"/>
   <object id="49" x="320" y="176" width="64" height="72"/>
   <object id="50" x="360" y="248" width="24" height="8"/>
+  <object id="52" x="0" y="592" width="8" height="8"/>
+  <object id="55" x="16" y="576" width="184" height="16"/>
+  <object id="56" x="16" y="560" width="80" height="16"/>
+  <object id="58" x="208" y="480" width="48" height="16"/>
+  <object id="60" x="136" y="496" width="120" height="16"/>
+  <object id="61" x="224" y="512" width="32" height="8"/>
  </objectgroup>
  <objectgroup name="Collision Objects">
   <object id="14" type="slope_topright" x="104" y="64" width="8" height="8"/>
   <object id="15" type="slope_topright" x="72" y="56" width="8" height="8"/>
+  <object id="62" type="slope_topright" x="96" y="560" width="16" height="16"/>
+  <object id="63" type="slope_topleft" x="192" y="480" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="bullets">
   <object id="1" x="-8" y="0" width="8" height="8"/>

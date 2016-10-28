@@ -2533,7 +2533,6 @@ class Powerup(InteractiveObject):
         powerups.append(i)
         DialogBox(gui_handler, self.message, self.sprite).show()
         self.collect()
-        other.refresh()
         self.destroy()
 
     def event_create(self):

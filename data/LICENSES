@@ -68,6 +68,9 @@ images/objects/enemies/bat-0.png
 images/objects/enemies/bat-1.png
 images/objects/enemies/bat-2.png
 images/objects/enemies/bat-3.png
+images/objects/enemies/frog_fall.png
+images/objects/enemies/frog_jump.png
+images/objects/enemies/frog_stand.png
 
 Author: ansimuz <http://ansimuz.com>
 License: CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>

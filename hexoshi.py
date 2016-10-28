@@ -2198,6 +2198,63 @@ class FrozenObject(InteractiveObject, xsge_physics.Solid):
                 self.thaw()
 
 
+class Frog(Enemy, FallingObject, CrowdBlockingObject):
+
+    jump_distance = 200
+    jump_height = 2 * TILE_SIZE + 1
+    jump_speed = 3
+    jump_interval = FPS / 2
+
+    def stop_left(self):
+        if self.yvelocity >= 0:
+            self.xvelocity = 0
+
+    def stop_right(self):
+        if self.yvelocity >= 0:
+            self.xvelocity = 0
+
+    def stop_down(self):
+        self.xvelocity = 0
+        self.yvelocity = 0
+
+    def event_create(self):
+        self.bbox_x = 2
+        self.bbox_y = 5
+        self.bbox_width = 12
+        self.bbox_height = 11
+
+    def event_step(self, time_passed, delta_mult):
+        super(Frog, self).event_step(time_passed, delta_mult)
+
+        if ("jump" not in self.alarms and self.was_on_floor and
+                not self.yvelocity):
+            self.alarms["jump"] = self.jump_interval
+            target = self.get_nearest_player()
+            if target is not None:
+                xvec = target.x - self.image_xcenter
+                self.image_xscale = math.copysign(self.image_xscale, xvec)
+
+        if self.was_on_floor:
+            self.sprite = frog_stand_sprite
+        elif self.yvelocity < 0:
+            self.sprite = frog_jump_sprite
+        else:
+            self.sprite = frog_fall_sprite
+
+    def event_alarm(self, alarm_id):
+        if alarm_id == "jump":
+            target = self.get_nearest_player()
+            if target is not None:
+                xvec = target.x - self.image_xcenter
+                yvec = target.y - self.image_ycenter
+                self.image_xscale = math.copysign(self.image_xscale, xvec)
+                dist = math.hypot(xvec, yvec)
+                if dist <= self.jump_distance:
+                    self.xvelocity = math.copysign(self.jump_speed, xvec)
+                    self.yvelocity = get_jump_speed(self.jump_height,
+                                                    self.gravity)
+
+
 class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 
     charge_distance = 200
@@ -2242,8 +2299,8 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
                 not self.returning):
             target = self.get_nearest_player()
             if target is not None:
-                xvec = target.x - self.x
-                yvec = target.y - self.y
+                xvec = target.x - self.image_xcenter
+                yvec = target.y - self.image_ycenter
                 dist = math.hypot(xvec, yvec)
                 if dist <= self.charge_distance:
                     self.speed = self.charge_speed
@@ -3904,7 +3961,7 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "slope_bottomright": SlopeBottomRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
-         "spike_bottom": SpikeBottom, "death": Death, "bat": Bat,
+         "spike_bottom": SpikeBottom, "death": Death, "frog": Frog, "bat": Bat,
          "fake_tile": FakeTile, "weak_stone": WeakStone, "etank": Etank,
          "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
          "doorframe_y": DoorFrameY, "door_left": LeftDoor,
@@ -4032,6 +4089,9 @@ anneroy_torso_offset[(n, 0)] = (0, 3)
 anneroy_torso_offset[(n, 1)] = (0, 9)
 
 d = os.path.join(DATA, "images", "objects", "enemies")
+frog_stand_sprite = sge.gfx.Sprite("frog_stand", d)
+frog_jump_sprite = sge.gfx.Sprite("frog_jump", d)
+frog_fall_sprite = sge.gfx.Sprite("frog_fall", d)
 bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
                             bbox_width=10, bbox_height=10)
 

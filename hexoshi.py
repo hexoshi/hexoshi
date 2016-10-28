@@ -1226,8 +1226,6 @@ class Player(xsge_physics.Collider):
                 self.aim_direction = 1 * -v_control
             else:
                 self.aim_direction = 2 * -v_control
-        elif self.aim_diag_pressed:
-            self.aim_direction = 1
 
         if self.aim_up_pressed and self.aim_down_pressed:
             self.aim_direction = 2

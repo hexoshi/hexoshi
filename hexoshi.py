@@ -3155,7 +3155,7 @@ class OptionsMenu(Menu):
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 2:
             sound_enabled = not sound_enabled
-            play_sound(bell_sound)
+            play_sound(teleport_sound)
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 3:
             music_enabled = not music_enabled

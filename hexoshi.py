@@ -1184,6 +1184,10 @@ class Player(xsge_physics.Collider):
         self.z = sge.game.current_room.player_z
         sge.game.current_room.add_timeline_object(self)
         self.view = sge.game.current_room.views[self.player]
+        for obj in sge.game.current_room.objects:
+            if isinstance(obj, SpawnPoint) and obj.spawn_id == spawn_point:
+                obj.spawn(self)
+                break
         self.init_position()
 
     def event_begin_step(self, time_passed, delta_mult):
@@ -2702,7 +2706,7 @@ class UpDoor(Door):
                       bbox_width=frame.barrier.bbox_width,
                       bbox_height=TILE_SIZE)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
-                          spawn_id=self.spawn_id, spawn_direction=270,
+                          spawn_id=self.spawn_id, spawn_direction=90,
                           barrier=frame.barrier,
                           bbox_width=frame.barrier.bbox_width,
                           bbox_height=frame.barrier.bbox_height)
@@ -2717,7 +2721,8 @@ class DownDoor(Door):
                       dest=self.dest, bbox_width=frame.barrier.bbox_width,
                       bbox_height=TILE_SIZE)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
-                          spawn_direction=90, barrier=frame.barrier,
+                          spawn_id=self.spawn_id, spawn_direction=270,
+                          barrier=frame.barrier,
                           bbox_width=frame.barrier.bbox_width,
                           bbox_height=frame.barrier.bbox_height)
         self.destroy()
@@ -3567,7 +3572,7 @@ def warp(dest):
         level_f, spawn_point = dest.split(':', 1)
     else:
         level_f = dest
-        spawn_point = None
+        spawn_point = sge.game.current_room.fname
 
     if level_f:
         level = sge.game.current_room.__class__.load(level_f)

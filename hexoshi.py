@@ -2530,7 +2530,6 @@ class Powerup(InteractiveObject):
         pass
 
     def touch(self, other):
-        global powerups
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
         powerups.append(i)
@@ -2540,7 +2539,6 @@ class Powerup(InteractiveObject):
         self.destroy()
 
     def event_create(self):
-        global powerups
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
         if i in powerups:
@@ -3914,6 +3912,7 @@ def set_new_game():
     global spawn_point
     global warp_pads
     global powerups
+    global progress_flags
     global etanks
 
     player_name = "Anneroy"

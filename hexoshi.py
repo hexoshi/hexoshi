@@ -2494,6 +2494,7 @@ class SpawnPoint(sge.dsp.Object):
             other.bbox_right = self.bbox_left
         elif self.spawn_direction == 270:
             other.bbox_bottom = self.bbox_top
+            other.yvelocity = get_jump_speed(TILE_SIZE / 2, other.gravity)
 
         other.init_position()
 

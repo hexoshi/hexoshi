@@ -161,6 +161,8 @@ images/misc/healthbar_back.png
 images/misc/healthbar_front.png
 images/misc/logo.png
 images/misc/logo-is.svg
+map/objects.json
+map/rooms.json
 rooms/base.tmx
 rooms/0.tmx
 rooms/1.tmx

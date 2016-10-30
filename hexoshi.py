@@ -32,13 +32,13 @@ import math
 import os
 import random
 import sys
+import time
 import traceback
 import warnings
 import weakref
 
 import sge
 import six
-import tmx
 import xsge_gui
 import xsge_lighting
 import xsge_path
@@ -221,6 +221,8 @@ player_name = "Anneroy"
 watched_timelines = []
 current_level = None
 spawn_point = None
+map_revealed = []
+map_explored = []
 warp_pads = []
 powerups = []
 progress_flags = []
@@ -634,7 +636,6 @@ class LevelRecorder(LevelTester):
         if key == "f12":
             jt = self.recording
 
-            import time
             fname = "recording_{}.json".format(time.time())
             with open(fname, 'w') as f:
                 json.dump(jt, f, indent=4, sort_keys=True)
@@ -4008,6 +4009,87 @@ def start_game():
     return True
 
 
+def generate_map():
+    global map_rooms
+    global map_objects
+
+    print(_("Generating new map files; this may take some time."))
+    files_checked = set()
+    files_remaining = {("0.tmx", 0, 0, None, None)}
+    map_rooms = {}
+    f_objects = {}
+    map_objects = {}
+
+    def xregion(x):
+        return int(x / SCREEN_SIZE[0])
+
+    def yregion(y):
+        return int(y / SCREEN_SIZE[1])
+
+    while files_remaining:
+        fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
+        files_checked.add(fname)
+        room = Level.load(fname, True)
+
+        for obj in room.objects:
+            if isinstance(obj, Door):
+                if ":" in obj.dest:
+                    level_f, spawn = obj.dest.split(':', 1)
+                else:
+                    level_f = obj.dest
+                    spawn = fname
+
+                if level_f == origin_level and spawn == origin_spawn:
+                    if isinstance(obj, LeftDoor):
+                        rm_x += 1
+                    elif isinstance(obj, RightDoor):
+                        rm_x -= 1
+                    elif isinstance(obj, UpDoor):
+                        rm_y += 1
+                    elif isinstance(obj, DownDoor):
+                        rm_y -= 1
+
+                    rm_x -= xregion(obj.image_xcenter)
+                    rm_y -= yregion(obj.image_ycenter)
+
+                    origin = None
+                    break
+
+        map_rooms[fname] = (rm_x, rm_y)
+
+        for obj in room.objects:
+            if isinstance(obj, Door):
+                dx = rm_x + xregion(obj.image_xcenter)
+                dy = rm_y + yregion(obj.image_ycenter)
+
+                if ":" in obj.dest:
+                    level_f, spawn = obj.dest.split(':', 1)
+                else:
+                    level_f = obj.dest
+                    spawn = fname
+
+                if level_f not in files_checked:
+                    files_remaining.add((level_f, dx, dy, fname, obj.spawn_id))
+            elif isinstance(obj, WarpPad):
+                wx = rm_x + xregion(obj.image_xcenter)
+                wy = rm_y + yregion(obj.image_ycenter)
+                i = "{},{}".format(wx, wy)
+                f_objects[i] = "warp_pad"
+                map_objects[(wx, wy)] = "warp_pad"
+            elif isinstance(obj, Powerup):
+                px = rm_x + xregion(obj.image_xcenter)
+                py = rm_y + yregion(obj.image_ycenter)
+                i = "{},{}".format(px, py)
+                f_objects.setdefault(i, "powerup")
+                map_objects.setdefault((px, py), "powerup")
+
+    with open(os.path.join(DATA, "map", "rooms.json"), 'w') as f:
+        json.dump(map_rooms, f, indent=4, sort_keys=True)
+
+    with open(os.path.join(DATA, "map", "objects.json"), 'w') as f:
+        json.dump(f_objects, f, indent=4, sort_keys=True)
+
+
 TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "solid_top": SolidTop, "solid_bottom": SolidBottom, "solid": Solid,
          "slope_topleft": SlopeTopLeft, "slope_topright": SlopeTopRight,
@@ -4043,6 +4125,21 @@ menu_text_color = sge.gfx.Color((64, 0, 255))
 menu_text_selected_color = sge.gfx.Color("white")
 
 print(_("Loading resources..."))
+
+if not os.path.exists(CONFIG):
+    os.makedirs(CONFIG)
+
+# Save error messages to a text file (so they aren't lost).
+if not PRINT_ERRORS:
+    stderr = os.path.join(CONFIG, "stderr.txt")
+    if not os.path.isfile(stderr) or os.path.getsize(stderr) > 1000000:
+        sys.stderr = open(stderr, 'w')
+    else:
+        sys.stderr = open(stderr, 'a')
+    dt = datetime.datetime.now()
+    sys.stderr.write("\n{}-{}-{} {}:{}:{}\n".format(
+        dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second))
+    del dt
 
 # Load sprites
 d = os.path.join(DATA, "images", "objects", "anneroy")
@@ -4250,20 +4347,27 @@ else:
 
 sge.game.mouse.visible = False
 
-if not os.path.exists(CONFIG):
-    os.makedirs(CONFIG)
+# Load map data
+map_rooms = {}
+try:
+    with open(os.path.join(DATA, "map", "rooms.json")) as f:
+        d = json.load(f)
+except (IOError, ValueError):
+    generate_map()
+else:
+    for i in d:
+        map_rooms[i] = tuple(d[i])
 
-# Save error messages to a text file (so they aren't lost).
-if not PRINT_ERRORS:
-    stderr = os.path.join(CONFIG, "stderr.txt")
-    if not os.path.isfile(stderr) or os.path.getsize(stderr) > 1000000:
-        sys.stderr = open(stderr, 'w')
-    else:
-        sys.stderr = open(stderr, 'a')
-    dt = datetime.datetime.now()
-    sys.stderr.write("\n{}-{}-{} {}:{}:{}\n".format(
-        dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second))
-    del dt
+map_objects = {}
+try:
+    with open(os.path.join(DATA, "map", "objects.json")) as f:
+        d = json.load(f)
+except (IOError, ValueError):
+    generate_map()
+else:
+    for i in d:
+        j = tuple(i.split(','))
+        map_objects[j] = d[i]
 
 try:
     with open(os.path.join(CONFIG, "config.json")) as f:

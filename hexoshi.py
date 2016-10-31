@@ -4048,13 +4048,14 @@ def generate_map():
     files_checked = set()
     files_remaining = {("0.tmx", 0, 0, None, None)}
     map_rooms = {}
-    f_objects = {}
     map_objects = {}
 
     while files_remaining:
         fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
         files_checked.add(fname)
         room = Level.load(fname, True)
+        rm_w = int(math.ceil(room.width / SCREEN_SIZE[0]))
+        rm_h = int(math.ceil(room.height / SCREEN_SIZE[1]))
 
         for obj in room.objects:
             if isinstance(obj, Door):
@@ -4095,24 +4096,122 @@ def generate_map():
 
                 if level_f not in files_checked:
                     files_remaining.add((level_f, dx, dy, fname, obj.spawn_id))
+
+                if isinstance(obj, LeftDoor):
+                    map_objects.setdefault((dx, dy), []).append("door_left")
+                elif isinstance(obj, RightDoor):
+                    map_objects.setdefault((dx, dy), []).append("door_right")
+                elif isinstance(obj, UpDoor):
+                    map_objects.setdefault((dx, dy), []).append("door_top")
+                elif isinstance(obj, DownDoor):
+                    map_objects.setdefault((dx, dy), []).append("door_bottom")
             elif isinstance(obj, WarpPad):
                 wx = rm_x + get_xregion(obj.image_xcenter)
                 wy = rm_y + get_yregion(obj.image_ycenter)
-                i = "{},{}".format(wx, wy)
-                f_objects[i] = "warp_pad"
-                map_objects[(wx, wy)] = "warp_pad"
+                map_objects.setdefault((wx, wy), []).append("warp_pad")
             elif isinstance(obj, Powerup):
                 px = rm_x + get_xregion(obj.image_xcenter)
                 py = rm_y + get_yregion(obj.image_ycenter)
-                i = "{},{}".format(px, py)
-                f_objects.setdefault(i, "powerup")
-                map_objects.setdefault((px, py), "powerup")
+                map_objects.setdefault((px, py), []).append("powerup")
+
+        for x in six.moves.range(rm_x, rm_x + rm_w):
+            y = rm_y
+            if "door_top" not in map_objects.setdefault((x, y), []):
+                map_objects[(x, y)].append("wall_top")
+
+            y = rm_y + rm_h - 1
+            if "door_bottom" not in map_objects.setdefault((x, y), []):
+                map_objects[(x, y)].append("wall_bottom")
+
+        for y in six.moves.range(rm_y, rm_y + rm_h):
+            x = rm_x
+            if "door_left" not in map_objects.setdefault((x, y), []):
+                map_objects[(x, y)].append("wall_left")
+
+            x = rm_x + rm_w - 1
+            if "door_right" not in map_objects.setdefault((x, y), []):
+                map_objects[(x, y)].append("wall_right")
+
+    f_objects = {}
+    for x, y in map_objects:
+        i = "{},{}".format(x, y)
+        f_objects[i] = map_objects[(x, y)]
 
     with open(os.path.join(DATA, "map", "rooms.json"), 'w') as f:
         json.dump(map_rooms, f, indent=4, sort_keys=True)
 
     with open(os.path.join(DATA, "map", "objects.json"), 'w') as f:
         json.dump(f_objects, f, indent=4, sort_keys=True)
+
+
+def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
+    cell_w = 8
+    cell_h = 8
+
+    if x is None or y is None or w is None or h is None:
+        left = 0
+        right = 0
+        top = 0
+        bottom = 0
+        for rx, ry in set(map_revealed + map_explored):
+            left = min(left, rx)
+            right = max(right, rx)
+            top = min(top, ry)
+            bottom = max(bottom, ry)
+
+        if x is None:
+            x = left
+        if y is None:
+            y = top
+        if w is None:
+            w = right - x + 1
+        if h is None:
+            h = bottom - y + 1
+
+    s_w = w * cell_w
+    s_h = h * cell_h
+    map_sprite = sge.gfx.Sprite(width=s_w, height=s_h)
+    map_sprite.draw_rectangle(0, 0, s_w, s_h, fill=sge.gfx.Color("black"))
+
+    for ex, ey in map_explored:
+        dx = (ex - x) * cell_w
+        dy = (ey - y) * cell_h
+        map_sprite.draw_rectangle(dx, dy, cell_w, cell_h,
+                                  fill=sge.gfx.Color("navy"))
+
+    for ox, oy in set(map_objects) & set(map_revealed + map_explored):
+        if x <= ox < x + w and y <= oy < y + h:
+            for obj in map_objects[(ox, oy)]:
+                dx = (ox - x) * cell_w
+                dy = (oy - y) * cell_h
+                if obj == "wall_left":
+                    map_sprite.draw_sprite(map_wall_left_sprite, 0, dx, dy)
+                elif obj == "wall_right":
+                    map_sprite.draw_sprite(map_wall_right_sprite, 0, dx, dy)
+                elif obj == "wall_top":
+                    map_sprite.draw_sprite(map_wall_top_sprite, 0, dx, dy)
+                elif obj == "wall_bottom":
+                    map_sprite.draw_sprite(map_wall_bottom_sprite, 0, dx, dy)
+                elif obj == "door_left":
+                    map_sprite.draw_sprite(map_door_left_sprite, 0, dx, dy)
+                elif obj == "door_right":
+                    map_sprite.draw_sprite(map_door_right_sprite, 0, dx, dy)
+                elif obj == "door_top":
+                    map_sprite.draw_sprite(map_door_top_sprite, 0, dx, dy)
+                elif obj == "door_bottom":
+                    map_sprite.draw_sprite(map_door_bottom_sprite, 0, dx, dy)
+                elif obj == "powerup":
+                    if "warp_pad" not in map_objects[(ox, oy)]:
+                        map_sprite.draw_sprite(map_powerup_sprite, 0, dx, dy)
+                elif obj == "warp_pad":
+                    map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
+
+    if player_x is not None and player_y is not None:
+        dx = (player_x - x) * cell_w
+        dy = (player_y - y) * cell_h
+        map_sprite.draw_sprite(map_player_sprite, 0, dx, dy)
+
+    return map_sprite
 
 
 TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
@@ -4288,6 +4387,19 @@ d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)
 warp_pad_inactive_sprite = sge.gfx.Sprite("warp_pad_inactive", d)
 
+d = os.path.join(DATA, "images", "map")
+map_wall_left_sprite = sge.gfx.Sprite("wall_left", d)
+map_wall_right_sprite = sge.gfx.Sprite("wall_right", d)
+map_wall_top_sprite = sge.gfx.Sprite("wall_top", d)
+map_wall_bottom_sprite = sge.gfx.Sprite("wall_bottom", d)
+map_door_left_sprite = sge.gfx.Sprite("door_left", d)
+map_door_right_sprite = sge.gfx.Sprite("door_right", d)
+map_door_top_sprite = sge.gfx.Sprite("door_top", d)
+map_door_bottom_sprite = sge.gfx.Sprite("door_bottom", d)
+map_powerup_sprite = sge.gfx.Sprite("powerup", d)
+map_warp_pad_sprite = sge.gfx.Sprite("warp_pad", d)
+map_player_sprite = sge.gfx.Sprite("player", d)
+
 d = os.path.join(DATA, "images", "misc")
 logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)
 font_sprite = sge.gfx.Sprite.from_tileset(
@@ -4392,7 +4504,8 @@ except (IOError, ValueError):
     generate_map()
 else:
     for i in d:
-        j = tuple(i.split(','))
+        x, y = tuple(i.split(','))
+        j = (int(x), int(y))
         map_objects[j] = d[i]
 
 try:

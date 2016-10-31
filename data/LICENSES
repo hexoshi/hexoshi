@@ -157,6 +157,17 @@ Source: http://opengameart.org/content/type7r-spritefont
 
 credits.json
 objecttypes.xml
+images/map/door_bottom.png
+images/map/door_left.png
+images/map/door_right.png
+images/map/door_top.png
+images/map/player.png
+images/map/powerup.png
+images/map/wall_bottom.png
+images/map/wall_left.png
+images/map/wall_right.png
+images/map/wall_top.png
+images/map/warp_pad.png
 images/misc/healthbar_back.png
 images/misc/healthbar_front.png
 images/misc/logo.png

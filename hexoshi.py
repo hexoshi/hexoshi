@@ -1333,6 +1333,15 @@ class Player(xsge_physics.Collider):
         self.last_x = self.x
         self.last_y = self.y
 
+        xr, yr = map_rooms.get(sge.game.current_room.fname, (0, 0))
+        xr += get_xregion(self.x)
+        yr += get_yregion(self.y)
+        pos = (xr, yr)
+        if pos not in map_explored:
+            map_explored.append(pos)
+        if pos not in map_revealed:
+            map_revealed.append(pos)
+
         self.show_hud()
 
     def event_paused_step(self, time_passed, delta_mult):
@@ -3677,6 +3686,14 @@ def get_jump_speed(height, gravity=GRAVITY):
     return -math.sqrt(2 * gravity * height)
 
 
+def get_xregion(x):
+    return int(x / SCREEN_SIZE[0])
+
+
+def get_yregion(y):
+    return int(y / SCREEN_SIZE[1])
+
+
 def warp(dest):
     global spawn_point
 
@@ -3910,6 +3927,8 @@ def set_new_game():
     global current_level
     global spawn_point
     global warp_pads
+    global map_revealed
+    global map_explored
     global powerups
     global progress_flags
     global etanks
@@ -3918,6 +3937,8 @@ def set_new_game():
     watched_timelines = []
     current_level = None
     spawn_point = "save"
+    map_revealed = []
+    map_explored = []
     warp_pads = []
     powerups = []
     progress_flags = []
@@ -3959,6 +3980,8 @@ def save_game():
             "watched_timelines": watched_timelines,
             "current_level": current_level,
             "spawn_point": spawn_point,
+            "map_revealed": map_revealed,
+            "map_explored": map_explored,
             "warp_pads": warp_pads,
             "powerups": powerups,
             "progress_flags": progress_flags,
@@ -3972,6 +3995,8 @@ def load_game():
     global watched_timelines
     global current_level
     global spawn_point
+    global map_revealed
+    global map_explored
     global warp_pads
     global powerups
     global progress_flags
@@ -3984,6 +4009,8 @@ def load_game():
         watched_timelines = slot.get("watched_timelines", [])
         current_level = slot.get("current_level")
         spawn_point = slot.get("spawn_point")
+        map_revealed = [tuple(i) for i in slot.get("map_revealed", [])]
+        map_explored = [tuple(i) for i in slot.get("map_explored", [])]
         warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
         powerups = [tuple(i) for i in slot.get("powerups", [])]
         progress_flags = slot.get("progress_flags", [])
@@ -4020,12 +4047,6 @@ def generate_map():
     f_objects = {}
     map_objects = {}
 
-    def xregion(x):
-        return int(x / SCREEN_SIZE[0])
-
-    def yregion(y):
-        return int(y / SCREEN_SIZE[1])
-
     while files_remaining:
         fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
         files_checked.add(fname)
@@ -4049,8 +4070,8 @@ def generate_map():
                     elif isinstance(obj, DownDoor):
                         rm_y -= 1
 
-                    rm_x -= xregion(obj.image_xcenter)
-                    rm_y -= yregion(obj.image_ycenter)
+                    rm_x -= get_xregion(obj.image_xcenter)
+                    rm_y -= get_yregion(obj.image_ycenter)
 
                     origin = None
                     break
@@ -4059,8 +4080,8 @@ def generate_map():
 
         for obj in room.objects:
             if isinstance(obj, Door):
-                dx = rm_x + xregion(obj.image_xcenter)
-                dy = rm_y + yregion(obj.image_ycenter)
+                dx = rm_x + get_xregion(obj.image_xcenter)
+                dy = rm_y + get_yregion(obj.image_ycenter)
 
                 if ":" in obj.dest:
                     level_f, spawn = obj.dest.split(':', 1)
@@ -4071,14 +4092,14 @@ def generate_map():
                 if level_f not in files_checked:
                     files_remaining.add((level_f, dx, dy, fname, obj.spawn_id))
             elif isinstance(obj, WarpPad):
-                wx = rm_x + xregion(obj.image_xcenter)
-                wy = rm_y + yregion(obj.image_ycenter)
+                wx = rm_x + get_xregion(obj.image_xcenter)
+                wy = rm_y + get_yregion(obj.image_ycenter)
                 i = "{},{}".format(wx, wy)
                 f_objects[i] = "warp_pad"
                 map_objects[(wx, wy)] = "warp_pad"
             elif isinstance(obj, Powerup):
-                px = rm_x + xregion(obj.image_xcenter)
-                py = rm_y + yregion(obj.image_ycenter)
+                px = rm_x + get_xregion(obj.image_xcenter)
+                py = rm_y + get_yregion(obj.image_ycenter)
                 i = "{},{}".format(px, py)
                 f_objects.setdefault(i, "powerup")
                 map_objects.setdefault((px, py), "powerup")

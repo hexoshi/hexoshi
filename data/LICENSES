@@ -185,6 +185,7 @@ sounds/shoot.sfxr
 sounds/shoot.wav
 sounds/teleport.sfxr
 sounds/teleport.wav
+sounds/type.wav
 
 Author: Julie Marchant <https://onpon4.github.io>
 License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
@@ -227,17 +228,17 @@ Source: http://opengameart.org/content/8-bit-sound-effects-library
 
 ------------------------------------------------------------------------
 
+sounds/frog_jump.wav
+
+Author: Blender Foundation <http://apricot.blender.org/>
+License: CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
+Source: http://opengameart.org/content/funny-comic-cartoon-bounce-sound
+
+------------------------------------------------------------------------
+
 sounds/select.ogg
 
 Author: NenadSimic <http://opengameart.org/users/nenadsimic>
 License: CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 Source: http://opengameart.org/content/menu-selection-click
-
-------------------------------------------------------------------------
-
-sounds/type.wav
-
-Author: Julie Marchant <https://onpon4.github.io>
-License: CC0 <http://creativecommons.org/publicdomain/zero/1.0/>
-Generated with Sfxr <http://www.drpetter.se/project_sfxr.html>
 

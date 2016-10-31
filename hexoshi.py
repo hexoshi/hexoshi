@@ -2274,6 +2274,8 @@ class Frog(Enemy, FallingObject, CrowdBlockingObject):
                     self.xvelocity = math.copysign(self.jump_speed, xvec)
                     self.yvelocity = get_jump_speed(self.jump_height,
                                                     self.gravity)
+                    play_sound(frog_jump_sound, self.image_xcenter,
+                               self.image_ycenter)
 
 
 class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
@@ -4342,6 +4344,7 @@ door_open_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "door_open.ogg"), volume=0.5)
 door_close_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "door_close.ogg"), volume=0.5)
+frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
 confirm_sound = sge.snd.Sound(None)

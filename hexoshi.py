@@ -2293,6 +2293,7 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 
     def stop(self):
         self.speed = 0
+        self.image_speed = None
         if self.returning:
             self.returning = False
             self.alarms["charge_wait"] = self.repeat_delay
@@ -2328,6 +2329,7 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
                 if dist <= self.charge_distance:
                     self.speed = self.charge_speed
                     self.move_direction = math.degrees(math.atan2(yvec, xvec))
+                    self.image_speed = self.sprite.speed * 2
 
         if self.xvelocity:
             self.image_xscale = math.copysign(self.image_xscale, self.xvelocity)

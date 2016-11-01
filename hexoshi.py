@@ -159,6 +159,9 @@ LIGHT_RANGE = 300
 SHAKE_FRAME_TIME = FPS / DELTA_MIN
 SHAKE_AMOUNT = 3
 
+MAP_CELL_WIDTH = 8
+MAP_CELL_HEIGHT = 8
+
 TEXT_SPEED = 1000
 
 SAVE_NSLOTS = 10
@@ -473,6 +476,7 @@ class Level(sge.dsp.Room):
                             play_music(arg)
                         elif command == "timeline":
                             if self.timeline_name not in watched_timelines:
+                                watched_timelines = watched_timelines[:]
                                 watched_timelines.append(self.timeline_name)
                             self.load_timeline(arg)
                             break
@@ -539,6 +543,7 @@ class Level(sge.dsp.Room):
         else:
             if (self.timeline_name and
                     self.timeline_name not in watched_timelines):
+                watched_timelines = watched_timelines[:]
                 watched_timelines.append(self.timeline_name)
                 self.timeline_name = ""
 
@@ -574,7 +579,7 @@ class Level(sge.dsp.Room):
     @classmethod
     def load(cls, fname, show_prompt=False):
         if show_prompt:
-            text = "Loading level..."
+            text = "Loading data..."
             if sge.game.current_room is not None:
                 x = sge.game.width / 2
                 y = sge.game.height / 2
@@ -922,7 +927,9 @@ class Player(xsge_physics.Collider):
         self.aim_direction = None
         self.aim_direction_time = 0
         self.view = None
-        self.hp = self.max_hp
+        self.__hp = self.max_hp
+        self.last_xr = None
+        self.last_yr = None
 
         if GOD:
             image_blend = sge.gfx.Color("olive")
@@ -1046,8 +1053,8 @@ class Player(xsge_physics.Collider):
     def update_hud(self):
         self.hud_sprite.draw_clear()
         if not NO_HUD:
-            start_x = 4
-            start_y = 4
+            start_x = 8
+            start_y = 8
             x = start_x
             y = start_y
             self.hud_sprite.draw_sprite(healthbar_back_sprite, 0, x, y)
@@ -1067,6 +1074,23 @@ class Player(xsge_physics.Collider):
                 if x + w >= start_x + healthbar_width:
                     x = start_x
                     y += h
+
+            if "map" in progress_flags:
+                w = 7
+                h = 5
+                rm_x, rm_y = map_rooms.get(sge.game.current_room.fname, (0, 0))
+                pl_x = rm_x + get_xregion(self.x)
+                pl_y = rm_y + get_yregion(self.y)
+                x = pl_x - w // 2
+                y = pl_y - h // 2
+                map_s = draw_map(x, y, w, h, pl_x, pl_y)
+
+                x = SCREEN_SIZE[0] - start_x - w * MAP_CELL_WIDTH
+                y = start_y
+                self.hud_sprite.draw_sprite(map_s, 0, x, y)
+                self.hud_sprite.draw_rectangle(x, y, map_s.width, map_s.height,
+                                               outline=sge.gfx.Color("white"))
+                
 
     def show_hud(self):
         if not NO_HUD:
@@ -1102,6 +1126,7 @@ class Player(xsge_physics.Collider):
                 obj.spawn(self)
                 break
         self.init_position()
+        self.update_hud()
 
     def event_begin_step(self, time_passed, delta_mult):
         self.refresh_input()
@@ -1184,6 +1209,9 @@ class Player(xsge_physics.Collider):
                                self.on_slope[0].bbox_width))
 
     def event_step(self, time_passed, delta_mult):
+        global map_revealed
+        global map_explored
+
         on_floor = self.get_bottom_touching_wall()
         self.on_slope = self.get_bottom_touching_slope() if not on_floor else []
         self.was_on_floor = self.on_floor
@@ -1231,11 +1259,17 @@ class Player(xsge_physics.Collider):
         xr, yr = map_rooms.get(sge.game.current_room.fname, (0, 0))
         xr += get_xregion(self.x)
         yr += get_yregion(self.y)
-        pos = (xr, yr)
-        if pos not in map_explored:
-            map_explored.append(pos)
-        if pos not in map_revealed:
-            map_revealed.append(pos)
+        if xr != self.last_xr or yr != self.last_yr:
+            pos = (xr, yr)
+            if pos not in map_explored:
+                map_explored = map_explored[:]
+                map_explored.append(pos)
+            if pos not in map_revealed:
+                map_revealed = map_revealed[:]
+                map_revealed.append(pos)
+            self.update_hud()
+        self.last_xr = xr
+        self.last_yr = yr
 
         self.show_hud()
 
@@ -2438,9 +2472,12 @@ class Powerup(InteractiveObject):
         pass
 
     def touch(self, other):
+        global powerups
+
         play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
+        powerups = powerups[:]
         powerups.append(i)
         DialogBox(gui_handler, self.message, self.sprite).show()
         self.collect()
@@ -2471,7 +2508,49 @@ class LifeOrb(Powerup):
         super(LifeOrb, self).__init__(x, y, **kwargs)
 
     def collect(self):
+        global progress_flags
+        progress_flags = progress_flags[:]
         progress_flags.append("life_orb")
+
+
+class MapPowerup(Powerup):
+
+    message = _("MAP")
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["sprite"] = map_powerup_sprite
+        super(MapPowerup, self).__init__(x, y, **kwargs)
+
+    def collect(self):
+        global progress_flags
+        progress_flags = progress_flags[:]
+        progress_flags.append("map")
+
+
+class MapDisk(Powerup):
+
+    message = _("MAP DISK\n\nArea map data loaded")
+
+    def __init__(self, x, y, rooms=None, **kwargs):
+        if rooms:
+            self.rooms = rooms.split(',')
+        else:
+            self.rooms = []
+        super(MapDisk, self).__init__(x, y, **kwargs)
+
+    def collect(self):
+        global map_revealed
+
+        for fname in self.rooms:
+            room = Level.load(fname, True)
+            rm_x, rm_y = map_rooms.get(fname, (0, 0))
+            rm_w = int(math.ceil(room.width / SCREEN_SIZE[0]))
+            rm_h = int(math.ceil(room.height / SCREEN_SIZE[1]))
+            for y in six.moves.range(rm_y, rm_y + rm_h):
+                for x in six.moves.range(rm_x, rm_x + rm_w):
+                    if (x, y) not in map_revealed:
+                        map_revealed = map_revealed[:]
+                        map_revealed.append((x, y))
 
 
 class Tunnel(InteractiveObject):
@@ -2551,6 +2630,7 @@ class WarpPad(SpawnPoint):
         spawn_point = self.spawn_id
         i = (sge.game.current_room.fname, self.spawn_id)
         if i not in warp_pads:
+            warp_pads = warp_pads[:]
             warp_pads.append(i)
         save_game()
 
@@ -4038,9 +4118,6 @@ def generate_map():
 
 
 def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
-    cell_w = 8
-    cell_h = 8
-
     if x is None or y is None or w is None or h is None:
         left = 0
         right = 0
@@ -4061,22 +4138,22 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
         if h is None:
             h = bottom - y + 1
 
-    s_w = w * cell_w
-    s_h = h * cell_h
+    s_w = w * MAP_CELL_WIDTH
+    s_h = h * MAP_CELL_HEIGHT
     map_sprite = sge.gfx.Sprite(width=s_w, height=s_h)
     map_sprite.draw_rectangle(0, 0, s_w, s_h, fill=sge.gfx.Color("black"))
 
     for ex, ey in map_explored:
-        dx = (ex - x) * cell_w
-        dy = (ey - y) * cell_h
-        map_sprite.draw_rectangle(dx, dy, cell_w, cell_h,
+        dx = (ex - x) * MAP_CELL_WIDTH
+        dy = (ey - y) * MAP_CELL_HEIGHT
+        map_sprite.draw_rectangle(dx, dy, MAP_CELL_WIDTH, MAP_CELL_HEIGHT,
                                   fill=sge.gfx.Color("navy"))
 
     for ox, oy in set(map_objects) & set(map_revealed + map_explored):
         if x <= ox < x + w and y <= oy < y + h:
             for obj in map_objects[(ox, oy)]:
-                dx = (ox - x) * cell_w
-                dy = (oy - y) * cell_h
+                dx = (ox - x) * MAP_CELL_WIDTH
+                dy = (oy - y) * MAP_CELL_HEIGHT
                 if obj == "wall_left":
                     map_sprite.draw_sprite(map_wall_left_sprite, 0, dx, dy)
                 elif obj == "wall_right":
@@ -4100,8 +4177,8 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
                     map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
 
     if player_x is not None and player_y is not None:
-        dx = (player_x - x) * cell_w
-        dy = (player_y - y) * cell_h
+        dx = (player_x - x) * MAP_CELL_WIDTH
+        dy = (player_y - y) * MAP_CELL_HEIGHT
         map_sprite.draw_sprite(map_player_sprite, 0, dx, dy)
 
     return map_sprite
@@ -4116,7 +4193,8 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "frog": Frog, "bat": Bat,
          "fake_tile": FakeTile, "weak_stone": WeakStone, "etank": Etank,
-         "life_orb": LifeOrb, "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
+         "life_orb": LifeOrb, "map_powerup": MapPowerup, "map_disk": MapDisk,
+         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
          "doorframe_y": DoorFrameY, "door_left": LeftDoor,
          "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
          "timeline_switcher": TimelineSwitcher, "enemies": get_object,
@@ -4275,6 +4353,7 @@ stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 
 d = os.path.join(DATA, "images", "objects", "powerups")
 life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
+map_powerup_sprite = sge.gfx.Sprite("map", d, fps=3)
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)

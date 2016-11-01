@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 # Hexoshi
-# Copyright (C) 2014-2016 onpon4 <onpon4@riseup.net>
+# Copyright (C) 2014-2016 Julie Marchant <onpon4@riseup.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,19 +74,15 @@ parser.add_argument(
     "-d", "--datadir",
     help=_('Where to load the game data from (Default: "{}")').format(DATA))
 parser.add_argument(
-    "--level",
-    help=_("Play the indicated level and then exit."))
-parser.add_argument(
-    "--record",
-    help=_("Start the indicated level and record player actions in a timeline. Useful for making cutscenes."))
-parser.add_argument(
     "--no-backgrounds",
     help=_("Only show solid colors for backgrounds (uses less RAM)."),
     action="store_true")
 parser.add_argument(
     "--no-hud", help=_("Don't show the player's heads-up display."),
     action="store_true")
-parser.add_argument("--scale-basic", action="store_true")
+parser.add_argument(
+    "-m", "--gen-map", help=_("Generate the map even if it already exists."),
+    action="store_true")
 parser.add_argument("--god")
 args = parser.parse_args()
 
@@ -94,10 +90,9 @@ PRINT_ERRORS = args.print_errors
 DELTA = not args.nodelta
 if args.datadir:
     DATA = args.datadir
-LEVEL = args.level
-RECORD = args.record
 NO_BACKGROUNDS = args.no_backgrounds
 NO_HUD = args.no_hud
+GEN_MAP = args.gen_map
 GOD = (args.god and args.god.lower() == "inbailey")
 
 if six.PY2:
@@ -608,98 +603,6 @@ class Level(sge.dsp.Room):
         return r
 
 
-class LevelTester(Level):
-
-    def return_to_map(self):
-        sge.game.end()
-
-    def win_game(self):
-        sge.game.end()
-
-    def event_alarm(self, alarm_id):
-        if alarm_id == "death":
-            sge.game.end()
-        else:
-            super(LevelTester, self).event_alarm(alarm_id)
-
-
-class LevelRecorder(LevelTester):
-
-    def __init__(self, *args, **kwargs):
-        super(LevelRecorder, self).__init__(*args, **kwargs)
-        self.recording = {}
-
-    def add_recording_event(self, command):
-        self.recording.setdefault(self.timeline_step, []).append(command)
-
-    def event_key_press(self, key, char):
-        if key == "f12":
-            jt = self.recording
-
-            fname = "recording_{}.json".format(time.time())
-            with open(fname, 'w') as f:
-                json.dump(jt, f, indent=4, sort_keys=True)
-
-            sge.game.end()
-
-        for i in self.timeline_objects:
-            obj = self.timeline_objects[i]()
-            if isinstance(obj, Player) and obj.human:
-                if key in left_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} left_pressed 1".format(obj.ID))
-                if key in right_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} right_pressed 1".format(obj.ID))
-                if key in up_key[obj.player]:
-                    self.add_recording_event("call {} press_up".format(obj.ID))
-                    self.add_recording_event(
-                        "setattr {} up_pressed 1".format(obj.ID))
-                if key in down_key[obj.player]:
-                    self.add_recording_event("call {} press_down".format(obj.ID))
-                    self.add_recording_event(
-                        "setattr {} down_pressed 1".format(obj.ID))
-                if key in jump_key[obj.player]:
-                    self.add_recording_event("call {} jump".format(obj.ID))
-                    self.add_recording_event(
-                        "setattr {} jump_pressed 1".format(obj.ID))
-                if key in action_key[obj.player]:
-                    self.add_recording_event("call {} action".format(obj.ID))
-                    self.add_recording_event(
-                        "setattr {} action_pressed 1".format(obj.ID))
-                if key in sneak_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} sneak_pressed 1".format(obj.ID))
-
-    def event_key_release(self, key):
-        for i in self.timeline_objects:
-            obj = self.timeline_objects[i]()
-            if isinstance(obj, Player) and obj.human:
-                if key in left_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} left_pressed 0".format(obj.ID))
-                if key in right_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} right_pressed 0".format(obj.ID))
-                if key in up_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} up_pressed 0".format(obj.ID))
-                if key in down_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} down_pressed 0".format(obj.ID))
-                if key in jump_key[obj.player]:
-                    self.add_recording_event(
-                        "call {} jump_release".format(obj.ID))
-                    self.add_recording_event(
-                        "setattr {} jump_pressed 0".format(obj.ID))
-                if key in action_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} action_pressed 0".format(obj.ID))
-                if key in sneak_key[obj.player]:
-                    self.add_recording_event(
-                        "setattr {} sneak_pressed 0".format(obj.ID))
-
-
 class SpecialScreen(Level):
 
     def event_room_start(self):
@@ -951,14 +854,6 @@ class Death(sge.dsp.Object):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
         super(Death, self).__init__(*args, **kwargs)
-
-
-class LevelEnd(sge.dsp.Object):
-
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("visible", False)
-        kwargs.setdefault("checks_collisions", False)
-        super(LevelEnd, self).__init__(*args, **kwargs)
 
 
 class Player(xsge_physics.Collider):
@@ -3585,10 +3480,7 @@ class PauseMenu(ModalMenu):
 
     @classmethod
     def create(cls, default=0):
-        if LEVEL or RECORD:
-            items = [_("Continue"), _("Abort")]
-        else:
-            items = [_("Continue"), _("Return to Title Screen")]
+        items = [_("Continue"), _("Return to Title Screen")]
 
         self = cls.from_text(
             gui_handler, sge.game.width / 2, sge.game.height / 2,
@@ -4473,42 +4365,36 @@ type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
 ##                                tangible=False)
 
 # Create rooms
-if LEVEL:
-    sge.game.start_room = LevelTester.load(LEVEL, True)
-    if sge.game.start_room is None:
-        sys.exit()
-elif RECORD:
-    sge.game.start_room = LevelRecorder.load(RECORD, True)
-    if sge.game.start_room is None:
-        sys.exit()
-else:
-    sge.game.start_room = TitleScreen.load(
-        os.path.join("special", "title_screen.tmx"), True)
+sge.game.start_room = TitleScreen.load(
+    os.path.join("special", "title_screen.tmx"), True)
 
 sge.game.mouse.visible = False
 
 # Load map data
 map_rooms = {}
-try:
-    with open(os.path.join(DATA, "map", "rooms.json")) as f:
-        d = json.load(f)
-except (IOError, ValueError):
-    generate_map()
-else:
-    for i in d:
-        map_rooms[i] = tuple(d[i])
-
 map_objects = {}
-try:
-    with open(os.path.join(DATA, "map", "objects.json")) as f:
-        d = json.load(f)
-except (IOError, ValueError):
-    generate_map()
+if not GEN_MAP:
+    try:
+        with open(os.path.join(DATA, "map", "rooms.json")) as f:
+            d = json.load(f)
+    except (IOError, ValueError):
+        generate_map()
+    else:
+        for i in d:
+            map_rooms[i] = tuple(d[i])
+
+    try:
+        with open(os.path.join(DATA, "map", "objects.json")) as f:
+            d = json.load(f)
+    except (IOError, ValueError):
+        generate_map()
+    else:
+        for i in d:
+            x, y = tuple(i.split(','))
+            j = (int(x), int(y))
+            map_objects[j] = d[i]
 else:
-    for i in d:
-        x, y = tuple(i.split(','))
-        j = (int(x), int(y))
-        map_objects[j] = d[i]
+    generate_map()
 
 try:
     with open(os.path.join(CONFIG, "config.json")) as f:

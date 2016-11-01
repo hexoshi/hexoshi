@@ -2543,6 +2543,7 @@ class Powerup(InteractiveObject):
         pass
 
     def touch(self, other):
+        play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
         powerups.append(i)
@@ -4451,6 +4452,7 @@ bullet_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "bullet_death.ogg"), volume=0.2)
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
+powerup_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "powerup.wav"))
 heal_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "heal.wav"))
 warp_pad_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "warp_pad.ogg"))
 teleport_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "teleport.wav"))

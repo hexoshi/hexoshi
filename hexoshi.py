@@ -151,6 +151,7 @@ CAMERA_MARGIN_TOP = 4 * TILE_SIZE
 CAMERA_MARGIN_BOTTOM = 5 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = SCREEN_SIZE[1] / 2
 
+LIFE_FORCE_CHANCE = 0.25
 LIFE_FORCE_SPEED = 1
 LIFE_FORCE_HEAL = 5
 
@@ -2063,7 +2064,8 @@ class Enemy(InteractiveObject):
         pass
 
     def kill(self):
-        if "life_orb" in progress_flags:
+        if ("life_orb" in progress_flags and
+                random.random() < LIFE_FORCE_CHANCE):
             LifeForce.create(self.image_xcenter, self.image_ycenter, z=self.z)
 
         self.destroy()
@@ -2624,11 +2626,13 @@ class WarpPad(SpawnPoint):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def activate(self):
+        global current_level
         global spawn_point
         global warp_pads
 
         self.activated = True
         self.sprite = warp_pad_active_sprite
+        current_level = sge.game.current_room.fname
         spawn_point = self.spawn_id
         i = (sge.game.current_room.fname, self.spawn_id)
         if i not in warp_pads:

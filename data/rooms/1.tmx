@@ -9,8 +9,8 @@
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="232" source="../tilesets/stones.tsx"/>
  <tileset firstgid="233" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="234" source="../tilesets/doors.tsx"/>
- <tileset firstgid="240" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="237" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="243" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="150" height="28">
   <data encoding="base64" compression="zlib">
    eJzt1ckKwjAQxnEf36q3utxqjy7oY7hS7958FEeokINdLDNNSv4/+Ci0cTpMQh2NACBumWTtJJckklWZpZPMWfPLxLbVv6WSue8mHJ/5aPRUNWd3L/OOtUOa11do5yo0WvNJOv4ubXg+7ljXGueq3sJ3AwPF3AAA1nLfDQAAAAAAAAAAAAAAEImZQc2DQU3Eo+pMFpJXj33senyXlr1CjY1kq1AnJifJueXam2UjRu4t1kwbnl8kV4Ve6hzLK/9B4RnynjzKa+G1i/A8K+43fQs0sScA+vIG3B8lpA==
@@ -29,12 +29,12 @@
   <object id="53" x="0" y="-8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="1" gid="237" x="1192" y="216" width="8" height="64">
+  <object id="1" gid="240" x="1192" y="216" width="8" height="64">
    <properties>
     <property name="dest" value="0.tmx"/>
    </properties>
   </object>
-  <object id="55" gid="239" x="16" y="224" width="64" height="8">
+  <object id="55" gid="242" x="16" y="224" width="64" height="8">
    <properties>
     <property name="dest" value="2.tmx"/>
    </properties>
@@ -47,7 +47,7 @@
  </layer>
  <layer name="Tile Layer 1" width="150" height="28">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">

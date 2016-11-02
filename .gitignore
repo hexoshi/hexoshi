@@ -30,3 +30,4 @@ pip-log.txt
 MANIFEST
 data/map/objects.json
 data/map/rooms.json
+map.png

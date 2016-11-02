@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="84" tilewidth="8" tileheight="8" nextobjectid="67">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="84" tilewidth="8" tileheight="8" nextobjectid="68">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -9,8 +9,8 @@
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="232" source="../tilesets/stones.tsx"/>
  <tileset firstgid="233" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="235" source="../tilesets/doors.tsx"/>
- <tileset firstgid="241" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="237" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="243" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="84">
   <data encoding="base64" compression="zlib">
    eJzt27sOgjAUxnEe39uGlw2ZdDC+hg7GxcVo4rtYhybVFKlYOIfy/yUnMZDUrwu9ULJsmFamlqZGFfcLU2unysB2J1/+yyc3NQ9su0u+fvRRKv0YSwdQ6iEdAAACaR3vAYTbSQf4w8z5fRJLAQAA6tylAwCCmu5/przeLiK3V/UuBLA2prbSISI4mDpm72thAIBue+kAgS4198+dpMCQpbz+0cCeEyuFc4RI5SzUQjpAom7SAZCMXDpAZO7eWCrPUW39qJsvV2E8AOR9fjPx67cTfaTtGdoU/dClzTFt6rn2mvsP+V1In89zujjPiZjv8dk/BIBw9myJ1WReFWMudm25fbTvCf4dLu8=
@@ -30,19 +30,19 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="3" gid="239" x="16" y="8" width="64" height="8">
+  <object id="3" gid="241" x="16" y="8" width="64" height="8">
    <properties>
     <property name="dest" value="1.tmx"/>
    </properties>
   </object>
-  <object id="19" gid="238" x="392" y="440" width="8" height="64">
+  <object id="19" gid="240" x="392" y="440" width="8" height="64">
    <properties>
     <property name="dest" value="3.tmx"/>
    </properties>
   </object>
-  <object id="51" gid="237" x="0" y="664" width="8" height="64">
+  <object id="51" gid="239" x="0" y="664" width="8" height="64">
    <properties>
-    <property name="dest" value="2.tmx"/>
+    <property name="dest" value="4.tmx"/>
    </properties>
   </object>
  </objectgroup>

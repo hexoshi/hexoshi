@@ -14,7 +14,7 @@
  </tile>
  <tile id="2">
   <properties>
-   <property name="cls" value="map_powerup"/>
+   <property name="cls" value="map"/>
   </properties>
   <image width="16" height="16" source="../images/objects/powerups/map-7.png"/>
  </tile>

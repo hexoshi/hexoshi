@@ -2468,7 +2468,7 @@ class Powerup(InteractiveObject):
 
     message = _("USELESS ARTIFACT\n\nIt doesn't seem to do anything")
 
-    def collect(self):
+    def collect(self, other):
         pass
 
     def touch(self, other):
@@ -2480,7 +2480,7 @@ class Powerup(InteractiveObject):
         powerups = powerups[:]
         powerups.append(i)
         DialogBox(gui_handler, self.message, self.sprite).show()
-        self.collect()
+        self.collect(other)
         self.destroy()
 
     def event_create(self):
@@ -2494,9 +2494,10 @@ class Etank(Powerup):
 
     message = _("E-TANK\n\nExtra energy acquired")
 
-    def collect(self):
+    def collect(self, other):
         global etanks
         etanks += 1
+        other.refresh()
 
 
 class LifeOrb(Powerup):
@@ -2507,24 +2508,25 @@ class LifeOrb(Powerup):
         kwargs["sprite"] = life_orb_sprite
         super(LifeOrb, self).__init__(x, y, **kwargs)
 
-    def collect(self):
+    def collect(self, other):
         global progress_flags
         progress_flags = progress_flags[:]
         progress_flags.append("life_orb")
 
 
-class MapPowerup(Powerup):
+class Map(Powerup):
 
     message = _("MAP")
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = map_powerup_sprite
-        super(MapPowerup, self).__init__(x, y, **kwargs)
+        kwargs["sprite"] = powerup_map_sprite
+        super(Map, self).__init__(x, y, **kwargs)
 
-    def collect(self):
+    def collect(self, other):
         global progress_flags
         progress_flags = progress_flags[:]
         progress_flags.append("map")
+        other.update_hud()
 
 
 class MapDisk(Powerup):
@@ -2538,7 +2540,7 @@ class MapDisk(Powerup):
             self.rooms = []
         super(MapDisk, self).__init__(x, y, **kwargs)
 
-    def collect(self):
+    def collect(self, other):
         global map_revealed
 
         for fname in self.rooms:
@@ -4193,7 +4195,7 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "frog": Frog, "bat": Bat,
          "fake_tile": FakeTile, "weak_stone": WeakStone, "etank": Etank,
-         "life_orb": LifeOrb, "map_powerup": MapPowerup, "map_disk": MapDisk,
+         "life_orb": LifeOrb, "map": Map, "map_disk": MapDisk,
          "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
          "doorframe_y": DoorFrameY, "door_left": LeftDoor,
          "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
@@ -4353,7 +4355,7 @@ stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 
 d = os.path.join(DATA, "images", "objects", "powerups")
 life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
-map_powerup_sprite = sge.gfx.Sprite("map", d, fps=3)
+powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)
@@ -4474,6 +4476,11 @@ if not GEN_MAP:
             map_objects[j] = d[i]
 else:
     generate_map()
+    map_revealed = list(map_objects.keys())
+    map_explored = map_revealed
+    draw_map().save("map.png")
+    map_revealed = []
+    map_explored = []
 
 try:
     with open(os.path.join(CONFIG, "config.json")) as f:

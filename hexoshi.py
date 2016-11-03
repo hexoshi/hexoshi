@@ -367,17 +367,13 @@ class Level(sge.dsp.Room):
             if isinstance(obj, SteadyIcicle):
                 obj.check_shake(True)
 
-    def pause(self):
-        if self.death_time is not None or "death" in self.alarms:
-            sge.snd.Music.stop()
-            self.alarms["death"] = 0
-        elif (self.timeline_skip_target is not None and
+    def pause(self, player_x=None, player_y=None):
+        if (self.timeline_skip_target is not None and
               self.timeline_step < self.timeline_skip_target):
             self.timeline_skipto(self.timeline_skip_target)
         else:
-            sge.snd.Music.pause()
             play_sound(pause_sound)
-            PauseMenu.create()
+            PauseMenu.create(player_x=player_x, player_y=player_y)
 
     def die(self):
         sge.game.start_room.start(transition="fade")
@@ -713,6 +709,76 @@ class CreditsScreen(SpecialScreen):
                     js in itertools.chain.from_iterable(shoot_js) or
                     js in itertools.chain.from_iterable(pause_js)):
                 sge.game.start_room.start()
+
+
+class MapScreen(sge.dsp.Room):
+
+    def __init__(self, player_x, player_y):
+        super(MapScreen, self).__init__()
+        self.current_room = sge.game.current_room
+        self.player_x = player_x
+        self.player_y = player_y
+        self.map_x = player_x
+        self.map_y = player_y
+        self.map = sge.dsp.Object(0, 0)
+        self.draw_map()
+        self.map.image_xcenter = self.width / 2
+        self.map.image_ycenter = self.height / 2
+
+    def draw_map(self):
+        w = int(self.width / MAP_CELL_WIDTH)
+        h = int(self.height / MAP_CELL_HEIGHT)
+        x = self.map_x - int(w / 2)
+        y = self.map_y - int(h / 2)
+        self.map.sprite = draw_map(x, y, w, h, self.player_x, self.player_y)
+
+    def event_room_start(self):
+        self.add(self.map)
+
+    def event_key_press(self, key, char):
+        if key in xsge_gui.left_keys:
+            play_sound(select_sound)
+            self.map_x -= 1
+            self.draw_map()
+        elif key in xsge_gui.right_keys:
+            play_sound(select_sound)
+            self.map_x += 1
+            self.draw_map()
+        elif key in xsge_gui.up_keys:
+            play_sound(select_sound)
+            self.map_y -= 1
+            self.draw_map()
+        elif key in xsge_gui.down_keys:
+            play_sound(select_sound)
+            self.map_y += 1
+            self.draw_map()
+        elif key in xsge_gui.enter_keys + xsge_gui.escape_keys:
+            play_sound(select_sound)
+            self.current_room.start()
+
+    def event_joystick(self, js_name, js_id, input_type, input_id, value):
+        js = (js_id, input_type, input_id)
+        if value >= joystick_threshold:
+            if js in xsge_gui.left_joystick_events:
+                play_sound(select_sound)
+                self.map_x -= 1
+                self.draw_map()
+            elif js in xsge_gui.right_joystick_events:
+                play_sound(select_sound)
+                self.map_x += 1
+                self.draw_map()
+            elif js in xsge_gui.up_joystick_events:
+                play_sound(select_sound)
+                self.map_y -= 1
+                self.draw_map()
+            elif js in xsge_gui.down_joystick_events:
+                play_sound(select_sound)
+                self.map_y += 1
+                self.draw_map()
+            elif js in (xsge_gui.enter_joystick_events +
+                        xsge_gui.escape_joystick_events):
+                play_sound(select_sound)
+                self.current_room.start()
 
 
 class SolidLeft(xsge_physics.SolidLeft):
@@ -1298,7 +1364,8 @@ class Player(xsge_physics.Collider):
 
         if not isinstance(sge.game.current_room, SpecialScreen):
             if key == "escape" or key in pause_key[self.player]:
-                sge.game.current_room.pause()
+                sge.game.current_room.pause(player_x=self.last_xr,
+                                            player_y=self.last_yr)
 
     def event_key_release(self, key):
         if self.human and not self.input_lock:
@@ -1318,7 +1385,8 @@ class Player(xsge_physics.Collider):
                 if js in shoot_js[self.player]:
                     self.shoot()
                 if js in pause_js[self.player]:
-                    sge.game.current_room.pause()
+                    sge.game.current_room.pause(player_x=self.last_xr,
+                                                player_y=self.last_yr)
             else:
                 if js in jump_js[self.player]:
                     self.jump_release()
@@ -3565,8 +3633,11 @@ class ModalMenu(xsge_gui.MenuDialog):
 class PauseMenu(ModalMenu):
 
     @classmethod
-    def create(cls, default=0):
-        items = [_("Continue"), _("Return to Title Screen")]
+    def create(cls, default=0, player_x=None, player_y=None):
+        if "map" in progress_flags:
+            items = [_("Continue"), _("View Map"), _("Return to Title Screen")]
+        else:
+            items = [_("Continue"), _("Return to Title Screen")]
 
         self = cls.from_text(
             gui_handler, sge.game.width / 2, sge.game.height / 2,
@@ -3576,13 +3647,18 @@ class PauseMenu(ModalMenu):
             valign="middle")
         default %= len(self.widgets)
         self.keyboard_focused_widget = self.widgets[default]
+        self.player_x = player_x
+        self.player_y = player_y
         self.show()
         return self
 
     def event_choose(self):
-        sge.snd.Music.unpause()
-
         if self.choice == 1:
+            if "map" in progress_flags:
+                MapScreen(self.player_x, self.player_y).start()
+            else:
+                sge.game.start_room.start()
+        elif self.choice == 2:
             sge.game.start_room.start()
         else:
             play_sound(select_sound)

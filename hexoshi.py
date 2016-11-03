@@ -2586,7 +2586,7 @@ class LifeOrb(Powerup):
 
 class Map(Powerup):
 
-    message = _("MAP")
+    message = _("MAP\n\nSee mini-map in HUD, or full map from pause menu")
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = powerup_map_sprite

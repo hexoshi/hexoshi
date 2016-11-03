@@ -930,6 +930,7 @@ class Player(xsge_physics.Collider):
         self.aim_direction_time = 0
         self.view = None
         self.__hp = self.max_hp
+        healthbar_front_sprite.width = healthbar_width
         self.last_xr = None
         self.last_yr = None
 
@@ -4154,6 +4155,7 @@ def load_game():
 
 def start_game():
     global player
+
     player = Anneroy(0, 0)
 
     if current_level is None:

@@ -711,76 +711,6 @@ class CreditsScreen(SpecialScreen):
                 sge.game.start_room.start()
 
 
-class MapScreen(sge.dsp.Room):
-
-    def __init__(self, player_x, player_y):
-        super(MapScreen, self).__init__()
-        self.current_room = sge.game.current_room
-        self.player_x = player_x
-        self.player_y = player_y
-        self.map_x = player_x
-        self.map_y = player_y
-        self.map = sge.dsp.Object(0, 0)
-        self.draw_map()
-        self.map.image_xcenter = self.width / 2
-        self.map.image_ycenter = self.height / 2
-
-    def draw_map(self):
-        w = int(self.width / MAP_CELL_WIDTH)
-        h = int(self.height / MAP_CELL_HEIGHT)
-        x = self.map_x - int(w / 2)
-        y = self.map_y - int(h / 2)
-        self.map.sprite = draw_map(x, y, w, h, self.player_x, self.player_y)
-
-    def event_room_start(self):
-        self.add(self.map)
-
-    def event_key_press(self, key, char):
-        if key in xsge_gui.left_keys:
-            play_sound(select_sound)
-            self.map_x -= 1
-            self.draw_map()
-        elif key in xsge_gui.right_keys:
-            play_sound(select_sound)
-            self.map_x += 1
-            self.draw_map()
-        elif key in xsge_gui.up_keys:
-            play_sound(select_sound)
-            self.map_y -= 1
-            self.draw_map()
-        elif key in xsge_gui.down_keys:
-            play_sound(select_sound)
-            self.map_y += 1
-            self.draw_map()
-        elif key in xsge_gui.enter_keys + xsge_gui.escape_keys:
-            play_sound(select_sound)
-            self.current_room.start()
-
-    def event_joystick(self, js_name, js_id, input_type, input_id, value):
-        js = (js_id, input_type, input_id)
-        if value >= joystick_threshold:
-            if js in xsge_gui.left_joystick_events:
-                play_sound(select_sound)
-                self.map_x -= 1
-                self.draw_map()
-            elif js in xsge_gui.right_joystick_events:
-                play_sound(select_sound)
-                self.map_x += 1
-                self.draw_map()
-            elif js in xsge_gui.up_joystick_events:
-                play_sound(select_sound)
-                self.map_y -= 1
-                self.draw_map()
-            elif js in xsge_gui.down_joystick_events:
-                play_sound(select_sound)
-                self.map_y += 1
-                self.draw_map()
-            elif js in (xsge_gui.enter_joystick_events +
-                        xsge_gui.escape_joystick_events):
-                play_sound(select_sound)
-                self.current_room.start()
-
-
 class SolidLeft(xsge_physics.SolidLeft):
 
     def __init__(self, *args, **kwargs):
@@ -983,6 +913,7 @@ class Player(xsge_physics.Collider):
         self.lose_on_death = lose_on_death
         self.view_frozen = view_frozen
         self.input_lock = False
+        self.warp_dest = None
 
         self.hud_sprite = sge.gfx.Sprite(width=SCREEN_SIZE[0],
                                          height=SCREEN_SIZE[1])
@@ -1058,7 +989,11 @@ class Player(xsge_physics.Collider):
             self.aim_down_pressed = states[8]
 
     def press_up(self):
-        pass
+        if not self.aim_diag_pressed:
+            warp_pads = self.collision(WarpPad)
+            if warp_pads:
+                warp_pad = warp_pads[0]
+                warp_pad.teleport(self)
 
     def press_down(self):
         pass
@@ -1112,7 +1047,7 @@ class Player(xsge_physics.Collider):
 
     def warp_out(self):
         self.input_lock = True
-        self.alarms["input_lock"] = WARP_TIME
+        self.alarms["warp_out"] = WARP_TIME
         self.reset_input()
         self.xvelocity = 0
         self.yvelocity = 0
@@ -1350,6 +1285,9 @@ class Player(xsge_physics.Collider):
         elif alarm_id == "input_lock":
             self.input_lock = False
             self.refresh_input()
+        elif alarm_id == "warp_out":
+            if self.warp_dest:
+                warp(self.warp_dest)
 
     def event_key_press(self, key, char):
         if self.human and not self.input_lock:
@@ -1491,25 +1429,28 @@ class Anneroy(Player):
         self.last_aim_direction = 0
 
     def press_up(self):
-        if self.crouching and not self.aim_diag_pressed:
-            for other in sge.collision.rectangle(
-                    self.x + ANNEROY_BBOX_X, self.y + ANNEROY_STAND_BBOX_Y,
-                    ANNEROY_BBOX_WIDTH, ANNEROY_STAND_BBOX_HEIGHT):
-                if isinstance(other, (xsge_physics.SolidBottom,
-                                      xsge_physics.SlopeBottomLeft,
-                                      xsge_physics.SlopeBottomRight)):
-                    if not self.collision(other):
-                        break
-            else:
-                if self.fixed_sprite != "crouch":
-                    self.reset_image()
-                    self.sprite = anneroy_legs_crouch_sprite
-                    self.image_index = anneroy_legs_crouch_sprite.frames - 1
-                self.image_speed = -anneroy_legs_crouch_sprite.speed
-                self.fixed_sprite = "crouch"
-                self.crouching = False
-                self.bbox_y = ANNEROY_STAND_BBOX_Y
-                self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
+        if self.crouching:
+            if not self.aim_diag_pressed:
+                for other in sge.collision.rectangle(
+                        self.x + ANNEROY_BBOX_X, self.y + ANNEROY_STAND_BBOX_Y,
+                        ANNEROY_BBOX_WIDTH, ANNEROY_STAND_BBOX_HEIGHT):
+                    if isinstance(other, (xsge_physics.SolidBottom,
+                                          xsge_physics.SlopeBottomLeft,
+                                          xsge_physics.SlopeBottomRight)):
+                        if not self.collision(other):
+                            break
+                else:
+                    if self.fixed_sprite != "crouch":
+                        self.reset_image()
+                        self.sprite = anneroy_legs_crouch_sprite
+                        self.image_index = anneroy_legs_crouch_sprite.frames - 1
+                    self.image_speed = -anneroy_legs_crouch_sprite.speed
+                    self.fixed_sprite = "crouch"
+                    self.crouching = False
+                    self.bbox_y = ANNEROY_STAND_BBOX_Y
+                    self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
+        else:
+            super(Anneroy, self).press_up()
 
     def press_down(self):
         h_control = bool(self.right_pressed) - bool(self.left_pressed)
@@ -1658,6 +1599,15 @@ class Anneroy(Player):
     def warp_in(self):
         super(Anneroy, self).warp_in()
         self.alarms["fixed_sprite"] = WARP_TIME
+        self.sprite = anneroy_turn_sprite
+        self.image_index = 1
+        self.image_speed = 0
+        self.torso.visible = False
+        self.fixed_sprite = True
+
+    def warp_out(self):
+        super(Anneroy, self).warp_out()
+        self.alarms["fixed_sprite"] = WARP_TIME + 1
         self.sprite = anneroy_turn_sprite
         self.image_index = 1
         self.image_speed = 0
@@ -2586,7 +2536,8 @@ class LifeOrb(Powerup):
 
 class Map(Powerup):
 
-    message = _("MAP\n\nSee mini-map in HUD, or full map from pause menu")
+    message = _(
+        "HANDHELD MAP\n\nSee mini-map in HUD and full map from pause menu")
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = powerup_map_sprite
@@ -2702,7 +2653,10 @@ class WarpPad(SpawnPoint):
         self.sprite = warp_pad_active_sprite
         current_level = sge.game.current_room.fname
         spawn_point = self.spawn_id
-        i = (sge.game.current_room.fname, self.spawn_id)
+        x, y = map_rooms.get(sge.game.current_room.fname, (0, 0))
+        x += get_xregion(self.image_xcenter)
+        y += get_yregion(self.image_ycenter)
+        i = (sge.game.current_room.fname, self.spawn_id, x, y)
         if i not in warp_pads:
             warp_pads = warp_pads[:]
             warp_pads.append(i)
@@ -2718,6 +2672,18 @@ class WarpPad(SpawnPoint):
         other.warp_in()
         self.activate()
         play_sound(teleport_sound, self.image_xcenter, self.image_ycenter)
+
+    def teleport(self, other):
+        x, y = map_rooms.get(sge.game.current_room.fname, (0, 0))
+        x += get_xregion(self.image_xcenter)
+        y += get_yregion(self.image_ycenter)
+        i = (sge.game.current_room.fname, self.spawn_id, x, y)
+        dlg = TeleportDialog(i)
+        dlg.show()
+        if dlg.selection and dlg.selection != i:
+            other.warp_dest = "{}:{}".format(*dlg.selection[:2])
+            other.warp_out()
+            play_sound(teleport_sound, self.image_xcenter, self.image_ycenter)
 
     def create_children(self):
         self.created = True
@@ -3655,13 +3621,117 @@ class PauseMenu(ModalMenu):
     def event_choose(self):
         if self.choice == 1:
             if "map" in progress_flags:
-                MapScreen(self.player_x, self.player_y).start()
+                play_sound(select_sound)
+                MapDialog(self.player_x, self.player_y).show()
             else:
                 sge.game.start_room.start()
         elif self.choice == 2:
             sge.game.start_room.start()
         else:
             play_sound(select_sound)
+
+
+class MapDialog(xsge_gui.Dialog):
+
+    def __init__(self, player_x, player_y):
+        self.xcells = int(sge.game.width / MAP_CELL_WIDTH)
+        self.ycells = int(sge.game.height / MAP_CELL_HEIGHT)
+        w = self.xcells * MAP_CELL_WIDTH
+        h = self.ycells * MAP_CELL_HEIGHT
+        super(MapDialog, self).__init__(
+            gui_handler, 0, 0, w, h, background_color=sge.gfx.Color("black"),
+            border=False)
+        self.player_x = player_x
+        self.player_y = player_y
+        self.map_x = player_x
+        self.map_y = player_y
+        self.map = xsge_gui.Widget(self, 0, 0, 0)
+        self.draw_map()
+
+    def draw_map(self):
+        x = self.map_x - int(self.xcells / 2)
+        y = self.map_y - int(self.ycells / 2)
+        self.map.sprite = draw_map(x, y, self.xcells, self.ycells,
+                                   self.player_x, self.player_y)
+
+    def event_press_left(self):
+        play_sound(select_sound)
+        self.map_x -= 1
+        self.draw_map()
+
+    def event_press_right(self):
+        play_sound(select_sound)
+        self.map_x += 1
+        self.draw_map()
+
+    def event_press_up(self):
+        play_sound(select_sound)
+        self.map_y -= 1
+        self.draw_map()
+
+    def event_press_down(self):
+        play_sound(select_sound)
+        self.map_y += 1
+        self.draw_map()
+
+    def event_press_enter(self):
+        play_sound(select_sound)
+        self.destroy()
+
+    def event_press_escape(self):
+        play_sound(select_sound)
+        self.destroy()
+
+
+class TeleportDialog(MapDialog):
+
+    def __init__(self, selection):
+        self.selection = selection
+        x = self.selection[2]
+        y = self.selection[3]
+        super(TeleportDialog, self).__init__(x, y)
+
+    def update_selection(self):
+        self.map_x = self.selection[2]
+        self.map_y = self.selection[3]
+        self.player_x = self.map_x
+        self.player_y = self.map_y
+        self.draw_map()
+
+    def event_press_left(self):
+        play_sound(select_sound)
+
+        if self.selection in warp_pads:
+            i = warp_pads.index(self.selection)
+        else:
+            i = 0
+
+        self.selection = warp_pads[(i - 1) % len(warp_pads)]
+        self.update_selection()
+
+    def event_press_right(self):
+        play_sound(select_sound)
+
+        if self.selection in warp_pads:
+            i = warp_pads.index(self.selection)
+        else:
+            i = -1
+
+        self.selection = warp_pads[(i + 1) % len(warp_pads)]
+        self.update_selection()
+
+    def event_press_up(self):
+        pass
+
+    def event_press_down(self):
+        pass
+
+    def event_press_enter(self):
+        self.destroy()
+
+    def event_press_escape(self):
+        self.selection = None
+        self.destroy()
 
 
 class DialogLabel(xsge_gui.ProgressiveLabel):

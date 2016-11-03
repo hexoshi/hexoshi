@@ -83,6 +83,9 @@ parser.add_argument(
 parser.add_argument(
     "-m", "--gen-map", help=_("Generate the map even if it already exists."),
     action="store_true")
+parser.add_argument(
+    "-s", "--save-map", help=_('Save an image of the full map as "map.png".'),
+    action="store_true")
 parser.add_argument("--god")
 args = parser.parse_args()
 
@@ -93,6 +96,7 @@ if args.datadir:
 NO_BACKGROUNDS = args.no_backgrounds
 NO_HUD = args.no_hud
 GEN_MAP = args.gen_map
+SAVE_MAP = args.save_map
 GOD = (args.god and args.god.lower() == "inbailey")
 
 if six.PY2:
@@ -2512,7 +2516,7 @@ class Powerup(InteractiveObject):
 
 class Etank(Powerup):
 
-    message = _("E-TANK\n\nExtra energy acquired")
+    message = _("E-TANK\n\nExtra energy capacity acquired")
 
     def collect(self, other):
         global etanks
@@ -4626,6 +4630,8 @@ if not GEN_MAP:
             map_objects[j] = d[i]
 else:
     generate_map()
+
+if SAVE_MAP:
     map_revealed = list(map_objects.keys())
     map_explored = map_revealed
     draw_map().save("map.png")

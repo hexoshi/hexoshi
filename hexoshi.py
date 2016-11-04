@@ -935,9 +935,6 @@ class Player(xsge_physics.Collider):
         self.last_xr = None
         self.last_yr = None
 
-        if GOD:
-            image_blend = sge.gfx.Color("olive")
-
         super(Player, self).__init__(
             x, y, z=z, sprite=sprite, visible=visible, active=active,
             checks_collisions=checks_collisions, tangible=tangible,
@@ -4407,64 +4404,81 @@ d = os.path.join(DATA, "images", "objects", "anneroy")
 anneroy_torso_offset = {}
 
 fname = os.path.join(d, "anneroy_sheet.png")
+trans = sge.gfx.Color("lime")
 
 anneroy_turn_sprite = sge.gfx.Sprite.from_tileset(
     fname, 2, 109, 3, xsep=3, width=39, height=43, origin_x=19, origin_y=19,
-    fps=10)
+    fps=10, transparent=trans)
 
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)
+    fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19,
+    transparent=trans)
 anneroy_torso_right_aim_right_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 234, 45, width=26, height=20, origin_x=5, origin_y=19)
+    fname, 234, 45, width=26, height=20, origin_x=5, origin_y=19,
+    transparent=trans)
 anneroy_torso_right_aim_up_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 293, 38, width=20, height=27, origin_x=6, origin_y=26)
+    fname, 293, 38, width=20, height=27, origin_x=6, origin_y=26,
+    transparent=trans)
 anneroy_torso_right_aim_down_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 182, 52, width=20, height=30, origin_x=1, origin_y=12)
+    fname, 182, 52, width=20, height=30, origin_x=1, origin_y=12,
+    transparent=trans)
 anneroy_torso_right_aim_upright_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 264, 39, width=25, height=26, origin_x=5, origin_y=25)
+    fname, 264, 39, width=25, height=26, origin_x=5, origin_y=25,
+    transparent=trans)
 anneroy_torso_right_aim_downright_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 207, 45, width=23, height=26, origin_x=5, origin_y=19)
+    fname, 207, 45, width=23, height=26, origin_x=5, origin_y=19,
+    transparent=trans)
 
 anneroy_torso_left_idle_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 14, 45, width=27, height=25, origin_x=18, origin_y=19)
+    fname, 14, 45, width=27, height=25, origin_x=18, origin_y=19,
+    transparent=trans)
 anneroy_torso_left_aim_left_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 95, 45, width=26, height=20, origin_x=20, origin_y=19)
+    fname, 95, 45, width=26, height=20, origin_x=20, origin_y=19,
+    transparent=trans)
 anneroy_torso_left_aim_up_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 45, 38, width=17, height=27, origin_x=11, origin_y=26)
+    fname, 45, 38, width=17, height=27, origin_x=11, origin_y=26,
+    transparent=trans)
 anneroy_torso_left_aim_down_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 154, 52, width=20, height=30, origin_x=18, origin_y=12)
+    fname, 154, 52, width=20, height=30, origin_x=18, origin_y=12,
+    transparent=trans)
 anneroy_torso_left_aim_upleft_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 66, 39, width=25, height=26, origin_x=19, origin_y=25)
+    fname, 66, 39, width=25, height=26, origin_x=19, origin_y=25,
+    transparent=trans)
 anneroy_torso_left_aim_downleft_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 125, 45, width=23, height=26, origin_x=17, origin_y=19)
+    fname, 125, 45, width=23, height=26, origin_x=17, origin_y=19,
+    transparent=trans)
 
 anneroy_legs_stand_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 47, 76, width=19, height=24, origin_x=8, origin_y=0)
+    fname, 47, 76, width=19, height=24, origin_x=8, origin_y=0,
+    transparent=trans)
 anneroy_legs_run_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 299, 5, 2, xsep=8, ysep=31, width=40, height=24, origin_x=17,
-    origin_y=0)
+    origin_y=0, transparent=trans)
 anneroy_legs_jump_sprite = sge.gfx.Sprite.from_tileset(
     fname, 14, 234, 5, xsep=15, width=23, height=29, origin_x=8, origin_y=5,
-    fps=30)
+    fps=30, transparent=trans)
 anneroy_legs_fall_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 204, 234, width=23, height=29, origin_x=8, origin_y=5)
+    fname, 204, 234, width=23, height=29, origin_x=8, origin_y=5,
+    transparent=trans)
 anneroy_legs_land_sprite = sge.gfx.Sprite.from_tileset(
     fname, 242, 234, 2, xsep=15, width=23, height=29, origin_x=8, origin_y=5,
-    fps=30)
+    fps=30, transparent=trans)
 anneroy_legs_crouched_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 23, 85, width=21, height=15, origin_x=7, origin_y=-9)
+    fname, 23, 85, width=21, height=15, origin_x=7, origin_y=-9,
+    transparent=trans)
 anneroy_legs_crouch_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 189, 2, xsep=7, width=21, height=21, origin_x=8, origin_y=-3,
-    fps=10)
+    fps=10, transparent=trans)
 
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 249, 119, width=26, height=16, origin_x=2, origin_y=7, fps=10)
+    fname, 249, 119, width=26, height=16, origin_x=2, origin_y=7, fps=10,
+    transparent=trans)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
     fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-8,
-    bbox_y=-8, bbox_width=15, bbox_height=15)
+    bbox_y=-8, bbox_width=15, bbox_height=15, transparent=trans)
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=13, origin_y=23,
-    fps=10)
+    fps=10, transparent=trans)
 
 n = id(anneroy_legs_run_sprite)
 anneroy_torso_offset[(n, 1)] = (0, 1)
@@ -4496,6 +4510,41 @@ anneroy_torso_offset[(n, 0)] = (0, 11)
 n = id(anneroy_legs_crouch_sprite)
 anneroy_torso_offset[(n, 0)] = (0, 3)
 anneroy_torso_offset[(n, 1)] = (0, 9)
+
+if GOD:
+    anneroy_images = [
+        anneroy_turn_sprite,
+
+        anneroy_torso_right_idle_sprite, anneroy_torso_right_aim_right_sprite,
+        anneroy_torso_right_aim_up_sprite, anneroy_torso_right_aim_down_sprite,
+        anneroy_torso_right_aim_upright_sprite,
+        anneroy_torso_right_aim_downright_sprite,
+
+        anneroy_torso_left_idle_sprite, anneroy_torso_left_aim_left_sprite,
+        anneroy_torso_left_aim_up_sprite, anneroy_torso_left_aim_down_sprite,
+        anneroy_torso_left_aim_upleft_sprite,
+        anneroy_torso_left_aim_downleft_sprite,
+
+        anneroy_legs_stand_sprite, anneroy_legs_run_sprite,
+        anneroy_legs_jump_sprite, anneroy_legs_fall_sprite,
+        anneroy_legs_land_sprite, anneroy_legs_crouched_sprite,
+        anneroy_legs_crouch_sprite,
+
+        anneroy_bullet_dust_sprite, anneroy_bullet_sprite,
+        anneroy_bullet_dissipate_sprite]
+    swaps = [
+        (sge.gfx.Color((255, 235, 221)), sge.gfx.Color((255, 255, 221))),
+        (sge.gfx.Color((255, 89, 45)), sge.gfx.Color((255, 255, 45))),
+        (sge.gfx.Color((246, 19, 19)), sge.gfx.Color((246, 246, 19))),
+        (sge.gfx.Color((143, 14, 47)), sge.gfx.Color((143, 143, 47))),
+        (sge.gfx.Color((85, 9, 32)), sge.gfx.Color((85, 85, 32))),
+        (sge.gfx.Color((16, 11, 41)), sge.gfx.Color((16, 41, 11))),
+        (sge.gfx.Color((32, 50, 130)), sge.gfx.Color((32, 130, 50))),
+        (sge.gfx.Color((50, 80, 210)), sge.gfx.Color((50, 210, 80))),
+        (sge.gfx.Color((88, 205, 249)), sge.gfx.Color((88, 249, 205)))]
+    for img in anneroy_images:
+        for c1, c2 in swaps:
+            img.swap_color(c1, c2)
 
 d = os.path.join(DATA, "images", "objects", "enemies")
 frog_stand_sprite = sge.gfx.Sprite("frog_stand", d)

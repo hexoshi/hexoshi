@@ -144,6 +144,7 @@ ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
 ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
+ANNEROY_BULLET_LIFE = 45
 ANNEROY_EXPLODE_TIME = 0.6 * FPS
 
 CEILING_LAX = 2
@@ -2378,6 +2379,9 @@ class AnneroyBullet(InteractiveObject):
                 image_blend=self.image_blend)
             self.destroy()
 
+    def event_create(self):
+        self.alarms["die"] = ANNEROY_BULLET_LIFE
+
     def event_step(self, time_passed, delta_mult):
         room = sge.game.current_room
         if (self.bbox_right < 0 or self.bbox_left > room.width or
@@ -2440,6 +2444,10 @@ class AnneroyBullet(InteractiveObject):
 
                 if touching:
                     self.dissipate(xdirection, ydirection)
+
+    def event_alarm(self, alarm_id):
+        if alarm_id == "die":
+            self.destroy()
 
 
 class FakeTile(sge.dsp.Object):
@@ -4021,7 +4029,7 @@ def play_music(music, force_restart=False):
             try:
                 music_object = sge.snd.Music(os.path.join(DATA, "music",
                                                           music))
-            except IOError:
+            except (IOError, OSError):
                 sge.snd.Music.clear_queue()
                 sge.snd.Music.stop()
                 return
@@ -4035,7 +4043,7 @@ def play_music(music, force_restart=False):
             try:
                 music_start_object = sge.snd.Music(os.path.join(DATA, "music",
                                                                 music_start))
-            except IOError:
+            except (IOError, OSError):
                 pass
             else:
                 loaded_music[music_start] = music_start_object
@@ -4556,7 +4564,7 @@ for fname in os.listdir(d):
     root, ext = os.path.splitext(fname)
     try:
         portrait = sge.gfx.Sprite(root, d)
-    except IOError:
+    except (IOError, OSError):
         pass
     else:
         portrait_sprites[root] = portrait

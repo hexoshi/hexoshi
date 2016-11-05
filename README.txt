@@ -1,23 +1,21 @@
-Copyright (C) 2014-2016 onpon4 <onpon4@riseup.net>
-
-Copying and distribution of this file, with or without modification,
-are permitted in any medium without royalty provided the copyright
-notice and this notice are preserved.  This file is offered as-is,
-without any warranty.
+This file has been dedicated to the public domain, to the extent
+possible under applicable law, via CC0. See
+http://creativecommons.org/publicdomain/zero/1.0/ for more
+information. This file is offered as-is, without any warranty.
 
 ========================================================================
 
 
 HOW TO RUN
 
-To run Hexoshi, you will need the following dependencies:
+If you have downloaded a version of Hexoshi designated for a particular
+system, simply run the executable.
+
+To run the Hexoshi source code, you will need the following
+dependencies:
 
 - Python 2 (2.7 or later) or 3 (3.1 or later) <http://www.python.org>
 - Pygame 1.9.1 or later <http://pygame.org/download.shtml>
-
-If you have downloaded a version of Hexoshi designated for a particular
-system, these dependencies can be found under the "deps" folder.  Please
-see any "README" files in that folder for instructions and tips.
 
 Once you have installed the dependencies, you can start Hexoshi by
 running hexoshi.py. On most systems, this should be done by

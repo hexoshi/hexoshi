@@ -4547,45 +4547,57 @@ if GOD:
             img.swap_color(c1, c2)
 
 d = os.path.join(DATA, "images", "objects", "enemies")
-frog_stand_sprite = sge.gfx.Sprite("frog_stand", d)
-frog_jump_sprite = sge.gfx.Sprite("frog_jump", d)
-frog_fall_sprite = sge.gfx.Sprite("frog_fall", d)
+trans = sge.gfx.Color("black")
+frog_stand_sprite = sge.gfx.Sprite("frog_stand", d, transparent=trans)
+frog_jump_sprite = sge.gfx.Sprite("frog_jump", d, transparent=trans)
+frog_fall_sprite = sge.gfx.Sprite("frog_fall", d, transparent=trans)
 bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
-                            bbox_width=10, bbox_height=10)
+                            bbox_width=10, bbox_height=10, transparent=trans)
 
 d = os.path.join(DATA, "images", "objects", "doors")
-door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,
-                                       bbox_y=8, bbox_width=8, bbox_height=48)
-door_barrier_y_sprite = sge.gfx.Sprite("barrier_y", d, origin_x=-8, fps=30,
-                                       bbox_x=8, bbox_width=48, bbox_height=8)
-doorframe_regular_x_closed_sprite = sge.gfx.Sprite("regular_x_closed", d)
-doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)
-doorframe_regular_y_closed_sprite = sge.gfx.Sprite("regular_y_closed", d)
-doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
+trans = sge.gfx.Color("black")
+door_barrier_x_sprite = sge.gfx.Sprite(
+    "barrier_x", d, origin_y=-8, fps=30, bbox_y=8, bbox_width=8,
+    bbox_height=48, transparent=trans)
+door_barrier_y_sprite = sge.gfx.Sprite(
+    "barrier_y", d, origin_x=-8, fps=30, bbox_x=8, bbox_width=48,
+    bbox_height=8, transparent=trans)
+doorframe_regular_x_closed_sprite = sge.gfx.Sprite(
+    "regular_x_closed", d, transparent=trans)
+doorframe_regular_x_open_sprite = sge.gfx.Sprite(
+    "regular_x_open", d, transparent=trans)
+doorframe_regular_y_closed_sprite = sge.gfx.Sprite(
+    "regular_y_closed", d, transparent=trans)
+doorframe_regular_y_open_sprite = sge.gfx.Sprite(
+    "regular_y_open", d, transparent=trans)
 
 d = os.path.join(DATA, "images", "objects", "stones")
-stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
+stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d, transparent=False)
 
 d = os.path.join(DATA, "images", "objects", "powerups")
 life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
 powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
 
 d = os.path.join(DATA, "images", "objects", "misc")
-warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)
-warp_pad_inactive_sprite = sge.gfx.Sprite("warp_pad_inactive", d)
+trans = sge.gfx.Color("black")
+warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d,
+                                        transparent=trans)
+warp_pad_inactive_sprite = sge.gfx.Sprite("warp_pad_inactive", d,
+                                          transparent=trans)
 
 d = os.path.join(DATA, "images", "map")
-map_wall_left_sprite = sge.gfx.Sprite("wall_left", d)
-map_wall_right_sprite = sge.gfx.Sprite("wall_right", d)
-map_wall_top_sprite = sge.gfx.Sprite("wall_top", d)
-map_wall_bottom_sprite = sge.gfx.Sprite("wall_bottom", d)
-map_door_left_sprite = sge.gfx.Sprite("door_left", d)
-map_door_right_sprite = sge.gfx.Sprite("door_right", d)
-map_door_top_sprite = sge.gfx.Sprite("door_top", d)
-map_door_bottom_sprite = sge.gfx.Sprite("door_bottom", d)
-map_powerup_sprite = sge.gfx.Sprite("powerup", d)
-map_warp_pad_sprite = sge.gfx.Sprite("warp_pad", d)
-map_player_sprite = sge.gfx.Sprite("player", d)
+trans = sge.gfx.Color("black")
+map_wall_left_sprite = sge.gfx.Sprite("wall_left", d, transparent=trans)
+map_wall_right_sprite = sge.gfx.Sprite("wall_right", d, transparent=trans)
+map_wall_top_sprite = sge.gfx.Sprite("wall_top", d, transparent=trans)
+map_wall_bottom_sprite = sge.gfx.Sprite("wall_bottom", d, transparent=trans)
+map_door_left_sprite = sge.gfx.Sprite("door_left", d, transparent=trans)
+map_door_right_sprite = sge.gfx.Sprite("door_right", d, transparent=trans)
+map_door_top_sprite = sge.gfx.Sprite("door_top", d, transparent=trans)
+map_door_bottom_sprite = sge.gfx.Sprite("door_bottom", d, transparent=trans)
+map_powerup_sprite = sge.gfx.Sprite("powerup", d, transparent=trans)
+map_warp_pad_sprite = sge.gfx.Sprite("warp_pad", d, transparent=trans)
+map_player_sprite = sge.gfx.Sprite("player", d, transparent=trans)
 
 d = os.path.join(DATA, "images", "misc")
 logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)
@@ -4596,16 +4608,17 @@ font_small_sprite = sge.gfx.Sprite.from_tileset(
 font_big_sprite = sge.gfx.Sprite.from_tileset(
     os.path.join(d, "font_big.png"), columns=8, rows=12, width=14, height=14,
     xsep=2, ysep=2)
+trans = sge.gfx.Color("black")
 healthbar_back_sprite = sge.gfx.Sprite("healthbar_back", d, origin_x=2,
-                                       origin_y=1)
+                                       origin_y=1, transparent=trans)
 healthbar_front_sprite = sge.gfx.Sprite("healthbar_front", d,
                                         transparent=False)
 healthbar_width = healthbar_front_sprite.width
 healthbar_height = healthbar_front_sprite.height
-etank_empty_sprite = sge.gfx.Sprite("etank_empty", d)
-etank_full_sprite = sge.gfx.Sprite("etank_full", d)
+etank_empty_sprite = sge.gfx.Sprite("etank_empty", d, transparent=trans)
+etank_full_sprite = sge.gfx.Sprite("etank_full", d, transparent=trans)
 life_force_sprite = sge.gfx.Sprite(
-    "life_force", d, origin_x=7, origin_y=7, fps=10)
+    "life_force", d, origin_x=7, origin_y=7, fps=10, transparent=trans)
 
 d = os.path.join(DATA, "images", "portraits")
 portrait_sprites = {}

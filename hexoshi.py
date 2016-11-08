@@ -2247,6 +2247,31 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
         kwargs["sprite"] = bat_sprite
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
+    def attack(self, target):
+        xvec = target.x - self.image_xcenter
+        yvec = target.y - self.image_ycenter
+        dist = math.hypot(xvec, yvec)
+        if dist <= self.charge_distance:
+            obst = sge.collision.line(self.image_xcenter, self.image_ycenter,
+                                      target.x, target.y)
+            for obj in obst:
+                if isinstance(obj, (xsge_physics.SolidLeft,
+                                    xsge_physics.SolidRight,
+                                    xsge_physics.SolidTop,
+                                    xsge_physics.SolidBottom,
+                                    xsge_physics.SlopeTopLeft,
+                                    xsge_physics.SlopeTopRight,
+                                    xsge_physics.SlopeBottomLeft,
+                                    xsge_physics.SlopeBottomRight)):
+                    break
+                                           
+            else:
+                self.speed = self.charge_speed
+                self.move_direction = math.degrees(math.atan2(yvec, xvec))
+                self.image_speed = self.sprite.speed * 2
+                play_sound(bat_attack_sound, self.image_xcenter,
+                           self.image_ycenter)
+
     def stop(self):
         self.speed = 0
         self.image_speed = None
@@ -2279,15 +2304,7 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
                 not self.returning):
             target = self.get_nearest_player()
             if target is not None:
-                xvec = target.x - self.image_xcenter
-                yvec = target.y - self.image_ycenter
-                dist = math.hypot(xvec, yvec)
-                if dist <= self.charge_distance:
-                    self.speed = self.charge_speed
-                    self.move_direction = math.degrees(math.atan2(yvec, xvec))
-                    self.image_speed = self.sprite.speed * 2
-                    play_sound(bat_attack_sound, self.image_xcenter,
-                               self.image_ycenter)
+                self.attack(target)
 
         if self.xvelocity:
             self.image_xscale = math.copysign(self.image_xscale, self.xvelocity)

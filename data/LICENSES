@@ -215,11 +215,9 @@ tilesets/main_white.tsx
 tilesets/objects.tsx
 tilesets/powerups.tsx
 tilesets/stones.tsx
-sounds/heal.sfxr
+sounds/enemy_death.wav
 sounds/heal.wav
-sounds/shoot.sfxr
 sounds/shoot.wav
-sounds/teleport.sfxr
 sounds/teleport.wav
 sounds/type.wav
 
@@ -245,6 +243,14 @@ sounds/warp_pad.ogg
 Author: Pumpkin Studios (Eidos)
 License: GNU GPLv2 or later <https://gnu.org/licenses/gpl.html>
 Source: https://github.com/Warzone2100/warzone2100
+
+------------------------------------------------------------------------
+
+sounds/land.ogg
+
+Author: Kenney <http://opengameart.org/users/kenney>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: http://opengameart.org/content/50-rpg-sound-effects
 
 ------------------------------------------------------------------------
 

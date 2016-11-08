@@ -1756,7 +1756,7 @@ class Anneroy(Player):
             self.image_speed = None
             self.image_index = 0
             self.fixed_sprite = "anim"
-            # TODO: Play landing sound
+            play_sound(land_sound, self.x, self.y)
 
     def event_jump(self):
         self.reset_image()
@@ -2092,6 +2092,7 @@ class Enemy(InteractiveObject):
                 random.random() < LIFE_FORCE_CHANCE):
             LifeForce.create(self.image_xcenter, self.image_ycenter, z=self.z)
 
+        play_sound(enemy_death_sound, self.image_xcenter, self.image_ycenter)
         self.destroy()
 
 
@@ -4587,6 +4588,7 @@ font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
 shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
 bullet_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "bullet_death.ogg"), volume=0.2)
+land_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "land.ogg"), volume=0.5)
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
 powerup_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "powerup.wav"))
@@ -4597,6 +4599,8 @@ door_open_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "door_open.ogg"), volume=0.5)
 door_close_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "door_close.ogg"), volume=0.5)
+enemy_death_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "enemy_death.wav"))
 frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound

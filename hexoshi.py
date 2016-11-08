@@ -137,7 +137,7 @@ WARP_TIME = FPS / 2
 DEATH_TIME = 3 * FPS
 
 ANNEROY_BBOX_X = -8
-ANNEROY_BBOX_WIDTH = 17
+ANNEROY_BBOX_WIDTH = 16
 ANNEROY_STAND_BBOX_Y = -16
 ANNEROY_STAND_BBOX_HEIGHT = 40
 ANNEROY_CROUCH_BBOX_Y = -5
@@ -2422,45 +2422,88 @@ class AnneroyBullet(InteractiveObject):
                                 xsge_physics.SlopeTopRight,
                                 xsge_physics.SlopeBottomLeft,
                                 xsge_physics.SlopeBottomRight)):
-            if self.xvelocity:
+            point_x = self.x
+            point_y = self.y
+            if ((self.xvelocity > 0 and self.yvelocity > 0) or
+                    (self.xvelocity < 0 and self.yvelocity < 0)):
+                collisions = sge.collision.line(
+                    self.bbox_left, self.bbox_top, self.bbox_right,
+                    self.bbox_bottom)
+            elif ((self.xvelocity > 0 and self.yvelocity < 0) or
+                  (self.xvelocity < 0 and self.yvelocity > 0)):
+                collisions = sge.collision.line(
+                    self.bbox_left, self.bbox_bottom, self.bbox_right,
+                    self.bbox_top)
+            elif self.xvelocity:
                 collisions = sge.collision.rectangle(
                     self.bbox_left, self.y, self.bbox_width, 1)
+            elif self.yvelocity:
+                collisions = sge.collision.rectangle(
+                    self.x, self.bbox_top, 1, self.bbox_height)
+            else:
+                warnings.warn("Bullet is not moving!")
+                collisions = []
+
+            if self.xvelocity:
                 if self.xvelocity > 0:
-                    cls = (xsge_physics.SolidLeft, xsge_physics.SlopeTopLeft,
-                           xsge_physics.SlopeBottomLeft)
+                    slope_cls = (xsge_physics.SlopeTopLeft,
+                                 xsge_physics.SlopeBottomLeft)
+                    cls = (xsge_physics.SolidLeft,) + slope_cls
                 else:
-                    cls = (xsge_physics.SolidRight, xsge_physics.SlopeTopRight,
-                           xsge_physics.SlopeBottomRight)
+                    slope_cls = (xsge_physics.SlopeTopRight,
+                                 xsge_physics.SlopeBottomRight)
+                    cls = (xsge_physics.SolidRight,) + slope_cls
 
                 touching = False
                 if collisions:
                     for obj in collisions:
                         if isinstance(obj, cls):
-                            touching = True
-                            if isinstance(obj, Stone):
-                                obj.destroy()
+                            if isinstance(obj, slope_cls):
+                                if self.xvelocity > 0:
+                                    collision_real = (
+                                        point_x > obj.get_slope_x(point_y))
+                                else:
+                                    collision_real = (
+                                        point_x < obj.get_slope_x(point_y))
+                            else:
+                                collision_real = True
+
+                            if collision_real:
+                                touching = True
+                                if isinstance(obj, Stone):
+                                    obj.destroy()
 
                 if touching:
                     self.dissipate(xdirection, ydirection)
 
             if self.yvelocity:
-                collisions = sge.collision.rectangle(
-                    self.x, self.bbox_top, 1, self.bbox_height)
                 if self.yvelocity > 0:
-                    cls = (xsge_physics.SolidTop, xsge_physics.SlopeTopLeft,
-                           xsge_physics.SlopeTopRight)
+                    slope_cls = (xsge_physics.SlopeTopLeft,
+                                 xsge_physics.SlopeTopRight)
+                    cls = (xsge_physics.SolidTop,) + slope_cls
                 else:
-                    cls = (xsge_physics.SolidBottom,
-                           xsge_physics.SlopeBottomLeft,
-                           xsge_physics.SlopeBottomRight)
+                    slope_cls = (xsge_physics.SlopeBottomLeft,
+                                 xsge_physics.SlopeBottomRight)
+                    cls = (xsge_physics.SolidBottom,) + slope_cls
 
                 touching = False
                 if collisions:
                     for obj in collisions:
                         if isinstance(obj, cls):
-                            touching = True
-                            if isinstance(obj, Stone):
-                                obj.destroy()
+                            if isinstance(obj, slope_cls):
+                                if self.yvelocity > 0:
+                                    collision_real = (
+                                        point_y > obj.get_slope_y(point_x))
+                                else:
+                                    collision_real = (
+                                        point_y < obj.get_slope_y(point_x))
+                            else:
+                                collision_real = True
+
+                            if collision_real:
+                                touching = True
+                                if isinstance(obj, Stone):
+                                    obj.destroy()
 
                 if touching:
                     self.dissipate(xdirection, ydirection)

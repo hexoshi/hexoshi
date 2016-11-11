@@ -136,8 +136,8 @@ PLAYER_HITSTUN = FPS
 WARP_TIME = FPS / 2
 DEATH_TIME = 3 * FPS
 
-ANNEROY_BBOX_X = -8
-ANNEROY_BBOX_WIDTH = 16
+ANNEROY_BBOX_X = -7
+ANNEROY_BBOX_WIDTH = 14
 ANNEROY_STAND_BBOX_Y = -16
 ANNEROY_STAND_BBOX_HEIGHT = 40
 ANNEROY_CROUCH_BBOX_Y = -5
@@ -1554,8 +1554,20 @@ class Anneroy(Player):
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
 
+            xdest = self.torso.x + x
+            ydest = self.torso.y + y
             guide = xsge_physics.Collider.create(
                 self.torso.x, self.torso.y, sprite=anneroy_bullet_sprite)
+            if self.facing > 0:
+                guide.bbox_right = self.bbox_right
+            else:
+                guide.bbox_left = self.bbox_left
+            if self.aim_direction < 0:
+                guide.bbox_bottom = self.bbox_bottom
+            else:
+                guide.bbox_top = self.bbox_top
+            x += self.torso.x - guide.x
+            y += self.torso.y - guide.y
             xsteps = int(abs(x) / guide.bbox_width)
             ysteps = int(abs(y) / guide.bbox_height)
             xfinal = math.copysign(abs(x) - xsteps * guide.bbox_width, x)
@@ -1578,13 +1590,13 @@ class Anneroy(Player):
             guide.destroy()
 
             Smoke.create(
-                self.torso.x + x, self.torso.y + y, self.torso.z,
+                xdest, ydest, self.torso.z,
                 sprite=anneroy_bullet_dust_sprite, xvelocity=self.xvelocity,
                 yvelocity=self.yvelocity, regulate_origin=True,
                 image_xscale=abs(self.image_xscale),
                 image_yscale=self.image_yscale,
                 image_rotation=image_rotation, image_blend=self.image_blend)
-            play_sound(shoot_sound, self.torso.x + x, self.torso.y + y)
+            play_sound(shoot_sound, xdest, ydest)
 
     def kill(self):
         if self.lose_on_death:

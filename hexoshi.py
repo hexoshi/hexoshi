@@ -2267,16 +2267,8 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
             obst = sge.collision.line(self.image_xcenter, self.image_ycenter,
                                       target.x, target.y)
             for obj in obst:
-                if isinstance(obj, (xsge_physics.SolidLeft,
-                                    xsge_physics.SolidRight,
-                                    xsge_physics.SolidTop,
-                                    xsge_physics.SolidBottom,
-                                    xsge_physics.SlopeTopLeft,
-                                    xsge_physics.SlopeTopRight,
-                                    xsge_physics.SlopeBottomLeft,
-                                    xsge_physics.SlopeBottomRight)):
+                if isinstance(obj, xsge_physics.Wall):
                     break
-                                           
             else:
                 self.speed = self.charge_speed
                 self.move_direction = math.degrees(math.atan2(yvec, xvec))
@@ -2424,14 +2416,7 @@ class AnneroyBullet(InteractiveObject):
         if isinstance(other, InteractiveObject) and other.shootable:
             other.shoot(self)
             self.dissipate(xdirection, ydirection)
-        elif isinstance(other, (xsge_physics.SolidLeft,
-                                xsge_physics.SolidRight,
-                                xsge_physics.SolidTop,
-                                xsge_physics.SolidBottom,
-                                xsge_physics.SlopeTopLeft,
-                                xsge_physics.SlopeTopRight,
-                                xsge_physics.SlopeBottomLeft,
-                                xsge_physics.SlopeBottomRight)):
+        elif isinstance(other, xsge_physics.Wall):
             point_x = self.x
             point_y = self.y
             if ((self.xvelocity > 0 and self.yvelocity > 0) or
@@ -4534,9 +4519,9 @@ anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
     fname, 249, 119, width=26, height=16, origin_x=2, origin_y=7, fps=10)
 anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
     fname, 287, 123, width=17, height=6, origin_x=14, origin_y=3, bbox_x=-8,
-    bbox_y=-8, bbox_width=15, bbox_height=15)
+    bbox_y=-8, bbox_width=16, bbox_height=16)
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=13, origin_y=23,
+    fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=12, origin_y=23,
     fps=10)
 
 n = id(anneroy_legs_run_sprite)

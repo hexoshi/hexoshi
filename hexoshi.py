@@ -2269,8 +2269,6 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
                 self.speed = self.charge_speed
                 self.move_direction = math.degrees(math.atan2(yvec, xvec))
                 self.image_speed = self.sprite.speed * 2
-                play_sound(bat_attack_sound, self.image_xcenter,
-                           self.image_ycenter)
 
     def stop(self):
         self.speed = 0
@@ -4664,7 +4662,6 @@ door_close_sound = sge.snd.Sound(
 enemy_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "enemy_death.wav"))
 frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))
-bat_attack_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "bat_attack.wav"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
 confirm_sound = sge.snd.Sound(None)

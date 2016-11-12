@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="250" height="28" tilewidth="8" tileheight="8" nextobjectid="21">
+ <properties>
+  <property name="music" value="late_night_runaway.ogg"/>
+ </properties>
+ <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
+ <tileset firstgid="89" source="../tilesets/extras.tsx"/>
+ <tileset firstgid="166" source="../tilesets/plants.tsx"/>
+ <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
+ <tileset firstgid="232" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="233" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="237" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="243" source="../tilesets/objects.tsx"/>
+ <layer name="Decorations" width="250" height="28">
+  <data encoding="base64" compression="zlib">
+   eJzt3ElOwzAUAFAfHwS7sqZdMl4DCpQNbACJu+BKjRRFceq4LiHoPemrbfo9fA/bhAAA/CenBW0uYywTsao2sxAWMS4q9leqr97VyD6OVUvf/k25br89bo1aS+5A29B9GHNWSms5KWgDzNdi6gkAAAAAAAAAAAAAAAAAAAAAAJPwviG27jJyrmJc78m5iXHf82zObv9on3Nc1xp155zDMWrub849GpPX1tyrkraNze7zfCBnHeNp9/07kfMc47XnWdvnuKkNOks879bxfsAYLwe0PWaf3XWtIbX/qXVOnYNUm5K6vzq/2+cwx8ee/1NzeojxmDlGc6Y3g1khvGXm9Wnu1bZtaj8AAACA6fwAGeQ8yw==
+  </data>
+ </layer>
+ <objectgroup name="Powerups"/>
+ <objectgroup name="Enemies"/>
+ <objectgroup name="player">
+  <object id="2" x="-8" y="8" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Special Blocks">
+  <object id="3" gid="239" x="0" y="200" width="8" height="64">
+   <properties>
+    <property name="dest" value="5.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="fake_tile" width="250" height="28">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+DG1gAAE=
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="250" height="28">
+  <data encoding="base64" compression="zlib">
+   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
+  </data>
+ </layer>
+ <objectgroup color="#000000" name="solid">
+  <object id="9" x="0" y="192" width="1880" height="32"/>
+  <object id="10" x="1880" y="216" width="48" height="8"/>
+  <object id="11" x="1928" y="192" width="72" height="32"/>
+  <object id="12" x="1984" y="24" width="16" height="168"/>
+  <object id="13" x="1976" y="16" width="24" height="8"/>
+  <object id="14" x="1016" y="16" width="192" height="8"/>
+  <object id="15" x="1024" y="24" width="176" height="128"/>
+  <object id="16" x="1024" y="152" width="168" height="16"/>
+  <object id="17" x="1048" y="168" width="144" height="8"/>
+  <object id="18" x="0" y="16" width="24" height="8"/>
+  <object id="19" x="0" y="24" width="16" height="112"/>
+  <object id="20" x="0" y="0" width="2000" height="16"/>
+ </objectgroup>
+ <objectgroup name="Collision Objects"/>
+ <objectgroup name="bullets">
+  <object id="1" x="-8" y="0" width="8" height="8"/>
+ </objectgroup>
+</map>

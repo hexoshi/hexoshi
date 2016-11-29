@@ -51,6 +51,7 @@ if getattr(sys, "frozen", False):
 
 DATA = os.path.join(os.path.dirname(__file__), "data")
 CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
+SCALE = 2
 
 if six.PY2:
     gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")),
@@ -74,6 +75,9 @@ parser.add_argument(
     "-d", "--datadir",
     help=_('Where to load the game data from (Default: "{}")').format(DATA))
 parser.add_argument(
+    "--scale",
+    help=_('The scale factor to use by defualt in windowed mode (Default: "{}")').format(SCALE))
+parser.add_argument(
     "--no-backgrounds",
     help=_("Only show solid colors for backgrounds (uses less RAM)."),
     action="store_true")
@@ -93,6 +97,8 @@ PRINT_ERRORS = args.print_errors
 DELTA = not args.nodelta
 if args.datadir:
     DATA = args.datadir
+if args.scale:
+    SCALE = eval(args.scale)
 NO_BACKGROUNDS = args.no_backgrounds
 NO_HUD = args.no_hud
 GEN_MAP = args.gen_map
@@ -267,7 +273,7 @@ class Game(sge.dsp.Game):
             if fullscreen:
                 self.fullscreen = True
             else:
-                self.scale = 2
+                self.scale = SCALE
                 self.fullscreen = False
                 self.scale = None
 
@@ -4437,7 +4443,7 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
 
 
 print(_("Initializing game system..."))
-Game(SCREEN_SIZE[0], SCREEN_SIZE[1], scale=2, fps=FPS, delta=DELTA,
+Game(SCREEN_SIZE[0], SCREEN_SIZE[1], scale=SCALE, fps=FPS, delta=DELTA,
      delta_min=DELTA_MIN, delta_max=DELTA_MAX,
      window_text="Hexoshi {}".format(__version__))
      #window_icon=os.path.join(DATA, "images", "misc", "icon.png"))

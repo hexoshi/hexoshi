@@ -270,12 +270,7 @@ class Game(sge.dsp.Game):
 
         if key == "f11":
             fullscreen = not fullscreen
-            if fullscreen:
-                self.fullscreen = True
-            else:
-                self.scale = SCALE
-                self.fullscreen = False
-                self.scale = None
+            update_fullscreen()
 
     def event_mouse_button_press(self, button):
         if button == "middle":
@@ -3251,7 +3246,7 @@ class OptionsMenu(Menu):
         if self.choice == 0:
             play_sound(select_sound)
             fullscreen = not fullscreen
-            sge.game.fullscreen = fullscreen
+            update_fullscreen()
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 1:
             choices = [None, "noblur", "smooth"] + sge.SCALE_METHODS
@@ -4422,6 +4417,16 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
     return map_sprite
 
 
+def update_fullscreen():
+    if fullscreen:
+        sge.game.scale = None
+        sge.game.fullscreen = True
+    else:
+        sge.game.scale = SCALE
+        sge.game.fullscreen = False
+        sge.game.scale = None
+
+
 TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "solid_top": SolidTop, "solid_bottom": SolidBottom, "solid": Solid,
          "slope_topleft": SlopeTopLeft, "slope_topright": SlopeTopRight,
@@ -4734,7 +4739,7 @@ finally:
     cfg_version = cfg.get("version", 0)
 
     fullscreen = cfg.get("fullscreen", fullscreen)
-    sge.game.fullscreen = fullscreen
+    update_fullscreen()
     scale_method = cfg.get("scale_method", scale_method)
     sge.game.scale_method = scale_method
     sound_enabled = cfg.get("sound_enabled", sound_enabled)

@@ -13,7 +13,7 @@
  <tileset firstgid="243" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="84">
   <data encoding="base64" compression="zlib">
-   eJzt27sOgjAUxnEe39uGlw2ZdDC+hg7GxcVo4rtYhybVFKlYOIfy/yUnMZDUrwu9ULJsmFamlqZGFfcLU2unysB2J1/+yyc3NQ9su0u+fvRRKv0YSwdQ6iEdAAACaR3vAYTbSQf4w8z5fRJLAQAA6tylAwCCmu5/przeLiK3V/UuBLA2prbSISI4mDpm72thAIBue+kAgS4198+dpMCQpbz+0cCeEyuFc4RI5SzUQjpAom7SAZCMXDpAZO7eWCrPUW39qJsvV2E8AOR9fjPx67cTfaTtGdoU/dClzTFt6rn2mvsP+V1In89zujjPiZjv8dk/BIBw9myJ1WReFWMudm25fbTvCf4dLu8=
+   eJzt27sOgjAUxnEe39uGlw2ZdDC+hg7GxcVo4rtYhybVFKlYOIfy/yUnMZDUrwu9ULJsmFamlqZGFfcLU2unysB2J1/+yyc3NQ9su0u+fvRRKv0YSwcAAjykAwCKaR3vAYTbSQf4w8z5fRJLAQAA6tylAwCCmu5/przeLiK3V/UuBLA2prbSISI4mDpm72thAIBue+kAgS4198+dpMCQpbz+0cCeEyuFc4RI5SzUQjpAom7SAZCMXDpAZO7eWCrPUW39qJsvV2E8AOR9fjPx67cTfaTtGdoU/dClzTFt6rn2mvsP+V1In89zujjPiZjv8dk/BIBw9myJ1WReFWMudm25fbTvCaS+Lu8=
   </data>
  </layer>
  <objectgroup name="Powerups"/>
@@ -53,7 +53,7 @@
  </layer>
  <layer name="Tile Layer 1" width="50" height="84">
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">
@@ -61,8 +61,6 @@
   <object id="5" x="0" y="0" width="16" height="592"/>
   <object id="6" x="0" y="656" width="400" height="16"/>
   <object id="8" x="384" y="8" width="16" height="376"/>
-  <object id="9" x="16" y="56" width="56" height="8"/>
-  <object id="10" x="16" y="64" width="88" height="8"/>
   <object id="11" x="16" y="72" width="128" height="16"/>
   <object id="12" x="16" y="88" width="96" height="8"/>
   <object id="13" x="16" y="96" width="8" height="16"/>
@@ -90,8 +88,6 @@
   <object id="61" x="224" y="512" width="32" height="8"/>
  </objectgroup>
  <objectgroup name="Collision Objects">
-  <object id="14" type="slope_topright" x="104" y="64" width="8" height="8"/>
-  <object id="15" type="slope_topright" x="72" y="56" width="8" height="8"/>
   <object id="62" type="slope_topright" x="96" y="560" width="16" height="16"/>
   <object id="63" type="slope_topleft" x="192" y="480" width="16" height="16"/>
  </objectgroup>

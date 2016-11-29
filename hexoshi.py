@@ -1097,6 +1097,9 @@ class Player(xsge_physics.Collider):
                 x = pl_x - w // 2
                 y = pl_y - h // 2
                 map_s = draw_map(x, y, w, h, pl_x, pl_y)
+                c = sge.gfx.Color((255, 255, 255, 192))
+                map_s.draw_rectangle(0, 0, map_s.width, map_s.height, fill=c,
+                                     blend_mode=sge.BLEND_RGBA_MULTIPLY)
 
                 x = SCREEN_SIZE[0] - start_x - w * MAP_CELL_WIDTH
                 y = start_y

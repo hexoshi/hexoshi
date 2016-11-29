@@ -264,7 +264,12 @@ class Game(sge.dsp.Game):
 
         if key == "f11":
             fullscreen = not fullscreen
-            self.fullscreen = fullscreen
+            if fullscreen:
+                self.fullscreen = True
+            else:
+                self.scale = 2
+                self.fullscreen = False
+                self.scale = None
 
     def event_mouse_button_press(self, button):
         if button == "middle":
@@ -4429,9 +4434,11 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
 
 
 print(_("Initializing game system..."))
-Game(SCREEN_SIZE[0], SCREEN_SIZE[1], fps=FPS, delta=DELTA, delta_min=DELTA_MIN,
-     delta_max=DELTA_MAX, window_text="Hexoshi {}".format(__version__))
+Game(SCREEN_SIZE[0], SCREEN_SIZE[1], scale=2, fps=FPS, delta=DELTA,
+     delta_min=DELTA_MIN, delta_max=DELTA_MAX,
+     window_text="Hexoshi {}".format(__version__))
      #window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
+sge.game.scale = None
 
 print(_("Initializing GUI system..."))
 xsge_gui.init()

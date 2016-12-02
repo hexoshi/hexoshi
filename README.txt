@@ -34,7 +34,7 @@ terminal with the "-h" command-line option for more information.
 
 HOW TO PLAY
 
-Use the arrow keys and Enter to navigate the menus. By default, Tux is
+Use the arrow keys and Enter to navigate the menus. By default, Anneroy
 is controlled by the arrow keys, Space, Left Ctrl, and Left Shift. You
 can change the controls in the Options menu.
 

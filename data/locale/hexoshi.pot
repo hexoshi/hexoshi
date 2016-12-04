@@ -96,6 +96,10 @@ msgid ""
 "{}"
 msgstr ""
 
+#: ../../hexoshi.py:590
+msgid "Loading data..."
+msgstr ""
+
 #: ../../hexoshi.py:603
 msgid "Loading \"{}\"..."
 msgstr ""

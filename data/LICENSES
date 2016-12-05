@@ -226,6 +226,28 @@ License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 
 ------------------------------------------------------------------------
 
+locale/build.py
+locale/hexoshi.pot
+
+Author: Julie Marchant <https://onpon4.github.io>
+License: GNU GPLv3 or later <https://gnu.org/licenses/gpl.html>
+
+------------------------------------------------------------------------
+
+locale/es.po
+
+Author: Jorge Maldonado Ventura <jorgesumle@freakspot.net>
+License: GNU GPLv3 or later <https://gnu.org/licenses/gpl.html>
+
+------------------------------------------------------------------------
+
+locale/pt.po
+
+Author: Rafael Gonçalves <raf.a.m.c.gon@gmail.com>
+License: GNU GPLv3 or later <https://gnu.org/licenses/gpl.html>
+
+------------------------------------------------------------------------
+
 music/late_night_runaway.ogg
 music/late_night_runaway-start.ogg
 

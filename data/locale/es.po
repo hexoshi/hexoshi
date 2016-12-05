@@ -53,7 +53,7 @@ msgid "Where to load the game data from (Default: \"{}\")"
 msgstr "Desde donde se cargan los datos del juego (Por defecto:  \"{}\")"
 
 #: ../../hexoshi.py:79
-msgid "The scale factor to use by defualt in windowed mode (Default: \"{}\")"
+msgid "The scale factor to use by default in windowed mode (Default: \"{}\")"
 msgstr ""
 "Factor de escala a usar por defecto en el modo de ventana (Por defecto: "
 "\"{}\")"
@@ -113,6 +113,10 @@ msgstr ""
 "Ha ocurrido un error en una expresion 'while' en la linea del tiempo:\n"
 "\n"
 "{}"
+
+#: ../../hexoshi.py:590
+msgid "Loading data..."
+msgstr ""
 
 #: ../../hexoshi.py:603
 msgid "Loading \"{}\"..."

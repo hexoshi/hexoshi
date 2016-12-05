@@ -587,7 +587,7 @@ class Level(sge.dsp.Room):
     @classmethod
     def load(cls, fname, show_prompt=False):
         if show_prompt:
-            text = "Loading data..."
+            text = _("Loading data...")
             if sge.game.current_room is not None:
                 x = sge.game.width / 2
                 y = sge.game.height / 2

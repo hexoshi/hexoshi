@@ -76,7 +76,7 @@ parser.add_argument(
     help=_('Where to load the game data from (Default: "{}")').format(DATA))
 parser.add_argument(
     "--scale",
-    help=_('The scale factor to use by defualt in windowed mode (Default: "{}")').format(SCALE))
+    help=_('The scale factor to use by default in windowed mode (Default: "{}")').format(SCALE))
 parser.add_argument(
     "--no-backgrounds",
     help=_("Only show solid colors for backgrounds (uses less RAM)."),

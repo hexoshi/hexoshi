@@ -49,7 +49,7 @@ msgid "Where to load the game data from (Default: \"{}\")"
 msgstr ""
 
 #: ../../hexoshi.py:79
-msgid "The scale factor to use by defualt in windowed mode (Default: \"{}\")"
+msgid "The scale factor to use by default in windowed mode (Default: \"{}\")"
 msgstr ""
 
 #: ../../hexoshi.py:82

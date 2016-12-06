@@ -48,19 +48,11 @@ images/tiles/main_green.png
 images/tiles/main_orange.png
 images/tiles/main_white.png
 
-Author: Adam Atomic <http://www.adamatomic.com/>
-License: Public domain
+Authors:
+  Adam Atomic <http://www.adamatomic.com/>
+  Julie Marchant <https://onpon4.github.io>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 Source: http://adamatomic.com/abandonauts/
-Details:
-  The "white" variations of the rock tiles were derived from the green
-  tiles by desaturating two of the colors. Similarly, the tiles on the
-  far right of main_green, main_orange, and main_white were derived from
-  "pit.png", but recolored in the orange, green, and white colors,
-  respectively.
-
-  The etank sprites are slight variations of "timerswitch.png";
-  the number of bars as been reduced from 3 to 2 and some colors have
-  been slightly tweaked.
 
 ------------------------------------------------------------------------
 

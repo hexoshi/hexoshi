@@ -91,7 +91,4 @@
   <object id="62" type="slope_topright" x="96" y="560" width="16" height="16"/>
   <object id="63" type="slope_topleft" x="192" y="480" width="16" height="16"/>
  </objectgroup>
- <objectgroup name="bullets">
-  <object id="1" x="-8" y="0" width="8" height="8"/>
- </objectgroup>
 </map>

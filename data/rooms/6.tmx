@@ -50,7 +50,4 @@
   <object id="11" x="304" y="152" width="48" height="8"/>
  </objectgroup>
  <objectgroup name="Collision Objects"/>
- <objectgroup name="bullets">
-  <object id="1" x="-8" y="0" width="8" height="8"/>
- </objectgroup>
 </map>

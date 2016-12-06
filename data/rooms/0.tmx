@@ -63,7 +63,4 @@
  <objectgroup name="Collision Objects">
   <object id="34" type="slope_topleft" x="120" y="288" width="16" height="16"/>
  </objectgroup>
- <objectgroup name="bullets">
-  <object id="67" x="-8" y="0" width="8" height="8"/>
- </objectgroup>
 </map>

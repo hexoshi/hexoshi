@@ -9,8 +9,8 @@
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="232" source="../tilesets/stones.tsx"/>
  <tileset firstgid="233" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="235" source="../tilesets/doors.tsx"/>
- <tileset firstgid="241" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="237" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="243" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="100" height="28">
   <data encoding="base64" compression="zlib">
    eJztwTEBAAAAwqD1T20LL6AAAAAAAAAAAAAAgJcBK8AAAQ==
@@ -30,7 +30,7 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="3" gid="237" x="0" y="216" width="8" height="64">
+  <object id="3" gid="239" x="0" y="216" width="8" height="64">
    <properties>
     <property name="dest" value="2.tmx"/>
    </properties>
@@ -57,7 +57,4 @@
   <object id="24" x="0" y="112" width="208" height="48"/>
  </objectgroup>
  <objectgroup name="Collision Objects"/>
- <objectgroup name="bullets">
-  <object id="1" x="-8" y="0" width="8" height="8"/>
- </objectgroup>
 </map>

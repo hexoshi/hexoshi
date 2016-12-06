@@ -301,7 +301,6 @@ class Level(sge.dsp.Room):
         self.death_time = None
         self.status_text = None
         self.player_z = 0
-        self.bullet_z = 10000
 
         if bgname is not None:
             background = backgrounds.get(bgname, background)
@@ -1589,7 +1588,7 @@ class Anneroy(Player):
             guide.move_y(yfinal)
 
             bs = AnneroyBullet.create(
-                guide.x, guide.y, sge.game.current_room.bullet_z,
+                guide.x, guide.y, self.z - 0.1,
                 sprite=anneroy_bullet_sprite, xvelocity=xv,
                 yvelocity=yv, regulate_origin=True,
                 image_xscale=abs(self.image_xscale),
@@ -3076,13 +3075,6 @@ class PlayerLayer(sge.dsp.Object):
         self.destroy()
 
 
-class BulletLayer(sge.dsp.Object):
-
-    def event_create(self):
-        sge.game.current_room.bullet_z = self.z
-        self.destroy()
-
-
 class Menu(xsge_gui.MenuWindow):
 
     items = []
@@ -4444,7 +4436,7 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "doors": get_object, "stones": get_object, "powerups": get_object,
          "objects": get_object, "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath,
-         "player": PlayerLayer, "bullets": BulletLayer}
+         "player": PlayerLayer}
 
 
 print(_("Initializing game system..."))

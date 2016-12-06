@@ -73,7 +73,4 @@
   <object id="27" type="slope_topright" x="416" y="200" width="8" height="8"/>
   <object id="28" type="slope_topleft" x="136" y="200" width="16" height="16"/>
  </objectgroup>
- <objectgroup name="bullets">
-  <object id="52" x="8" y="-8" width="8" height="8"/>
- </objectgroup>
 </map>

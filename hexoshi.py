@@ -1603,7 +1603,7 @@ class Anneroy(Player):
                     guide.x = self.torso.x + ydiff / m
 
             bs = AnneroyBullet.create(
-                guide.x, guide.y, self.z - 0.1,
+                guide.x, guide.y, self.z + 0.2,
                 sprite=anneroy_bullet_sprite, xvelocity=xv,
                 yvelocity=yv, regulate_origin=True,
                 image_xscale=abs(self.image_xscale),

@@ -1562,6 +1562,11 @@ class Anneroy(Player):
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
 
+            if x:
+                m = y / x
+            else:
+                m = None
+
             xdest = self.torso.x + x
             ydest = self.torso.y + y
             guide = xsge_physics.Collider.create(
@@ -1586,6 +1591,16 @@ class Anneroy(Player):
                 guide.move_y(math.copysign(guide.bbox_height, y))
             guide.move_x(xfinal)
             guide.move_y(yfinal)
+
+            if abs(self.aim_direction) == 1 and m:
+                target_x = self.torso.x + x
+                target_y = self.torso.y + y
+                xdiff = guide.x - self.torso.x
+                ydiff = guide.y - self.torso.y
+                if abs(guide.x - target_x) >= 1:
+                    guide.y = self.torso.y + m * xdiff
+                elif abs(guide.y - target_y) >= 1:
+                    guide.x = self.torso.x + ydiff / m
 
             bs = AnneroyBullet.create(
                 guide.x, guide.y, self.z - 0.1,

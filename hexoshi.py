@@ -2123,9 +2123,22 @@ class Enemy(InteractiveObject):
         pass
 
     def kill(self):
+        blend = sge.gfx.Color((255, 255, 255, 0))
+        spr = sge.gfx.Sprite.from_tween(
+            self.sprite, int(FPS / 6), fps=FPS, blend=blend,
+            blend_mode=sge.BLEND_RGBA_MULTIPLY)
+        Smoke.create(self.x, self.y, z=self.z, sprite=spr, tangible=False,
+                     image_xscale=self.image_xscale,
+                     image_yscale=self.image_yscale,
+                     image_rotation=self.image_rotation,
+                     image_alpha=self.image_alpha,
+                     image_blend=self.image_blend,
+                     image_blend_mode=self.image_blend_mode)
+
         if ("life_orb" in progress_flags and
                 random.random() < LIFE_FORCE_CHANCE):
-            LifeForce.create(self.image_xcenter, self.image_ycenter, z=self.z)
+            LifeForce.create(self.image_xcenter, self.image_ycenter,
+                             z=self.z - 0.1)
 
         play_sound(enemy_death_sound, self.image_xcenter, self.image_ycenter)
         self.destroy()

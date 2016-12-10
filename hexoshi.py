@@ -105,12 +105,6 @@ GEN_MAP = args.gen_map
 SAVE_MAP = args.save_map
 GOD = (args.god and args.god.lower() == "inbailey")
 
-if six.PY2:
-    gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")),
-                    unicode=True)
-else:
-    gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
-
 if args.lang:
     lang = gettext.translation("hexoshi",
                                os.path.abspath(os.path.join(DATA, "locale")),

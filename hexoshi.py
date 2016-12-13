@@ -4666,13 +4666,13 @@ for fname in os.listdir(d):
 # TODO
 
 # Load fonts
-chars = [six.unichr(i) for i in six.moves.range(32, 127)] + [ETANK_CHAR]
+chars = [six.unichr(i) for i in six.moves.range(32, 127)] + [None, ETANK_CHAR]
 font = sge.gfx.Font.from_sprite(font_sprite, chars, size=9, hsep=-1)
 font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=14,
                                     hsep=2, vsep=2)
 
 chars = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
-             "0123456789.,;:?!-_~#\"'&()[]|`\\/@^+=*$\xa3\x80<>")
+             "0123456789.,;:?!-_~#\"'&()[]|`\\/@^+=*$\xa3\u20ac<>  ") + [None]
 font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
                                       hsep=-1)
 

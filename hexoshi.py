@@ -3314,7 +3314,7 @@ class OptionsMenu(Menu):
         else:
             play_sound(cancel_sound)
             write_to_disk()
-            MainMenu.create(default=3)
+            MainMenu.create(default=2)
 
 
 class KeyboardMenu(Menu):

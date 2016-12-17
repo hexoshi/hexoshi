@@ -26,7 +26,7 @@ msgstr ""
 "Language-Team: Spanish\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.4\n"
@@ -34,7 +34,7 @@ msgstr ""
 #: ../../hexoshi.py:65
 msgid "Print errors directly to stdout rather than saving them in a file."
 msgstr ""
-"Muestra los errores en la salida estandar en vez de guardarlos en un archivo."
+"Muestra los errores en la salida estándar en vez de guardarlos en un archivo."
 
 #: ../../hexoshi.py:69
 msgid "Manually choose a different language to use."
@@ -45,12 +45,12 @@ msgid ""
 "Disable delta timing. Causes the game to slow down when it can't run at full "
 "speed instead of becoming choppier."
 msgstr ""
-"Desactiva la sincronizacion delta. Hace que el juego reduzca su velocidad "
+"Desactiva la sincronización delta. Hace que el juego reduzca su velocidad "
 "cuando no puede correr a toda velocidad en lugar de ir a trompicones."
 
 #: ../../hexoshi.py:76
 msgid "Where to load the game data from (Default: \"{}\")"
-msgstr "Desde donde se cargan los datos del juego (Por defecto:  \"{}\")"
+msgstr "Desde dónde se cargan los datos del juego (Por defecto:  \"{}\")"
 
 #: ../../hexoshi.py:79
 msgid "The scale factor to use by default in windowed mode (Default: \"{}\")"
@@ -60,7 +60,7 @@ msgstr ""
 
 #: ../../hexoshi.py:82
 msgid "Only show solid colors for backgrounds (uses less RAM)."
-msgstr "Muestra solo colores solidos en los fondos de pantalla (usa menos RAM)"
+msgstr "Muestra solo colores sólidos en los fondos de pantalla (usa menos RAM)"
 
 #: ../../hexoshi.py:85
 msgid "Don't show the player's heads-up display."
@@ -80,7 +80,7 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
-"Ha ocurrido un error en la instruccion 'setattr' en la linea del tiempo:\n"
+"Ha ocurrido un error en la instrucción 'setattr' en la línea del tiempo:\n"
 "\n"
 "{}"
 
@@ -90,7 +90,7 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
-"Ha ocurrido un error en la instruccion 'exec' en la linea del tiempo:\n"
+"Ha ocurrido un error en la instrucción 'exec' en la línea del tiempo:\n"
 "\n"
 "{}"
 
@@ -100,7 +100,7 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
-"Ha ocurrido un error en una expresion 'if' en la linea del tiempo:\n"
+"Ha ocurrido un error en una expresión 'if' en la línea del tiempo:\n"
 "\n"
 "{}"
 
@@ -110,7 +110,7 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
-"Ha ocurrido un error en una expresion 'while' en la linea del tiempo:\n"
+"Ha ocurrido un error en una expresión 'while' en la línea del tiempo:\n"
 "\n"
 "{}"
 
@@ -134,11 +134,11 @@ msgstr ""
 
 #: ../../hexoshi.py:1120
 msgid "Press the Menu button to skip..."
-msgstr "Pulsa el boton del Menu para saltar..."
+msgstr "Pulsa el botón del Menú para saltar..."
 
 #: ../../hexoshi.py:1122
 msgid "Cinematic mode enabled"
-msgstr "Modo cinematico habilitado"
+msgstr "Modo cinemático habilitado"
 
 #: ../../hexoshi.py:2569
 msgid ""
@@ -146,7 +146,7 @@ msgid ""
 "\n"
 "It doesn't seem to do anything"
 msgstr ""
-"ARTEFACTO INUTIL\n"
+"ARTEFACTO INÚTIL\n"
 "\n"
 "Parece que no hace nada"
 
@@ -158,7 +158,7 @@ msgid ""
 msgstr ""
 "E-TANK\n"
 "\n"
-"Adquirida mayor capacidad de energia"
+"Adquirida mayor capacidad de energía"
 
 #: ../../hexoshi.py:2605
 msgid ""
@@ -178,7 +178,7 @@ msgid ""
 msgstr ""
 "MAPA DE MANO\n"
 "\n"
-"Ve el mini-mapa en el HUD y el mapa completo desde el menu de pausa"
+"Ve el mini-mapa en el HUD y el mapa completo desde el menú de pausa"
 
 #: ../../hexoshi.py:2635
 msgid ""
@@ -188,7 +188,7 @@ msgid ""
 msgstr ""
 "DISCO DE MAPA\n"
 "\n"
-"Datos del area del mapa cargados"
+"Datos del área del mapa cargados"
 
 #: ../../hexoshi.py:3111
 msgid "New Game"
@@ -204,7 +204,7 @@ msgstr "Opciones"
 
 #: ../../hexoshi.py:3111
 msgid "Credits"
-msgstr "Creditos"
+msgstr "Créditos"
 
 #: ../../hexoshi.py:3112
 msgid "Quit"
@@ -212,12 +212,12 @@ msgstr "Salir"
 
 #: ../../hexoshi.py:3139
 msgid "-Empty-"
-msgstr "-Vacio-"
+msgstr "-Vacío-"
 
 #: ../../hexoshi.py:3149 ../../hexoshi.py:3234 ../../hexoshi.py:3336
 #: ../../hexoshi.py:3516
 msgid "Back"
-msgstr "Atras"
+msgstr "Atrás"
 
 #: ../../hexoshi.py:3177
 msgid "Overwrite this save file"
@@ -247,7 +247,7 @@ msgstr "Desactivado"
 
 #: ../../hexoshi.py:3227
 msgid "Scale Method: {}"
-msgstr "Metodo de escala: {}"
+msgstr "Método de escala: {}"
 
 #: ../../hexoshi.py:3228
 msgid "Sound: {}"
@@ -255,11 +255,11 @@ msgstr "Sonido: {}"
 
 #: ../../hexoshi.py:3229
 msgid "Music: {}"
-msgstr "Musica: {}"
+msgstr "Música: {}"
 
 #: ../../hexoshi.py:3230
 msgid "Stereo: {}"
-msgstr "Estereo: {}"
+msgstr "Estéreo: {}"
 
 #: ../../hexoshi.py:3231
 msgid "Show FPS: {}"
@@ -323,7 +323,7 @@ msgstr "Apuntar abajo: {}"
 
 #: ../../hexoshi.py:3333 ../../hexoshi.py:3513
 msgid "Reset Mode: {}"
-msgstr "Modo de recarga automatica: {}"
+msgstr "Modo de recarga automática: {}"
 
 #: ../../hexoshi.py:3334 ../../hexoshi.py:3514
 msgid "Mode: {}"
@@ -358,7 +358,7 @@ msgid ""
 "Press the joystick button, axis, or hat direction you wish to toggle, or the "
 "Escape key to cancel."
 msgstr ""
-"Pulsa el boton de la palanca, eje, o el boton direccional que quieras "
+"Pulsa el botón de la palanca, eje, o el botón direccional que quieras "
 "utilizar, o la tecla de Escape para cancelar."
 
 #: ../../hexoshi.py:4029
@@ -371,7 +371,7 @@ msgstr "Vale"
 
 #: ../../hexoshi.py:4253
 msgid "Generating new map files; this may take some time."
-msgstr "Generando nuevos archivos de mapas; esto podria tomar tiempo."
+msgstr "Generando nuevos archivos de mapas; esto podría tomar tiempo."
 
 #: ../../hexoshi.py:4450
 msgid "Initializing game system..."

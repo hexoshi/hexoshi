@@ -4634,7 +4634,7 @@ map_player_sprite = sge.gfx.Sprite("player", d)
 d = os.path.join(DATA, "images", "misc")
 logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)
 font_sprite = sge.gfx.Sprite.from_tileset(
-    os.path.join(d, "font.png"), columns=18, rows=6, width=7, height=9)
+    os.path.join(d, "font.png"), columns=18, rows=19, width=7, height=9)
 font_small_sprite = sge.gfx.Sprite.from_tileset(
     os.path.join(d, "font_small.png"), columns=8, rows=12, width=7, height=7)
 font_big_sprite = sge.gfx.Sprite.from_tileset(
@@ -4666,7 +4666,9 @@ for fname in os.listdir(d):
 # TODO
 
 # Load fonts
-chars = [six.unichr(i) for i in six.moves.range(32, 127)] + [None, ETANK_CHAR]
+chars = ([six.unichr(i) for i in six.moves.range(32, 127)] +
+         [None, ETANK_CHAR] + [' '] * 11 +
+         [six.unichr(i) for i in six.moves.range(161, 384)])
 font = sge.gfx.Font.from_sprite(font_sprite, chars, size=9, hsep=-1)
 font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=14,
                                     hsep=2, vsep=2)

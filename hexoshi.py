@@ -4670,6 +4670,7 @@ chars = ([six.unichr(i) for i in six.moves.range(32, 127)] +
          [None, ETANK_CHAR] + [' '] * 11 +
          [six.unichr(i) for i in six.moves.range(161, 384)])
 font = sge.gfx.Font.from_sprite(font_sprite, chars, size=9, hsep=-1)
+chars = [six.unichr(i) for i in six.moves.range(32, 127)] + [None]
 font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=14,
                                     hsep=2, vsep=2)
 

@@ -24,15 +24,15 @@ msgstr ""
 "POT-Creation-Date: 2016-11-29 19:06-0500\n"
 "PO-Revision-Date: 2016-12-03 23:22-0000\n"
 "Last-Translator: mdn <bernardlprf@openmailbox.org>\n"
-"Language-Team: Francais\n"
+"Language-Team: Français\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../../hexoshi.py:65
 msgid "Print errors directly to stdout rather than saving them in a file."
-msgstr "Afficher les erreurs directement dans stdout plutot que de les sauvegarder dans un fichier."
+msgstr "Afficher les erreurs directement dans stdout plutôt que de les sauvegarder dans un fichier."
 
 #: ../../hexoshi.py:69
 msgid "Manually choose a different language to use."
@@ -43,32 +43,32 @@ msgid ""
 "Disable delta timing. Causes the game to slow down when it can't run at full "
 "speed instead of becoming choppier."
 msgstr ""
-"Desactivez-le Delta timing. Ralentie le jeu lorsqu'il ne peut pas fonctionner pleinement"
-"Plutot que de laguer."
+"Désactivez-le Delta timing. Ralentie le jeu lorsqu'il ne peut pas fonctionner pleinement"
+"Plutôt que de laguer."
 
 #: ../../hexoshi.py:76
 msgid "Where to load the game data from (Default: \"{}\")"
-msgstr "Ou charger les donnees du jeu (Default: \"{}\")"
+msgstr "Ou charger les données du jeu (Défault: \"{}\")"
 
 #: ../../hexoshi.py:79
 msgid "The scale factor to use by default in windowed mode (Default: \"{}\")"
-msgstr "La resolution a utilise par defaut en mode fenetre (Default: \"{}\")"
+msgstr "La résolution a utilisé par défaut en mode fenêtré (Défault: \"{}\")"
 
 #: ../../hexoshi.py:82
 msgid "Only show solid colors for backgrounds (uses less RAM)."
-msgstr "Affiche seulement les couleurs solid pour le decor (utilise moins de RAM)."
+msgstr "Affiche seulement les couleurs solid pour le décor (utilise moins de RAM)."
 
 #: ../../hexoshi.py:85
 msgid "Don't show the player's heads-up display."
-msgstr "Ne montre pas  au joueur l'affichage tete haute."
+msgstr "Ne montre pas  au joueur l'affichage tête haute."
 
 #: ../../hexoshi.py:88
 msgid "Generate the map even if it already exists."
-msgstr "Generer la carte meme si elle existe deja."
+msgstr "Générer la carte même si elle existe déjà."
 
 #: ../../hexoshi.py:91
 msgid "Save an image of the full map as \"map.png\"."
-msgstr "Sauvegarder une image complete de la carte avec pour nom \"carte.png\". "
+msgstr "Sauvegarder une image complète de la carte avec pour nom \"carte.png\". "
 
 #: ../../hexoshi.py:454
 msgid ""
@@ -108,7 +108,7 @@ msgstr "Une erreur a eu lieu dans une commande 'while':\n"
 
 #: ../../hexoshi.py:590
 msgid "Loading data..."
-msgstr "Chargement des donnees..."
+msgstr "Chargement des données..."
 
 #: ../../hexoshi.py:603
 msgid "Loading \"{}\"..."
@@ -129,7 +129,7 @@ msgstr "Appuyer sur la touche Menu pour passer...."
 
 #: ../../hexoshi.py:1122
 msgid "Cinematic mode enabled"
-msgstr "Mode cinematique activer"
+msgstr "Mode cinématique activer"
 
 #: ../../hexoshi.py:2569
 msgid ""
@@ -148,7 +148,7 @@ msgid ""
 msgstr ""
 "E-TANK\n"
 "\n"
-"Energie supplementaire acquise"
+"Énergie supplémentaire acquise"
 
 #: ../../hexoshi.py:2605
 msgid ""
@@ -166,9 +166,9 @@ msgid ""
 "\n"
 "See mini-map in HUD and full map from pause menu"
 msgstr ""
-"CARTE PRATIQUE\n"
+"Carte Pratique\n"
 "\n"
-"Voir la mini-map dans le HUD et la carte complete a partir du menu pause"
+"Voir la mini-map dans le HUD et la carte complète à partir du menu pause"
 
 #: ../../hexoshi.py:2635
 msgid ""
@@ -178,7 +178,7 @@ msgid ""
 msgstr ""
 "CARTE DISQUE\n"
 "\n"
-"Zone supplementaire ajoutait a la carte"
+"Zone supplémentaire ajoutait à la carte"
 
 #: ../../hexoshi.py:3111
 msgid "New Game"
@@ -211,7 +211,7 @@ msgstr "Retour"
 
 #: ../../hexoshi.py:3177
 msgid "Overwrite this save file"
-msgstr "Ecraser cette sauvegarde"
+msgstr "Écraser cette sauvegarde"
 
 #: ../../hexoshi.py:3177
 msgid "Cancel"
@@ -237,7 +237,7 @@ msgstr "Off"
 
 #: ../../hexoshi.py:3227
 msgid "Scale Method: {}"
-msgstr "Methode D'echantillonnage"
+msgstr "Méthode D'échantillonnage"
 
 #: ../../hexoshi.py:3228
 msgid "Sound: {}"
@@ -257,7 +257,7 @@ msgstr "Indiquer les FPS: {}"
 
 #: ../../hexoshi.py:3232
 msgid "Joystick Threshold: {}%"
-msgstr "Sensibilite de la manette: {}"
+msgstr "Sensibilité de la manette: {}"
 
 #: ../../hexoshi.py:3233
 msgid "Configure keyboard"
@@ -301,15 +301,15 @@ msgstr "Tire: {}"
 
 #: ../../hexoshi.py:3330 ../../hexoshi.py:3510
 msgid "Aim Diagonal: {}"
-msgstr "Visee Diagonale: {}"
+msgstr "Visée Diagonale: {}"
 
 #: ../../hexoshi.py:3331 ../../hexoshi.py:3511
 msgid "Aim Up: {}"
-msgstr "Visee en Haut: {}"
+msgstr "Visée en Haut: {}"
 
 #: ../../hexoshi.py:3332 ../../hexoshi.py:3512
 msgid "Aim Down: {}"
-msgstr "Visee en Bas: {}"
+msgstr "Visée en Bas: {}"
 
 #: ../../hexoshi.py:3333 ../../hexoshi.py:3513
 msgid "Reset Mode: {}"
@@ -337,11 +337,11 @@ msgstr "Voir la Carte"
 
 #: ../../hexoshi.py:3684 ../../hexoshi.py:3686
 msgid "Return to Title Screen"
-msgstr "Revenir a l'ecran de demarage"
+msgstr "Revenir a l'écran de démarage"
 
 #: ../../hexoshi.py:3975
 msgid "Press the key you wish to toggle, or Escape to cancel."
-msgstr "Appuyer sur la touche que vous voulez attribuer, ou appuyer sur la touche echappe pour annuler."
+msgstr "Appuyer sur la touche que vous voulez attribuer, ou appuyer sur la touche échappe pour annuler."
 
 #: ../../hexoshi.py:4013
 msgid ""
@@ -349,7 +349,7 @@ msgid ""
 "Escape key to cancel."
 msgstr ""
 "Appuyer sur les boutons de la manette, axe ou une direction que vous voulez attribuer, ou la"
-"Touche Echap pour annuler."
+"Touche Échap pour annuler."
 #: ../../hexoshi.py:4029
 msgid "Error"
 msgstr "Erreur"
@@ -360,7 +360,7 @@ msgstr "Ok"
 
 #: ../../hexoshi.py:4253
 msgid "Generating new map files; this may take some time."
-msgstr "Generation des nouvelles cartes; cela peut prendre du temps."
+msgstr "Génération des nouvelles cartes; cela peut prendre du temps."
 
 #: ../../hexoshi.py:4450
 msgid "Initializing game system..."
@@ -376,4 +376,4 @@ msgstr "Chargement des ressources..."
 
 #: ../../hexoshi.py:4797
 msgid "Starting game..."
-msgstr "Demarrage du jeu..."
+msgstr "Démarrage du jeu..."

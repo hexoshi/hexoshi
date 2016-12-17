@@ -36,14 +36,14 @@ msgstr "Mostrar erros directamente no stdout em vez de guardar um ficheiro."
 
 #: ../../hexoshi.py:69
 msgid "Manually choose a different language to use."
-msgstr "Escolher manualmente uma lingua diferente a usar."
+msgstr "Escolher manualmente uma língua diferente a usar."
 
 #: ../../hexoshi.py:72
 msgid ""
 "Disable delta timing. Causes the game to slow down when it can't run at full "
 "speed instead of becoming choppier."
 msgstr ""
-"Desactivar sincronizacao delta. Atrasa o jogo quando nao consegue correr a "
+"Desactivar sincronização delta. Atrasa o jogo quando não consegue correr a "
 "velocidade completa, em vez de dar saltos."
 
 #: ../../hexoshi.py:76
@@ -60,11 +60,11 @@ msgstr "Mostrar cores simples como fundo (usa menos RAM)."
 
 #: ../../hexoshi.py:85
 msgid "Don't show the player's heads-up display."
-msgstr "Nao mostrar a interface de utilizador do jogador."
+msgstr "Não mostrar a interface de utilizador do jogador."
 
 #: ../../hexoshi.py:88
 msgid "Generate the map even if it already exists."
-msgstr "Gerar o mapa mesmo que ja exista."
+msgstr "Gerar o mapa mesmo que já exista."
 
 #: ../../hexoshi.py:91
 msgid "Save an image of the full map as \"map.png\"."
@@ -96,13 +96,13 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
-"Ocorreu um erro numa expressao 'if' na linha do tempo:\n"
+"Ocorreu um erro numa expressão 'if' na linha do tempo:\n"
 "\n"
 "{}"
 
 #: ../../hexoshi.py:530
 msgid ""
-"Ocorreu um erro numa expressao 'while' na linha do tempo:\n"
+"Ocorreu um erro numa expressão 'while' na linha do tempo:\n"
 "\n"
 "{}"
 msgstr ""
@@ -121,17 +121,17 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
-"Ocorreu um erro a carregar o nivel:\n"
+"Ocorreu um erro a carregar o nível:\n"
 "\n"
 "{}"
 
 #: ../../hexoshi.py:1120
 msgid "Press the Menu button to skip..."
-msgstr "Carregue no botao Menu para saltar..."
+msgstr "Carregue no botão Menu para saltar..."
 
 #: ../../hexoshi.py:1122
 msgid "Cinematic mode enabled"
-msgstr "Modo cinematico activado"
+msgstr "Modo cinemático activado"
 
 #: ../../hexoshi.py:2569
 msgid ""
@@ -139,9 +139,9 @@ msgid ""
 "\n"
 "It doesn't seem to do anything"
 msgstr ""
-"ARTEFACTO INUTIL\n"
+"ARTEFACTO INÚTIL\n"
 "\n"
-"Parece nao fazer nada"
+"Parece não fazer nada"
 
 #: ../../hexoshi.py:2595
 msgid ""
@@ -169,7 +169,7 @@ msgid ""
 "\n"
 "See mini-map in HUD and full map from pause menu"
 msgstr ""
-"MAPA PORTATIL\n"
+"MAPA PORTÁTIL\n"
 "\n"
 "Ver mini-mapa na interface, e mapa completo no menu de pausa"
 
@@ -181,7 +181,7 @@ msgid ""
 msgstr ""
 "DISCO DE MAPA\n"
 "\n"
-"Dados do mapa da area carregados"
+"Dados do mapa da área carregados"
 
 #: ../../hexoshi.py:3111
 msgid "New Game"
@@ -193,11 +193,11 @@ msgstr "Continuar"
 
 #: ../../hexoshi.py:3111
 msgid "Options"
-msgstr "Opcoes"
+msgstr "Opções"
 
 #: ../../hexoshi.py:3111
 msgid "Credits"
-msgstr "Creditos"
+msgstr "Créditos"
 
 #: ../../hexoshi.py:3112
 msgid "Quit"
@@ -226,7 +226,7 @@ msgstr "Ocorreu um erro ao tentar carregar o jogo."
 
 #: ../../hexoshi.py:3226
 msgid "Fullscreen: {}"
-msgstr "Ecra inteiro: {}"
+msgstr "Ecrã inteiro: {}"
 
 #: ../../hexoshi.py:3226 ../../hexoshi.py:3228 ../../hexoshi.py:3229
 #: ../../hexoshi.py:3230 ../../hexoshi.py:3231
@@ -240,7 +240,7 @@ msgstr "Off"
 
 #: ../../hexoshi.py:3227
 msgid "Scale Method: {}"
-msgstr "Metodo de escala: {}"
+msgstr "Método de escala: {}"
 
 #: ../../hexoshi.py:3228
 msgid "Sound: {}"
@@ -248,11 +248,11 @@ msgstr "Som: {}"
 
 #: ../../hexoshi.py:3229
 msgid "Music: {}"
-msgstr "Musica: {}"
+msgstr "Música: {}"
 
 #: ../../hexoshi.py:3230
 msgid "Stereo: {}"
-msgstr "Estereo: {}"
+msgstr "Estéreo: {}"
 
 #: ../../hexoshi.py:3231
 msgid "Show FPS: {}"
@@ -340,7 +340,7 @@ msgstr "Ver Mapa"
 
 #: ../../hexoshi.py:3684 ../../hexoshi.py:3686
 msgid "Return to Title Screen"
-msgstr "Voltar ao Ecra Inicial"
+msgstr "Voltar ao Ecrã Inicial"
 
 #: ../../hexoshi.py:3975
 msgid "Press the key you wish to toggle, or Escape to cancel."
@@ -350,7 +350,7 @@ msgstr "Carregar na tecla a usar, ou Escape para cancelar."
 msgid ""
 "Press the joystick button, axis, or hat direction you wish to toggle, or the "
 "Escape key to cancel."
-msgstr "Carregar no botao do comando a activar, ou Escape para cancelar."
+msgstr "Carregar no botão do comando a activar, ou Escape para cancelar."
 
 #: ../../hexoshi.py:4029
 msgid "Error"
@@ -370,7 +370,7 @@ msgstr "A inicializar sistema de jogo..."
 
 #: ../../hexoshi.py:4457
 msgid "Initializing GUI system..."
-msgstr "A inicializar interface grafica..."
+msgstr "A inicializar interface gráfica..."
 
 #: ../../hexoshi.py:4467
 msgid "Loading resources..."
@@ -378,4 +378,4 @@ msgstr "A carregar recursos..."
 
 #: ../../hexoshi.py:4797
 msgid "Starting game..."
-msgstr "A comecar o jogo..."
+msgstr "A começar o jogo..."

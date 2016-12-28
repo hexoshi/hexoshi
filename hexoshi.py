@@ -2551,6 +2551,7 @@ class Stone(xsge_physics.Solid):
     shard_speed_min = 2
     shard_speed_max = 5
     shootable = False
+    spikeable = False
 
     fakes = ()
 
@@ -2583,6 +2584,12 @@ class Stone(xsge_physics.Solid):
 class WeakStone(Stone):
 
     shootable = True
+    spikeable = True
+
+
+class SpikeStone(Stone):
+
+    spikeable = True
 
 
 class Powerup(InteractiveObject):
@@ -4449,14 +4456,15 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "frog": Frog, "bat": Bat,
-         "fake_tile": FakeTile, "weak_stone": WeakStone, "etank": Etank,
-         "life_orb": LifeOrb, "map": Map, "map_disk": MapDisk,
-         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
-         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
-         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
-         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
-         "doors": get_object, "stones": get_object, "powerups": get_object,
-         "objects": get_object, "moving_platform_path": MovingPlatformPath,
+         "fake_tile": FakeTile, "weak_stone": WeakStone,
+         "spike_stone": SpikeStone, "etank": Etank, "life_orb": LifeOrb,
+         "map": Map, "map_disk": MapDisk, "warp_pad": WarpPad,
+         "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
+         "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
+         "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
+         "enemies": get_object, "doors": get_object, "stones": get_object,
+         "powerups": get_object, "objects": get_object,
+         "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath,
          "player": PlayerLayer}
 

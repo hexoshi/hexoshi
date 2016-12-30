@@ -1214,9 +1214,12 @@ class Player(xsge_physics.Collider):
             else:
                 self.yvelocity = self.fall_speed
         elif self.on_slope:
-            self.yvelocity = (self.slide_speed *
-                              (self.on_slope[0].bbox_height /
-                               self.on_slope[0].bbox_width))
+            if self.xvelocity:
+                self.yvelocity = (self.slide_speed *
+                                  (self.on_slope[0].bbox_height /
+                                   self.on_slope[0].bbox_width))
+            else:
+                self.yvelocity = 0
 
     def event_step(self, time_passed, delta_mult):
         global map_revealed
@@ -2219,6 +2222,7 @@ class FrozenObject(InteractiveObject, xsge_physics.Solid):
 
 class Frog(Enemy, FallingObject, CrowdBlockingObject):
 
+    slide_speed = 0
     jump_distance = 200
     jump_height = 2 * TILE_SIZE + 1
     jump_speed = 3

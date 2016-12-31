@@ -20,9 +20,8 @@
  <objectgroup name="Enemies">
   <object id="16" gid="231" x="224" y="72" width="16" height="16"/>
   <object id="17" gid="231" x="792" y="120" width="16" height="16"/>
-  <object id="18" gid="231" x="872" y="120" width="16" height="16"/>
+  <object id="18" gid="231" x="960" y="120" width="16" height="16"/>
   <object id="19" gid="230" x="904" y="40" width="16" height="16"/>
-  <object id="20" gid="230" x="840" y="40" width="16" height="16"/>
   <object id="21" gid="230" x="1168" y="40" width="16" height="16"/>
   <object id="22" gid="230" x="1320" y="32" width="16" height="16"/>
   <object id="23" gid="231" x="1176" y="200" width="16" height="16"/>

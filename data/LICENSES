@@ -200,6 +200,15 @@ rooms/0.tmx
 rooms/1.tmx
 rooms/2.tmx
 rooms/3.tmx
+rooms/4.tmx
+rooms/5.tmx
+rooms/6.tmx
+rooms/7.tmx
+rooms/8.tmx
+rooms/9.tmx
+rooms/10.tmx
+rooms/11.tmx
+rooms/special/credits.tmx
 rooms/special/title_screen.tmx
 tilesets/doors.tsx
 tilesets/enemies.tsx

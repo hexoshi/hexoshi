@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="112" tilewidth="8" tileheight="8" nextobjectid="87">
+ <properties>
+  <property name="music" value="late_night_runaway.ogg"/>
+ </properties>
+ <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
+ <tileset firstgid="89" source="../tilesets/extras.tsx"/>
+ <tileset firstgid="166" source="../tilesets/plants.tsx"/>
+ <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
+ <tileset firstgid="232" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="238" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <layer name="Decorations" width="50" height="112">
+  <data encoding="base64" compression="zlib">
+   eJzt3MtygjAUgGEeX+uydtuyrEpfwyptN7Ub9WVMFgwMphBI2nOS+b+ZzHhJDgcXkAuxKKDRYkabhwjHdcV4NuVloJQRjjuWg0SMUJxHaxkhRigNv2UMnIcuT9IJAAAAIHtvHnV2AfGbtlXns2tAvN98edT56L1fTYjftP2c0AZ5ejRlLZ0EACh3lk4AQBD6O2hsi7DxoBZ1cT8evMyMVY1XSQJjW732prxLJwFAnSlzuJrvVa453P51j3lYAPh/zAMAACAvh3lYqz8P6/Lz51lAg2aPWOlRV8NeIACtrXQCkdTSCUAV29d6NWUjncgM353Xtq91MOUolAvylMseXM5DF8k90ZrXSqdgrRQA0mDvOzmMo+19h3E0fLn+H6yUTCgxrucAU1sjsvvFXM8B+qwRAUBXSte/08B3XP8w5AZ6IkCj
+  </data>
+ </layer>
+ <objectgroup name="Powerups"/>
+ <objectgroup name="Enemies">
+  <object id="68" gid="231" x="192" y="192" width="16" height="16"/>
+  <object id="71" gid="230" x="344" y="232" width="16" height="16"/>
+  <object id="73" gid="230" x="328" y="496" width="16" height="16"/>
+  <object id="76" gid="230" x="24" y="624" width="16" height="16"/>
+  <object id="77" gid="231" x="24" y="720" width="16" height="16"/>
+  <object id="78" gid="231" x="352" y="624" width="16" height="16"/>
+  <object id="79" gid="230" x="216" y="712" width="16" height="16"/>
+  <object id="85" gid="230" x="232" y="312" width="16" height="16"/>
+  <object id="86" gid="230" x="360" y="512" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup name="player">
+  <object id="2" x="-8" y="8" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Special Blocks">
+  <object id="4" gid="240" x="0" y="208" width="8" height="64">
+   <properties>
+    <property name="dest" value="11.tmx"/>
+   </properties>
+  </object>
+  <object id="5" gid="241" x="392" y="200" width="8" height="64">
+   <properties>
+    <property name="dest" value="12.tmx"/>
+   </properties>
+  </object>
+  <object id="8" gid="240" x="0" y="360" width="8" height="64">
+   <properties>
+    <property name="dest" value="12.tmx"/>
+   </properties>
+  </object>
+  <object id="10" gid="241" x="392" y="832" width="8" height="64">
+   <properties>
+    <property name="dest" value="12.tmx"/>
+   </properties>
+  </object>
+  <object id="11" gid="240" x="0" y="888" width="8" height="64">
+   <properties>
+    <property name="dest" value="12.tmx"/>
+   </properties>
+  </object>
+  <object id="48" gid="232" x="128" y="208" width="16" height="16"/>
+  <object id="50" gid="232" x="160" y="208" width="16" height="16"/>
+  <object id="52" gid="232" x="192" y="208" width="16" height="16"/>
+  <object id="54" gid="232" x="224" y="208" width="16" height="16"/>
+  <object id="56" gid="232" x="256" y="208" width="16" height="16"/>
+ </objectgroup>
+ <layer name="fake_tile" width="50" height="112">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20PBxQAAAAAAAAAAAAAAAAAAAAAAAAAAAD8GVeAAAE=
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="50" height="112">
+  <data encoding="base64" compression="zlib">
+   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
+  </data>
+ </layer>
+ <objectgroup color="#000000" name="solid">
+  <object id="12" x="0" y="880" width="400" height="16"/>
+  <object id="13" x="232" y="824" width="168" height="56"/>
+  <object id="14" x="0" y="0" width="400" height="16"/>
+  <object id="15" x="0" y="16" width="16" height="128"/>
+  <object id="16" x="384" y="16" width="16" height="120"/>
+  <object id="17" x="0" y="200" width="128" height="88"/>
+  <object id="18" x="104" y="192" width="24" height="8"/>
+  <object id="19" x="128" y="272" width="144" height="16"/>
+  <object id="20" x="0" y="288" width="120" height="8"/>
+  <object id="21" x="272" y="192" width="128" height="16"/>
+  <object id="22" x="384" y="208" width="16" height="568"/>
+  <object id="23" x="320" y="336" width="64" height="80"/>
+  <object id="24" x="192" y="416" width="192" height="48"/>
+  <object id="25" x="0" y="352" width="96" height="16"/>
+  <object id="26" x="0" y="368" width="128" height="112"/>
+  <object id="27" x="0" y="480" width="144" height="80"/>
+  <object id="28" x="0" y="560" width="272" height="16"/>
+  <object id="30" x="0" y="576" width="16" height="248"/>
+  <object id="31" x="16" y="720" width="32" height="80"/>
+  <object id="32" x="48" y="784" width="128" height="16"/>
+  <object id="35" x="320" y="624" width="64" height="32"/>
+  <object id="36" x="96" y="656" width="288" height="16"/>
+  <object id="37" x="256" y="672" width="128" height="104"/>
+  <object id="80" x="8" y="296" width="104" height="8"/>
+  <object id="82" x="16" y="800" width="16" height="8"/>
+  <object id="83" x="16" y="808" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Collision Objects">
+  <object id="39" type="slope_topleft" x="176" y="824" width="56" height="56"/>
+  <object id="44" type="slope_topleft" x="96" y="192" width="8" height="8"/>
+  <object id="40" type="slope_topright" x="48" y="720" width="64" height="64"/>
+  <object id="43" type="slope_topright" x="96" y="352" width="16" height="16"/>
+  <object id="45" type="slope_topleft" x="288" y="624" width="32" height="32"/>
+ </objectgroup>
+</map>

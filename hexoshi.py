@@ -2605,8 +2605,8 @@ class Powerup(InteractiveObject):
              int(self.x), int(self.y))
         powerups = powerups[:]
         powerups.append(i)
-        DialogBox(gui_handler, self.message, self.sprite).show()
         self.collect(other)
+        DialogBox(gui_handler, self.message, self.sprite).show()
         self.destroy()
 
     def event_create(self):
@@ -2680,6 +2680,12 @@ class MapDisk(Powerup):
                     if (x, y) not in map_revealed:
                         map_revealed = map_revealed[:]
                         map_revealed.append((x, y))
+
+        for obj in sge.game.current_room.objects:
+            if isinstance(obj, Player):
+                obj.update_hud()
+
+        sge.game.regulate_speed()
 
 
 class Tunnel(InteractiveObject):

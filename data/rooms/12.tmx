@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="112" tilewidth="8" tileheight="8" nextobjectid="88">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="112" tilewidth="8" tileheight="8" nextobjectid="97">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -20,13 +20,12 @@
  <objectgroup name="Enemies">
   <object id="68" gid="231" x="192" y="192" width="16" height="16"/>
   <object id="71" gid="230" x="344" y="232" width="16" height="16"/>
-  <object id="73" gid="230" x="328" y="496" width="16" height="16"/>
   <object id="76" gid="230" x="24" y="624" width="16" height="16"/>
   <object id="77" gid="231" x="24" y="720" width="16" height="16"/>
   <object id="78" gid="231" x="352" y="624" width="16" height="16"/>
   <object id="79" gid="230" x="216" y="712" width="16" height="16"/>
   <object id="85" gid="230" x="232" y="312" width="16" height="16"/>
-  <object id="86" gid="230" x="360" y="512" width="16" height="16"/>
+  <object id="96" gid="230" x="328" y="504" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>
@@ -62,7 +61,6 @@
   <object id="52" gid="232" x="192" y="208" width="16" height="16"/>
   <object id="54" gid="232" x="224" y="208" width="16" height="16"/>
   <object id="56" gid="232" x="256" y="208" width="16" height="16"/>
-  <object id="87" x="0" y="0" width="400" height="224"/>
  </objectgroup>
  <layer name="fake_tile" width="50" height="112">
   <data encoding="base64" compression="zlib">

@@ -2298,15 +2298,9 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
         yvec = target.y - self.image_ycenter
         dist = math.hypot(xvec, yvec)
         if dist <= self.charge_distance:
-            obst = sge.collision.line(self.image_xcenter, self.image_ycenter,
-                                      target.x, target.y)
-            for obj in obst:
-                if isinstance(obj, xsge_physics.Wall):
-                    break
-            else:
-                self.speed = self.charge_speed
-                self.move_direction = math.degrees(math.atan2(yvec, xvec))
-                self.image_speed = self.sprite.speed * 2
+            self.speed = self.charge_speed
+            self.move_direction = math.degrees(math.atan2(yvec, xvec))
+            self.image_speed = self.sprite.speed * 2
 
     def stop(self):
         self.speed = 0

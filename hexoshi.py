@@ -1451,12 +1451,14 @@ class Anneroy(Player):
                         if not self.collision(other):
                             break
                 else:
-                    if self.fixed_sprite != "crouch":
-                        self.reset_image()
-                        self.sprite = anneroy_legs_crouch_sprite
-                        self.image_index = anneroy_legs_crouch_sprite.frames - 1
-                    self.image_speed = -anneroy_legs_crouch_sprite.speed
-                    self.fixed_sprite = "crouch"
+                    if self.on_floor:
+                        if self.fixed_sprite != "crouch":
+                            self.reset_image()
+                            self.sprite = anneroy_legs_crouch_sprite
+                            self.image_index = anneroy_legs_crouch_sprite.frames - 1
+                        self.image_speed = -anneroy_legs_crouch_sprite.speed
+                        self.fixed_sprite = "crouch"
+
                     self.crouching = False
                     self.bbox_y = ANNEROY_STAND_BBOX_Y
                     self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
@@ -1759,6 +1761,12 @@ class Anneroy(Player):
         self.torso = sge.dsp.Object.create(self.x, self.y, self.z + 0.1,
                                            regulate_origin=True)
         super(Anneroy, self).event_create()
+
+    def event_begin_step(self, time_passed, delta_mult):
+        super(Anneroy, self).event_begin_step(time_passed, delta_mult)
+
+        if not self.on_floor and self.crouching:
+            self.press_up()
 
     def event_alarm(self, alarm_id):
         super(Anneroy, self).event_alarm(alarm_id)

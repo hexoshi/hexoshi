@@ -2801,6 +2801,8 @@ class WarpPad(SpawnPoint):
         dlg = TeleportDialog(i)
         dlg.show()
         if dlg.selection and dlg.selection != i:
+            other.x = self.image_xcenter
+            other.bbox_bottom = self.image_top
             other.warp_dest = "{}:{}".format(*dlg.selection[:2])
             other.warp_out()
             play_sound(teleport_sound, self.image_xcenter, self.image_ycenter)

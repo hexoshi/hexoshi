@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="84" tilewidth="8" tileheight="8" nextobjectid="46">
+ <properties>
+  <property name="music" value="late_night_runaway.ogg"/>
+ </properties>
+ <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
+ <tileset firstgid="89" source="../tilesets/extras.tsx"/>
+ <tileset firstgid="166" source="../tilesets/plants.tsx"/>
+ <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
+ <tileset firstgid="232" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="238" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <layer name="Decorations" width="50" height="84">
+  <data encoding="base64" compression="zlib">
+   eJzt2sEKgkAQgGEfv9Jbda3Olj1GgWWH6IFaI2EZhdXa3bH8PxgYYXBnD8oybJKgtjSxirTWItI6oa21GwAG2Ivng0oX/WQmUuvZzi+i9hq+HQAYncLKff3P6/PZxsRWxM7T+7tUVu7rf/4v50z2MS6c+4G4HtoNKJppNwDgJXWXIJKYM2sAnyvcJT+hmVNkql1gynIrP6p18b3Sym9qXQDA9Piax2uf7Xzto3KXBDVXXh8AEN5du4EBxnxPcAjuCaIveVdWm/wG846arlmQvCsbg5yNnkyc37n8BsukrZkFMWMFAAAAAGAanud4Jig=
+  </data>
+ </layer>
+ <objectgroup name="Powerups"/>
+ <objectgroup name="Enemies">
+  <object id="37" gid="231" x="24" y="296" width="16" height="16"/>
+  <object id="38" gid="231" x="360" y="456" width="16" height="16"/>
+  <object id="39" gid="230" x="240" y="232" width="16" height="16"/>
+  <object id="40" gid="230" x="344" y="216" width="16" height="16"/>
+  <object id="41" gid="230" x="32" y="184" width="16" height="16"/>
+  <object id="42" gid="230" x="88" y="144" width="16" height="16"/>
+  <object id="43" gid="230" x="232" y="112" width="16" height="16"/>
+  <object id="44" gid="230" x="176" y="112" width="16" height="16"/>
+  <object id="45" gid="230" x="312" y="256" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup name="player">
+  <object id="2" x="-8" y="8" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Special Blocks">
+  <object id="6" gid="240" x="0" y="520" width="8" height="64">
+   <properties>
+    <property name="dest" value="18.tmx"/>
+   </properties>
+  </object>
+  <object id="7" gid="240" x="0" y="72" width="8" height="64">
+   <properties>
+    <property name="dest" value="19.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="fake_tile" width="50" height="84">
+  <data encoding="base64" compression="zlib">
+   eJztwYEAAAAAw6D5U9/gBFUBAAAAAAAAAAAAAAAAAAAA8AxBoAAB
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="50" height="84">
+  <data encoding="base64" compression="zlib">
+   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
+  </data>
+ </layer>
+ <objectgroup color="#000000" name="solid">
+  <object id="8" x="216" y="392" width="88" height="8"/>
+  <object id="9" x="0" y="512" width="400" height="160"/>
+  <object id="10" x="0" y="64" width="256" height="16"/>
+  <object id="11" x="0" y="80" width="128" height="32"/>
+  <object id="12" x="0" y="0" width="400" height="8"/>
+  <object id="13" x="384" y="8" width="16" height="504"/>
+  <object id="14" x="216" y="504" width="168" height="8"/>
+  <object id="15" x="240" y="496" width="144" height="8"/>
+  <object id="16" x="264" y="488" width="120" height="8"/>
+  <object id="18" x="288" y="480" width="96" height="8"/>
+  <object id="20" x="312" y="472" width="72" height="8"/>
+  <object id="21" x="336" y="464" width="48" height="8"/>
+  <object id="22" x="360" y="456" width="24" height="8"/>
+  <object id="23" x="0" y="112" width="16" height="352"/>
+  <object id="24" x="112" y="232" width="64" height="8"/>
+  <object id="25" x="208" y="184" width="64" height="8"/>
+  <object id="26" x="304" y="120" width="80" height="64"/>
+  <object id="27" x="16" y="296" width="48" height="32"/>
+  <object id="28" x="16" y="328" width="168" height="48"/>
+ </objectgroup>
+ <objectgroup name="Collision Objects">
+  <object id="29" type="slope_topright" x="64" y="296" width="32" height="32"/>
+  <object id="30" type="slope_topleft" x="208" y="504" width="8" height="8"/>
+  <object id="31" type="slope_topleft" x="232" y="496" width="8" height="8"/>
+  <object id="32" type="slope_topleft" x="256" y="488" width="8" height="8"/>
+  <object id="33" type="slope_topleft" x="280" y="480" width="8" height="8"/>
+  <object id="34" type="slope_topleft" x="304" y="472" width="8" height="8"/>
+  <object id="35" type="slope_topleft" x="328" y="464" width="8" height="8"/>
+  <object id="36" type="slope_topleft" x="352" y="456" width="8" height="8"/>
+ </objectgroup>
+</map>

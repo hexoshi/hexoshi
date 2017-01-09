@@ -31,7 +31,7 @@
   </object>
   <object id="5" gid="240" x="0" y="88" width="8" height="64">
    <properties>
-    <property name="dest" value="16.tmx"/>
+    <property name="dest" value="17.tmx"/>
    </properties>
   </object>
  </objectgroup>

@@ -2755,6 +2755,8 @@ class SpawnPoint(sge.dsp.Object):
 
 class WarpPad(SpawnPoint):
 
+    message = _('WARP PAD\n\nProgress saved. Press "up" to teleport.')
+
     def __init__(self, x, y, spawn_id="save", **kwargs):
         self.spawn_id = spawn_id
         self.spawn_direction = None
@@ -2823,12 +2825,18 @@ class WarpPad(SpawnPoint):
             self.create_children()
 
     def event_collision(self, other, xdirection, ydirection):
+        global progress_flags
+
         if isinstance(other, Player):
             if not self.activated and (xdirection or ydirection):
                 self.activate()
                 other.refresh()
                 play_sound(warp_pad_sound, self.image_xcenter,
                            self.image_ycenter)
+
+                if "warp" not in progress_flags:
+                    progress_flags.append("warp")
+                    DialogBox(gui_handler, self.message).show()
 
 
 class DoorBarrier(InteractiveObject, xsge_physics.Solid):

@@ -4195,41 +4195,45 @@ def play_sound(sound, x=None, y=None, force=True):
 
 def play_music(music, force_restart=False):
     """Play the given music file, starting with its start piece."""
-    if music_enabled and music:
-        music_object = loaded_music.get(music)
-        if music_object is None:
-            try:
-                music_object = sge.snd.Music(os.path.join(DATA, "music",
-                                                          music))
-            except (IOError, OSError):
+    if music_enabled:
+        if music:
+            music_object = loaded_music.get(music)
+            if music_object is None:
+                try:
+                    music_object = sge.snd.Music(os.path.join(DATA, "music",
+                                                              music))
+                except (IOError, OSError):
+                    sge.snd.Music.clear_queue()
+                    sge.snd.Music.stop()
+                    return
+                else:
+                    loaded_music[music] = music_object
+
+            name, ext = os.path.splitext(music)
+            music_start = ''.join([name, "-start", ext])
+            music_start_object = loaded_music.get(music_start)
+            if music_start_object is None:
+                try:
+                    music_start_object = sge.snd.Music(os.path.join(DATA, "music",
+                                                                    music_start))
+                except (IOError, OSError):
+                    pass
+                else:
+                    loaded_music[music_start] = music_start_object
+
+            if (force_restart or (not music_object.playing and
+                                  (music_start_object is None or
+                                   not music_start_object.playing))):
                 sge.snd.Music.clear_queue()
                 sge.snd.Music.stop()
-                return
-            else:
-                loaded_music[music] = music_object
-
-        name, ext = os.path.splitext(music)
-        music_start = ''.join([name, "-start", ext])
-        music_start_object = loaded_music.get(music_start)
-        if music_start_object is None:
-            try:
-                music_start_object = sge.snd.Music(os.path.join(DATA, "music",
-                                                                music_start))
-            except (IOError, OSError):
-                pass
-            else:
-                loaded_music[music_start] = music_start_object
-
-        if (force_restart or (not music_object.playing and
-                              (music_start_object is None or
-                               not music_start_object.playing))):
+                if music_start_object is not None:
+                    music_start_object.play()
+                    music_object.queue(loops=None)
+                else:
+                    music_object.play(loops=None)
+        else:
             sge.snd.Music.clear_queue()
-            sge.snd.Music.stop()
-            if music_start_object is not None:
-                music_start_object.play()
-                music_object.queue(loops=None)
-            else:
-                music_object.play(loops=None)
+            sge.snd.Music.stop(fade_time=1000)
     else:
         sge.snd.Music.clear_queue()
         sge.snd.Music.stop()

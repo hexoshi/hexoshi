@@ -51,7 +51,13 @@ if getattr(sys, "frozen", False):
 
 DATA = os.path.join(os.path.dirname(__file__), "data")
 CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
+SCREEN_SIZE = [400, 224]
+TILE_SIZE = 16
+FPS = 60
+DELTA_MIN = FPS / 2
+DELTA_MAX = FPS * 4
 SCALE = 2
+FSSCALE = None
 
 if six.PY2:
     gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")),
@@ -78,6 +84,11 @@ parser.add_argument(
     "--scale",
     help=_('The scale factor to use by default in windowed mode (Default: "{}")').format(SCALE))
 parser.add_argument(
+    "--fsscale",
+    help=_("Specify a scale factor to use in fullscreen mode instead of using dynamic scaling. This will cause the screen resolution to change, which may improve performance. For best results, specify this as the target resolution width divided by {w}, or as the target resolution height divided by {h} (whichever is smaller). For example, to target a resolution of 640x480, use {ex}. A scale factor of 1 will always be fastest, but may result in windowboxing.").format(
+        w=SCREEN_SIZE[0], h=SCREEN_SIZE[1],
+        ex=min(640 / SCREEN_SIZE[0], 480 / SCREEN_SIZE[1])))
+parser.add_argument(
     "--no-backgrounds",
     help=_("Only show solid colors for backgrounds (uses less RAM)."),
     action="store_true")
@@ -99,6 +110,8 @@ if args.datadir:
     DATA = args.datadir
 if args.scale:
     SCALE = eval(args.scale)
+if args.fsscale:
+    FSSCALE = eval(args.fsscale)
 NO_BACKGROUNDS = args.no_backgrounds
 NO_HUD = args.no_hud
 GEN_MAP = args.gen_map
@@ -113,12 +126,6 @@ if args.lang:
         lang.install(unicode=True)
     else:
         lang.install()
-
-SCREEN_SIZE = [400, 224]
-TILE_SIZE = 16
-FPS = 60
-DELTA_MIN = FPS / 2
-DELTA_MAX = FPS * 4
 
 GRAVITY = 0.4
 
@@ -4578,7 +4585,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
 
 def update_fullscreen():
     if fullscreen:
-        sge.game.scale = None
+        sge.game.scale = FSSCALE if FSSCALE else None
         sge.game.fullscreen = True
     else:
         sge.game.scale = SCALE

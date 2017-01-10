@@ -3176,6 +3176,11 @@ class MapBottomDoor(MapHint):
     pass
 
 
+class IgnoreRegion(MapHint):
+
+    pass
+
+
 class Menu(xsge_gui.MenuWindow):
 
     items = []
@@ -4348,6 +4353,7 @@ def generate_map():
     files_remaining = {("0.tmx", 0, 0, None, None)}
     map_rooms = {}
     map_objects = {}
+    ignore_regions = set()
 
     while files_remaining:
         fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
@@ -4413,13 +4419,13 @@ def generate_map():
                 py = rm_y + get_yregion(obj.image_ycenter)
                 map_objects.setdefault((px, py), []).append("powerup")
             elif isinstance(obj, MapLeftWall):
-                wx = rm_x + get_xregion(obj.bbox_right)
+                wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom)
                 for wy in six.moves.range(wy1, wy2):
                     map_objects.setdefault((wx, wy), []).append("wall_left")
             elif isinstance(obj, MapRightWall):
-                wx = rm_x + get_xregion(obj.bbox_left)
+                wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom)
                 for wy in six.moves.range(wy1, wy2):
@@ -4427,23 +4433,23 @@ def generate_map():
             elif isinstance(obj, MapTopWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right)
-                wy = rm_y + get_yregion(obj.bbox_bottom)
+                wy = rm_y + get_yregion(obj.bbox_top)
                 for wx in six.moves.range(wx1, wx2):
                     map_objects.setdefault((wx, wy), []).append("wall_top")
             elif isinstance(obj, MapBottomWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right)
-                wy = rm_y + get_yregion(obj.bbox_top)
+                wy = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wx in six.moves.range(wx1, wx2):
                     map_objects.setdefault((wx, wy), []).append("wall_bottom")
             elif isinstance(obj, MapLeftDoor):
-                wx = rm_x + get_xregion(obj.bbox_right)
+                wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom)
                 for wy in six.moves.range(wy1, wy2):
                     map_objects.setdefault((wx, wy), []).append("door_left")
             elif isinstance(obj, MapRightDoor):
-                wx = rm_x + get_xregion(obj.bbox_left)
+                wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom)
                 for wy in six.moves.range(wy1, wy2):
@@ -4451,15 +4457,23 @@ def generate_map():
             elif isinstance(obj, MapTopDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right)
-                wy = rm_y + get_yregion(obj.bbox_bottom)
+                wy = rm_y + get_yregion(obj.bbox_top)
                 for wx in six.moves.range(wx1, wx2):
                     map_objects.setdefault((wx, wy), []).append("door_top")
             elif isinstance(obj, MapBottomDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right)
-                wy = rm_y + get_yregion(obj.bbox_top)
+                wy = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wx in six.moves.range(wx1, wx2):
                     map_objects.setdefault((wx, wy), []).append("door_bottom")
+            elif isinstance(obj, IgnoreRegion):
+                rx1 = rm_x + get_xregion(obj.bbox_left)
+                rx2 = rm_x + get_xregion(obj.bbox_right)
+                ry1 = rm_y + get_yregion(obj.bbox_top)
+                ry2 = rm_y + get_yregion(obj.bbox_bottom)
+                for ry in six.moves.range(ry1, ry2):
+                    for rx in six.moves.range(rx1, rx2):
+                        ignore_regions.add((rx, ry))
 
         for x in six.moves.range(rm_x, rm_x + rm_w):
             y = rm_y
@@ -4478,6 +4492,10 @@ def generate_map():
             x = rm_x + rm_w - 1
             if "door_right" not in map_objects.setdefault((x, y), []):
                 map_objects[(x, y)].append("wall_right")
+
+    for i in map_objects.keys():
+        if i in ignore_regions:
+            del map_objects[i]
 
     f_objects = {}
     for x, y in map_objects:
@@ -4590,7 +4608,7 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "map_wall_right": MapRightWall, "map_wall_top": MapTopWall,
          "map_wall_bottom": MapBottomWall, "map_door_left": MapLeftDoor,
          "map_door_right": MapRightDoor, "map_door_top": MapTopDoor,
-         "map_door_bottom": MapBottomDoor}
+         "map_door_bottom": MapBottomDoor, "map_ignore_region": IgnoreRegion}
 
 
 print(_("Initializing game system..."))

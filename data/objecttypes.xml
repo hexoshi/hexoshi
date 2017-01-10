@@ -33,4 +33,5 @@
  <objecttype name="map_door_right" color="#aaaa7f"/>
  <objecttype name="map_door_top" color="#aaaa7f"/>
  <objecttype name="map_door_bottom" color="#aaaa7f"/>
+ <objecttype name="map_ignore_region" color="#aa0000"/>
 </objecttypes>

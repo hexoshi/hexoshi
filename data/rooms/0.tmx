@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="56" tilewidth="8" tileheight="8" nextobjectid="71">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="56" tilewidth="8" tileheight="8" nextobjectid="72">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -8,9 +8,9 @@
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="232" source="../tilesets/stones.tsx"/>
- <tileset firstgid="233" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="237" source="../tilesets/doors.tsx"/>
- <tileset firstgid="243" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="238" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="244" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="56">
   <data encoding="base64" compression="zlib">
    eJzt1bERgzAQBEDat1Ps1JADbZjAkFARXwARIAR4d+YijV73kYqCKykjrw33P5EqUi+cPVfMe2zoksqaPc7oLnu8cxcAAAAAOKlvpM9dAgDwHwNcXJu7wE6G3AUA/lQT6RLNnhLNXfKLjAe+xz5moFENTw==
@@ -22,12 +22,12 @@
   <object id="66" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="1" gid="239" x="0" y="440" width="8" height="64">
+  <object id="1" gid="240" x="0" y="440" width="8" height="64">
    <properties>
     <property name="dest" value="1.tmx"/>
    </properties>
   </object>
-  <object id="39" gid="243" x="64" y="160" width="48" height="8"/>
+  <object id="39" gid="244" x="64" y="160" width="48" height="8"/>
  </objectgroup>
  <layer name="fake_tile" width="50" height="56">
   <data encoding="base64" compression="zlib">
@@ -58,9 +58,8 @@
   <object id="26" x="32" y="0" width="336" height="16"/>
   <object id="28" x="360" y="16" width="8" height="16"/>
   <object id="29" x="32" y="16" width="8" height="8"/>
-  <object id="31" x="136" y="288" width="8" height="16"/>
+  <object id="31" x="128" y="288" width="16" height="8"/>
+  <object id="71" x="120" y="296" width="24" height="8"/>
  </objectgroup>
- <objectgroup name="Collision Objects">
-  <object id="34" type="slope_topleft" x="120" y="288" width="16" height="16"/>
- </objectgroup>
+ <objectgroup name="Collision Objects"/>
 </map>

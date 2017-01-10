@@ -25,4 +25,12 @@
  <objecttype name="checkpoint" color="#ffffff"/>
  <objecttype name="triggered_moving_platform_path" color="#ffff00"/>
  <objecttype name="flying_spiky_path" color="#aa007f"/>
+ <objecttype name="map_wall_left" color="#aaaa7f"/>
+ <objecttype name="map_wall_right" color="#aaaa7f"/>
+ <objecttype name="map_wall_top" color="#aaaa7f"/>
+ <objecttype name="map_wall_bottom" color="#aaaa7f"/>
+ <objecttype name="map_door_left" color="#aaaa7f"/>
+ <objecttype name="map_door_right" color="#aaaa7f"/>
+ <objecttype name="map_door_top" color="#aaaa7f"/>
+ <objecttype name="map_door_bottom" color="#aaaa7f"/>
 </objecttypes>

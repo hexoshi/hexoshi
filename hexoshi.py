@@ -3126,6 +3126,56 @@ class PlayerLayer(sge.dsp.Object):
         self.destroy()
 
 
+class MapHint(sge.dsp.Object):
+
+    def event_create(self):
+        self.alarms["destroy"] = 1
+
+    def event_alarm(self, alarm_id):
+        if alarm_id == "destroy":
+            self.destroy()
+
+
+class MapLeftWall(MapHint):
+
+    pass
+
+
+class MapRightWall(MapHint):
+
+    pass
+
+
+class MapTopWall(MapHint):
+
+    pass
+
+
+class MapBottomWall(MapHint):
+
+    pass
+
+
+class MapLeftDoor(MapHint):
+
+    pass
+
+
+class MapRightDoor(MapHint):
+
+    pass
+
+
+class MapTopDoor(MapHint):
+
+    pass
+
+
+class MapBottomDoor(MapHint):
+
+    pass
+
+
 class Menu(xsge_gui.MenuWindow):
 
     items = []
@@ -4362,6 +4412,54 @@ def generate_map():
                 px = rm_x + get_xregion(obj.image_xcenter)
                 py = rm_y + get_yregion(obj.image_ycenter)
                 map_objects.setdefault((px, py), []).append("powerup")
+            elif isinstance(obj, MapLeftWall):
+                wx = rm_x + get_xregion(obj.bbox_right)
+                wy1 = rm_y + get_yregion(obj.bbox_top)
+                wy2 = rm_y + get_yregion(obj.bbox_bottom)
+                for wy in six.moves.range(wy1, wy2):
+                    map_objects.setdefault((wx, wy), []).append("wall_left")
+            elif isinstance(obj, MapRightWall):
+                wx = rm_x + get_xregion(obj.bbox_left)
+                wy1 = rm_y + get_yregion(obj.bbox_top)
+                wy2 = rm_y + get_yregion(obj.bbox_bottom)
+                for wy in six.moves.range(wy1, wy2):
+                    map_objects.setdefault((wx, wy), []).append("wall_right")
+            elif isinstance(obj, MapTopWall):
+                wx1 = rm_x + get_xregion(obj.bbox_left)
+                wx2 = rm_x + get_xregion(obj.bbox_right)
+                wy = rm_y + get_yregion(obj.bbox_bottom)
+                for wx in six.moves.range(wx1, wx2):
+                    map_objects.setdefault((wx, wy), []).append("wall_top")
+            elif isinstance(obj, MapBottomWall):
+                wx1 = rm_x + get_xregion(obj.bbox_left)
+                wx2 = rm_x + get_xregion(obj.bbox_right)
+                wy = rm_y + get_yregion(obj.bbox_top)
+                for wx in six.moves.range(wx1, wx2):
+                    map_objects.setdefault((wx, wy), []).append("wall_bottom")
+            elif isinstance(obj, MapLeftDoor):
+                wx = rm_x + get_xregion(obj.bbox_right)
+                wy1 = rm_y + get_yregion(obj.bbox_top)
+                wy2 = rm_y + get_yregion(obj.bbox_bottom)
+                for wy in six.moves.range(wy1, wy2):
+                    map_objects.setdefault((wx, wy), []).append("door_left")
+            elif isinstance(obj, MapRightDoor):
+                wx = rm_x + get_xregion(obj.bbox_left)
+                wy1 = rm_y + get_yregion(obj.bbox_top)
+                wy2 = rm_y + get_yregion(obj.bbox_bottom)
+                for wy in six.moves.range(wy1, wy2):
+                    map_objects.setdefault((wx, wy), []).append("door_right")
+            elif isinstance(obj, MapTopDoor):
+                wx1 = rm_x + get_xregion(obj.bbox_left)
+                wx2 = rm_x + get_xregion(obj.bbox_right)
+                wy = rm_y + get_yregion(obj.bbox_bottom)
+                for wx in six.moves.range(wx1, wx2):
+                    map_objects.setdefault((wx, wy), []).append("door_top")
+            elif isinstance(obj, MapBottomDoor):
+                wx1 = rm_x + get_xregion(obj.bbox_left)
+                wx2 = rm_x + get_xregion(obj.bbox_right)
+                wy = rm_y + get_yregion(obj.bbox_top)
+                for wx in six.moves.range(wx1, wx2):
+                    map_objects.setdefault((wx, wy), []).append("door_bottom")
 
         for x in six.moves.range(rm_x, rm_x + rm_w):
             y = rm_y
@@ -4488,7 +4586,11 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "powerups": get_object, "objects": get_object,
          "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath,
-         "player": PlayerLayer}
+         "player": PlayerLayer, "map_wall_left": MapLeftWall,
+         "map_wall_right": MapRightWall, "map_wall_top": MapTopWall,
+         "map_wall_bottom": MapBottomWall, "map_door_left": MapLeftDoor,
+         "map_door_right": MapRightDoor, "map_door_top": MapTopDoor,
+         "map_door_bottom": MapBottomDoor}
 
 
 print(_("Initializing game system..."))

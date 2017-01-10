@@ -4421,58 +4421,58 @@ def generate_map():
             elif isinstance(obj, MapLeftWall):
                 wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
-                wy2 = rm_y + get_yregion(obj.bbox_bottom)
-                for wy in six.moves.range(wy1, wy2):
+                wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
+                for wy in six.moves.range(wy1, wy2 + 1):
                     map_objects.setdefault((wx, wy), []).append("wall_left")
             elif isinstance(obj, MapRightWall):
                 wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
-                wy2 = rm_y + get_yregion(obj.bbox_bottom)
-                for wy in six.moves.range(wy1, wy2):
+                wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
+                for wy in six.moves.range(wy1, wy2 + 1):
                     map_objects.setdefault((wx, wy), []).append("wall_right")
             elif isinstance(obj, MapTopWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
-                wx2 = rm_x + get_xregion(obj.bbox_right)
+                wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_top)
-                for wx in six.moves.range(wx1, wx2):
+                for wx in six.moves.range(wx1, wx2 + 1):
                     map_objects.setdefault((wx, wy), []).append("wall_top")
             elif isinstance(obj, MapBottomWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
-                wx2 = rm_x + get_xregion(obj.bbox_right)
+                wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for wx in six.moves.range(wx1, wx2):
+                for wx in six.moves.range(wx1, wx2 + 1):
                     map_objects.setdefault((wx, wy), []).append("wall_bottom")
             elif isinstance(obj, MapLeftDoor):
                 wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
-                wy2 = rm_y + get_yregion(obj.bbox_bottom)
-                for wy in six.moves.range(wy1, wy2):
+                wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
+                for wy in six.moves.range(wy1, wy2 + 1):
                     map_objects.setdefault((wx, wy), []).append("door_left")
             elif isinstance(obj, MapRightDoor):
                 wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
-                wy2 = rm_y + get_yregion(obj.bbox_bottom)
-                for wy in six.moves.range(wy1, wy2):
+                wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
+                for wy in six.moves.range(wy1, wy2 + 1):
                     map_objects.setdefault((wx, wy), []).append("door_right")
             elif isinstance(obj, MapTopDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
-                wx2 = rm_x + get_xregion(obj.bbox_right)
+                wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_top)
-                for wx in six.moves.range(wx1, wx2):
+                for wx in six.moves.range(wx1, wx2 + 1):
                     map_objects.setdefault((wx, wy), []).append("door_top")
             elif isinstance(obj, MapBottomDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
-                wx2 = rm_x + get_xregion(obj.bbox_right)
+                wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for wx in six.moves.range(wx1, wx2):
+                for wx in six.moves.range(wx1, wx2 + 1):
                     map_objects.setdefault((wx, wy), []).append("door_bottom")
             elif isinstance(obj, IgnoreRegion):
                 rx1 = rm_x + get_xregion(obj.bbox_left)
-                rx2 = rm_x + get_xregion(obj.bbox_right)
+                rx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 ry1 = rm_y + get_yregion(obj.bbox_top)
-                ry2 = rm_y + get_yregion(obj.bbox_bottom)
-                for ry in six.moves.range(ry1, ry2):
-                    for rx in six.moves.range(rx1, rx2):
+                ry2 = rm_y + get_yregion(obj.bbox_bottom - 1)
+                for ry in six.moves.range(ry1, ry2 + 1):
+                    for rx in six.moves.range(rx1, rx2 + 1):
                         ignore_regions.add((rx, ry))
 
         for x in six.moves.range(rm_x, rm_x + rm_w):

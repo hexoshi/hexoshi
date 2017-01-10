@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="56" tilewidth="8" tileheight="8" nextobjectid="30">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="56" tilewidth="8" tileheight="8" nextobjectid="31">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>

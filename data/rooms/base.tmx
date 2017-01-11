@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="6">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="8">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -35,5 +35,6 @@
  </layer>
  <objectgroup color="#000000" name="solid"/>
  <objectgroup name="Collision Objects"/>
+ <objectgroup name="View Guides"/>
  <objectgroup name="Map Hints"/>
 </map>

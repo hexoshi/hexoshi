@@ -118,7 +118,9 @@
   <object id="64" type="slope_topleft" x="496" y="320" width="16" height="16"/>
   <object id="78" type="slope_topright" x="72" y="80" width="16" height="16"/>
   <object id="79" type="slope_topleft" x="32" y="80" width="16" height="16"/>
-  <object id="92" type="camera_y_guide" x="0" y="224" width="400" height="224"/>
+ </objectgroup>
+ <objectgroup name="View Guides">
   <object id="94" type="camera_y_guide" x="0" y="0" width="416" height="224"/>
+  <object id="92" type="camera_y_guide" x="0" y="224" width="400" height="224"/>
  </objectgroup>
 </map>

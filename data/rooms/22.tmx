@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="50">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="51">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -45,7 +45,7 @@
  <objectgroup name="Special Blocks">
   <object id="8" gid="241" x="1592" y="152" width="8" height="64">
    <properties>
-    <property name="dest" value="22.tmx"/>
+    <property name="dest" value="23.tmx"/>
    </properties>
   </object>
  </objectgroup>

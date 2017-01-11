@@ -39,7 +39,7 @@
   </object>
   <object id="5" gid="241" x="392" y="200" width="8" height="64">
    <properties>
-    <property name="dest" value="12.tmx"/>
+    <property name="dest" value="22.tmx"/>
    </properties>
   </object>
   <object id="8" gid="240" x="0" y="360" width="8" height="64">

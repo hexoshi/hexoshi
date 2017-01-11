@@ -4423,7 +4423,6 @@ def generate_map():
     files_remaining = {("0.tmx", 0, 0, None, None)}
     map_rooms = {}
     map_objects = {}
-    ignore_regions = set()
 
     while files_remaining:
         fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
@@ -4458,6 +4457,17 @@ def generate_map():
 
         map_rooms[fname] = (rm_x, rm_y)
 
+        ignore_regions = set()
+        for obj in room.objects:
+            if isinstance(obj, IgnoreRegion):
+                rx1 = rm_x + get_xregion(obj.bbox_left)
+                rx2 = rm_x + get_xregion(obj.bbox_right - 1)
+                ry1 = rm_y + get_yregion(obj.bbox_top)
+                ry2 = rm_y + get_yregion(obj.bbox_bottom - 1)
+                for ry in six.moves.range(ry1, ry2 + 1):
+                    for rx in six.moves.range(rx1, rx2 + 1):
+                        ignore_regions.add((rx, ry))
+
         for obj in room.objects:
             if isinstance(obj, Door):
                 dx = rm_x + get_xregion(obj.image_xcenter)
@@ -4472,100 +4482,103 @@ def generate_map():
                 if level_f not in files_checked:
                     files_remaining.add((level_f, dx, dy, fname, obj.spawn_id))
 
-                if isinstance(obj, LeftDoor):
-                    map_objects.setdefault((dx, dy), []).append("door_left")
-                elif isinstance(obj, RightDoor):
-                    map_objects.setdefault((dx, dy), []).append("door_right")
-                elif isinstance(obj, UpDoor):
-                    map_objects.setdefault((dx, dy), []).append("door_top")
-                elif isinstance(obj, DownDoor):
-                    map_objects.setdefault((dx, dy), []).append("door_bottom")
+                if (dx, dy) not in ignore_regions:
+                    if isinstance(obj, LeftDoor):
+                        map_objects.setdefault((dx, dy), []).append("door_left")
+                    elif isinstance(obj, RightDoor):
+                        map_objects.setdefault((dx, dy), []).append("door_right")
+                    elif isinstance(obj, UpDoor):
+                        map_objects.setdefault((dx, dy), []).append("door_top")
+                    elif isinstance(obj, DownDoor):
+                        map_objects.setdefault((dx, dy), []).append("door_bottom")
             elif isinstance(obj, WarpPad):
                 wx = rm_x + get_xregion(obj.image_xcenter)
                 wy = rm_y + get_yregion(obj.image_ycenter)
-                map_objects.setdefault((wx, wy), []).append("warp_pad")
+                if (wx, wy) not in ignore_regions:
+                    map_objects.setdefault((wx, wy), []).append("warp_pad")
             elif isinstance(obj, Powerup):
                 px = rm_x + get_xregion(obj.image_xcenter)
                 py = rm_y + get_yregion(obj.image_ycenter)
-                map_objects.setdefault((px, py), []).append("powerup")
+                if (px, py) not in ignore_regions:
+                    map_objects.setdefault((px, py), []).append("powerup")
             elif isinstance(obj, MapLeftWall):
                 wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wy in six.moves.range(wy1, wy2 + 1):
-                    map_objects.setdefault((wx, wy), []).append("wall_left")
+                    if (wx, wy) not in ignore_regions:
+                        map_objects.setdefault((wx, wy), []).append("wall_left")
             elif isinstance(obj, MapRightWall):
                 wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wy in six.moves.range(wy1, wy2 + 1):
-                    map_objects.setdefault((wx, wy), []).append("wall_right")
+                    if (wx, wy) not in ignore_regions:
+                        map_objects.setdefault((wx, wy), []).append("wall_right")
             elif isinstance(obj, MapTopWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_top)
                 for wx in six.moves.range(wx1, wx2 + 1):
-                    map_objects.setdefault((wx, wy), []).append("wall_top")
+                    if (wx, wy) not in ignore_regions:
+                        map_objects.setdefault((wx, wy), []).append("wall_top")
             elif isinstance(obj, MapBottomWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wx in six.moves.range(wx1, wx2 + 1):
-                    map_objects.setdefault((wx, wy), []).append("wall_bottom")
+                    if (wx, wy) not in ignore_regions:
+                        map_objects.setdefault((wx, wy), []).append("wall_bottom")
             elif isinstance(obj, MapLeftDoor):
                 wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wy in six.moves.range(wy1, wy2 + 1):
-                    map_objects.setdefault((wx, wy), []).append("door_left")
+                    if (wx, wy) not in ignore_regions:
+                        map_objects.setdefault((wx, wy), []).append("door_left")
             elif isinstance(obj, MapRightDoor):
                 wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wy in six.moves.range(wy1, wy2 + 1):
-                    map_objects.setdefault((wx, wy), []).append("door_right")
+                    if (wx, wy) not in ignore_regions:
+                        map_objects.setdefault((wx, wy), []).append("door_right")
             elif isinstance(obj, MapTopDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_top)
                 for wx in six.moves.range(wx1, wx2 + 1):
-                    map_objects.setdefault((wx, wy), []).append("door_top")
+                    if (wx, wy) not in ignore_regions:
+                        map_objects.setdefault((wx, wy), []).append("door_top")
             elif isinstance(obj, MapBottomDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wx in six.moves.range(wx1, wx2 + 1):
-                    map_objects.setdefault((wx, wy), []).append("door_bottom")
-            elif isinstance(obj, IgnoreRegion):
-                rx1 = rm_x + get_xregion(obj.bbox_left)
-                rx2 = rm_x + get_xregion(obj.bbox_right - 1)
-                ry1 = rm_y + get_yregion(obj.bbox_top)
-                ry2 = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for ry in six.moves.range(ry1, ry2 + 1):
-                    for rx in six.moves.range(rx1, rx2 + 1):
-                        ignore_regions.add((rx, ry))
+                    if (wx, wy) not in ignore_regions:
+                        map_objects.setdefault((wx, wy), []).append("door_bottom")
 
         for x in six.moves.range(rm_x, rm_x + rm_w):
             y = rm_y
-            if "door_top" not in map_objects.setdefault((x, y), []):
+            if ((x, y) not in ignore_regions and
+                    "door_top" not in map_objects.setdefault((x, y), [])):
                 map_objects[(x, y)].append("wall_top")
 
             y = rm_y + rm_h - 1
-            if "door_bottom" not in map_objects.setdefault((x, y), []):
+            if ((x, y) not in ignore_regions and
+                    "door_bottom" not in map_objects.setdefault((x, y), [])):
                 map_objects[(x, y)].append("wall_bottom")
 
         for y in six.moves.range(rm_y, rm_y + rm_h):
             x = rm_x
-            if "door_left" not in map_objects.setdefault((x, y), []):
+            if ((x, y) not in ignore_regions and
+                    "door_left" not in map_objects.setdefault((x, y), [])):
                 map_objects[(x, y)].append("wall_left")
 
             x = rm_x + rm_w - 1
-            if "door_right" not in map_objects.setdefault((x, y), []):
+            if ((x, y) not in ignore_regions and
+                    "door_right" not in map_objects.setdefault((x, y), [])):
                 map_objects[(x, y)].append("wall_right")
-
-    for i in map_objects.keys():
-        if i in ignore_regions:
-            del map_objects[i]
 
     f_objects = {}
     for x, y in map_objects:

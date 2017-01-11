@@ -159,8 +159,8 @@ CEILING_LAX = 2
 CAMERA_HSPEED_FACTOR = 1 / 8
 CAMERA_VSPEED_FACTOR = 1 / 20
 CAMERA_OFFSET_FACTOR = 10
-CAMERA_MARGIN_TOP = 4 * TILE_SIZE
-CAMERA_MARGIN_BOTTOM = 5 * TILE_SIZE
+CAMERA_MARGIN_TOP = 3 * TILE_SIZE
+CAMERA_MARGIN_BOTTOM = 3 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = SCREEN_SIZE[1] / 2
 
 LIFE_FORCE_CHANCE = 0.25
@@ -934,6 +934,23 @@ class Player(xsge_physics.Collider):
             healthbar_front_sprite.width = new_w
         self.update_hud()
 
+    @property
+    def camera_target_x(self):
+        guides = self.collision(CameraXGuide)
+        if guides:
+            return guides[0].x
+        else:
+            return (self.x - self.view.width / 2 +
+                    self.xvelocity * CAMERA_OFFSET_FACTOR)
+
+    @property
+    def camera_target_y(self):
+        guides = self.collision(CameraYGuide)
+        if guides:
+            return guides[0].y
+        else:
+            return self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
+
     def __init__(self, x, y, z=0, sprite=None, visible=True, active=True,
                  checks_collisions=True, tangible=True, bbox_x=8, bbox_y=0,
                  bbox_width=16, bbox_height=16, regulate_origin=True,
@@ -1157,8 +1174,8 @@ class Player(xsge_physics.Collider):
         self.on_floor = self.get_bottom_touching_wall() + self.on_slope
         self.was_on_floor = self.on_floor
 
-        self.view.x = self.x - self.view.width / 2
-        self.view.y = self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
+        self.view.x = self.camera_target_x
+        self.view.y = self.camera_target_y
 
     def event_create(self):
         self.z = sge.game.current_room.player_z
@@ -1274,8 +1291,7 @@ class Player(xsge_physics.Collider):
 
         # Move view
         if self.view is not None and not self.view_frozen:
-            view_target_x = (self.x - self.view.width / 2 +
-                             self.xvelocity * CAMERA_OFFSET_FACTOR)
+            view_target_x = self.camera_target_x
             if abs(view_target_x - self.view.x) > 0.5:
                 self.view.x += ((view_target_x - self.view.x) *
                                 CAMERA_HSPEED_FACTOR)
@@ -1286,8 +1302,7 @@ class Player(xsge_physics.Collider):
             view_max_y = self.y - CAMERA_MARGIN_TOP
 
             if self.on_floor and self.was_on_floor:
-                view_target_y = (self.y - self.view.height +
-                                 CAMERA_TARGET_MARGIN_BOTTOM)
+                view_target_y = self.camera_target_y
                 if abs(view_target_y - self.view.y) > 0.5:
                     self.view.y += ((view_target_y - self.view.y) *
                                     CAMERA_VSPEED_FACTOR)
@@ -3159,6 +3174,24 @@ class PlayerLayer(sge.dsp.Object):
         self.destroy()
 
 
+class CameraGuide(sge.dsp.Object):
+
+    def __init__(self, x, y, **kwargs):
+        kwargs.setdefault("visible", False)
+        kwargs.setdefault("checks_collisions", False)
+        super(CameraGuide, self).__init__(x, y, **kwargs)
+
+
+class CameraXGuide(CameraGuide):
+
+    pass
+
+
+class CameraYGuide(CameraGuide):
+
+    pass
+
+
 class MapHint(sge.dsp.Object):
 
     def event_create(self):
@@ -4641,7 +4674,8 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "doors": get_object, "stones": get_object, "powerups": get_object,
          "objects": get_object, "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath,
-         "player": PlayerLayer, "map_wall_left": MapLeftWall,
+         "player": PlayerLayer, "camera_x_guide": CameraXGuide,
+         "camera_y_guide": CameraYGuide, "map_wall_left": MapLeftWall,
          "map_wall_right": MapRightWall, "map_wall_top": MapTopWall,
          "map_wall_bottom": MapBottomWall, "map_door_left": MapLeftDoor,
          "map_door_right": MapRightDoor, "map_door_top": MapTopDoor,

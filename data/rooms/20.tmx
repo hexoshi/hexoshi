@@ -60,9 +60,10 @@
   <object id="20" x="712" y="376" width="56" height="8"/>
   <object id="21" x="128" y="152" width="48" height="8"/>
   <object id="31" x="320" y="240" width="64" height="176"/>
+ </objectgroup>
+ <objectgroup name="Collision Objects">
   <object id="32" type="camera_y_guide" x="0" y="0" width="800" height="224"/>
  </objectgroup>
- <objectgroup name="Collision Objects"/>
  <objectgroup name="Map Hints">
   <object id="25" type="map_wall_right" x="392" y="224" width="8" height="224"/>
   <object id="26" type="map_wall_bottom" x="400" y="216" width="400" height="8"/>

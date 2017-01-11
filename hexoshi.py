@@ -250,6 +250,7 @@ class Game(sge.dsp.Game):
     fps_time = 0
     fps_frames = 0
     fps_text = ""
+    cheatcode = ""
 
     def event_step(self, time_passed, delta_mult):
         if fps_enabled:
@@ -272,6 +273,31 @@ class Game(sge.dsp.Game):
         if key == "f11":
             fullscreen = not fullscreen
             update_fullscreen()
+        elif key == "f7":
+            self.cheatcode = ""
+        elif sge.keyboard.get_pressed("f7"):
+            if not self.cheatcode:
+                print(_("Code entry:"), end=' ')
+            self.cheatcode += char
+            print(char, end='')
+            sys.stdout.flush()
+
+    def event_key_release(self, key):
+        global map_revealed
+        global map_explored
+
+        if key == "f7":
+            if self.cheatcode:
+                print()
+
+                if self.cheatcode.lower() == "knowitall":
+                    map_revealed = list(map_objects.keys())
+                elif self.cheatcode.lower() == "seenitall":
+                    map_explored = map_revealed
+                elif self.cheatcode.startswith("teleport"):
+                    warp(self.cheatcode[8:])
+                else:
+                    print(_("Invalid cheat code: {}").format(self.cheatcode))
 
     def event_mouse_button_press(self, button):
         if button == "middle":

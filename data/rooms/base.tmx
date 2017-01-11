@@ -11,6 +11,7 @@
  <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
  <tileset firstgid="238" source="../tilesets/doors.tsx"/>
  <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="245" source="../tilesets/artifact.tsx"/>
  <layer name="Decorations" width="50" height="28">
   <data encoding="base64" compression="zlib">
    eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==

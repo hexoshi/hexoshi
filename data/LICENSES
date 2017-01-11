@@ -82,6 +82,37 @@ Source: http://opengameart.org/content/27-bricks
 
 ------------------------------------------------------------------------
 
+images/objects/powerups/artifact1.png
+images/objects/powerups/artifact2.png
+images/objects/powerups/artifact3.png
+
+Author: johndimi <http://opengameart.org/users/johndimi>
+License: CC BY-SA 3.0 <http://creativecommons.org/licenses/by-sa/3.0/>
+Source: http://opengameart.org/content/16x16-remixed-sprites
+
+------------------------------------------------------------------------
+
+images/objects/powerups/artifact4.png
+images/objects/powerups/artifact5.png
+images/objects/powerups/artifact6.png
+images/objects/powerups/artifact7.png
+
+Author: MoikMellah <http://opengameart.org/users/moikmellah>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: http://opengameart.org/content/buddha-statues-16x16
+
+------------------------------------------------------------------------
+
+images/objects/powerups/artifact8.png
+images/objects/powerups/artifact9.png
+images/objects/powerups/artifact10.png
+
+Author: surt <http://opengameart.org/users/surt>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: http://opengameart.org/content/simple-broad-purpose-tileset
+
+------------------------------------------------------------------------
+
 images/objects/powerups/etank.png
 
 Authors:
@@ -220,6 +251,7 @@ rooms/20.tmx
 rooms/21.tmx
 rooms/special/credits.tmx
 rooms/special/title_screen.tmx
+tilesets/artifact.tsx
 tilesets/doors.tsx
 tilesets/enemies.tsx
 tilesets/extras.tsx

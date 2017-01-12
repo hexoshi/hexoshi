@@ -35,6 +35,6 @@
  </layer>
  <objectgroup color="#000000" name="solid"/>
  <objectgroup name="Collision Objects"/>
- <objectgroup name="View Guides"/>
+ <objectgroup name="Camera Guides"/>
  <objectgroup name="Map Hints"/>
 </map>

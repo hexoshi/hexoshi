@@ -109,7 +109,7 @@
   <object id="69" type="slope_topleft" x="592" y="808" width="8" height="8"/>
   <object id="70" type="slope_topleft" x="608" y="800" width="8" height="8"/>
  </objectgroup>
- <objectgroup name="View Guides">
+ <objectgroup name="Camera Guides">
   <object id="15" type="camera_x_guide" x="400" y="0" width="400" height="728"/>
   <object id="21" type="camera_x_guide" x="0" y="448" width="400" height="280"/>
  </objectgroup>

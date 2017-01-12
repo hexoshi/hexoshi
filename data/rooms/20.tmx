@@ -62,7 +62,7 @@
   <object id="31" x="320" y="240" width="64" height="176"/>
  </objectgroup>
  <objectgroup name="Collision Objects"/>
- <objectgroup name="View Guides">
+ <objectgroup name="Camera Guides">
   <object id="32" type="camera_y_guide" x="0" y="0" width="800" height="224"/>
  </objectgroup>
  <objectgroup name="Map Hints">

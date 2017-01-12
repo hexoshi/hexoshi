@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="84" tilewidth="8" tileheight="8" nextobjectid="68">
+ <properties>
+  <property name="music" value="late_night_runaway.ogg"/>
+ </properties>
+ <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
+ <tileset firstgid="89" source="../tilesets/extras.tsx"/>
+ <tileset firstgid="166" source="../tilesets/plants.tsx"/>
+ <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
+ <tileset firstgid="232" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="238" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="245" source="../tilesets/artifact.tsx"/>
+ <layer name="Decorations" width="50" height="84">
+  <data encoding="base64" compression="zlib">
+   eJzt2s1OwzAMB/A+/lZx29hubOd9wFuANBhIiBNPgy2tIqoSh5Q4ddP/T7K2tZqTnOo4bRoAgHRLipZiQ7G9xQPFzhN7ihXFeoyJ/kE79gQywTps0VzHgeKomN91r5j7QvGqmB8ApuUcuH4qOov/uwauv2Uc4ztjLgCAuSpVT2tDPQ1W8D7VreemUsN99X7zPtWt53LWcGAP9266nmVqH2fR/PZEu9j0PrcD8g7RBr5rjaHFHUOrH7VUyutCb1NPqG8gsbiOUN9AYnEdQ2AdtmAdtmAdtpSoGWrEvZap7AUl3Gvx7QXvSk+kUujJAQCkexx7Apm8jz0BmDXeq7h93C6k912lXH2l3o1dZMxVy/6tlnXk7IkfIvekfZulPd0lck86w8P5HgD48DnT1PoSn55rfM6EvsS8hWrYWB0LUBvp/QGpJmbu88CX5ylhHrGxYqT3B6SamLnPA1+eD+G/zxQvCWMBQNgPcSdW0g==
+  </data>
+ </layer>
+ <objectgroup name="Powerups"/>
+ <objectgroup name="Enemies">
+  <object id="57" gid="231" x="208" y="240" width="16" height="16"/>
+  <object id="58" gid="231" x="304" y="384" width="16" height="16"/>
+  <object id="60" gid="231" x="152" y="528" width="16" height="16"/>
+  <object id="61" gid="230" x="264" y="504" width="16" height="16"/>
+  <object id="62" gid="230" x="336" y="512" width="16" height="16"/>
+  <object id="63" gid="230" x="80" y="328" width="16" height="16"/>
+  <object id="64" gid="230" x="152" y="296" width="16" height="16"/>
+  <object id="65" gid="230" x="104" y="288" width="16" height="16"/>
+  <object id="66" gid="230" x="336" y="184" width="16" height="16"/>
+  <object id="67" gid="231" x="280" y="640" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup name="player">
+  <object id="2" x="-8" y="0" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Special Blocks">
+  <object id="10" gid="241" x="392" y="96" width="8" height="64">
+   <properties>
+    <property name="dest" value="23.tmx"/>
+   </properties>
+  </object>
+  <object id="11" gid="240" x="0" y="152" width="8" height="64">
+   <properties>
+    <property name="dest" value="24.tmx"/>
+   </properties>
+  </object>
+  <object id="12" gid="240" x="0" y="648" width="8" height="64">
+   <properties>
+    <property name="dest" value="24.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="fake_tile" width="50" height="84">
+  <data encoding="base64" compression="zlib">
+   eJztwYEAAAAAw6D5U9/gBFUBAAAAAAAAAAAAAAAAAAAA8AxBoAAB
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="50" height="84">
+  <data encoding="base64" compression="zlib">
+   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
+  </data>
+ </layer>
+ <objectgroup color="#000000" name="solid">
+  <object id="17" x="0" y="0" width="400" height="40"/>
+  <object id="18" x="0" y="40" width="16" height="56"/>
+  <object id="19" x="336" y="88" width="64" height="56"/>
+  <object id="20" x="208" y="144" width="192" height="16"/>
+  <object id="21" x="0" y="144" width="152" height="64"/>
+  <object id="22" x="0" y="208" width="168" height="32"/>
+  <object id="23" x="0" y="240" width="320" height="16"/>
+  <object id="24" x="368" y="160" width="32" height="144"/>
+  <object id="25" x="0" y="256" width="16" height="272"/>
+  <object id="26" x="0" y="528" width="168" height="48"/>
+  <object id="27" x="0" y="576" width="312" height="16"/>
+  <object id="28" x="0" y="640" width="400" height="32"/>
+  <object id="29" x="352" y="304" width="48" height="80"/>
+  <object id="31" x="232" y="384" width="168" height="8"/>
+  <object id="32" x="216" y="392" width="184" height="8"/>
+  <object id="33" x="200" y="400" width="200" height="8"/>
+  <object id="34" x="184" y="408" width="216" height="8"/>
+  <object id="35" x="168" y="416" width="232" height="8"/>
+  <object id="36" x="152" y="424" width="248" height="8"/>
+  <object id="37" x="136" y="432" width="264" height="8"/>
+  <object id="38" x="120" y="440" width="280" height="8"/>
+  <object id="39" x="104" y="448" width="296" height="8"/>
+  <object id="40" x="88" y="456" width="312" height="8"/>
+  <object id="41" x="48" y="464" width="352" height="16"/>
+  <object id="42" x="384" y="480" width="16" height="160"/>
+ </objectgroup>
+ <objectgroup name="Collision Objects">
+  <object id="43" type="slope_topright" x="168" y="528" width="48" height="48"/>
+  <object id="44" type="slope_topleft" x="280" y="88" width="56" height="56"/>
+  <object id="46" type="slope_topright" x="168" y="208" width="32" height="32"/>
+  <object id="47" type="slope_topleft" x="224" y="384" width="8" height="8"/>
+  <object id="48" type="slope_topleft" x="208" y="392" width="8" height="8"/>
+  <object id="49" type="slope_topleft" x="192" y="400" width="8" height="8"/>
+  <object id="50" type="slope_topleft" x="176" y="408" width="8" height="8"/>
+  <object id="51" type="slope_topleft" x="160" y="416" width="8" height="8"/>
+  <object id="52" type="slope_topleft" x="144" y="424" width="8" height="8"/>
+  <object id="53" type="slope_topleft" x="128" y="432" width="8" height="8"/>
+  <object id="54" type="slope_topleft" x="112" y="440" width="8" height="8"/>
+  <object id="55" type="slope_topleft" x="96" y="448" width="8" height="8"/>
+  <object id="56" type="slope_topleft" x="80" y="456" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Camera Guides"/>
+ <objectgroup name="Map Hints"/>
+</map>

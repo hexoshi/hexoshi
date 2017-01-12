@@ -46,7 +46,7 @@
   </object>
   <object id="13" gid="240" x="0" y="544" width="8" height="64">
    <properties>
-    <property name="dest" value="23.tmx"/>
+    <property name="dest" value="24.tmx"/>
    </properties>
   </object>
  </objectgroup>

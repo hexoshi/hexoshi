@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="17">
+ <properties>
+  <property name="music" value="late_night_runaway.ogg"/>
+ </properties>
+ <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
+ <tileset firstgid="89" source="../tilesets/extras.tsx"/>
+ <tileset firstgid="166" source="../tilesets/plants.tsx"/>
+ <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
+ <tileset firstgid="232" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="238" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="245" source="../tilesets/artifact.tsx"/>
+ <layer name="Decorations" width="50" height="28">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
+  </data>
+ </layer>
+ <objectgroup name="Powerups">
+  <object id="9" gid="246" x="56" y="152" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup name="Enemies"/>
+ <objectgroup name="player">
+  <object id="2" x="-8" y="0" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Special Blocks">
+  <object id="8" gid="241" x="392" y="152" width="8" height="64">
+   <properties>
+    <property name="dest" value="24.tmx"/>
+   </properties>
+  </object>
+  <object id="10" gid="232" x="56" y="152" width="16" height="16"/>
+ </objectgroup>
+ <layer name="fake_tile" width="50" height="28">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
+  </data>
+ </layer>
+ <layer name="Tile Layer 1" width="50" height="28">
+  <data encoding="base64" compression="zlib">
+   eJztWFsOgyAQXNAPkZ+eoqfoRUwf9z9GmWQnThPpZ3VNN5mAqMiwuyCTzWxsKA1zw9RQ/XpoSI7i97KXs2OQtiptyduL1Kv0UaXP4mPgd7L3oX0N8izvVymBpeEZFIvMzcviGsZOH0XngfirFp8H8yU6D+Z6dB7I82TxeXD9js4De88Z4or7anQe/BeJzGPxMnqe06Lv57TocUWLvp/TzuIP7CF/Hr+3xwZgW+vVvYMjGMaNuUc+8Lz77fxx6dT3NvDg2Z7n82z9/ePaqe9t4KH6g+od0XhQN1HtJCIPzD91KcZU7//qyDyoqVHzgn96/rh16nub+gMl1y5gse11+ajg+W+WOvMF19Qdkn3qoVXeow+zrX4dbY1Txm2RZwhqp9Q4qQ9UQZJylvZJvsMxZcEb5846Dg==
+  </data>
+ </layer>
+ <objectgroup color="#000000" name="solid">
+  <object id="11" x="0" y="0" width="400" height="16"/>
+  <object id="12" x="384" y="16" width="16" height="80"/>
+  <object id="13" x="352" y="144" width="48" height="64"/>
+  <object id="14" x="0" y="16" width="16" height="192"/>
+  <object id="15" x="0" y="208" width="400" height="16"/>
+  <object id="16" x="40" y="152" width="48" height="8"/>
+ </objectgroup>
+ <objectgroup name="Collision Objects"/>
+ <objectgroup name="Camera Guides"/>
+ <objectgroup name="Map Hints"/>
+</map>

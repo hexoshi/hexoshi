@@ -2731,9 +2731,22 @@ class MapDisk(Powerup):
             rm_x, rm_y = map_rooms.get(fname, (0, 0))
             rm_w = int(math.ceil(room.width / SCREEN_SIZE[0]))
             rm_h = int(math.ceil(room.height / SCREEN_SIZE[1]))
+            
+            ignore_regions = set()
+            for obj in room.objects:
+                if isinstance(obj, IgnoreRegion):
+                    rx1 = rm_x + get_xregion(obj.bbox_left)
+                    rx2 = rm_x + get_xregion(obj.bbox_right - 1)
+                    ry1 = rm_y + get_yregion(obj.bbox_top)
+                    ry2 = rm_y + get_yregion(obj.bbox_bottom - 1)
+                    for ry in six.moves.range(ry1, ry2 + 1):
+                        for rx in six.moves.range(rx1, rx2 + 1):
+                            ignore_regions.add((rx, ry))
+
             for y in six.moves.range(rm_y, rm_y + rm_h):
                 for x in six.moves.range(rm_x, rm_x + rm_w):
-                    if (x, y) not in map_revealed:
+                    if ((x, y) not in ignore_regions and
+                            (x, y) not in map_revealed):
                         map_revealed = map_revealed[:]
                         map_revealed.append((x, y))
 

@@ -30,8 +30,8 @@
   <object id="47" gid="230" x="440" y="264" width="16" height="16"/>
   <object id="48" gid="230" x="528" y="264" width="16" height="16"/>
   <object id="49" gid="230" x="696" y="264" width="16" height="16"/>
-  <object id="50" gid="230" x="904" y="272" width="16" height="16"/>
-  <object id="51" gid="230" x="976" y="280" width="16" height="16"/>
+  <object id="50" gid="230" x="1088" y="272" width="16" height="16"/>
+  <object id="51" gid="230" x="1152" y="288" width="16" height="16"/>
   <object id="52" gid="230" x="1072" y="576" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="player">
@@ -60,17 +60,17 @@
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">
-  <object id="16" x="0" y="0" width="1200" height="112"/>
-  <object id="17" x="392" y="112" width="808" height="32"/>
+  <object id="16" x="0" y="0" width="400" height="112"/>
+  <object id="17" x="392" y="112" width="8" height="32"/>
   <object id="18" x="224" y="192" width="976" height="48"/>
   <object id="19" x="144" y="240" width="208" height="16"/>
   <object id="20" x="0" y="112" width="16" height="160"/>
   <object id="21" x="0" y="272" width="80" height="64"/>
   <object id="22" x="0" y="336" width="800" height="48"/>
   <object id="23" x="0" y="384" width="976" height="64"/>
-  <object id="24" x="0" y="448" width="1056" height="160"/>
+  <object id="24" x="800" y="448" width="256" height="160"/>
   <object id="25" x="1056" y="528" width="64" height="16"/>
-  <object id="26" x="0" y="656" width="1200" height="16"/>
+  <object id="26" x="800" y="656" width="400" height="16"/>
   <object id="27" x="1168" y="592" width="32" height="64"/>
   <object id="28" x="1184" y="240" width="16" height="352"/>
  </objectgroup>
@@ -86,7 +86,7 @@
   <object id="36" type="camera_y_guide" x="224" y="224" width="672" height="224"/>
   <object id="37" type="camera_x_guide" x="800" y="448" width="400" height="224"/>
   <object id="38" type="camera_x_guide" x="0" y="0" width="400" height="240"/>
-  <object id="53" type="camera_x_guide" x="0" y="0" width="176" height="336"/>
+  <object id="53" type="camera_x_guide" x="0" y="0" width="192" height="336"/>
  </objectgroup>
  <objectgroup name="Map Hints">
   <object id="31" type="map_wall_bottom" x="0" y="440" width="800" height="8"/>

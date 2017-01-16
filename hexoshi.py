@@ -294,8 +294,8 @@ class Game(sge.dsp.Game):
                     map_revealed = list(map_objects.keys())
                 elif self.cheatcode.lower() == "seenitall":
                     map_explored = map_revealed
-                elif self.cheatcode.startswith("teleport"):
-                    warp(self.cheatcode[8:])
+                elif self.cheatcode.startswith("tele"):
+                    warp(self.cheatcode[4:])
                 else:
                     print(_("Invalid cheat code: {}").format(self.cheatcode))
 

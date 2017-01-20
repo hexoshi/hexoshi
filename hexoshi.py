@@ -211,6 +211,7 @@ aim_down_key = [["z"]]
 mode_reset_key = [["shift_left", "shift_right"]]
 mode_key = [["tab"]]
 pause_key = [["enter", "p"]]
+map_key = [["m"]]
 left_js = [[(0, "axis-", 0), (0, "hat_left", 0)]]
 right_js = [[(0, "axis+", 0), (0, "hat_right", 0)]]
 up_js = [[(0, "axis-", 1), (0, "hat_up", 0)]]
@@ -223,6 +224,7 @@ aim_down_js = [[(0, "button", 4), (0, "button", 6)]]
 mode_reset_js = [[(0, "button", 2)]]
 mode_js = [[(0, "button", 8)]]
 pause_js = [[(0, "button", 9)]]
+map_js = [[]]
 save_slots = [None for i in six.moves.range(SAVE_NSLOTS)]
 
 abort = False
@@ -1358,6 +1360,10 @@ class Player(xsge_physics.Collider):
                 self.jump()
             if key in shoot_key[self.player]:
                 self.shoot()
+            if key in map_key[self.player]:
+                if "map" in progress_flags:
+                    play_sound(select_sound)
+                    MapDialog(self.last_xr, self.last_yr).show()
 
         if not isinstance(sge.game.current_room, SpecialScreen):
             if key == "escape" or key in pause_key[self.player]:
@@ -1384,6 +1390,10 @@ class Player(xsge_physics.Collider):
                 if js in pause_js[self.player]:
                     sge.game.current_room.pause(player_x=self.last_xr,
                                                 player_y=self.last_yr)
+                if js in map_js[self.player]:
+                    if "map" in progress_flags:
+                        play_sound(select_sound)
+                        MapDialog(self.last_xr, self.last_yr).show()
             else:
                 if js in jump_js[self.player]:
                     self.jump_release()
@@ -2699,7 +2709,7 @@ class LifeOrb(Powerup):
 class Map(Powerup):
 
     message = _(
-        "HANDHELD MAP\n\nSee mini-map in HUD and full map from pause menu")
+        'HANDHELD MAP\n\nSee mini-map in HUD; see full map by pressing "map" button or from pause menu')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = powerup_map_sprite
@@ -3489,7 +3499,7 @@ class KeyboardMenu(Menu):
         page %= min(len(left_key), len(right_key), len(up_key), len(down_key),
                     len(jump_key), len(shoot_key), len(aim_diag_key),
                     len(aim_up_key), len(aim_down_key), len(mode_reset_key),
-                    len(mode_key), len(pause_key))
+                    len(mode_key), len(pause_key), len(map_key))
 
         def format_key(key):
             if key:
@@ -3510,6 +3520,7 @@ class KeyboardMenu(Menu):
                      _("Reset Mode: {}").format(format_key(mode_reset_key[page])),
                      _("Mode: {}").format(format_key(mode_key[page])),
                      _("Pause: {}").format(format_key(pause_key[page])),
+                     _("Map: {}").format(format_key(map_key[page])),
                      _("Back")]
         self = cls.create(default)
         self.page = page
@@ -3528,7 +3539,8 @@ class KeyboardMenu(Menu):
                         jump_key[self.page], shoot_key[self.page],
                         aim_diag_key[self.page], aim_up_key[self.page],
                         aim_down_key[self.page], mode_reset_key[self.page],
-                        mode_key[self.page], pause_key[self.page]]:
+                        mode_key[self.page], pause_key[self.page],
+                        map_key[self.page]]:
                     if new_key in other_key:
                         if len(other_key) > 1:
                             other_key.remove(new_key)
@@ -3651,6 +3663,15 @@ class KeyboardMenu(Menu):
             else:
                 play_sound(cancel_sound)
             KeyboardMenu.create_page(default=self.choice, page=self.page)
+        elif self.choice == 13:
+            k = wait_key()
+            if k is not None:
+                toggle_key(map_key[self.page], k)
+                set_gui_controls()
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            KeyboardMenu.create_page(default=self.choice, page=self.page)
         else:
             play_sound(cancel_sound)
             OptionsMenu.create_page(default=5)
@@ -3665,7 +3686,7 @@ class JoystickMenu(Menu):
         page %= min(len(left_js), len(right_js), len(up_js), len(down_js),
                     len(jump_js), len(shoot_js), len(aim_diag_js),
                     len(aim_up_js), len(aim_down_js), len(mode_reset_js),
-                    len(mode_js), len(pause_js))
+                    len(mode_js), len(pause_js), len(map_js))
 
         def format_js(js):
             js_template = "{},{},{}"
@@ -3690,6 +3711,7 @@ class JoystickMenu(Menu):
                      _("Reset Mode: {}").format(format_js(mode_reset_js[page])),
                      _("Mode: {}").format(format_js(mode_js[page])),
                      _("Pause: {}").format(format_js(pause_js[page])),
+                     _("Map: {}").format(format_js(map_js[page])),
                      _("Back")]
         self = cls.create(default)
         self.page = page
@@ -3706,9 +3728,10 @@ class JoystickMenu(Menu):
                         jump_js[self.page], shoot_js[self.page],
                         aim_diag_js[self.page], aim_up_js[self.page],
                         aim_down_js[self.page], mode_reset_js[self.page],
-                        mode_js[self.page], pause_js[self.page]]:
+                        mode_js[self.page], pause_js[self.page],
+                        map_js[self.page]]:
                     if new_js in other_js:
-                        other_key.remove(new_js)
+                        other_js.remove(new_js)
 
                 js.append(new_js)
                 while len(js) > 2:
@@ -3820,6 +3843,15 @@ class JoystickMenu(Menu):
             js = wait_js()
             if js is not None:
                 toggle_js(pause_js[self.page], js)
+                set_gui_controls()
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            JoystickMenu.create_page(default=self.choice, page=self.page)
+        elif self.choice == 13:
+            js = wait_js()
+            if js is not None:
+                toggle_js(map_js[self.page], js)
                 set_gui_controls()
                 play_sound(confirm_sound)
             else:
@@ -4112,6 +4144,7 @@ def set_gui_controls():
                            list(itertools.chain.from_iterable(shoot_key)) +
                            list(itertools.chain.from_iterable(pause_key)))
     xsge_gui.escape_keys = (list(itertools.chain.from_iterable(mode_key)) +
+                            list(itertools.chain.from_iterable(map_key)) +
                             ["escape"])
     xsge_gui.next_widget_joystick_events = (
         list(itertools.chain.from_iterable(down_js)))
@@ -4127,7 +4160,8 @@ def set_gui_controls():
         list(itertools.chain.from_iterable(shoot_js)) +
         list(itertools.chain.from_iterable(pause_js)))
     xsge_gui.escape_joystick_events = (
-        list(itertools.chain.from_iterable(mode_js)))
+        list(itertools.chain.from_iterable(mode_js)) +
+        list(itertools.chain.from_iterable(map_js)))
 
 
 def wait_key():
@@ -4341,11 +4375,12 @@ def write_to_disk():
                 "down": down_key, "aim_diag": aim_diag_key, "jump": jump_key,
                 "shoot": shoot_key, "aim_up": aim_up_key,
                 "aim_down": aim_down_key, "mode_reset": mode_reset_key,
-                "mode": mode_key, "pause": pause_key}
+                "mode": mode_key, "pause": pause_key, "map": map_key}
     js_cfg = {"left": left_js, "right": right_js, "up": up_js,
               "down": down_js, "aim_diag": aim_diag_js, "jump": jump_js,
               "shoot": shoot_js, "aim_up": aim_up_js, "aim_down": aim_down_js,
-              "mode_reset": mode_reset_js, "mode": mode_js, "pause": pause_js}
+              "mode_reset": mode_reset_js, "mode": mode_js, "pause": pause_js,
+              "map": map_js}
 
     cfg = {"version": 1, "fullscreen": fullscreen,
            "scale_method": scale_method, "sound_enabled": sound_enabled,
@@ -5026,6 +5061,7 @@ finally:
     mode_reset_key = keys_cfg.get("mode_reset", mode_reset_key)
     mode_key = keys_cfg.get("mode", mode_key)
     pause_key = keys_cfg.get("pause", pause_key)
+    map_key = keys_cfg.get("map", map_key)
 
     js_cfg = cfg.get("joystick", {})
     left_js = [[tuple(j) for j in js] for js in js_cfg.get("left", left_js)]
@@ -5044,6 +5080,7 @@ finally:
                      for js in js_cfg.get("mode_reset", mode_reset_js)]
     mode_js = [[tuple(j) for j in js] for js in js_cfg.get("mode", mode_js)]
     pause_js = [[tuple(j) for j in js] for js in js_cfg.get("pause", pause_js)]
+    map_js = [[tuple(j) for j in js] for js in js_cfg.get("map", map_js)]
 
     set_gui_controls()
 

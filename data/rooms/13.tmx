@@ -19,7 +19,7 @@
  <objectgroup name="Powerups">
   <object id="5" gid="237" x="112" y="104" width="16" height="16">
    <properties>
-    <property name="rooms" value="0.tmx,1.tmx,2.tmx,4.tmx,5.tmx,6.tmx,7.tmx,8.tmx,9.tmx,10.tmx,11.tmx,12.tmx,13.tmx,14.tmx,15.tmx,16.tmx,17.tmx,21.tmx,22.tmx,26.tmx"/>
+    <property name="rooms" value="0.tmx,1.tmx,2.tmx,4.tmx,5.tmx,6.tmx,7.tmx,8.tmx,9.tmx,10.tmx,11.tmx,12.tmx,13.tmx,14.tmx,15.tmx,16.tmx,17.tmx,21.tmx,22.tmx,26.tmx,28.tmx"/>
    </properties>
   </object>
  </objectgroup>

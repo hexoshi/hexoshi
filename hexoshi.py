@@ -236,6 +236,7 @@ current_level = None
 spawn_point = None
 map_revealed = []
 map_explored = []
+map_removed = []
 warp_pads = []
 powerups = []
 progress_flags = []
@@ -2665,13 +2666,26 @@ class Powerup(InteractiveObject):
 
     def touch(self, other):
         global powerups
+        global map_removed
 
         play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
         powerups = powerups[:]
         powerups.append(i)
+
+        # Remove the powerup from the map
+        rm_x, rm_y = map_rooms.get(sge.game.current_room.fname, (0, 0))
+        px = rm_x + get_xregion(self.image_xcenter)
+        py = rm_y + get_yregion(self.image_ycenter)
+        map_removed.append(("powerup", px, py))
+
         self.collect(other)
+
+        for obj in sge.game.current_room.objects:
+            if isinstance(obj, Player):
+                obj.update_hud()
+
         DialogBox(gui_handler, self.message, self.sprite).show()
         self.destroy()
 
@@ -2719,7 +2733,6 @@ class Map(Powerup):
         global progress_flags
         progress_flags = progress_flags[:]
         progress_flags.append("map")
-        other.update_hud()
 
 
 class MapDisk(Powerup):
@@ -2759,10 +2772,6 @@ class MapDisk(Powerup):
                             (x, y) not in map_revealed):
                         map_revealed = map_revealed[:]
                         map_revealed.append((x, y))
-
-        for obj in sge.game.current_room.objects:
-            if isinstance(obj, Player):
-                obj.update_hud()
 
         sge.game.regulate_speed()
 
@@ -4353,6 +4362,7 @@ def set_new_game():
     global warp_pads
     global map_revealed
     global map_explored
+    global map_removed
     global powerups
     global progress_flags
     global etanks
@@ -4363,6 +4373,7 @@ def set_new_game():
     spawn_point = "save"
     map_revealed = []
     map_explored = []
+    map_removed = []
     warp_pads = []
     powerups = []
     progress_flags = []
@@ -4407,6 +4418,7 @@ def save_game():
             "spawn_point": spawn_point,
             "map_revealed": map_revealed,
             "map_explored": map_explored,
+            "map_removed": map_removed,
             "warp_pads": warp_pads,
             "powerups": powerups,
             "progress_flags": progress_flags,
@@ -4422,6 +4434,7 @@ def load_game():
     global spawn_point
     global map_revealed
     global map_explored
+    global map_removed
     global warp_pads
     global powerups
     global progress_flags
@@ -4436,6 +4449,7 @@ def load_game():
         spawn_point = slot.get("spawn_point")
         map_revealed = [tuple(i) for i in slot.get("map_revealed", [])]
         map_explored = [tuple(i) for i in slot.get("map_explored", [])]
+        map_removed = [tuple(i) for i in slot.get("map_removed", [])]
         warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
         powerups = [tuple(i) for i in slot.get("powerups", [])]
         progress_flags = slot.get("progress_flags", [])
@@ -4661,6 +4675,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
         if h is None:
             h = bottom - y + 1
 
+    removed = map_removed[:]
     s_w = w * MAP_CELL_WIDTH
     s_h = h * MAP_CELL_HEIGHT
     map_sprite = sge.gfx.Sprite(width=s_w, height=s_h)
@@ -4675,29 +4690,32 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
     for ox, oy in set(map_objects) & set(map_revealed + map_explored):
         if x <= ox < x + w and y <= oy < y + h:
             for obj in map_objects[(ox, oy)]:
-                dx = (ox - x) * MAP_CELL_WIDTH
-                dy = (oy - y) * MAP_CELL_HEIGHT
-                if obj == "wall_left":
-                    map_sprite.draw_sprite(map_wall_left_sprite, 0, dx, dy)
-                elif obj == "wall_right":
-                    map_sprite.draw_sprite(map_wall_right_sprite, 0, dx, dy)
-                elif obj == "wall_top":
-                    map_sprite.draw_sprite(map_wall_top_sprite, 0, dx, dy)
-                elif obj == "wall_bottom":
-                    map_sprite.draw_sprite(map_wall_bottom_sprite, 0, dx, dy)
-                elif obj == "door_left":
-                    map_sprite.draw_sprite(map_door_left_sprite, 0, dx, dy)
-                elif obj == "door_right":
-                    map_sprite.draw_sprite(map_door_right_sprite, 0, dx, dy)
-                elif obj == "door_top":
-                    map_sprite.draw_sprite(map_door_top_sprite, 0, dx, dy)
-                elif obj == "door_bottom":
-                    map_sprite.draw_sprite(map_door_bottom_sprite, 0, dx, dy)
-                elif obj == "powerup":
-                    if "warp_pad" not in map_objects[(ox, oy)]:
-                        map_sprite.draw_sprite(map_powerup_sprite, 0, dx, dy)
-                elif obj == "warp_pad":
-                    map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
+                if (obj, ox, oy) in removed:
+                    removed.remove((obj, ox, oy))
+                else:
+                    dx = (ox - x) * MAP_CELL_WIDTH
+                    dy = (oy - y) * MAP_CELL_HEIGHT
+                    if obj == "wall_left":
+                        map_sprite.draw_sprite(map_wall_left_sprite, 0, dx, dy)
+                    elif obj == "wall_right":
+                        map_sprite.draw_sprite(map_wall_right_sprite, 0, dx, dy)
+                    elif obj == "wall_top":
+                        map_sprite.draw_sprite(map_wall_top_sprite, 0, dx, dy)
+                    elif obj == "wall_bottom":
+                        map_sprite.draw_sprite(map_wall_bottom_sprite, 0, dx, dy)
+                    elif obj == "door_left":
+                        map_sprite.draw_sprite(map_door_left_sprite, 0, dx, dy)
+                    elif obj == "door_right":
+                        map_sprite.draw_sprite(map_door_right_sprite, 0, dx, dy)
+                    elif obj == "door_top":
+                        map_sprite.draw_sprite(map_door_top_sprite, 0, dx, dy)
+                    elif obj == "door_bottom":
+                        map_sprite.draw_sprite(map_door_bottom_sprite, 0, dx, dy)
+                    elif obj == "powerup":
+                        if "warp_pad" not in map_objects[(ox, oy)]:
+                            map_sprite.draw_sprite(map_powerup_sprite, 0, dx, dy)
+                    elif obj == "warp_pad":
+                        map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
 
     if player_x is not None and player_y is not None:
         dx = (player_x - x) * MAP_CELL_WIDTH

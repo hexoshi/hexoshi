@@ -271,12 +271,7 @@ class Game(sge.dsp.Game):
                               valign="bottom")
 
     def event_key_press(self, key, char):
-        global fullscreen
-
-        if key == "f11":
-            fullscreen = not fullscreen
-            update_fullscreen()
-        elif key == "f7":
+        if key == "f7":
             self.cheatcode = ""
         elif sge.keyboard.get_pressed("f7"):
             if not self.cheatcode:

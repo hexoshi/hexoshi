@@ -71,7 +71,7 @@
   </object>
   <object id="15" gid="240" x="0" y="632" width="8" height="64">
    <properties>
-    <property name="dest" value="30.tmx"/>
+    <property name="dest" value="31.tmx"/>
    </properties>
   </object>
   <object id="16" gid="243" x="296" y="1344" width="64" height="8">

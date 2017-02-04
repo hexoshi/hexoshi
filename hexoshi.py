@@ -945,8 +945,10 @@ class Player(xsge_physics.Collider):
     def camera_target_y(self):
         guides = self.collision(CameraYGuide)
         if guides:
+            self.camera_guided_y = True
             return guides[0].y
         else:
+            self.camera_guided_y = False
             return self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
 
     def __init__(self, x, y, z=0, sprite=None, visible=True, active=True,
@@ -981,6 +983,7 @@ class Player(xsge_physics.Collider):
         healthbar_front_sprite.width = healthbar_width
         self.last_xr = None
         self.last_yr = None
+        self.camera_guided_y = False
 
         if GOD:
             image_blend = sge.gfx.Color("olive")
@@ -1299,18 +1302,19 @@ class Player(xsge_physics.Collider):
             view_min_y = self.y - self.view.height + CAMERA_MARGIN_BOTTOM
             view_max_y = self.y - CAMERA_MARGIN_TOP
 
-            if self.on_floor and self.was_on_floor:
-                view_target_y = self.camera_target_y
+            view_target_y = self.camera_target_y
+            if (self.on_floor and self.was_on_floor) or self.camera_guided_y:
                 if abs(view_target_y - self.view.y) > 0.5:
                     self.view.y += ((view_target_y - self.view.y) *
                                     CAMERA_VSPEED_FACTOR)
                 else:
                     self.view.y = view_target_y
 
-            if self.view.y < view_min_y:
-                self.view.y = view_min_y
-            elif self.view.y > view_max_y:
-                self.view.y = view_max_y
+            if not self.camera_guided_y:
+                if self.view.y < view_min_y:
+                    self.view.y = view_min_y
+                elif self.view.y > view_max_y:
+                    self.view.y = view_max_y
 
         self.last_x = self.x
         self.last_y = self.y

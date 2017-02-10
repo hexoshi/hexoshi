@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="56" tilewidth="8" tileheight="8" nextobjectid="33">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="56" tilewidth="8" tileheight="8" nextobjectid="34">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -63,7 +63,8 @@
  </objectgroup>
  <objectgroup name="Collision Objects"/>
  <objectgroup name="Camera Guides">
-  <object id="32" type="camera_y_guide" x="0" y="0" width="800" height="224"/>
+  <object id="32" type="camera_y_guide" x="96" y="0" width="704" height="224"/>
+  <object id="33" type="camera_x_guide" x="0" y="208" width="320" height="240"/>
  </objectgroup>
  <objectgroup name="Map Hints">
   <object id="25" type="map_wall_right" x="392" y="224" width="8" height="224"/>

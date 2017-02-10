@@ -142,6 +142,7 @@ PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
 WARP_TIME = FPS / 2
 DEATH_TIME = 3 * FPS
+DOUBLETAP_TIME = FPS / 4
 
 ANNEROY_BBOX_X = -7
 ANNEROY_BBOX_WIDTH = 14
@@ -149,6 +150,8 @@ ANNEROY_STAND_BBOX_Y = -16
 ANNEROY_STAND_BBOX_HEIGHT = 40
 ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
+ANNEROY_BALL_BBOX_Y = 10
+ANNEROY_BALL_BBOX_HEIGHT = 14
 ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_BULLET_LIFE = 45
@@ -1495,10 +1498,37 @@ class Anneroy(Player):
         self.torso = None
         self.fixed_sprite = False
         self.crouching = False
+        self.ball = False
         self.last_aim_direction = 0
 
     def press_up(self):
-        if self.crouching:
+        if self.ball:
+            for other in sge.collision.rectangle(
+                    self.x + ANNEROY_BBOX_X, self.y + ANNEROY_CROUCH_BBOX_Y,
+                    ANNEROY_BBOX_WIDTH, ANNEROY_CROUCH_BBOX_HEIGHT):
+                if isinstance(other, (xsge_physics.SolidBottom,
+                                      xsge_physics.SlopeBottomLeft,
+                                      xsge_physics.SlopeBottomRight)):
+                    if not self.collision(other):
+                        break
+            else:
+                if self.fixed_sprite != "compress":
+                    self.reset_image()
+                    self.sprite = anneroy_compress_sprite
+                    self.image_index = anneroy_compress_sprite.frames - 1
+                self.image_speed = -anneroy_compress_sprite.speed
+                self.torso.visible = False
+                self.fixed_sprite = "compress"
+
+                self.ball = False
+                if self.on_floor:
+                    self.crouching = True
+                    self.bbox_y = ANNEROY_CROUCH_BBOX_Y
+                    self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
+                else:
+                    self.bbox_y = ANNEROY_STAND_BBOX_Y
+                    self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
+        elif self.crouching:
             if not self.aim_diag_pressed:
                 for other in sge.collision.rectangle(
                         self.x + ANNEROY_BBOX_X, self.y + ANNEROY_STAND_BBOX_Y,
@@ -1524,159 +1554,190 @@ class Anneroy(Player):
             super(Anneroy, self).press_up()
 
     def press_down(self):
-        h_control = bool(self.right_pressed) - bool(self.left_pressed)
-        if (not self.crouching and not h_control and self.on_floor and
-                self.was_on_floor and not self.aim_diag_pressed):
-            if self.fixed_sprite != "crouch":
-                self.reset_image()
-                self.sprite = anneroy_legs_crouch_sprite
-                self.image_index = 0
-            self.image_speed = anneroy_legs_crouch_sprite.speed
-            self.fixed_sprite = "crouch"
-            self.crouching = True
-            self.bbox_y = ANNEROY_CROUCH_BBOX_Y
-            self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
+        if not self.aim_diag_pressed:
+            h_control = bool(self.right_pressed) - bool(self.left_pressed)
+            if self.on_floor and self.was_on_floor:
+                if self.ball:
+                    # Do nothing
+                    pass
+                elif self.crouching:
+                    self.compress()
+                else:
+                    if not h_control:
+                        if self.fixed_sprite != "crouch":
+                            self.reset_image()
+                            self.sprite = anneroy_legs_crouch_sprite
+                            self.image_index = 0
+                        self.image_speed = anneroy_legs_crouch_sprite.speed
+                        self.fixed_sprite = "crouch"
+                        self.crouching = True
+                        self.bbox_y = ANNEROY_CROUCH_BBOX_Y
+                        self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
+            else:
+                if "compress_pressed" in self.alarms:
+                    self.compress()
+                    del self.alarms["compress_pressed"]
+                else:
+                    self.alarms["compress_pressed"] = DOUBLETAP_TIME
 
     def jump(self):
         if self.crouching:
             self.press_up()
 
-        if not self.crouching:
+        if not self.crouching and not self.ball:
             super(Anneroy, self).jump()
 
     def shoot(self):
         if "shoot_lock" not in self.alarms:
-            if self.aim_direction is None:
-                self.aim_direction = 0
-            self.alarms["shooting"] = 30
-            self.alarms["shoot_lock"] = 15
-
-            if self.aim_direction is not None:
-                self.last_aim_direction = self.aim_direction
+            if self.ball:
+                pass
             else:
-                self.last_aim_direction = 0
+                if self.aim_direction is None:
+                    self.aim_direction = 0
+                self.alarms["shooting"] = 30
+                self.alarms["shoot_lock"] = 15
 
-            x = 0
-            y = 0
-            xv = 0
-            yv = 0
-            image_rotation = 0
+                if self.aim_direction is not None:
+                    self.last_aim_direction = self.aim_direction
+                else:
+                    self.last_aim_direction = 0
 
-            if self.facing > 0:
-                if self.aim_direction == 0:
-                    x = 25
-                    y = -3
-                    xv = ANNEROY_BULLET_SPEED
-                    image_rotation = 0
-                elif self.aim_direction == 1:
-                    x = 22
-                    y = -27
-                    xv = ANNEROY_BULLET_DSPEED
-                    yv = -ANNEROY_BULLET_DSPEED
-                    image_rotation = 315
-                elif self.aim_direction == 2:
-                    x = 6
-                    y = -31
-                    yv = -ANNEROY_BULLET_SPEED
-                    image_rotation = 270
-                elif self.aim_direction == -1:
-                    x = 19
-                    y = 9
-                    xv = ANNEROY_BULLET_DSPEED
-                    yv = ANNEROY_BULLET_DSPEED
-                    image_rotation = 45
-                elif self.aim_direction == -2:
-                    x = 9
-                    y = 21
-                    yv = ANNEROY_BULLET_SPEED
-                    image_rotation = 90
-            else:
-                if self.aim_direction == 0:
-                    x = -25
-                    y = -3
-                    xv = -ANNEROY_BULLET_SPEED
-                    image_rotation = 180
-                elif self.aim_direction == 1:
-                    x = -22
-                    y = -27
-                    xv = -ANNEROY_BULLET_DSPEED
-                    yv = -ANNEROY_BULLET_DSPEED
-                    image_rotation = 225
-                elif self.aim_direction == 2:
-                    x = -6
-                    y = -31
-                    yv = -ANNEROY_BULLET_SPEED
-                    image_rotation = 270
-                elif self.aim_direction == -1:
-                    x = -19
-                    y = 9
-                    xv = -ANNEROY_BULLET_DSPEED
-                    yv = ANNEROY_BULLET_DSPEED
-                    image_rotation = 135
-                elif self.aim_direction == -2:
-                    x = -9
-                    y = 21
-                    yv = ANNEROY_BULLET_SPEED
-                    image_rotation = 90
+                x = 0
+                y = 0
+                xv = 0
+                yv = 0
+                image_rotation = 0
 
-            if x:
-                m = y / x
-            else:
-                m = None
+                if self.facing > 0:
+                    if self.aim_direction == 0:
+                        x = 25
+                        y = -3
+                        xv = ANNEROY_BULLET_SPEED
+                        image_rotation = 0
+                    elif self.aim_direction == 1:
+                        x = 22
+                        y = -27
+                        xv = ANNEROY_BULLET_DSPEED
+                        yv = -ANNEROY_BULLET_DSPEED
+                        image_rotation = 315
+                    elif self.aim_direction == 2:
+                        x = 6
+                        y = -31
+                        yv = -ANNEROY_BULLET_SPEED
+                        image_rotation = 270
+                    elif self.aim_direction == -1:
+                        x = 19
+                        y = 9
+                        xv = ANNEROY_BULLET_DSPEED
+                        yv = ANNEROY_BULLET_DSPEED
+                        image_rotation = 45
+                    elif self.aim_direction == -2:
+                        x = 9
+                        y = 21
+                        yv = ANNEROY_BULLET_SPEED
+                        image_rotation = 90
+                else:
+                    if self.aim_direction == 0:
+                        x = -25
+                        y = -3
+                        xv = -ANNEROY_BULLET_SPEED
+                        image_rotation = 180
+                    elif self.aim_direction == 1:
+                        x = -22
+                        y = -27
+                        xv = -ANNEROY_BULLET_DSPEED
+                        yv = -ANNEROY_BULLET_DSPEED
+                        image_rotation = 225
+                    elif self.aim_direction == 2:
+                        x = -6
+                        y = -31
+                        yv = -ANNEROY_BULLET_SPEED
+                        image_rotation = 270
+                    elif self.aim_direction == -1:
+                        x = -19
+                        y = 9
+                        xv = -ANNEROY_BULLET_DSPEED
+                        yv = ANNEROY_BULLET_DSPEED
+                        image_rotation = 135
+                    elif self.aim_direction == -2:
+                        x = -9
+                        y = 21
+                        yv = ANNEROY_BULLET_SPEED
+                        image_rotation = 90
 
-            xdest = self.torso.x + x
-            ydest = self.torso.y + y
-            guide = xsge_physics.Collider.create(
-                self.torso.x, self.torso.y, sprite=anneroy_bullet_sprite)
-            if self.facing > 0:
-                guide.bbox_right = self.bbox_right
-            else:
-                guide.bbox_left = self.bbox_left
-            if self.aim_direction < 0:
-                guide.bbox_bottom = self.bbox_bottom
-            else:
-                guide.bbox_top = self.bbox_top
-            x += self.torso.x - guide.x
-            y += self.torso.y - guide.y
-            xsteps = int(abs(x) / guide.bbox_width)
-            ysteps = int(abs(y) / guide.bbox_height)
-            xfinal = math.copysign(abs(x) - xsteps * guide.bbox_width, x)
-            yfinal = math.copysign(abs(y) - ysteps * guide.bbox_height, y)
-            for i in six.moves.range(xsteps):
-                guide.move_x(math.copysign(guide.bbox_width, x))
-            for i in six.moves.range(ysteps):
-                guide.move_y(math.copysign(guide.bbox_height, y))
-            guide.move_x(xfinal)
-            guide.move_y(yfinal)
+                if x:
+                    m = y / x
+                else:
+                    m = None
 
-            if abs(self.aim_direction) == 1 and m:
-                target_x = self.torso.x + x
-                target_y = self.torso.y + y
-                xdiff = guide.x - self.torso.x
-                ydiff = guide.y - self.torso.y
-                if abs(guide.x - target_x) >= 1:
-                    guide.y = self.torso.y + m * xdiff
-                elif abs(guide.y - target_y) >= 1:
-                    guide.x = self.torso.x + ydiff / m
+                xdest = self.torso.x + x
+                ydest = self.torso.y + y
+                guide = xsge_physics.Collider.create(
+                    self.torso.x, self.torso.y, sprite=anneroy_bullet_sprite)
+                if self.facing > 0:
+                    guide.bbox_right = self.bbox_right
+                else:
+                    guide.bbox_left = self.bbox_left
+                if self.aim_direction < 0:
+                    guide.bbox_bottom = self.bbox_bottom
+                else:
+                    guide.bbox_top = self.bbox_top
+                x += self.torso.x - guide.x
+                y += self.torso.y - guide.y
+                xsteps = int(abs(x) / guide.bbox_width)
+                ysteps = int(abs(y) / guide.bbox_height)
+                xfinal = math.copysign(abs(x) - xsteps * guide.bbox_width, x)
+                yfinal = math.copysign(abs(y) - ysteps * guide.bbox_height, y)
+                for i in six.moves.range(xsteps):
+                    guide.move_x(math.copysign(guide.bbox_width, x))
+                for i in six.moves.range(ysteps):
+                    guide.move_y(math.copysign(guide.bbox_height, y))
+                guide.move_x(xfinal)
+                guide.move_y(yfinal)
 
-            bs = AnneroyBullet.create(
-                guide.x, guide.y, self.z + 0.2,
-                sprite=anneroy_bullet_sprite, xvelocity=xv,
-                yvelocity=yv, regulate_origin=True,
-                image_xscale=abs(self.image_xscale),
-                image_yscale=self.image_yscale,
-                image_rotation=image_rotation, image_blend=self.image_blend)
+                if abs(self.aim_direction) == 1 and m:
+                    target_x = self.torso.x + x
+                    target_y = self.torso.y + y
+                    xdiff = guide.x - self.torso.x
+                    ydiff = guide.y - self.torso.y
+                    if abs(guide.x - target_x) >= 1:
+                        guide.y = self.torso.y + m * xdiff
+                    elif abs(guide.y - target_y) >= 1:
+                        guide.x = self.torso.x + ydiff / m
 
-            guide.destroy()
+                bs = AnneroyBullet.create(
+                    guide.x, guide.y, self.z + 0.2,
+                    sprite=anneroy_bullet_sprite, xvelocity=xv,
+                    yvelocity=yv, regulate_origin=True,
+                    image_xscale=abs(self.image_xscale),
+                    image_yscale=self.image_yscale,
+                    image_rotation=image_rotation, image_blend=self.image_blend)
 
-            Smoke.create(
-                xdest, ydest, self.torso.z,
-                sprite=anneroy_bullet_dust_sprite, xvelocity=self.xvelocity,
-                yvelocity=self.yvelocity, regulate_origin=True,
-                image_xscale=abs(self.image_xscale),
-                image_yscale=self.image_yscale,
-                image_rotation=image_rotation, image_blend=self.image_blend)
-            play_sound(shoot_sound, xdest, ydest)
+                guide.destroy()
+
+                Smoke.create(
+                    xdest, ydest, self.torso.z,
+                    sprite=anneroy_bullet_dust_sprite,
+                    xvelocity=self.xvelocity, yvelocity=self.yvelocity,
+                    regulate_origin=True, image_xscale=abs(self.image_xscale),
+                    image_yscale=self.image_yscale,
+                    image_rotation=image_rotation,
+                    image_blend=self.image_blend)
+                play_sound(shoot_sound, xdest, ydest)
+
+    def compress(self):
+        if "atomic_compressor" in progress_flags or GOD:
+            if self.fixed_sprite != "compress":
+                self.reset_image()
+                self.sprite = anneroy_compress_sprite
+                self.image_index = 0
+            self.image_speed = anneroy_compress_sprite.speed
+            self.fixed_sprite = "compress"
+            self.torso.visible = False
+            self.crouching = False
+            self.ball = True
+            self.bbox_y = ANNEROY_BALL_BBOX_Y
+            self.bbox_height = ANNEROY_BALL_BBOX_HEIGHT
 
     def kill(self):
         if self.lose_on_death:
@@ -1726,7 +1787,7 @@ class Anneroy(Player):
         idle_torso_left = anneroy_torso_left_idle_sprite
 
         # Turn Anneroy around.
-        if not self.crouching:
+        if not self.crouching and not self.ball:
             if self.facing < 0 and h_control > 0:
                 self.facing = 1
                 if self.fixed_sprite != "turn":
@@ -1753,26 +1814,30 @@ class Anneroy(Player):
         if not self.fixed_sprite:
             self.reset_image()
 
-            # Set legs
-            if self.on_floor and self.was_on_floor:
-                if self.crouching:
-                    self.sprite = anneroy_legs_crouched_sprite
-                else:
-                    xm = (self.xvelocity > 0) - (self.xvelocity < 0)
-                    speed = abs(self.xvelocity)
-                    if speed > 0:
-                        self.sprite = anneroy_legs_run_sprite
-                        self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
-                        if xm != self.facing:
-                            self.image_speed *= -1
-
-                        idle_torso_right = anneroy_torso_right_aim_right_sprite
-                        idle_torso_left = anneroy_torso_left_aim_left_sprite
-                    else:
-                        self.sprite = anneroy_legs_stand_sprite
+            if self.ball:
+                self.sprite = anneroy_ball_sprite
+                self.torso.visible = False
             else:
-                self.sprite = anneroy_legs_jump_sprite
-                self.image_index = -1
+                # Set legs
+                if self.on_floor and self.was_on_floor:
+                    if self.crouching:
+                        self.sprite = anneroy_legs_crouched_sprite
+                    else:
+                        xm = (self.xvelocity > 0) - (self.xvelocity < 0)
+                        speed = abs(self.xvelocity)
+                        if speed > 0:
+                            self.sprite = anneroy_legs_run_sprite
+                            self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
+                            if xm != self.facing:
+                                self.image_speed *= -1
+
+                            idle_torso_right = anneroy_torso_right_aim_right_sprite
+                            idle_torso_left = anneroy_torso_left_aim_left_sprite
+                        else:
+                            self.sprite = anneroy_legs_stand_sprite
+                else:
+                    self.sprite = anneroy_legs_jump_sprite
+                    self.image_index = -1
 
         if "shooting" in self.alarms:
             aim_direction = self.last_aim_direction
@@ -1838,7 +1903,7 @@ class Anneroy(Player):
             self.destroy()
 
     def event_animation_end(self):
-        if self.fixed_sprite in {"turn", "crouch", "anim"}:
+        if self.fixed_sprite in {"turn", "crouch", "compress", "anim"}:
             self.fixed_sprite = False
 
     def event_physics_collision_top(self, other, move_loss):
@@ -1849,19 +1914,23 @@ class Anneroy(Player):
         super(Anneroy, self).event_physics_collision_bottom(other, move_loss)
 
         if not self.was_on_floor:
+            if self.ball:
+                play_sound(land_sound, self.x, self.y)
+            else:
+                self.reset_image()
+                self.sprite = anneroy_legs_land_sprite
+                self.image_speed = None
+                self.image_index = 0
+                self.fixed_sprite = "anim"
+                play_sound(land_sound, self.x, self.y)
+
+    def event_jump(self):
+        if not self.ball:
             self.reset_image()
-            self.sprite = anneroy_legs_land_sprite
+            self.sprite = anneroy_legs_jump_sprite
             self.image_speed = None
             self.image_index = 0
             self.fixed_sprite = "anim"
-            play_sound(land_sound, self.x, self.y)
-
-    def event_jump(self):
-        self.reset_image()
-        self.sprite = anneroy_legs_jump_sprite
-        self.image_speed = None
-        self.image_index = 0
-        self.fixed_sprite = "anim"
 
     def event_destroy(self):
         if self.torso is not None:
@@ -4803,6 +4872,9 @@ fname = os.path.join(d, "anneroy_sheet.png")
 anneroy_turn_sprite = sge.gfx.Sprite.from_tileset(
     fname, 2, 109, 3, xsep=3, width=39, height=43, origin_x=19, origin_y=19,
     fps=10)
+anneroy_ball_sprite = sge.gfx.Sprite(None, width=16, height=16, origin_x=8, origin_y=-6)
+anneroy_ball_sprite.draw_circle(8, 8, 8, sge.gfx.Color("red"))
+anneroy_compress_sprite = anneroy_turn_sprite
 
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)

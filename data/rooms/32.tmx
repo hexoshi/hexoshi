@@ -62,7 +62,7 @@
   </object>
   <object id="19" gid="240" x="0" y="440" width="8" height="64">
    <properties>
-    <property name="dest" value="32.tmx"/>
+    <property name="dest" value="33.tmx"/>
    </properties>
   </object>
  </objectgroup>

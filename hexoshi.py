@@ -320,10 +320,12 @@ class Level(sge.dsp.Room):
                  object_area_width=TILE_SIZE * 2,
                  object_area_height=TILE_SIZE * 2,
                  name=None, bgname=None, music=None, timeline=None,
-                 ambient_light=None, disable_lights=False):
+                 ambient_light=None, disable_lights=False,
+                 music_noloop=False):
         self.fname = None
         self.name = name
         self.music = music
+        self.music_noloop = music_noloop
         self.timeline_objects = {}
         self.shake_queue = 0
         self.death_time = None
@@ -428,10 +430,10 @@ class Level(sge.dsp.Room):
 
         xsge_lighting.clear_lights()
 
-        play_music(self.music)
+        play_music(self.music, noloop=self.music_noloop)
 
     def event_room_resume(self):
-        play_music(self.music)
+        play_music(self.music, noloop=self.music_noloop)
 
     def event_step(self, time_passed, delta_mult):
         global watched_timelines
@@ -3531,7 +3533,8 @@ class OptionsMenu(Menu):
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 3:
             music_enabled = not music_enabled
-            play_music(sge.game.current_room.music)
+            play_music(sge.game.current_room.music,
+                       noloop=sge.game.current_room.music_noloop)
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 4:
             stereo_enabled = not stereo_enabled
@@ -4376,9 +4379,10 @@ def play_sound(sound, x=None, y=None, force=True):
             sound.play(volume=volume, balance=balance, force=force)
 
 
-def play_music(music, force_restart=False):
+def play_music(music, force_restart=False, noloop=False):
     """Play the given music file, starting with its start piece."""
     if music_enabled:
+        loops = 1 if noloop else None
         if music:
             music_object = loaded_music.get(music)
             if music_object is None:
@@ -4411,9 +4415,9 @@ def play_music(music, force_restart=False):
                 sge.snd.Music.stop()
                 if music_start_object is not None:
                     music_start_object.play()
-                    music_object.queue(loops=None)
+                    music_object.queue(loops=loops)
                 else:
-                    music_object.play(loops=None)
+                    music_object.play(loops=loops)
         else:
             sge.snd.Music.clear_queue()
             sge.snd.Music.stop(fade_time=1000)

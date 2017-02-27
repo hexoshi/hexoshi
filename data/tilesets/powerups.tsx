@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="powerups" tilewidth="24" tileheight="16" tilecount="4">
+<tileset name="powerups" tilewidth="24" tileheight="16" tilecount="5">
  <tile id="0">
   <properties>
    <property name="cls" value="etank"/>
@@ -23,5 +23,11 @@
    <property name="cls" value="map_disk"/>
   </properties>
   <image width="16" height="16" source="../images/objects/powerups/map_disk.png"/>
+ </tile>
+ <tile id="4">
+  <properties>
+   <property name="cls" value="atomic_compressor"/>
+  </properties>
+  <image width="16" height="16" source="../images/objects/powerups/life_orb-0.png"/>
  </tile>
 </tileset>

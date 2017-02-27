@@ -2846,6 +2846,20 @@ class MapDisk(Powerup):
         sge.game.regulate_speed()
 
 
+class AtomicCompressor(Powerup):
+
+    message = _('ATOMIC COMPRESSOR\n\nPress "down" to compress into a ball, then press "up" to uncompress')
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["sprite"] = atomic_compressor_sprite
+        super(AtomicCompressor, self).__init__(x, y, **kwargs)
+
+    def collect(self, other):
+        global progress_flags
+        progress_flags = progress_flags[:]
+        progress_flags.append("atomic_compressor")
+
+
 class Tunnel(InteractiveObject):
 
     def __init__(self, x, y, dest=None, **kwargs):
@@ -4818,12 +4832,13 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "fake_tile": FakeTile, "weak_stone": WeakStone,
          "spike_stone": SpikeStone, "artifact": Powerup, "etank": Etank,
          "life_orb": LifeOrb, "map": Map, "map_disk": MapDisk,
-         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
-         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
-         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
-         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
-         "doors": get_object, "stones": get_object, "powerups": get_object,
-         "objects": get_object, "moving_platform_path": MovingPlatformPath,
+         "atomic_compressor": AtomicCompressor, "warp_pad": WarpPad,
+         "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
+         "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
+         "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
+         "enemies": get_object, "doors": get_object, "stones": get_object,
+         "powerups": get_object, "objects": get_object,
+         "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath,
          "player": PlayerLayer, "camera_x_guide": CameraXGuide,
          "camera_y_guide": CameraYGuide, "map_wall_left": MapLeftWall,
@@ -4876,9 +4891,9 @@ fname = os.path.join(d, "anneroy_sheet.png")
 anneroy_turn_sprite = sge.gfx.Sprite.from_tileset(
     fname, 2, 109, 3, xsep=3, width=39, height=43, origin_x=19, origin_y=19,
     fps=10)
-anneroy_ball_sprite = sge.gfx.Sprite(None, width=16, height=16, origin_x=8, origin_y=-6)
-anneroy_ball_sprite.draw_circle(8, 8, 8, sge.gfx.Color("red"))
-anneroy_compress_sprite = anneroy_turn_sprite
+anneroy_compress_sprite = sge.gfx.Sprite("compress", d, origin_x=12,
+                                         origin_y=8, fps=15)
+anneroy_ball_sprite = sge.gfx.Sprite("ball", d, origin_x=8, origin_y=-8)
 
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)
@@ -4988,6 +5003,8 @@ stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 d = os.path.join(DATA, "images", "objects", "powerups")
 life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
 powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
+atomic_compressor_sprite = life_orb_sprite # TODO
+monkey_boots_sprite = life_orb_sprite # TODO
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)

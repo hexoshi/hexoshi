@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="56" tilewidth="8" tileheight="8" nextobjectid="34">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="56" tilewidth="8" tileheight="8" nextobjectid="35">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -9,8 +9,8 @@
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="232" source="../tilesets/stones.tsx"/>
  <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="238" source="../tilesets/doors.tsx"/>
- <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="239" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="245" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="100" height="56">
   <data encoding="base64" compression="zlib">
    eJzt3MtKxDAUANB+vjhLdatd+v4M3+PCnfgzRihSLqWdakzj9By4ZNKmbeDCDCV30jRAaacpzlK0I2MOy0zley4x2kLP/y9K5YPdyEddTpaeAIu6zDj2euDYTeifp7iYcf3aPPU+36W433HskJeBY9sUm17/IcXjjOsBAAAAYC0OMt7rKMVxxvsBsC5xvc2a2t97Hzm3DX1ragCQV6yJbSfGD71zq0+si3zURT7qIh91kY+6yEdd/N8A9tdvvm+tgebn968uOWsGAAAAAPi5q2Z6v5tYa9s3VXcb98G57do5+/HUosScn5vp/W5ire2Xj66Ndbeb0I/74Lx27dQzl/I2cq7WOcM++AQmSjRg
@@ -18,24 +18,25 @@
  </layer>
  <objectgroup name="Powerups">
   <object id="9" gid="234" x="728" y="376" width="24" height="8"/>
+  <object id="34" gid="238" x="144" y="152" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Enemies"/>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="5" gid="241" x="792" y="72" width="8" height="64">
+  <object id="5" gid="242" x="792" y="72" width="8" height="64">
    <properties>
     <property name="dest" value="19.tmx"/>
    </properties>
   </object>
-  <object id="6" gid="240" x="0" y="440" width="8" height="64">
+  <object id="6" gid="241" x="0" y="440" width="8" height="64">
    <properties>
     <property name="dest" value="14.tmx"/>
    </properties>
   </object>
   <object id="7" gid="232" x="320" y="432" width="16" height="16"/>
-  <object id="10" gid="238" x="288" y="216" width="8" height="64"/>
+  <object id="10" gid="239" x="288" y="216" width="8" height="64"/>
  </objectgroup>
  <layer name="fake_tile" width="100" height="56">
   <data encoding="base64" compression="zlib">

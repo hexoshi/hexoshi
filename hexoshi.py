@@ -138,12 +138,16 @@ PLAYER_AIR_FRICTION = 0.01
 PLAYER_JUMP_HEIGHT = 5 * TILE_SIZE + 2
 PLAYER_FALL_SPEED = 7
 PLAYER_SLIDE_SPEED = 0.25
-PLAYER_RUN_FRAMES_PER_PIXEL = 1 / 10
 PLAYER_HITSTUN = FPS
 WARP_TIME = FPS / 2
 DEATH_TIME = 3 * FPS
 DOUBLETAP_TIME = FPS / 4
 
+ANNEROY_BALL_BOUNCE_HEIGHT = 2
+ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
+# This should be 1 / 3, but Anneroy's fast movement makes that animation
+# rate so fast that it looks weird, so a lower rate is being used.
+ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 6
 ANNEROY_BBOX_X = -7
 ANNEROY_BBOX_WIDTH = 14
 ANNEROY_STAND_BBOX_Y = -16
@@ -1502,6 +1506,7 @@ class Anneroy(Player):
         self.crouching = False
         self.ball = False
         self.last_aim_direction = 0
+        self.bouncing = False
 
     def press_up(self):
         if self.ball:
@@ -1728,7 +1733,7 @@ class Anneroy(Player):
                 play_sound(shoot_sound, xdest, ydest)
 
     def compress(self):
-        if "atomic_compressor" in progress_flags or GOD:
+        if "atomic_compressor" in progress_flags:
             if self.fixed_sprite != "compress":
                 self.reset_image()
                 self.sprite = anneroy_compress_sprite
@@ -1738,6 +1743,7 @@ class Anneroy(Player):
             self.torso.visible = False
             self.crouching = False
             self.ball = True
+            self.bouncing = False
             self.bbox_y = ANNEROY_BALL_BBOX_Y
             self.bbox_height = ANNEROY_BALL_BBOX_HEIGHT
 
@@ -1814,11 +1820,19 @@ class Anneroy(Player):
             self.facing = h_control
 
         if not self.fixed_sprite:
+            old_is = self.image_speed
             self.reset_image()
 
             if self.ball:
                 self.sprite = anneroy_ball_sprite
                 self.torso.visible = False
+                if self.on_floor:
+                    xm = (self.xvelocity > 0) - (self.xvelocity < 0)
+                    self.image_speed = abs(self.xvelocity) * ANNEROY_BALL_FRAMES_PER_PIXEL
+                    if xm != self.facing:
+                        self.image_speed *= -1
+                else:
+                    self.image_speed = old_is
             else:
                 # Set legs
                 if self.on_floor and self.was_on_floor:
@@ -1829,7 +1843,7 @@ class Anneroy(Player):
                         speed = abs(self.xvelocity)
                         if speed > 0:
                             self.sprite = anneroy_legs_run_sprite
-                            self.image_speed = speed * PLAYER_RUN_FRAMES_PER_PIXEL
+                            self.image_speed = speed * ANNEROY_RUN_FRAMES_PER_PIXEL
                             if xm != self.facing:
                                 self.image_speed *= -1
 
@@ -1917,6 +1931,12 @@ class Anneroy(Player):
 
         if not self.was_on_floor:
             if self.ball:
+                if self.bouncing:
+                    self.bouncing = False
+                else:
+                    self.bouncing = True
+                    self.yvelocity = get_jump_speed(ANNEROY_BALL_BOUNCE_HEIGHT,
+                                                    self.gravity)
                 play_sound(land_sound, self.x, self.y)
             else:
                 self.reset_image()

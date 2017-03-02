@@ -132,12 +132,15 @@ GRAVITY = 0.4
 PLAYER_MAX_HP = 100
 PLAYER_MAX_SPEED = 3
 PLAYER_ACCELERATION = 0.5
+PLAYER_ROLL_ACCELERATION = 0.25
 PLAYER_AIR_ACCELERATION = 0.1
 PLAYER_FRICTION = 0.75
+PLAYER_ROLL_FRICTION = 0.1
 PLAYER_AIR_FRICTION = 0.01
 PLAYER_JUMP_HEIGHT = 5 * TILE_SIZE + 2
 PLAYER_FALL_SPEED = 7
 PLAYER_SLIDE_SPEED = 0.25
+PLAYER_ROLL_SLIDE_SPEED = 0.75
 PLAYER_HITSTUN = FPS
 WARP_TIME = FPS / 2
 DEATH_TIME = 3 * FPS
@@ -908,13 +911,16 @@ class Player(xsge_physics.Collider):
     max_hp = PLAYER_MAX_HP
     max_speed = PLAYER_MAX_SPEED
     acceleration = PLAYER_ACCELERATION
+    roll_acceleration = PLAYER_ROLL_ACCELERATION
     air_acceleration = PLAYER_AIR_ACCELERATION
     friction = PLAYER_FRICTION
+    roll_friction = PLAYER_ROLL_FRICTION
     air_friction = PLAYER_AIR_FRICTION
     jump_height = PLAYER_JUMP_HEIGHT
     gravity = GRAVITY
     fall_speed = PLAYER_FALL_SPEED
     slide_speed = PLAYER_SLIDE_SPEED
+    roll_slide_speed = PLAYER_ROLL_SLIDE_SPEED
     hitstun_time = PLAYER_HITSTUN
     can_move = True
 
@@ -985,6 +991,7 @@ class Player(xsge_physics.Collider):
         self.etanks_used = 0
         self.hitstun = False
         self.facing = 1
+        self.rolling = False
         self.aim_direction = None
         self.aim_direction_time = 0
         self.view = None
@@ -1248,12 +1255,18 @@ class Player(xsge_physics.Collider):
                     (self.xvelocity > 0 and h_control < 0) or
                     (self.xvelocity < 0 and h_control > 0)):
                 if self.on_floor or self.was_on_floor:
-                    self.xacceleration = self.acceleration * h_control
+                    if self.rolling:
+                        self.xacceleration = self.roll_acceleration * h_control
+                    else:
+                        self.xacceleration = self.acceleration * h_control
                 else:
                     self.xacceleration = self.air_acceleration * h_control
             else:
                 if self.on_floor or self.was_on_floor:
-                    dc = self.friction
+                    if self.rolling:
+                        dc = self.roll_friction
+                    else:
+                        dc = self.friction
                 else:
                     dc = self.air_friction
 
@@ -1264,7 +1277,10 @@ class Player(xsge_physics.Collider):
 
         if current_h_movement and h_control != current_h_movement:
             if self.on_floor or self.was_on_floor:
-                self.xdeceleration = self.friction
+                if self.rolling:
+                    self.xdeceleration = self.roll_friction
+                else:
+                    self.xdeceleration = self.friction
             else:
                 self.xdeceleration = self.air_friction
 
@@ -1274,7 +1290,11 @@ class Player(xsge_physics.Collider):
             else:
                 self.yvelocity = self.fall_speed
         elif self.on_slope:
-            if self.xvelocity:
+            if self.rolling:
+                self.yvelocity = (self.roll_slide_speed *
+                                  (self.on_slope[0].bbox_height /
+                                   self.on_slope[0].bbox_width))
+            elif self.xvelocity:
                 self.yvelocity = (self.slide_speed *
                                   (self.on_slope[0].bbox_height /
                                    self.on_slope[0].bbox_width))
@@ -1470,8 +1490,8 @@ class Player(xsge_physics.Collider):
             self.yvelocity = min(self.yvelocity, 0)
         elif isinstance(other, (xsge_physics.SlopeTopLeft,
                                 xsge_physics.SlopeTopRight)):
-            self.yvelocity = min(self.slide_speed * (other.bbox_height /
-                                                     other.bbox_width),
+            ss = self.roll_slide_speed if self.rolling else self.slide_speed
+            self.yvelocity = min(ss * (other.bbox_height / other.bbox_width),
                                  self.yvelocity)
 
     def event_jump(self):
@@ -1528,6 +1548,7 @@ class Anneroy(Player):
                 self.fixed_sprite = "compress"
 
                 self.ball = False
+                self.rolling = False
                 if self.on_floor:
                     self.crouching = True
                     self.bbox_y = ANNEROY_CROUCH_BBOX_Y
@@ -1743,6 +1764,7 @@ class Anneroy(Player):
             self.torso.visible = False
             self.crouching = False
             self.ball = True
+            self.rolling = True
             self.bouncing = False
             self.bbox_y = ANNEROY_BALL_BBOX_Y
             self.bbox_height = ANNEROY_BALL_BBOX_HEIGHT
@@ -1823,12 +1845,17 @@ class Anneroy(Player):
             old_is = self.image_speed
             self.reset_image()
 
+            if self.xvelocity:
+                xm = (self.xvelocity > 0) - (self.xvelocity < 0)
+            else:
+                real_xv = self.x - self.xprevious
+                xm = (real_xv > 0) - (real_xv < 0)
+
             if self.ball:
                 self.sprite = anneroy_ball_sprite
                 self.torso.visible = False
                 if self.on_floor:
-                    xm = (self.xvelocity > 0) - (self.xvelocity < 0)
-                    self.image_speed = abs(self.xvelocity) * ANNEROY_BALL_FRAMES_PER_PIXEL
+                    self.image_speed = self.speed * ANNEROY_BALL_FRAMES_PER_PIXEL
                     if xm != self.facing:
                         self.image_speed *= -1
                 else:
@@ -1839,11 +1866,9 @@ class Anneroy(Player):
                     if self.crouching:
                         self.sprite = anneroy_legs_crouched_sprite
                     else:
-                        xm = (self.xvelocity > 0) - (self.xvelocity < 0)
-                        speed = abs(self.xvelocity)
-                        if speed > 0:
+                        if self.xvelocity:
                             self.sprite = anneroy_legs_run_sprite
-                            self.image_speed = speed * ANNEROY_RUN_FRAMES_PER_PIXEL
+                            self.image_speed = self.speed * ANNEROY_RUN_FRAMES_PER_PIXEL
                             if xm != self.facing:
                                 self.image_speed *= -1
 
@@ -4968,6 +4993,11 @@ anneroy_bullet_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=12, origin_y=23,
     fps=10)
+
+n = id(anneroy_compress_sprite)
+anneroy_torso_offset[(n, 0)] = (0, 11)
+anneroy_torso_offset[(n, 1)] = (0, 11)
+anneroy_torso_offset[(n, 2)] = (0, 11)
 
 n = id(anneroy_legs_run_sprite)
 anneroy_torso_offset[(n, 1)] = (0, 1)

@@ -147,6 +147,7 @@ DEATH_TIME = 3 * FPS
 DOUBLETAP_TIME = FPS / 4
 
 ANNEROY_BALL_BOUNCE_HEIGHT = 2
+ANNEROY_BALL_FORCE_BOUNCE_SPEED = 4
 ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
 # This should be 1 / 3, but Anneroy's fast movement makes that animation
 # rate so fast that it looks weird, so a lower rate is being used.
@@ -1856,9 +1857,12 @@ class Anneroy(Player):
                 self.sprite = anneroy_ball_sprite
                 self.torso.visible = False
                 if self.on_floor:
-                    self.image_speed = self.speed * ANNEROY_BALL_FRAMES_PER_PIXEL
-                    if xm != self.facing:
-                        self.image_speed *= -1
+                    if xm:
+                        self.image_speed = self.speed * ANNEROY_BALL_FRAMES_PER_PIXEL
+                        if xm != self.facing:
+                            self.image_speed *= -1
+                    else:
+                        self.image_speed = 0
                 else:
                     self.image_speed = old_is
             else:
@@ -1867,7 +1871,7 @@ class Anneroy(Player):
                     if self.crouching:
                         self.sprite = anneroy_legs_crouched_sprite
                     else:
-                        if self.xvelocity:
+                        if xm:
                             self.sprite = anneroy_legs_run_sprite
                             self.image_speed = self.speed * ANNEROY_RUN_FRAMES_PER_PIXEL
                             if xm != self.facing:
@@ -1953,16 +1957,17 @@ class Anneroy(Player):
         self.event_animation_end()
 
     def event_physics_collision_bottom(self, other, move_loss):
+        yv = self.yvelocity
         super(Anneroy, self).event_physics_collision_bottom(other, move_loss)
 
         if not self.was_on_floor:
             if self.ball:
-                if self.bouncing:
-                    self.bouncing = False
-                else:
+                if not self.bouncing or yv >= ANNEROY_BALL_FORCE_BOUNCE_SPEED:
                     self.bouncing = True
                     self.yvelocity = get_jump_speed(ANNEROY_BALL_BOUNCE_HEIGHT,
                                                     self.gravity)
+                else:
+                    self.bouncing = False
                 play_sound(ball_land_sound, self.x, self.y)
             else:
                 self.reset_image()

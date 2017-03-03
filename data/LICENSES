@@ -368,6 +368,14 @@ Source: http://opengameart.org/content/50-rpg-sound-effects
 
 ------------------------------------------------------------------------
 
+sounds/ball_land.ogg
+
+Author: Mito551
+License: CC BY-SA 3.0 <http://creativecommons.org/licenses/by-sa/3.0/>
+Source: https://github.com/minetest/minetest_game/blob/master/mods/default/sounds/default_glass_footstep.ogg
+
+------------------------------------------------------------------------
+
 sounds/hurt.wav
 
 Author: MatzeB

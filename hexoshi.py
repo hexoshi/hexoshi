@@ -1962,7 +1962,7 @@ class Anneroy(Player):
                     self.bouncing = True
                     self.yvelocity = get_jump_speed(ANNEROY_BALL_BOUNCE_HEIGHT,
                                                     self.gravity)
-                play_sound(land_sound, self.x, self.y)
+                play_sound(ball_land_sound, self.x, self.y)
             else:
                 self.reset_image()
                 self.sprite = anneroy_legs_land_sprite
@@ -5126,6 +5126,7 @@ shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
 bullet_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "bullet_death.ogg"), volume=0.2)
 land_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "land.ogg"), volume=0.5)
+ball_land_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "ball_land.ogg"))
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
 powerup_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "powerup.wav"))

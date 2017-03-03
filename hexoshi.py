@@ -2911,6 +2911,20 @@ class AtomicCompressor(Powerup):
         progress_flags.append("atomic_compressor")
 
 
+class MonkeyBoots(Powerup):
+
+    message = _('MONKEY BOOTS\n\nPress "jump" while touching a wall to wall-jump')
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["sprite"] = monkey_boots_sprite
+        super(MonkeyBoots, self).__init__(x, y, **kwargs)
+
+    def collect(self, other):
+        global progress_flags
+        progress_flags = progress_flags[:]
+        progress_flags.append("monkey_boots")
+
+
 class Tunnel(InteractiveObject):
 
     def __init__(self, x, y, dest=None, **kwargs):
@@ -4883,13 +4897,13 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "fake_tile": FakeTile, "weak_stone": WeakStone,
          "spike_stone": SpikeStone, "artifact": Powerup, "etank": Etank,
          "life_orb": LifeOrb, "map": Map, "map_disk": MapDisk,
-         "atomic_compressor": AtomicCompressor, "warp_pad": WarpPad,
-         "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
-         "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
-         "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
-         "enemies": get_object, "doors": get_object, "stones": get_object,
-         "powerups": get_object, "objects": get_object,
-         "moving_platform_path": MovingPlatformPath,
+         "atomic_compressor": AtomicCompressor, "monkey_boots": MonkeyBoots,
+         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
+         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
+         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
+         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
+         "doors": get_object, "stones": get_object, "powerups": get_object,
+         "objects": get_object, "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath,
          "player": PlayerLayer, "camera_x_guide": CameraXGuide,
          "camera_y_guide": CameraYGuide, "map_wall_left": MapLeftWall,

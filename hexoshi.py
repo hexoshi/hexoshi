@@ -1778,6 +1778,7 @@ class Anneroy(Player):
         self.alarms["death"] = ANNEROY_EXPLODE_TIME
         self.input_lock = True
         self.tangible = False
+        self.view_frozen = True
         self.reset_input()
         self.xvelocity = 0
         self.yvelocity = 0

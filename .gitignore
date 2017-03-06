@@ -28,6 +28,7 @@ pip-log.txt
 .mr.developer.cfg
 
 MANIFEST
+data/map/info.json
 data/map/objects.json
 data/map/rooms.json
 map.png

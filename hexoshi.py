@@ -252,6 +252,7 @@ warp_pads = []
 powerups = []
 progress_flags = []
 etanks = 0
+time_taken = 0
 
 spawn_xoffset = 0
 spawn_yoffset = 0
@@ -445,6 +446,9 @@ class Level(sge.dsp.Room):
 
     def event_step(self, time_passed, delta_mult):
         global watched_timelines
+        global time_taken
+
+        time_taken += time_passed / 1000
 
         for view in self.views:
             for obj in self.get_objects_at(
@@ -4049,9 +4053,11 @@ class PauseMenu(ModalMenu):
     @classmethod
     def create(cls, default=0, player_x=None, player_y=None):
         if "map" in progress_flags:
-            items = [_("Continue"), _("View Map"), _("Return to Title Screen")]
+            items = [_("Continue"), _("View Stats"), _("View Map"),
+                     _("Return to Title Screen")]
         else:
-            items = [_("Continue"), _("Return to Title Screen")]
+            items = [_("Continue"), _("View Stats"),
+                     _("Return to Title Screen")]
 
         self = cls.from_text(
             gui_handler, sge.game.width / 2, sge.game.height / 2,
@@ -4068,12 +4074,22 @@ class PauseMenu(ModalMenu):
 
     def event_choose(self):
         if self.choice == 1:
+            seconds = int(time_taken % 60)
+            minutes = int((time_taken / 60) % 60)
+            hours = int(time_taken / 3600)
+            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nArtifacts collected: {powerups} ({powerups_percent}%)").format(
+                hours=hours, minutes=minutes, seconds=seconds,
+                powerups=len(powerups),
+                powerups_percent=int(100 * len(powerups) / num_powerups))
+
+            DialogBox(gui_handler, text).show()
+        elif self.choice == 2:
             if "map" in progress_flags:
                 play_sound(select_sound)
                 MapDialog(self.player_x, self.player_y).show()
             else:
                 sge.game.start_room.start()
-        elif self.choice == 2:
+        elif self.choice == 3:
             sge.game.start_room.start()
         else:
             play_sound(select_sound)
@@ -4517,6 +4533,7 @@ def set_new_game():
     global powerups
     global progress_flags
     global etanks
+    global time_taken
 
     player_name = "Anneroy"
     watched_timelines = []
@@ -4529,6 +4546,7 @@ def set_new_game():
     powerups = []
     progress_flags = []
     etanks = 0
+    time_taken = 0
 
 
 def write_to_disk():
@@ -4573,7 +4591,8 @@ def save_game():
             "warp_pads": warp_pads,
             "powerups": powerups,
             "progress_flags": progress_flags,
-            "etanks": etanks}
+            "etanks": etanks,
+            "time_taken": time_taken}
 
     write_to_disk()
 
@@ -4590,6 +4609,7 @@ def load_game():
     global powerups
     global progress_flags
     global etanks
+    global time_taken
 
     if (current_save_slot is not None and
             save_slots[current_save_slot] is not None):
@@ -4605,6 +4625,7 @@ def load_game():
         powerups = [tuple(i) for i in slot.get("powerups", [])]
         progress_flags = slot.get("progress_flags", [])
         etanks = slot.get("etanks", 0)
+        time_taken = slot.get("time_taken", 0)
     else:
         set_new_game()
 
@@ -4630,12 +4651,14 @@ def start_game():
 def generate_map():
     global map_rooms
     global map_objects
+    global num_powerups
 
     print(_("Generating new map files; this may take some time."))
     files_checked = set()
     files_remaining = {("0.tmx", 0, 0, None, None)}
     map_rooms = {}
     map_objects = {}
+    num_powerups = 0
 
     while files_remaining:
         fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
@@ -4710,6 +4733,7 @@ def generate_map():
                 if (wx, wy) not in ignore_regions:
                     map_objects.setdefault((wx, wy), []).append("warp_pad")
             elif isinstance(obj, Powerup):
+                num_powerups += 1
                 px = rm_x + get_xregion(obj.image_xcenter)
                 py = rm_y + get_yregion(obj.image_ycenter)
                 if (px, py) not in ignore_regions:
@@ -4798,11 +4822,16 @@ def generate_map():
         i = "{},{}".format(x, y)
         f_objects[i] = map_objects[(x, y)]
 
+    info = {"powerups": num_powerups}
+
     with open(os.path.join(DATA, "map", "rooms.json"), 'w') as f:
         json.dump(map_rooms, f, indent=4, sort_keys=True)
 
     with open(os.path.join(DATA, "map", "objects.json"), 'w') as f:
         json.dump(f_objects, f, indent=4, sort_keys=True)
+
+    with open(os.path.join(DATA, "map", "info.json"), 'w') as f:
+        json.dump(info, f, indent=4, sort_keys=True)
 
 
 def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
@@ -5200,6 +5229,14 @@ if not GEN_MAP:
             x, y = tuple(i.split(','))
             j = (int(x), int(y))
             map_objects[j] = d[i]
+
+    try:
+        with open(os.path.join(DATA, "map", "info.json")) as f:
+            d = json.load(f)
+    except (IOError, ValueError):
+        generate_map()
+    else:
+        num_powerups = d.get("powerups", 0)
 else:
     generate_map()
 

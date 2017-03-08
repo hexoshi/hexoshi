@@ -1389,13 +1389,13 @@ class Player(xsge_physics.Collider):
 
     def event_key_press(self, key, char):
         if self.human and not self.input_lock:
-            if key in up_key[self.player]:
+            if key in up_key[self.player] and not self.up_pressed:
                 self.press_up()
-            if key in down_key[self.player]:
+            if key in down_key[self.player] and not self.down_pressed:
                 self.press_down()
-            if key in jump_key[self.player]:
+            if key in jump_key[self.player] and not self.jump_pressed:
                 self.jump()
-            if key in shoot_key[self.player]:
+            if key in shoot_key[self.player] and not self.shoot_pressed:
                 self.shoot()
             if key in map_key[self.player]:
                 if "map" in progress_flags:
@@ -1413,20 +1413,17 @@ class Player(xsge_physics.Collider):
                 self.jump_release()
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
+        js = (js_id, input_type, input_id)
         if self.human and not self.input_lock:
-            js = (js_id, input_type, input_id)
             if value >= joystick_threshold:
-                if js in up_js[self.player]:
+                if js in up_js[self.player] and not self.up_pressed:
                     self.press_up()
-                if js in down_js[self.player]:
+                if js in down_js[self.player] and not self.down_pressed:
                     self.press_down()
-                if js in jump_js[self.player]:
+                if js in jump_js[self.player] and not self.jump_pressed:
                     self.jump()
-                if js in shoot_js[self.player]:
+                if js in shoot_js[self.player] and not self.shoot_pressed:
                     self.shoot()
-                if js in pause_js[self.player]:
-                    sge.game.current_room.pause(player_x=self.last_xr,
-                                                player_y=self.last_yr)
                 if js in map_js[self.player]:
                     if "map" in progress_flags:
                         play_sound(select_sound)
@@ -1434,6 +1431,12 @@ class Player(xsge_physics.Collider):
             else:
                 if js in jump_js[self.player]:
                     self.jump_release()
+
+        if not isinstance(sge.game.current_room, SpecialScreen):
+            if (value >= joystick_threshold and js in pause_js[self.player]
+                    and not self.pause_pressed):
+                sge.game.current_room.pause(player_x=self.last_xr,
+                                            player_y=self.last_yr)
 
     def event_collision(self, other, xdirection, ydirection):
         if isinstance(other, InteractiveObject):

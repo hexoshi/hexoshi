@@ -1860,29 +1860,30 @@ class Anneroy(Player):
         idle_torso_left = anneroy_torso_left_idle_sprite
 
         # Turn Anneroy around.
-        if not self.crouching and not self.ball:
-            if self.facing < 0 and h_control > 0:
-                self.facing = 1
-                if self.fixed_sprite != "turn":
-                    self.reset_image()
-                    self.sprite = anneroy_turn_sprite
-                    self.image_index = 0
-                self.image_speed = anneroy_turn_sprite.speed
-                self.image_xscale = abs(self.image_xscale)
-                self.torso.visible = False
-                self.fixed_sprite = "turn"
-            elif self.facing > 0 and h_control < 0:
-                self.facing = -1
-                if self.fixed_sprite != "turn":
-                    self.reset_image()
-                    self.sprite = anneroy_turn_sprite
-                    self.image_index = anneroy_turn_sprite.frames - 1
-                self.image_speed = -anneroy_turn_sprite.speed
-                self.image_xscale = abs(self.image_xscale)
-                self.torso.visible = False
-                self.fixed_sprite = "turn"
-        elif h_control:
-            self.facing = h_control
+        if not self.fixed_sprite or self.fixed_sprite == "turn":
+            if not self.crouching and not self.ball:
+                if self.facing < 0 and h_control > 0:
+                    self.facing = 1
+                    if self.fixed_sprite != "turn":
+                        self.reset_image()
+                        self.sprite = anneroy_turn_sprite
+                        self.image_index = 0
+                    self.image_speed = anneroy_turn_sprite.speed
+                    self.image_xscale = abs(self.image_xscale)
+                    self.torso.visible = False
+                    self.fixed_sprite = "turn"
+                elif self.facing > 0 and h_control < 0:
+                    self.facing = -1
+                    if self.fixed_sprite != "turn":
+                        self.reset_image()
+                        self.sprite = anneroy_turn_sprite
+                        self.image_index = anneroy_turn_sprite.frames - 1
+                    self.image_speed = -anneroy_turn_sprite.speed
+                    self.image_xscale = abs(self.image_xscale)
+                    self.torso.visible = False
+                    self.fixed_sprite = "turn"
+            elif h_control:
+                self.facing = h_control
 
         if not self.fixed_sprite:
             old_is = self.image_speed

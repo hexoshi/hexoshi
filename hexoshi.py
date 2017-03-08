@@ -144,10 +144,13 @@ PLAYER_ROLL_SLIDE_SPEED = 0.75
 PLAYER_HITSTUN = FPS
 WARP_TIME = FPS / 2
 DEATH_TIME = 3 * FPS
-DOUBLETAP_TIME = FPS / 4
+DOUBLETAP_TIME = FPS / 6
 
 ANNEROY_BALL_BOUNCE_HEIGHT = 2
 ANNEROY_BALL_FORCE_BOUNCE_SPEED = 4
+ANNEROY_WALLJUMP_HEIGHT = 5 * TILE_SIZE
+ANNEROY_WALLJUMP_SPEED = PLAYER_MAX_SPEED
+ANNEROY_WALLJUMP_FRAME_TIME = FPS / 4
 ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
 # This should be 1 / 3, but Anneroy's fast movement makes that animation
 # rate so fast that it looks weird, so a lower rate is being used.
@@ -1530,6 +1533,7 @@ class Anneroy(Player):
         self.fixed_sprite = False
         self.crouching = False
         self.ball = False
+        self.walljumping = False
         self.last_aim_direction = 0
         self.bouncing = False
 
@@ -1617,8 +1621,38 @@ class Anneroy(Player):
         if self.crouching:
             self.press_up()
 
-        if not self.crouching and not self.ball:
-            super(Anneroy, self).jump()
+        if not self.crouching and not self.ball and not self.walljumping:
+            if (not self.on_floor and not self.was_on_floor and
+                    "monkey_boots" in progress_flags):
+                if self.facing > 0 and self.get_right_touching_wall():
+                    self.walljumping = True
+                    self.reset_image()
+                    self.sprite = anneroy_wall_right_sprite
+                    self.image_index = 0
+                    self.image_speed = anneroy_wall_right_sprite.speed
+                    self.image_xscale = abs(self.image_xscale)
+                    self.fixed_sprite = "wall_right"
+                    self.walljumping = True
+                    self.torso.visible = False
+                    self.input_lock = True
+                    self.xvelocity = 0
+                    self.yvelocity = 0
+                    self.gravity = 0
+                elif self.facing < 0 and self.get_left_touching_wall():
+                    self.reset_image()
+                    self.sprite = anneroy_wall_left_sprite
+                    self.image_index = 0
+                    self.image_speed = anneroy_wall_left_sprite.speed
+                    self.image_xscale = abs(self.image_xscale)
+                    self.fixed_sprite = "wall_left"
+                    self.walljumping = True
+                    self.torso.visible = False
+                    self.input_lock = True
+                    self.xvelocity = 0
+                    self.yvelocity = 0
+                    self.gravity = 0
+            else:
+                super(Anneroy, self).jump()
 
     def shoot(self):
         if "shoot_lock" not in self.alarms:
@@ -1955,6 +1989,32 @@ class Anneroy(Player):
     def event_animation_end(self):
         if self.fixed_sprite in {"turn", "crouch", "compress", "anim"}:
             self.fixed_sprite = False
+        elif self.fixed_sprite == "wall_left":
+            self.reset_image()
+            self.sprite = anneroy_walljump_right_sprite
+            self.image_xscale = abs(self.image_xscale)
+            self.fixed_sprite = "walljump_right"
+            self.alarms["fixed_sprite"] = ANNEROY_WALLJUMP_FRAME_TIME
+            self.walljumping = False
+            self.input_lock = False
+            self.facing = 1
+            self.gravity = self.__class__.gravity
+            self.xvelocity = ANNEROY_WALLJUMP_SPEED
+            self.yvelocity = get_jump_speed(ANNEROY_WALLJUMP_HEIGHT,
+                                            self.gravity)
+        elif self.fixed_sprite == "wall_right":
+            self.reset_image()
+            self.sprite = anneroy_walljump_left_sprite
+            self.image_xscale = abs(self.image_xscale)
+            self.fixed_sprite = "walljump_left"
+            self.alarms["fixed_sprite"] = ANNEROY_WALLJUMP_FRAME_TIME
+            self.walljumping = False
+            self.input_lock = False
+            self.facing = -1
+            self.gravity = self.__class__.gravity
+            self.xvelocity = -ANNEROY_WALLJUMP_SPEED
+            self.yvelocity = get_jump_speed(ANNEROY_WALLJUMP_HEIGHT,
+                                            self.gravity)
 
     def event_physics_collision_top(self, other, move_loss):
         super(Anneroy, self).event_physics_collision_top(other, move_loss)
@@ -2685,7 +2745,7 @@ class AnneroyBullet(InteractiveObject):
 
                             if collision_real:
                                 touching = True
-                                if isinstance(obj, Stone):
+                                if isinstance(obj, Stone) and obj.shootable:
                                     obj.destroy()
 
                 if touching:
@@ -2717,7 +2777,7 @@ class AnneroyBullet(InteractiveObject):
 
                             if collision_real:
                                 touching = True
-                                if isinstance(obj, Stone):
+                                if isinstance(obj, Stone) and obj.shootable:
                                     obj.destroy()
 
                 if touching:
@@ -4985,6 +5045,16 @@ fname = os.path.join(d, "anneroy_sheet.png")
 anneroy_turn_sprite = sge.gfx.Sprite.from_tileset(
     fname, 2, 109, 3, xsep=3, width=39, height=43, origin_x=19, origin_y=19,
     fps=10)
+anneroy_wall_right_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 439, 228, 2, xsep=5, width=32, height=45, origin_x=23, origin_y=19,
+    fps=10)
+anneroy_wall_left_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 439, 284, 2, xsep=5, width=31, height=45, origin_x=9, origin_y=19,
+    fps=10)
+anneroy_walljump_left_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 522, 229, width=34, height=46, origin_x=17, origin_y=20)
+anneroy_walljump_right_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 522, 283, width=34, height=46, origin_x=15, origin_y=20)
 anneroy_compress_sprite = sge.gfx.Sprite("compress", d, origin_x=12,
                                          origin_y=8, fps=15)
 anneroy_ball_sprite = sge.gfx.Sprite("ball", d, origin_x=8, origin_y=-8)

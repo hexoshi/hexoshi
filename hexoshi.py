@@ -1537,8 +1537,9 @@ class Anneroy(Player):
         self.crouching = False
         self.ball = False
         self.walljumping = False
-        self.last_aim_direction = 0
+        self.wall_direction = 0
         self.bouncing = False
+        self.last_aim_direction = 0
 
     def press_up(self):
         if self.ball:
@@ -1634,8 +1635,11 @@ class Anneroy(Player):
                     self.image_index = 0
                     self.image_speed = anneroy_wall_right_sprite.speed
                     self.image_xscale = abs(self.image_xscale)
-                    self.fixed_sprite = "wall_right"
+                    self.fixed_sprite = "wall"
                     self.walljumping = True
+                    self.wall_direction = 1
+                    if "fixed_sprite" in self.alarms:
+                        del self.alarms["fixed_sprite"]
                     self.torso.visible = False
                     self.input_lock = True
                     self.xvelocity = 0
@@ -1647,8 +1651,11 @@ class Anneroy(Player):
                     self.image_index = 0
                     self.image_speed = anneroy_wall_left_sprite.speed
                     self.image_xscale = abs(self.image_xscale)
-                    self.fixed_sprite = "wall_left"
+                    self.fixed_sprite = "wall"
                     self.walljumping = True
+                    self.wall_direction = -1
+                    if "fixed_sprite" in self.alarms:
+                        del self.alarms["fixed_sprite"]
                     self.torso.visible = False
                     self.input_lock = True
                     self.xvelocity = 0
@@ -1993,30 +2000,20 @@ class Anneroy(Player):
     def event_animation_end(self):
         if self.fixed_sprite in {"turn", "crouch", "compress", "anim"}:
             self.fixed_sprite = False
-        elif self.fixed_sprite == "wall_left":
+        elif self.fixed_sprite == "wall":
             self.reset_image()
-            self.sprite = anneroy_walljump_right_sprite
+            if self.wall_direction < 0:
+                self.sprite = anneroy_walljump_right_sprite
+            else:
+                self.sprite = anneroy_walljump_left_sprite
             self.image_xscale = abs(self.image_xscale)
-            self.fixed_sprite = "walljump_right"
+            self.fixed_sprite = "walljump"
             self.alarms["fixed_sprite"] = ANNEROY_WALLJUMP_FRAME_TIME
             self.walljumping = False
             self.input_lock = False
-            self.facing = 1
+            self.facing = -self.wall_direction
             self.gravity = self.__class__.gravity
-            self.xvelocity = ANNEROY_WALLJUMP_SPEED
-            self.yvelocity = get_jump_speed(ANNEROY_WALLJUMP_HEIGHT,
-                                            self.gravity)
-        elif self.fixed_sprite == "wall_right":
-            self.reset_image()
-            self.sprite = anneroy_walljump_left_sprite
-            self.image_xscale = abs(self.image_xscale)
-            self.fixed_sprite = "walljump_left"
-            self.alarms["fixed_sprite"] = ANNEROY_WALLJUMP_FRAME_TIME
-            self.walljumping = False
-            self.input_lock = False
-            self.facing = -1
-            self.gravity = self.__class__.gravity
-            self.xvelocity = -ANNEROY_WALLJUMP_SPEED
+            self.xvelocity = ANNEROY_WALLJUMP_SPEED * self.facing
             self.yvelocity = get_jump_speed(ANNEROY_WALLJUMP_HEIGHT,
                                             self.gravity)
 

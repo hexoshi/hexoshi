@@ -154,7 +154,7 @@ ANNEROY_WALLJUMP_FRAME_TIME = FPS / 4
 ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
 # This should be 1 / 3, but Anneroy's fast movement makes that animation
 # rate so fast that it looks weird, so a lower rate is being used.
-ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 6
+ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 3
 ANNEROY_BBOX_X = -7
 ANNEROY_BBOX_WIDTH = 14
 ANNEROY_STAND_BBOX_Y = -16
@@ -4159,45 +4159,40 @@ class PauseMenu(ModalMenu):
 class MapDialog(xsge_gui.Dialog):
 
     def __init__(self, player_x, player_y):
-        self.xcells = int(sge.game.width / MAP_CELL_WIDTH)
-        self.ycells = int(sge.game.height / MAP_CELL_HEIGHT)
-        w = self.xcells * MAP_CELL_WIDTH
-        h = self.ycells * MAP_CELL_HEIGHT
+        xcells = int(sge.game.width / MAP_CELL_WIDTH)
+        ycells = int(sge.game.height / MAP_CELL_HEIGHT)
+        w = sge.game.width
+        h = sge.game.height
         super(MapDialog, self).__init__(
             gui_handler, 0, 0, w, h, background_color=sge.gfx.Color("black"),
             border=False)
-        self.player_x = player_x
-        self.player_y = player_y
-        self.map_x = player_x
-        self.map_y = player_y
         self.map = xsge_gui.Widget(self, 0, 0, 0)
-        self.draw_map()
-
-    def draw_map(self):
-        x = self.map_x - int(self.xcells / 2)
-        y = self.map_y - int(self.ycells / 2)
-        self.map.sprite = draw_map(x, y, self.xcells, self.ycells,
-                                   self.player_x, self.player_y)
+        self.map.sprite = draw_map(player_x=player_x, player_y=player_y)
+        left = 0
+        top = 0
+        for rx, ry in set(map_revealed + map_explored):
+            left = min(left, rx)
+            top = min(top, ry)
+        player_x -= left
+        player_y -= top
+        self.map.x = (xcells // 2 - player_x) * MAP_CELL_WIDTH
+        self.map.y = (ycells // 2 - player_y) * MAP_CELL_HEIGHT
 
     def event_press_left(self):
         play_sound(select_sound)
-        self.map_x -= 1
-        self.draw_map()
+        self.map.x += MAP_CELL_WIDTH
 
     def event_press_right(self):
         play_sound(select_sound)
-        self.map_x += 1
-        self.draw_map()
+        self.map.x -= MAP_CELL_WIDTH
 
     def event_press_up(self):
         play_sound(select_sound)
-        self.map_y -= 1
-        self.draw_map()
+        self.map.y += MAP_CELL_HEIGHT
 
     def event_press_down(self):
         play_sound(select_sound)
-        self.map_y += 1
-        self.draw_map()
+        self.map.y -= MAP_CELL_HEIGHT
 
     def event_press_enter(self):
         play_sound(select_sound)

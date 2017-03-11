@@ -4188,13 +4188,13 @@ class MapDialog(xsge_gui.Dialog):
             border=False)
         self.map = xsge_gui.Widget(self, 0, 0, 0)
         self.map.sprite = draw_map(player_x=player_x, player_y=player_y)
-        left = 0
-        top = 0
+        self.left = 0
+        self.top = 0
         for rx, ry in set(map_revealed + map_explored):
-            left = min(left, rx)
-            top = min(top, ry)
-        player_x -= left
-        player_y -= top
+            self.left = min(self.left, rx)
+            self.top = min(self.top, ry)
+        player_x -= self.left
+        player_y -= self.top
         self.map.x = (xcells // 2 - player_x) * MAP_CELL_WIDTH
         self.map.y = (ycells // 2 - player_y) * MAP_CELL_HEIGHT
 
@@ -4232,11 +4232,12 @@ class TeleportDialog(MapDialog):
         super(TeleportDialog, self).__init__(x, y)
 
     def update_selection(self):
-        self.map_x = self.selection[2]
-        self.map_y = self.selection[3]
-        self.player_x = self.map_x
-        self.player_y = self.map_y
-        self.draw_map()
+        xcells = int(sge.game.width / MAP_CELL_WIDTH)
+        ycells = int(sge.game.height / MAP_CELL_HEIGHT)
+        x = self.selection[2] - self.left
+        y = self.selection[3] - self.top
+        self.map.x = (xcells // 2 - x) * MAP_CELL_WIDTH
+        self.map.y = (ycells // 2 - y) * MAP_CELL_HEIGHT
 
     def event_press_left(self):
         play_sound(select_sound)

@@ -154,8 +154,6 @@ ANNEROY_WALLJUMP_HEIGHT = 5 * TILE_SIZE
 ANNEROY_WALLJUMP_SPEED = PLAYER_MAX_SPEED
 ANNEROY_WALLJUMP_FRAME_TIME = FPS / 4
 ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
-# This should be 1 / 3, but Anneroy's fast movement makes that animation
-# rate so fast that it looks weird, so a lower rate is being used.
 ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 3
 ANNEROY_BBOX_X = -7
 ANNEROY_BBOX_WIDTH = 14

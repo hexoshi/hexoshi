@@ -131,16 +131,18 @@ GRAVITY = 0.4
 
 PLAYER_MAX_HP = 100
 PLAYER_MAX_SPEED = 3
+PLAYER_ROLL_MAX_SPEED = 5
 PLAYER_ACCELERATION = 0.5
 PLAYER_ROLL_ACCELERATION = 0.25
 PLAYER_AIR_ACCELERATION = 0.1
 PLAYER_FRICTION = 0.75
-PLAYER_ROLL_FRICTION = 0.1
+PLAYER_ROLL_FRICTION = 0.02
 PLAYER_AIR_FRICTION = 0.02
 PLAYER_JUMP_HEIGHT = 5 * TILE_SIZE + 2
 PLAYER_FALL_SPEED = 7
 PLAYER_SLIDE_SPEED = 0.25
-PLAYER_ROLL_SLIDE_SPEED = 0.75
+PLAYER_ROLL_SLIDE_SPEED = 0
+PLAYER_ROLL_SLOPE_ACCELERATION = 0.25
 PLAYER_HITSTUN = FPS
 WARP_TIME = FPS / 2
 DEATH_TIME = 3 * FPS
@@ -815,6 +817,9 @@ class SlopeTopLeft(xsge_physics.SlopeTopLeft):
         kwargs.setdefault("checks_collisions", False)
         super(SlopeTopLeft, self).__init__(*args, **kwargs)
 
+    def event_create(self):
+        self.slope_xacceleration = -self.bbox_height / self.bbox_width
+
 
 class SlopeTopRight(xsge_physics.SlopeTopRight):
 
@@ -824,6 +829,9 @@ class SlopeTopRight(xsge_physics.SlopeTopRight):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
         super(SlopeTopRight, self).__init__(*args, **kwargs)
+
+    def event_create(self):
+        self.slope_xacceleration = self.bbox_height / self.bbox_width
 
 
 class SlopeBottomLeft(xsge_physics.SlopeBottomLeft):
@@ -918,6 +926,7 @@ class Player(xsge_physics.Collider):
     name = "Ian C."
     max_hp = PLAYER_MAX_HP
     max_speed = PLAYER_MAX_SPEED
+    roll_max_speed = PLAYER_ROLL_MAX_SPEED
     acceleration = PLAYER_ACCELERATION
     roll_acceleration = PLAYER_ROLL_ACCELERATION
     air_acceleration = PLAYER_AIR_ACCELERATION
@@ -929,8 +938,20 @@ class Player(xsge_physics.Collider):
     fall_speed = PLAYER_FALL_SPEED
     slide_speed = PLAYER_SLIDE_SPEED
     roll_slide_speed = PLAYER_ROLL_SLIDE_SPEED
+    roll_slope_acceleration = PLAYER_ROLL_SLOPE_ACCELERATION
     hitstun_time = PLAYER_HITSTUN
     can_move = True
+
+    @property
+    def slope_acceleration(self):
+        if self.rolling:
+            return self.roll_slope_acceleration
+        else:
+            return 0
+
+    @slope_acceleration.setter
+    def slope_acceleration(self, value):
+        pass
 
     @property
     def hp(self):
@@ -1249,8 +1270,9 @@ class Player(xsge_physics.Collider):
         self.yacceleration = 0
         self.xdeceleration = 0
 
-        if abs(self.xvelocity) >= self.max_speed:
-            self.xvelocity = self.max_speed * current_h_movement
+        max_speed = self.roll_max_speed if self.rolling else self.max_speed
+        if abs(self.xvelocity) >= max_speed:
+            self.xvelocity = max_speed * current_h_movement
 
         if h_control:
             if not self.can_move:

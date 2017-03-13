@@ -167,6 +167,7 @@ ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_BULLET_LIFE = 45
 ANNEROY_EXPLODE_TIME = 0.6 * FPS
+ANNEROY_DECOMPRESS_LAX = 4
 
 CEILING_LAX = 2
 
@@ -1564,22 +1565,60 @@ class Anneroy(Player):
         self.bouncing = False
         self.last_aim_direction = 0
 
+    def get_up_obstructed(self, x, y, w, h, lax=0):
+        for other in sge.collision.rectangle(self.x + x, self.y + y, w, h):
+            if isinstance(other, (xsge_physics.SolidBottom,
+                                  xsge_physics.SlopeBottomLeft,
+                                  xsge_physics.SlopeBottomRight)):
+                if not self.collision(other):
+                    break
+        else:
+            return False
+
+        xstart = self.x
+
+        for i in six.moves.range(lax):
+            self.move_x(-1)
+            if self.x != xstart:
+                for other in sge.collision.rectangle(self.x + x, self.y + y, w,
+                                                     h):
+                    if isinstance(other, (xsge_physics.SolidBottom,
+                                          xsge_physics.SlopeBottomLeft,
+                                          xsge_physics.SlopeBottomRight)):
+                        if not self.collision(other):
+                            break
+                else:
+                    return False
+        self.move_x(xstart - self.x)
+
+        for i in six.moves.range(lax):
+            self.move_x(1)
+            if self.x != xstart:
+                for other in sge.collision.rectangle(self.x + x, self.y + y, w,
+                                                     h):
+                    if isinstance(other, (xsge_physics.SolidBottom,
+                                          xsge_physics.SlopeBottomLeft,
+                                          xsge_physics.SlopeBottomRight)):
+                        if not self.collision(other):
+                            break
+                else:
+                    return False
+        self.move_x(xstart - self.x)
+
+        return True
+
     def press_up(self):
         if self.ball:
-            for other in sge.collision.rectangle(
-                    self.x + ANNEROY_BBOX_X, self.y + ANNEROY_CROUCH_BBOX_Y,
-                    ANNEROY_BBOX_WIDTH, ANNEROY_CROUCH_BBOX_HEIGHT):
-                if isinstance(other, (xsge_physics.SolidBottom,
-                                      xsge_physics.SlopeBottomLeft,
-                                      xsge_physics.SlopeBottomRight)):
-                    if not self.collision(other):
-                        self.reset_image()
-                        self.sprite = anneroy_decompress_fail_sprite
-                        self.image_index = 0
-                        self.image_speed = None
-                        self.torso.visible = False
-                        self.fixed_sprite = "decompress_fail"
-                        break
+            if self.get_up_obstructed(
+                    ANNEROY_BBOX_X, ANNEROY_CROUCH_BBOX_Y,
+                    ANNEROY_BBOX_WIDTH, ANNEROY_CROUCH_BBOX_HEIGHT,
+                    ANNEROY_DECOMPRESS_LAX):
+                self.reset_image()
+                self.sprite = anneroy_decompress_fail_sprite
+                self.image_index = 0
+                self.image_speed = None
+                self.torso.visible = False
+                self.fixed_sprite = "decompress_fail"
             else:
                 if self.fixed_sprite != "compress":
                     self.reset_image()

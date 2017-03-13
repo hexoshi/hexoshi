@@ -202,6 +202,8 @@ SOUND_TILT_LIMIT = 0.75
 
 ETANK_CHAR = '\x80'
 
+ENEMY_TYPES = ["Bat", "Frog"]
+
 backgrounds = {}
 loaded_music = {}
 tux_grab_sprites = {}
@@ -253,6 +255,7 @@ map_explored = []
 map_removed = []
 warp_pads = []
 powerups = []
+enemies_killed = []
 progress_flags = []
 etanks = 0
 time_taken = 0
@@ -2393,6 +2396,8 @@ class Enemy(InteractiveObject):
         pass
 
     def kill(self):
+        global enemies_killed
+
         blend = sge.gfx.Color((255, 255, 255, 0))
         spr = sge.gfx.Sprite.from_tween(
             self.sprite, int(FPS / 6), fps=FPS, blend=blend,
@@ -2409,6 +2414,10 @@ class Enemy(InteractiveObject):
                 random.random() < LIFE_FORCE_CHANCE):
             LifeForce.create(self.image_xcenter, self.image_ycenter,
                              z=self.z - 0.1)
+
+        cn = self.__class__.__name__
+        if cn in ENEMY_TYPES and cn not in enemies_killed:
+            enemies_killed.append(cn)
 
         play_sound(enemy_death_sound, self.image_xcenter, self.image_ycenter)
         self.destroy()
@@ -4158,10 +4167,12 @@ class PauseMenu(ModalMenu):
             seconds = int(time_taken % 60)
             minutes = int((time_taken / 60) % 60)
             hours = int(time_taken / 3600)
-            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nArtifacts collected: {powerups} ({powerups_percent}%)").format(
+            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nArtifacts collected: {powerups} ({powerups_percent}%)\nEnemy types killed: {kills} ({kills_percent}%)").format(
                 hours=hours, minutes=minutes, seconds=seconds,
                 powerups=len(powerups),
-                powerups_percent=int(100 * len(powerups) / num_powerups))
+                powerups_percent=int(100 * len(powerups) / num_powerups),
+                kills=len(enemies_killed),
+                kills_percent=int(100 * len(enemies_killed) / len(ENEMY_TYPES)))
 
             DialogBox(gui_handler, text).show()
         elif self.choice == 2:
@@ -4667,6 +4678,7 @@ def save_game():
             "map_removed": map_removed,
             "warp_pads": warp_pads,
             "powerups": powerups,
+            "enemies_killed": enemies_killed,
             "progress_flags": progress_flags,
             "etanks": etanks,
             "time_taken": time_taken}
@@ -4684,6 +4696,7 @@ def load_game():
     global map_removed
     global warp_pads
     global powerups
+    global enemies_killed
     global progress_flags
     global etanks
     global time_taken
@@ -4700,6 +4713,7 @@ def load_game():
         map_removed = [tuple(i) for i in slot.get("map_removed", [])]
         warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
         powerups = [tuple(i) for i in slot.get("powerups", [])]
+        enemies_killed = slot.get("enemies_killed", [])
         progress_flags = slot.get("progress_flags", [])
         etanks = slot.get("etanks", 0)
         time_taken = slot.get("time_taken", 0)

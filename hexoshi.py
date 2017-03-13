@@ -1573,6 +1573,12 @@ class Anneroy(Player):
                                       xsge_physics.SlopeBottomLeft,
                                       xsge_physics.SlopeBottomRight)):
                     if not self.collision(other):
+                        self.reset_image()
+                        self.sprite = anneroy_decompress_fail_sprite
+                        self.image_index = 0
+                        self.image_speed = None
+                        self.torso.visible = False
+                        self.fixed_sprite = "decompress_fail"
                         break
             else:
                 if self.fixed_sprite != "compress":
@@ -2021,7 +2027,8 @@ class Anneroy(Player):
             self.destroy()
 
     def event_animation_end(self):
-        if self.fixed_sprite in {"turn", "crouch", "compress", "anim"}:
+        if self.fixed_sprite in {"turn", "crouch", "compress", "anim",
+                                 "decompress_fail"}:
             self.fixed_sprite = False
         elif self.fixed_sprite == "wall":
             self.reset_image()
@@ -5089,6 +5096,8 @@ anneroy_walljump_right_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_compress_sprite = sge.gfx.Sprite("compress", d, origin_x=12,
                                          origin_y=8, fps=15)
 anneroy_ball_sprite = sge.gfx.Sprite("ball", d, origin_x=8, origin_y=-8)
+anneroy_decompress_fail_sprite = sge.gfx.Sprite(
+    "decompress_fail", d, origin_x=12, origin_y=8, fps=15)
 
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)
@@ -5145,6 +5154,11 @@ anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fps=10)
 
 n = id(anneroy_compress_sprite)
+anneroy_torso_offset[(n, 0)] = (0, 11)
+anneroy_torso_offset[(n, 1)] = (0, 11)
+anneroy_torso_offset[(n, 2)] = (0, 11)
+
+n = id(anneroy_decompress_fail_sprite)
 anneroy_torso_offset[(n, 0)] = (0, 11)
 anneroy_torso_offset[(n, 1)] = (0, 11)
 anneroy_torso_offset[(n, 2)] = (0, 11)

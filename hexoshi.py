@@ -150,7 +150,7 @@ DOUBLETAP_TIME = FPS / 6
 
 ANNEROY_BALL_BOUNCE_HEIGHT = 2
 ANNEROY_BALL_FORCE_BOUNCE_SPEED = 4
-ANNEROY_WALLJUMP_HEIGHT = 5 * TILE_SIZE
+ANNEROY_WALLJUMP_HEIGHT = 3 * TILE_SIZE
 ANNEROY_WALLJUMP_SPEED = PLAYER_MAX_SPEED
 ANNEROY_WALLJUMP_FRAME_TIME = FPS / 4
 ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
@@ -1022,6 +1022,7 @@ class Player(xsge_physics.Collider):
         self.etanks_used = 0
         self.hitstun = False
         self.facing = 1
+        self.has_jumped = False
         self.rolling = False
         self.aim_direction = None
         self.aim_direction_time = 0
@@ -1103,13 +1104,15 @@ class Player(xsge_physics.Collider):
 
     def jump(self):
         if self.on_floor or self.was_on_floor:
+            self.has_jumped = True
             self.yvelocity = get_jump_speed(self.jump_height, self.gravity)
             self.on_floor = []
             self.was_on_floor = []
             self.event_jump()
 
     def jump_release(self):
-        if self.yvelocity < 0:
+        if self.has_jumped and self.yvelocity < 0:
+            self.has_jumped = False
             self.yvelocity /= 2
 
     def shoot(self):
@@ -1517,6 +1520,8 @@ class Player(xsge_physics.Collider):
                 self.hurt()
 
     def event_physics_collision_bottom(self, other, move_loss):
+        self.has_jumped = False
+
         for block in self.get_bottom_touching_wall():
             if isinstance(block, HurtTop):
                 self.hurt()
@@ -1697,7 +1702,6 @@ class Anneroy(Player):
             if (not self.on_floor and not self.was_on_floor and
                     "monkey_boots" in progress_flags):
                 if self.facing > 0 and self.get_right_touching_wall():
-                    self.walljumping = True
                     self.reset_image()
                     self.sprite = anneroy_wall_right_sprite
                     self.image_index = 0
@@ -1706,6 +1710,7 @@ class Anneroy(Player):
                     self.fixed_sprite = "wall"
                     self.walljumping = True
                     self.wall_direction = 1
+                    self.has_jumped = False
                     if "fixed_sprite" in self.alarms:
                         del self.alarms["fixed_sprite"]
                     self.torso.visible = False
@@ -1722,6 +1727,7 @@ class Anneroy(Player):
                     self.fixed_sprite = "wall"
                     self.walljumping = True
                     self.wall_direction = -1
+                    self.has_jumped = False
                     if "fixed_sprite" in self.alarms:
                         del self.alarms["fixed_sprite"]
                     self.torso.visible = False

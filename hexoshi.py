@@ -4251,6 +4251,7 @@ class MapDialog(xsge_gui.Dialog):
             border=False)
         self.map = xsge_gui.Widget(self, 0, 0, 0)
         self.map.sprite = draw_map(player_x=player_x, player_y=player_y)
+        self.map.tab_focus = False
         self.left = 0
         self.top = 0
         for rx, ry in set(map_revealed + map_explored):
@@ -4290,9 +4291,30 @@ class TeleportDialog(MapDialog):
 
     def __init__(self, selection):
         self.selection = selection
-        x = self.selection[2]
-        y = self.selection[3]
-        super(TeleportDialog, self).__init__(x, y)
+        w = sge.game.width
+        h = sge.game.height
+        super(MapDialog, self).__init__(
+            gui_handler, 0, 0, w, h, background_color=sge.gfx.Color("black"),
+            border=False)
+        self.map = xsge_gui.Widget(self, 0, 0, 0)
+        self.map.sprite = draw_map()
+        self.map.tab_focus = False
+        self.location_indicator = xsge_gui.Widget(self, 0, 0, 1)
+        self.location_indicator.sprite = map_player_sprite
+        self.location_indicator.tab_focus = False
+
+        self.left = 0
+        self.top = 0
+        for rx, ry in set(map_revealed + map_explored):
+            self.left = min(self.left, rx)
+            self.top = min(self.top, ry)
+
+        xcells = int(sge.game.width / MAP_CELL_WIDTH)
+        ycells = int(sge.game.height / MAP_CELL_HEIGHT)
+        self.location_indicator.x = (xcells // 2) * MAP_CELL_WIDTH
+        self.location_indicator.y = (ycells // 2) * MAP_CELL_HEIGHT
+
+        self.update_selection()
 
     def update_selection(self):
         xcells = int(sge.game.width / MAP_CELL_WIDTH)

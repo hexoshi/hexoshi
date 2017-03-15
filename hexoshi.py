@@ -5284,8 +5284,8 @@ stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 d = os.path.join(DATA, "images", "objects", "powerups")
 life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
 powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
-atomic_compressor_sprite = life_orb_sprite # TODO
-monkey_boots_sprite = life_orb_sprite # TODO
+atomic_compressor_sprite = sge.gfx.Sprite("ball", os.path.join(DATA, "images", "objects", "anneroy"), fps=10) # TODO
+monkey_boots_sprite = sge.gfx.Sprite("artifact1", d) # TODO
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)

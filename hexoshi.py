@@ -4240,6 +4240,35 @@ class PauseMenu(ModalMenu):
             else:
                 sge.game.start_room.start()
         elif self.choice == 3:
+            if current_save_slot is not None:
+                slot = save_slots[current_save_slot]
+            else:
+                slot = {}
+
+            if (slot.get("map_revealed") == map_revealed and
+                    slot.get("map_explored") == map_explored and
+                    slot.get("map_removed") == map_removed and
+                    slot.get("warp_pads") == warp_pads and
+                    slot.get("powerups") == powerups and
+                    slot.get("enemies_killed") == enemies_killed and
+                    slot.get("progress_flags") == progress_flags and
+                    slot.get("etanks") == etanks):
+                sge.game.start_room.start()
+            else:
+                text = _("Some progress has not been saved. If you leave the game now, this unsaved progress will be lost. You can save the game by touching any warp pad.")
+                DialogBox(gui_handler, text).show()
+                play_sound(type_sound)
+                LoseProgressMenu.create(1)
+        else:
+            play_sound(select_sound)
+
+
+class LoseProgressMenu(ModalMenu):
+
+    items = [_("Abandon unsaved progress"), _("Return to game")]
+
+    def event_choose(self):
+        if self.choice == 0:
             sge.game.start_room.start()
         else:
             play_sound(select_sound)

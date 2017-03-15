@@ -1687,6 +1687,12 @@ class Anneroy(Player):
                         self.crouching = True
                         self.bbox_y = ANNEROY_CROUCH_BBOX_Y
                         self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
+                    else:
+                        if "compress_pressed" in self.alarms:
+                            self.compress()
+                            del self.alarms["compress_pressed"]
+                        else:
+                            self.alarms["compress_pressed"] = DOUBLETAP_TIME
             else:
                 if "compress_pressed" in self.alarms:
                     self.compress()

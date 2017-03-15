@@ -215,6 +215,7 @@ sound_enabled = True
 music_enabled = True
 stereo_enabled = True
 fps_enabled = False
+diag_aim_lock = False
 joystick_threshold = 0.1
 left_key = [["left", "a"]]
 right_key = [["right", "d"]]
@@ -1254,7 +1255,7 @@ class Player(xsge_physics.Collider):
             self.aim_direction = None
 
         if v_control:
-            if self.aim_diag_pressed:
+            if self.aim_diag_pressed ^ diag_aim_lock:
                 self.aim_direction = 1 * -v_control
             else:
                 self.aim_direction = 2 * -v_control
@@ -3726,6 +3727,7 @@ class OptionsMenu(Menu):
             _("Music: {}").format(_("On") if music_enabled else _("Off")),
             _("Stereo: {}").format(_("On") if stereo_enabled else _("Off")),
             _("Show FPS: {}").format(_("On") if fps_enabled else _("Off")),
+            _("Diagonal Aim Lock: {}").format(_("On") if diag_aim_lock else _("Off")),
             _("Joystick Threshold: {}%").format(int(joystick_threshold * 100)),
             _("Configure keyboard"), _("Configure joysticks"),
             _("Detect joysticks"), _("Back")]
@@ -3738,6 +3740,7 @@ class OptionsMenu(Menu):
         global music_enabled
         global stereo_enabled
         global fps_enabled
+        global diag_aim_lock
         global joystick_threshold
 
         if self.choice == 0:
@@ -3777,6 +3780,10 @@ class OptionsMenu(Menu):
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 6:
             play_sound(select_sound)
+            diag_aim_lock = not diag_aim_lock
+            OptionsMenu.create_page(default=self.choice)
+        elif self.choice == 7:
+            play_sound(select_sound)
             # This somewhat complicated method is to prevent rounding
             # irregularities.
             threshold = ((int(joystick_threshold * 100) + 5) % 100) / 100
@@ -3785,13 +3792,13 @@ class OptionsMenu(Menu):
             joystick_threshold = threshold
             xsge_gui.joystick_threshold = threshold
             OptionsMenu.create_page(default=self.choice)
-        elif self.choice == 7:
-            play_sound(confirm_sound)
-            KeyboardMenu.create_page()
         elif self.choice == 8:
             play_sound(confirm_sound)
-            JoystickMenu.create_page()
+            KeyboardMenu.create_page()
         elif self.choice == 9:
+            play_sound(confirm_sound)
+            JoystickMenu.create_page()
+        elif self.choice == 10:
             sge.joystick.refresh()
             play_sound(heal_sound)
             OptionsMenu.create_page(default=self.choice)
@@ -4762,7 +4769,7 @@ def write_to_disk():
     cfg = {"version": 1, "fullscreen": fullscreen,
            "scale_method": scale_method, "sound_enabled": sound_enabled,
            "music_enabled": music_enabled, "stereo_enabled": stereo_enabled,
-           "fps_enabled": fps_enabled,
+           "fps_enabled": fps_enabled, "diag_aim_lock": diag_aim_lock,
            "joystick_threshold": joystick_threshold, "keys": keys_cfg,
            "joystick": js_cfg}
 
@@ -5480,6 +5487,7 @@ finally:
     music_enabled = cfg.get("music_enabled", music_enabled)
     stereo_enabled = cfg.get("stereo_enabled", stereo_enabled)
     fps_enabled = cfg.get("fps_enabled", fps_enabled)
+    diag_aim_lock = cfg.get("diag_aim_lock", diag_aim_lock)
     joystick_threshold = cfg.get("joystick_threshold", joystick_threshold)
     xsge_gui.joystick_threshold = joystick_threshold
 

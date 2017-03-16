@@ -2976,11 +2976,9 @@ class Powerup(InteractiveObject):
         powerups.append(i)
 
         # Remove the powerup from the map
-        if sge.game.current_room.fname in map_rooms:
-            rm_x, rm_y = map_rooms[sge.game.current_room.fname]
-            px = rm_x + get_xregion(self.image_xcenter)
-            py = rm_y + get_yregion(self.image_ycenter)
-            map_removed.append(("powerup", px, py))
+        px = get_xregion(self.image_xcenter)
+        py = get_yregion(self.image_ycenter)
+        map_removed.append(("powerup", sge.game.current_room.fname, px, py))
 
         self.collect(other)
 
@@ -5110,7 +5108,11 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
         if h is None:
             h = bottom - y + 1
 
-    removed = map_removed[:]
+    removed = []
+    for obj, fname, ox, oy in map_removed:
+        if fname in map_rooms:
+            rm_x, rm_y = map_rooms[fname]
+            removed.append((obj, rm_x + ox, rm_y + oy))
     s_w = w * MAP_CELL_WIDTH
     s_h = h * MAP_CELL_HEIGHT
     map_sprite = sge.gfx.Sprite(width=s_w, height=s_h)

@@ -1095,9 +1095,9 @@ class Player(xsge_physics.Collider):
 
     def press_up(self):
         if not self.aim_diag_pressed:
-            warp_pads = self.collision(WarpPad)
-            if warp_pads:
-                warp_pad = warp_pads[0]
+            warp_pad_objs = self.collision(WarpPad)
+            if warp_pad_objs:
+                warp_pad = warp_pad_objs[0]
                 warp_pad.teleport(self)
 
     def press_down(self):
@@ -1187,11 +1187,19 @@ class Player(xsge_physics.Collider):
             if "map" in progress_flags:
                 w = 7
                 h = 5
-                rm_x, rm_y = map_rooms.get(sge.game.current_room.fname, (0, 0))
-                pl_x = rm_x + get_xregion(self.x)
-                pl_y = rm_y + get_yregion(self.y)
-                x = pl_x - w // 2
-                y = pl_y - h // 2
+
+                if sge.game.current_room.fname in map_rooms:
+                    rm_x, rm_y = map_rooms[sge.game.current_room.fname]
+                    pl_x = rm_x + get_xregion(self.x)
+                    pl_y = rm_y + get_yregion(self.y)
+                    x = pl_x - w // 2
+                    y = pl_y - h // 2
+                else:
+                    x = 0
+                    y = 0
+                    pl_x = None
+                    pl_y = None
+
                 map_s = draw_map(x, y, w, h, pl_x, pl_y)
                 c = sge.gfx.Color((255, 255, 255, 192))
                 map_s.draw_rectangle(0, 0, map_s.width, map_s.height, fill=c,
@@ -1384,20 +1392,21 @@ class Player(xsge_physics.Collider):
         self.last_x = self.x
         self.last_y = self.y
 
-        xr, yr = map_rooms.get(sge.game.current_room.fname, (0, 0))
-        xr += get_xregion(self.x)
-        yr += get_yregion(self.y)
-        if xr != self.last_xr or yr != self.last_yr:
-            pos = (xr, yr)
-            if pos not in map_explored:
-                map_explored = map_explored[:]
-                map_explored.append(pos)
-            if pos not in map_revealed:
-                map_revealed = map_revealed[:]
-                map_revealed.append(pos)
-            self.update_hud()
-        self.last_xr = xr
-        self.last_yr = yr
+        if sge.game.current_room.fname in map_rooms:
+            xr, yr = map_rooms[sge.game.current_room.fname]
+            xr += get_xregion(self.x)
+            yr += get_yregion(self.y)
+            if xr != self.last_xr or yr != self.last_yr:
+                pos = (xr, yr)
+                if pos not in map_explored:
+                    map_explored = map_explored[:]
+                    map_explored.append(pos)
+                if pos not in map_revealed:
+                    map_revealed = map_revealed[:]
+                    map_revealed.append(pos)
+                self.update_hud()
+            self.last_xr = xr
+            self.last_yr = yr
 
         self.show_hud()
 
@@ -2950,10 +2959,11 @@ class Powerup(InteractiveObject):
         powerups.append(i)
 
         # Remove the powerup from the map
-        rm_x, rm_y = map_rooms.get(sge.game.current_room.fname, (0, 0))
-        px = rm_x + get_xregion(self.image_xcenter)
-        py = rm_y + get_yregion(self.image_ycenter)
-        map_removed.append(("powerup", px, py))
+        if sge.game.current_room.fname in map_rooms:
+            rm_x, rm_y = map_rooms[sge.game.current_room.fname]
+            px = rm_x + get_xregion(self.image_xcenter)
+            py = rm_y + get_yregion(self.image_ycenter)
+            map_removed.append(("powerup", px, py))
 
         self.collect(other)
 
@@ -3025,28 +3035,29 @@ class MapDisk(Powerup):
         global map_revealed
 
         for fname in self.rooms:
-            room = Level.load(fname, True)
-            rm_x, rm_y = map_rooms.get(fname, (0, 0))
-            rm_w = int(math.ceil(room.width / SCREEN_SIZE[0]))
-            rm_h = int(math.ceil(room.height / SCREEN_SIZE[1]))
-            
-            ignore_regions = set()
-            for obj in room.objects:
-                if isinstance(obj, IgnoreRegion):
-                    rx1 = rm_x + get_xregion(obj.bbox_left)
-                    rx2 = rm_x + get_xregion(obj.bbox_right - 1)
-                    ry1 = rm_y + get_yregion(obj.bbox_top)
-                    ry2 = rm_y + get_yregion(obj.bbox_bottom - 1)
-                    for ry in six.moves.range(ry1, ry2 + 1):
-                        for rx in six.moves.range(rx1, rx2 + 1):
-                            ignore_regions.add((rx, ry))
+            if fname in map_rooms:
+                room = Level.load(fname, True)
+                rm_x, rm_y = map_rooms[fname]
+                rm_w = int(math.ceil(room.width / SCREEN_SIZE[0]))
+                rm_h = int(math.ceil(room.height / SCREEN_SIZE[1]))
 
-            for y in six.moves.range(rm_y, rm_y + rm_h):
-                for x in six.moves.range(rm_x, rm_x + rm_w):
-                    if ((x, y) not in ignore_regions and
-                            (x, y) not in map_revealed):
-                        map_revealed = map_revealed[:]
-                        map_revealed.append((x, y))
+                ignore_regions = set()
+                for obj in room.objects:
+                    if isinstance(obj, IgnoreRegion):
+                        rx1 = rm_x + get_xregion(obj.bbox_left)
+                        rx2 = rm_x + get_xregion(obj.bbox_right - 1)
+                        ry1 = rm_y + get_yregion(obj.bbox_top)
+                        ry2 = rm_y + get_yregion(obj.bbox_bottom - 1)
+                        for ry in six.moves.range(ry1, ry2 + 1):
+                            for rx in six.moves.range(rx1, rx2 + 1):
+                                ignore_regions.add((rx, ry))
+
+                for y in six.moves.range(rm_y, rm_y + rm_h):
+                    for x in six.moves.range(rm_x, rm_x + rm_w):
+                        if ((x, y) not in ignore_regions and
+                                (x, y) not in map_revealed):
+                            map_revealed = map_revealed[:]
+                            map_revealed.append((x, y))
 
         sge.game.regulate_speed()
 
@@ -3172,9 +3183,8 @@ class WarpPad(SpawnPoint):
         self.sprite = warp_pad_active_sprite
         current_level = sge.game.current_room.fname
         spawn_point = self.spawn_id
-        x, y = map_rooms.get(sge.game.current_room.fname, (0, 0))
-        x += get_xregion(self.image_xcenter)
-        y += get_yregion(self.image_ycenter)
+        x = get_xregion(self.image_xcenter)
+        y = get_yregion(self.image_ycenter)
         i = (sge.game.current_room.fname, self.spawn_id, x, y)
         if i not in warp_pads:
             warp_pads = warp_pads[:]
@@ -3193,9 +3203,8 @@ class WarpPad(SpawnPoint):
         play_sound(teleport_sound, self.image_xcenter, self.image_ycenter)
 
     def teleport(self, other):
-        x, y = map_rooms.get(sge.game.current_room.fname, (0, 0))
-        x += get_xregion(self.image_xcenter)
-        y += get_yregion(self.image_ycenter)
+        x = get_xregion(self.image_xcenter)
+        y = get_yregion(self.image_ycenter)
         i = (sge.game.current_room.fname, self.spawn_id, x, y)
         dlg = TeleportDialog(i)
         dlg.show()
@@ -4299,6 +4308,11 @@ class LoseProgressMenu(ModalMenu):
 class MapDialog(xsge_gui.Dialog):
 
     def __init__(self, player_x, player_y):
+        if player_x is None:
+            player_x = 0
+        if player_y is None:
+            player_y = 0
+
         xcells = int(sge.game.width / MAP_CELL_WIDTH)
         ycells = int(sge.game.height / MAP_CELL_HEIGHT)
         w = sge.game.width
@@ -4374,12 +4388,14 @@ class TeleportDialog(MapDialog):
         self.update_selection()
 
     def update_selection(self):
-        xcells = int(sge.game.width / MAP_CELL_WIDTH)
-        ycells = int(sge.game.height / MAP_CELL_HEIGHT)
-        x = self.selection[2] - self.left
-        y = self.selection[3] - self.top
-        self.map.x = (xcells // 2 - x) * MAP_CELL_WIDTH
-        self.map.y = (ycells // 2 - y) * MAP_CELL_HEIGHT
+        if self.selection[0] in map_rooms:
+            xcells = int(sge.game.width / MAP_CELL_WIDTH)
+            ycells = int(sge.game.height / MAP_CELL_HEIGHT)
+            x, y = map_rooms[self.selection[0]]
+            x += self.selection[2] - self.left
+            y += self.selection[3] - self.top
+            self.map.x = (xcells // 2 - x) * MAP_CELL_WIDTH
+            self.map.y = (ycells // 2 - y) * MAP_CELL_HEIGHT
 
     def event_press_left(self):
         play_sound(select_sound)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="8">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="15">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -17,12 +17,20 @@
    eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
   </data>
  </layer>
- <objectgroup name="Powerups"/>
+ <objectgroup name="Powerups">
+  <object id="9" gid="240" x="320" y="152" width="16" height="16"/>
+ </objectgroup>
  <objectgroup name="Enemies"/>
  <objectgroup name="player">
   <object id="2" x="-8" y="0" width="8" height="8"/>
  </objectgroup>
- <objectgroup name="Special Blocks"/>
+ <objectgroup name="Special Blocks">
+  <object id="8" gid="243" x="0" y="216" width="8" height="64">
+   <properties>
+    <property name="dest" value="37.tmx"/>
+   </properties>
+  </object>
+ </objectgroup>
  <layer name="fake_tile" width="50" height="28">
   <data encoding="base64" compression="zlib">
    eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
@@ -30,10 +38,16 @@
  </layer>
  <layer name="Tile Layer 1" width="50" height="28">
   <data encoding="base64" compression="zlib">
-   eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
+   eJzlWFEKgzAMTVs/tP3ZKXaKXUTGdv9jrIE8fDgKA2Ez2YMH0daYhyGNqSKSOmtnMS7G1pmNk93D3mz2RM8042ycbF81LuSj2Xqi+/AFwkela+ybzfdCsaydD6dcTZNqfYpfaOzIBe86kMvedWhORdChNSBCXqGOedehNTeLfx2T0buOKOeHakjiXwf6ogg6IuRVJB0R6hX6eO86VEOUehXhPC9mr78MZID7gHugvzozLgObwd/jrLgObAb+B8+MT3XUL8RyBP/2PfIXYjmC28BmcF6NapwH6pmBOWSTbW6JmSTmoUm2PkzXMY9s8j67TORrPxPl+Weh9Sxbv4p56n4vYsA7Cz2DOesL6xo5HA==
   </data>
  </layer>
- <objectgroup color="#000000" name="solid"/>
+ <objectgroup color="#000000" name="solid">
+  <object id="10" x="0" y="0" width="400" height="16"/>
+  <object id="11" x="384" y="16" width="16" height="192"/>
+  <object id="12" x="0" y="16" width="16" height="144"/>
+  <object id="13" x="0" y="208" width="400" height="16"/>
+  <object id="14" x="304" y="152" width="48" height="8"/>
+ </objectgroup>
  <objectgroup name="Collision Objects"/>
  <objectgroup name="Camera Guides"/>
  <objectgroup name="Map Hints"/>

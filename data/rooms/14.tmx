@@ -9,8 +9,8 @@
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="232" source="../tilesets/stones.tsx"/>
  <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="238" source="../tilesets/doors.tsx"/>
- <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="240" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="246" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="112">
   <data encoding="base64" compression="zlib">
    eJzt3MtqwzAQheE8fppk13TbeJk2l8dom94W7aK0TxMJIhAHuUaJ8cjK/8GAZBsx3hgxkjyZoGQzF/cuVlE0lgmdaWadQE9qeY876wSAyE76jyZZXO5D+q+JZ36HSARA0abWCQAF2nbcD3OFjVwvbc7wLv259P1c4cfFm1xPzRkAAAD6FmrMjXEeNbl1sbROAgAAdNJ1qC77qO3rT1q7yh2vL/E61ELuaR3K+4zavv4Uald/ifGCJxfPLeMBAAAAAGBF99FrNGaZAQBwnXQvp1XdPOU741ndy5mqmwO4Hm3fsq597qVp+5bpPncgqOW8dC3vcWOdAAZV2pmoXGFvCWeiAAzlyzoBABi5tYuHU7ukmm6uFxeHU5uaLsaKf86gZjn1Dr/maF2DD2do1H/1Dj1v49ccqcGP0xF3ODtd
@@ -22,24 +22,24 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="6" gid="241" x="392" y="360" width="8" height="64">
+  <object id="6" gid="243" x="392" y="360" width="8" height="64">
    <properties>
     <property name="dest" value="10.tmx"/>
    </properties>
   </object>
-  <object id="7" gid="241" x="392" y="168" width="8" height="64">
+  <object id="7" gid="243" x="392" y="168" width="8" height="64">
    <properties>
-    <property name="dest" value="14.tmx"/>
+    <property name="dest" value="36.tmx"/>
    </properties>
   </object>
-  <object id="9" gid="241" x="392" y="888" width="8" height="64">
+  <object id="9" gid="243" x="392" y="888" width="8" height="64">
    <properties>
     <property name="dest" value="20.tmx"/>
    </properties>
   </object>
   <object id="10" gid="233" x="224" y="176" width="16" height="16"/>
   <object id="11" gid="233" x="224" y="240" width="16" height="16"/>
-  <object id="12" gid="240" x="0" y="600" width="8" height="64">
+  <object id="12" gid="242" x="0" y="600" width="8" height="64">
    <properties>
     <property name="dest" value="21.tmx"/>
    </properties>

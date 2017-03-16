@@ -3084,7 +3084,7 @@ class HedgehogHormone(Powerup):
     message = _('HEDGEHOG HORMONE\n\nPress "shoot" while in the form of a ball to grow spikes')
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = atomic_compressor_sprite
+        kwargs["sprite"] = hedgehog_hormone_sprite
         super(HedgehogHormone, self).__init__(x, y, **kwargs)
 
     def collect(self, other):
@@ -5149,12 +5149,13 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "spike_stone": SpikeStone, "artifact": Powerup, "etank": Etank,
          "life_orb": LifeOrb, "map": Map, "map_disk": MapDisk,
          "atomic_compressor": AtomicCompressor, "monkey_boots": MonkeyBoots,
-         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
-         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
-         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
-         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
-         "doors": get_object, "stones": get_object, "powerups": get_object,
-         "objects": get_object, "moving_platform_path": MovingPlatformPath,
+         "hedgehog_hormone": HedgehogHormone, "warp_pad": WarpPad,
+         "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
+         "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
+         "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
+         "enemies": get_object, "doors": get_object, "stones": get_object,
+         "powerups": get_object, "objects": get_object,
+         "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath,
          "player": PlayerLayer, "camera_x_guide": CameraXGuide,
          "camera_y_guide": CameraYGuide, "map_wall_left": MapLeftWall,
@@ -5343,6 +5344,7 @@ life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
 powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
 atomic_compressor_sprite = sge.gfx.Sprite("ball", os.path.join(DATA, "images", "objects", "anneroy"), fps=10) # TODO
 monkey_boots_sprite = sge.gfx.Sprite("artifact1", d) # TODO
+hedgehog_hormone_sprite = sge.gfx.Sprite("artifact2", d) # TODO
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)

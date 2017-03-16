@@ -3079,6 +3079,20 @@ class MonkeyBoots(Powerup):
         progress_flags.append("monkey_boots")
 
 
+class HedgehogHormone(Powerup):
+
+    message = _('HEDGEHOG HORMONE\n\nPress "shoot" while in the form of a ball to grow spikes')
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["sprite"] = atomic_compressor_sprite
+        super(HedgehogHormone, self).__init__(x, y, **kwargs)
+
+    def collect(self, other):
+        global progress_flags
+        progress_flags = progress_flags[:]
+        progress_flags.append("hedgehog_hormone")
+
+
 class Tunnel(InteractiveObject):
 
     def __init__(self, x, y, dest=None, **kwargs):

@@ -278,12 +278,14 @@ rooms/35.tmx
 rooms/36.tmx
 rooms/37.tmx
 rooms/38.tmx
+rooms/39.tmx
 rooms/special/credits.tmx
 rooms/special/title_screen.tmx
 tilesets/artifact.tsx
 tilesets/doors.tsx
 tilesets/enemies.tsx
 tilesets/extras.tsx
+tilesets/macguffin.tsx
 tilesets/main_blue.tsx
 tilesets/main_green.tsx
 tilesets/main_orange.tsx

@@ -8,9 +8,9 @@
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
  <tileset firstgid="232" source="../tilesets/stones.tsx"/>
- <tileset firstgid="233" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="237" source="../tilesets/doors.tsx"/>
- <tileset firstgid="243" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="241" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="247" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="250" height="28">
   <data encoding="base64" compression="zlib">
    eJzt3ElOwzAUAFAfHwS7sqZdMl4DCpQNbACJu+BKjRRFceq4LiHoPemrbfo9fA/bhAAA/CenBW0uYywTsao2sxAWMS4q9leqr97VyD6OVUvf/k25br89bo1aS+5A29B9GHNWSms5KWgDzNdi6gkAAAAAAAAAAAAAAAAAAAAAAJPwviG27jJyrmJc78m5iXHf82zObv9on3Nc1xp155zDMWrub849GpPX1tyrkraNze7zfCBnHeNp9/07kfMc47XnWdvnuKkNOks879bxfsAYLwe0PWaf3XWtIbX/qXVOnYNUm5K6vzq/2+cwx8ee/1NzeojxmDlGc6Y3g1khvGXm9Wnu1bZtaj8AAACA6fwAGeQ8yw==
@@ -22,14 +22,14 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="3" gid="239" x="0" y="200" width="8" height="64">
+  <object id="3" gid="243" x="0" y="200" width="8" height="64">
    <properties>
     <property name="dest" value="5.tmx"/>
    </properties>
   </object>
-  <object id="21" gid="242" x="1872" y="224" width="64" height="8">
+  <object id="21" gid="246" x="1872" y="224" width="64" height="8">
    <properties>
-    <property name="dest" value="9.tmx"/>
+    <property name="dest" value="39.tmx"/>
    </properties>
   </object>
  </objectgroup>

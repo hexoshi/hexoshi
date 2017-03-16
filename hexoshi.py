@@ -1134,6 +1134,7 @@ class Player(xsge_physics.Collider):
 
     def kill(self):
         if self.lose_on_death:
+            sge.snd.Music.clear_queue()
             sge.snd.Music.stop()
             sge.game.current_room.alarms["death"] = DEATH_TIME
 
@@ -1911,6 +1912,7 @@ class Anneroy(Player):
 
     def kill(self):
         if self.lose_on_death:
+            sge.snd.Music.clear_queue()
             sge.snd.Music.stop()
             sge.game.current_room.alarms["death"] = DEATH_TIME
 
@@ -2939,6 +2941,21 @@ class WeakStone(Stone):
 class SpikeStone(Stone):
 
     spikeable = True
+
+
+class Macguffin(InteractiveObject):
+
+    def touch(self, other):
+        sge.snd.Music.clear_queue()
+        sge.snd.Music.stop()
+        play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
+
+        msg1 = _("MACGUFFIN\n\nThis is the end of the demo! Thank you for playing Hexoshi version {}.".format(__version__))
+        msg2 = _("Don't worry; the full game will not end this way. This is just a placeholder until the game is completed. I hope you enjoyed what you have seen so far, and I hope you enjoy the final game when it is finished! :)")
+        DialogBox(gui_handler, msg1, self.sprite).show()
+        DialogBox(gui_handler, msg2, self.sprite).show()
+
+        sge.game.current_room.win_game()
 
 
 class Powerup(InteractiveObject):
@@ -5162,16 +5179,16 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "frog": Frog, "bat": Bat,
          "fake_tile": FakeTile, "weak_stone": WeakStone,
-         "spike_stone": SpikeStone, "artifact": Powerup, "etank": Etank,
-         "life_orb": LifeOrb, "map": Map, "map_disk": MapDisk,
-         "atomic_compressor": AtomicCompressor, "monkey_boots": MonkeyBoots,
-         "hedgehog_hormone": HedgehogHormone, "warp_pad": WarpPad,
-         "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
-         "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
-         "door_down": DownDoor, "timeline_switcher": TimelineSwitcher,
-         "enemies": get_object, "doors": get_object, "stones": get_object,
-         "powerups": get_object, "objects": get_object,
-         "moving_platform_path": MovingPlatformPath,
+         "spike_stone": SpikeStone, "macguffin": Macguffin,
+         "artifact": Powerup, "etank": Etank, "life_orb": LifeOrb, "map": Map,
+         "map_disk": MapDisk, "atomic_compressor": AtomicCompressor,
+         "monkey_boots": MonkeyBoots, "hedgehog_hormone": HedgehogHormone,
+         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
+         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
+         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
+         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
+         "doors": get_object, "stones": get_object, "powerups": get_object,
+         "objects": get_object, "moving_platform_path": MovingPlatformPath,
          "triggered_moving_platform_path": TriggeredMovingPlatformPath,
          "player": PlayerLayer, "camera_x_guide": CameraXGuide,
          "camera_y_guide": CameraYGuide, "map_wall_left": MapLeftWall,

@@ -1695,11 +1695,12 @@ class Anneroy(Player):
                         else:
                             self.alarms["compress_pressed"] = DOUBLETAP_TIME
             else:
-                if "compress_pressed" in self.alarms:
-                    self.compress()
-                    del self.alarms["compress_pressed"]
-                else:
-                    self.alarms["compress_pressed"] = DOUBLETAP_TIME
+                if not self.ball:
+                    if "compress_pressed" in self.alarms:
+                        self.compress()
+                        del self.alarms["compress_pressed"]
+                    else:
+                        self.alarms["compress_pressed"] = DOUBLETAP_TIME
 
     def jump(self):
         if self.crouching:

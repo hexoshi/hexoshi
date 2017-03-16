@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="56" tilewidth="8" tileheight="8" nextobjectid="100">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="56" tilewidth="8" tileheight="8" nextobjectid="102">
  <properties>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
@@ -128,5 +128,7 @@
  <objectgroup name="Map Hints">
   <object id="98" type="map_wall_top" x="0" y="224" width="400" height="8"/>
   <object id="99" type="map_wall_bottom" x="0" y="216" width="400" height="8"/>
+  <object id="100" type="map_door_left" x="400" y="0" width="8" height="224"/>
+  <object id="101" type="map_door_right" x="392" y="0" width="8" height="224"/>
  </objectgroup>
 </map>

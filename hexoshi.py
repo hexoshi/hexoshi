@@ -2173,10 +2173,10 @@ class Anneroy(Player):
         super(Anneroy, self).event_physics_collision_bottom(other, move_loss)
 
         if not self.was_on_floor:
-            if self.ball:
-                if (not self.hedgehog and
-                        (not self.bouncing or
-                         yv >= ANNEROY_BALL_FORCE_BOUNCE_SPEED)):
+            if self.hedgehog:
+                play_sound(ball_land_sound, self.x, self.y)
+            elif self.ball:
+                if not self.bouncing or yv >= ANNEROY_BALL_FORCE_BOUNCE_SPEED:
                     self.bouncing = True
                     self.yvelocity = get_jump_speed(ANNEROY_BALL_BOUNCE_HEIGHT,
                                                     self.gravity)

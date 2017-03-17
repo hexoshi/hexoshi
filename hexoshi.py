@@ -163,6 +163,10 @@ ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
 ANNEROY_BALL_BBOX_Y = 10
 ANNEROY_BALL_BBOX_HEIGHT = 14
+ANNEROY_HEDGEHOG_BBOX_X = -10
+ANNEROY_HEDGEHOG_BBOX_Y = 7
+ANNEROY_HEDGEHOG_BBOX_WIDTH = 20
+ANNEROY_HEDGEHOG_BBOX_HEIGHT = 20
 ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_BULLET_LIFE = 45
@@ -1022,6 +1026,7 @@ class Player(xsge_physics.Collider):
         self.reset_input()
         self.etanks_used = 0
         self.hitstun = False
+        self.invincible = False
         self.facing = 1
         self.has_jumped = False
         self.rolling = False
@@ -1120,7 +1125,7 @@ class Player(xsge_physics.Collider):
         pass
 
     def hurt(self, damage=1):
-        if not self.hitstun:
+        if not self.hitstun and not self.invincible:
             play_sound(hurt_sound, self.x, self.y)
             if not GOD:
                 self.hp -= damage
@@ -1573,12 +1578,14 @@ class Anneroy(Player):
         super(Anneroy, self).__init__(*args, **kwargs)
 
         self.torso = None
+        self.hedgehog_spikes = None
         self.fixed_sprite = False
         self.crouching = False
         self.ball = False
         self.walljumping = False
         self.wall_direction = 0
         self.bouncing = False
+        self.hedgehog = False
         self.last_aim_direction = 0
 
     def get_up_obstructed(self, x, y, w, h, lax=0):
@@ -1645,7 +1652,11 @@ class Anneroy(Player):
                 self.fixed_sprite = "compress"
 
                 self.ball = False
+                self.hedgehog = False
                 self.rolling = False
+                self.invincible = False
+                self.acceleration = self.__class__.acceleration
+                self.max_speed = self.__class__.max_speed
                 if self.on_floor:
                     self.crouching = True
                     self.bbox_y = ANNEROY_CROUCH_BBOX_Y
@@ -1759,7 +1770,22 @@ class Anneroy(Player):
     def shoot(self):
         if "shoot_lock" not in self.alarms:
             if self.ball:
-                pass
+                if "hedgehog_hormone" in progress_flags:
+                    # TODO: Animation event
+                    self.hedgehog = not self.hedgehog
+                    if self.hedgehog:
+                        self.rolling = False
+                        self.invincible = True
+                        self.acceleration = 0
+                        self.max_speed = self.roll_max_speed
+                        if self.on_floor or self.was_on_floor:
+                            self.xvelocity = 0
+                            self.yvelocity = 0
+                    else:
+                        self.rolling = True
+                        self.invincible = False
+                        self.acceleration = self.__class__.acceleration
+                        self.max_speed = self.__class__.max_speed
             else:
                 if self.aim_direction is None:
                     self.aim_direction = 0
@@ -1907,6 +1933,10 @@ class Anneroy(Player):
             self.ball = True
             self.rolling = True
             self.bouncing = False
+            self.hedgehog = False
+            self.invincible = False
+            self.acceleration = self.__class__.acceleration
+            self.max_speed = self.__class__.max_speed
             self.bbox_y = ANNEROY_BALL_BBOX_Y
             self.bbox_height = ANNEROY_BALL_BBOX_HEIGHT
 
@@ -2068,9 +2098,32 @@ class Anneroy(Player):
         self.torso.image_alpha = self.image_alpha
         self.torso.image_blend = self.image_blend
 
+        # Position hedgehog spikes
+        if self.hedgehog:
+            if self.hedgehog_spikes is None:
+                self.hedgehog_spikes = HedgehogSpikes.create(
+                    self.x, self.y, visible=False,
+                    bbox_x=ANNEROY_HEDGEHOG_BBOX_X,
+                    bbox_y=ANNEROY_HEDGEHOG_BBOX_Y,
+                    bbox_width=ANNEROY_HEDGEHOG_BBOX_WIDTH,
+                    bbox_height=ANNEROY_HEDGEHOG_BBOX_HEIGHT,
+                    regulate_origin=True)
+            else:
+                self.hedgehog_spikes.x = self.x
+                self.hedgehog_spikes.y = self.y
+                self.hedgehog_spikes.tangible = True
+        else:
+            if self.hedgehog_spikes is not None:
+                self.hedgehog_spikes.tangible = False
+
     def event_create(self):
         self.torso = sge.dsp.Object.create(self.x, self.y, self.z + 0.1,
                                            regulate_origin=True)
+        self.hedgehog_spikes = HedgehogSpikes.create(
+            self.x, self.y, visible=False, bbox_x=ANNEROY_HEDGEHOG_BBOX_X,
+            bbox_y=ANNEROY_HEDGEHOG_BBOX_Y,
+            bbox_width=ANNEROY_HEDGEHOG_BBOX_WIDTH,
+            bbox_height=ANNEROY_HEDGEHOG_BBOX_HEIGHT, regulate_origin=True)
         super(Anneroy, self).event_create()
 
     def event_begin_step(self, time_passed, delta_mult):
@@ -2121,7 +2174,9 @@ class Anneroy(Player):
 
         if not self.was_on_floor:
             if self.ball:
-                if not self.bouncing or yv >= ANNEROY_BALL_FORCE_BOUNCE_SPEED:
+                if (not self.hedgehog and
+                        (not self.bouncing or
+                         yv >= ANNEROY_BALL_FORCE_BOUNCE_SPEED)):
                     self.bouncing = True
                     self.yvelocity = get_jump_speed(ANNEROY_BALL_BOUNCE_HEIGHT,
                                                     self.gravity)
@@ -2203,6 +2258,7 @@ class InteractiveObject(sge.dsp.Object):
 
     killed_by_void = True
     shootable = False
+    spikeable = False
     freezable = False
 
     def get_nearest_player(self):
@@ -2227,6 +2283,9 @@ class InteractiveObject(sge.dsp.Object):
 
     def shoot(self, other):
         pass
+
+    def spike(self, other):
+        self.shoot(other)
 
     def freeze(self):
         pass
@@ -2449,6 +2508,7 @@ class Shard(FallingObject):
 class Enemy(InteractiveObject):
 
     shootable = True
+    spikeable = True
     touch_damage = 5
     hp = 1
 
@@ -2887,6 +2947,17 @@ class AnneroyBullet(InteractiveObject):
     def event_alarm(self, alarm_id):
         if alarm_id == "die":
             self.destroy()
+
+
+class HedgehogSpikes(InteractiveObject):
+
+    def event_collision(self, other, xdirection, ydirection):
+        super(HedgehogSpikes, self).event_collision(other, xdirection, ydirection)
+
+        if isinstance(other, InteractiveObject) and other.spikeable:
+            other.spike(self)
+        elif isinstance(other, Stone) and other.spikeable:
+            other.destroy()
 
 
 class FakeTile(sge.dsp.Object):

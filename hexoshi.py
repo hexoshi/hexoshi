@@ -4902,6 +4902,7 @@ def save_game():
 
     if current_save_slot is not None:
         save_slots[current_save_slot] = {
+            "save_format": 1,
             "player_name": player_name,
             "watched_timelines": watched_timelines,
             "current_level": current_level,
@@ -4937,19 +4938,22 @@ def load_game():
     if (current_save_slot is not None and
             save_slots[current_save_slot] is not None):
         slot = save_slots[current_save_slot]
-        player_name = slot.get("player_name", "Anneroy")
-        watched_timelines = slot.get("watched_timelines", [])
-        current_level = slot.get("current_level")
-        spawn_point = slot.get("spawn_point")
-        map_revealed = [tuple(i) for i in slot.get("map_revealed", [])]
-        map_explored = [tuple(i) for i in slot.get("map_explored", [])]
-        map_removed = [tuple(i) for i in slot.get("map_removed", [])]
-        warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
-        powerups = [tuple(i) for i in slot.get("powerups", [])]
-        enemies_killed = slot.get("enemies_killed", [])
-        progress_flags = slot.get("progress_flags", [])
-        etanks = slot.get("etanks", 0)
-        time_taken = slot.get("time_taken", 0)
+        save_format = slot.get("save_format", 0)
+
+        if save_format == 1:
+            player_name = slot.get("player_name", "Anneroy")
+            watched_timelines = slot.get("watched_timelines", [])
+            current_level = slot.get("current_level")
+            spawn_point = slot.get("spawn_point")
+            map_revealed = [tuple(i) for i in slot.get("map_revealed", [])]
+            map_explored = [tuple(i) for i in slot.get("map_explored", [])]
+            map_removed = [tuple(i) for i in slot.get("map_removed", [])]
+            warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
+            powerups = [tuple(i) for i in slot.get("powerups", [])]
+            enemies_killed = slot.get("enemies_killed", [])
+            progress_flags = slot.get("progress_flags", [])
+            etanks = slot.get("etanks", 0)
+            time_taken = slot.get("time_taken", 0)
     else:
         set_new_game()
 
@@ -5657,7 +5661,11 @@ except (IOError, ValueError):
     pass
 else:
     for i in six.moves.range(min(len(loaded_slots), len(save_slots))):
-        save_slots[i] = loaded_slots[i]
+        slot = loaded_slots[i]
+        if slot is not None and slot.get("save_format", 0) > 0:
+            save_slots[i] = slot
+        else:
+            save_slots[i] = None
 
 
 if __name__ == '__main__':

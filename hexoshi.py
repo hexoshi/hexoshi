@@ -5045,6 +5045,7 @@ def generate_map():
 
                 if level_f not in files_checked:
                     files_remaining.add((level_f, dx, dy, fname, obj.spawn_id))
+                    files_checked.add(level_f)
 
                 if (dx, dy) not in ignore_regions:
                     if isinstance(obj, LeftDoor):

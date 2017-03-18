@@ -1770,7 +1770,8 @@ class Anneroy(Player):
                     self.hedgehog = not self.hedgehog
 
                     if self.hedgehog:
-                        play_sound(hedgehog_spikes_sound, self.x, self.y)
+                        play_sound(hedgehog_spikes_sound, self.image_xcenter,
+                                   self.image_ycenter)
                         self.rolling = False
                         self.invincible = True
                         self.max_speed = 0
@@ -1778,7 +1779,8 @@ class Anneroy(Player):
                             self.xvelocity = 0
                             self.yvelocity = 0
                     else:
-                        play_sound(hedgehog_spikes_sound, self.x, self.y)
+                        play_sound(hedgehog_spikes_sound, self.image_xcenter,
+                                   self.image_ycenter)
                         self.rolling = True
                         self.invincible = False
                         self.max_speed = self.__class__.max_speed
@@ -2986,6 +2988,8 @@ class Stone(xsge_physics.Solid):
                 self.fakes.append(other)
 
     def event_destroy(self):
+        play_sound(stone_break_sound, self.image_xcenter, self.image_ycenter)
+
         for other in self.fakes:
             other.destroy()
 
@@ -5527,6 +5531,8 @@ hedgehog_spikes_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "hedgehog_spikes.wav"), volume=0.5)
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
+stone_break_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "stone_break.wav"), volume=0.5)
 powerup_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "powerup.wav"))
 heal_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "heal.wav"))
 warp_pad_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "warp_pad.ogg"))

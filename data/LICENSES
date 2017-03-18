@@ -384,6 +384,17 @@ Source: https://github.com/minetest/minetest_game/blob/master/mods/default/sound
 
 ------------------------------------------------------------------------
 
+sounds/hedgehog_spikes.wav
+
+Author: Berklee College of Music <http://www.archive.org/details/Berklee44v13>
+License: CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
+Source: http://opengameart.org/content/knife-sharpening-slice-1
+Details:
+  Pitch has been increased slightly (about 5%), and some silence has
+  been trimmed off both the start and the end of the sound.
+
+------------------------------------------------------------------------
+
 sounds/hurt.wav
 
 Author: MatzeB

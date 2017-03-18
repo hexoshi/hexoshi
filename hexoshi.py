@@ -1290,10 +1290,6 @@ class Player(xsge_physics.Collider):
         self.yacceleration = 0
         self.xdeceleration = 0
 
-        max_speed = self.roll_max_speed if self.rolling else self.max_speed
-        if abs(self.xvelocity) >= max_speed:
-            self.xvelocity = max_speed * current_h_movement
-
         if h_control:
             if not self.can_move:
                 target_speed = 0
@@ -1655,7 +1651,6 @@ class Anneroy(Player):
                 self.hedgehog = False
                 self.rolling = False
                 self.invincible = False
-                self.acceleration = self.__class__.acceleration
                 self.max_speed = self.__class__.max_speed
                 if self.on_floor:
                     self.crouching = True
@@ -1773,18 +1768,19 @@ class Anneroy(Player):
                 if "hedgehog_hormone" in progress_flags:
                     # TODO: Animation event
                     self.hedgehog = not self.hedgehog
+
                     if self.hedgehog:
+                        play_sound(hedgehog_spikes_sound, self.x, self.y)
                         self.rolling = False
                         self.invincible = True
-                        self.acceleration = 0
-                        self.max_speed = self.roll_max_speed
+                        self.max_speed = 0
                         if self.on_floor or self.was_on_floor:
                             self.xvelocity = 0
                             self.yvelocity = 0
                     else:
+                        play_sound(hedgehog_spikes_sound, self.x, self.y)
                         self.rolling = True
                         self.invincible = False
-                        self.acceleration = self.__class__.acceleration
                         self.max_speed = self.__class__.max_speed
             else:
                 if self.aim_direction is None:
@@ -1935,7 +1931,6 @@ class Anneroy(Player):
             self.bouncing = False
             self.hedgehog = False
             self.invincible = False
-            self.acceleration = self.__class__.acceleration
             self.max_speed = self.__class__.max_speed
             self.bbox_y = ANNEROY_BALL_BBOX_Y
             self.bbox_height = ANNEROY_BALL_BBOX_HEIGHT
@@ -5528,6 +5523,8 @@ bullet_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "bullet_death.ogg"), volume=0.2)
 land_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "land.ogg"), volume=0.5)
 ball_land_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "ball_land.ogg"))
+hedgehog_spikes_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "hedgehog_spikes.wav"), volume=0.5)
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
 powerup_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "powerup.wav"))

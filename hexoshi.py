@@ -5328,11 +5328,14 @@ anneroy_walljump_left_sprite = sge.gfx.Sprite.from_tileset(
     fname, 522, 229, width=34, height=46, origin_x=17, origin_y=20)
 anneroy_walljump_right_sprite = sge.gfx.Sprite.from_tileset(
     fname, 522, 283, width=34, height=46, origin_x=15, origin_y=20)
-anneroy_compress_sprite = sge.gfx.Sprite("compress", d, origin_x=12,
-                                         origin_y=8, fps=15)
-anneroy_ball_sprite = sge.gfx.Sprite("ball", d, origin_x=8, origin_y=-8)
-anneroy_decompress_fail_sprite = sge.gfx.Sprite(
-    "decompress_fail", d, origin_x=12, origin_y=8, fps=15)
+anneroy_compress_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 9, 393, 3, xsep=5, width=27, height=32, origin_x=12, origin_y=8,
+    fps=15)
+anneroy_ball_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 9, 440, 8, xsep=8, width=16, height=16, origin_x=8, origin_y=-8)
+anneroy_decompress_fail_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 150, 393, 3, xsep=5, width=27, height=32, origin_x=12, origin_y=8,
+    fps=15)
 
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)

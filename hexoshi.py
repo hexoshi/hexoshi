@@ -2793,7 +2793,7 @@ class LifeForce(InteractiveObject):
             target = self.get_nearest_player()
             if target is not None:
                 xvec = target.x - self.image_xcenter
-                yvec = target.y - self.image_ycenter
+                yvec = max(target.y, target.bbox_top) - self.image_ycenter
                 self.speed = LIFE_FORCE_SPEED
                 self.move_direction = math.degrees(math.atan2(yvec, xvec))
             else:
@@ -5455,7 +5455,7 @@ stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 d = os.path.join(DATA, "images", "objects", "powerups")
 life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
 powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
-atomic_compressor_sprite = sge.gfx.Sprite("ball", os.path.join(DATA, "images", "objects", "anneroy"), fps=10) # TODO
+atomic_compressor_sprite = sge.gfx.Sprite.from_tileset(fname, 9, 440, 8, xsep=8, width=16, height=16, fps=10) # TODO
 monkey_boots_sprite = sge.gfx.Sprite("artifact1", d) # TODO
 hedgehog_hormone_sprite = sge.gfx.Sprite("artifact2", d) # TODO
 

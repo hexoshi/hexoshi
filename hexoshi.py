@@ -284,8 +284,8 @@ class Game(sge.dsp.Game):
             self.fps_time += time_passed
             self.fps_frames += 1
             if self.fps_time >= 250:
-                self.fps_text = str(round(
-                    (1000 * self.fps_frames) / self.fps_time, 2))
+                self.fps_text = '{:.2f}'.format(
+                    (1000 * self.fps_frames) / self.fps_time)
                 self.fps_time = 0
                 self.fps_frames = 0
 

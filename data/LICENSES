@@ -399,11 +399,11 @@ Source: http://opengameart.org/content/8-bit-sound-effects-library
 
 ------------------------------------------------------------------------
 
-sounds/stone_break.wav
+sounds/stone_break.ogg
 
-Author: Yaniel
-License: CC BY-SA 3.0 <http://creativecommons.org/licenses/by-sa/3.0/>
-Source: https://github.com/SuperTux/supertux/releases/tag/v0.3.4
+Author: qubodup <http://opengameart.org/users/qubodup>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: https://github.com/minetest/minetest_game/blob/master/mods/default/sounds/default_dug_metal.2.ogg
 
 ------------------------------------------------------------------------
 

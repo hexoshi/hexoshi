@@ -4851,6 +4851,7 @@ def set_new_game():
     global map_explored
     global map_removed
     global powerups
+    global enemies_killed
     global progress_flags
     global etanks
     global time_taken
@@ -4864,6 +4865,7 @@ def set_new_game():
     map_removed = []
     warp_pads = []
     powerups = []
+    enemies_killed = []
     progress_flags = []
     etanks = 0
     time_taken = 0
@@ -5535,7 +5537,7 @@ hedgehog_spikes_sound = sge.snd.Sound(
 hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
 death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
 stone_break_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "stone_break.wav"), volume=0.5)
+    os.path.join(DATA, "sounds", "stone_break.ogg"), volume=0.5)
 powerup_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "powerup.wav"))
 heal_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "heal.wav"))
 warp_pad_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "warp_pad.ogg"))

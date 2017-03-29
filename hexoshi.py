@@ -164,10 +164,10 @@ ANNEROY_CROUCH_BBOX_HEIGHT = 29
 ANNEROY_BALL_BBOX_Y = 10
 ANNEROY_BALL_BBOX_HEIGHT = 14
 ANNEROY_HEDGEHOG_FRAME_TIME = 4
-ANNEROY_HEDGEHOG_BBOX_X = -10
-ANNEROY_HEDGEHOG_BBOX_Y = 7
-ANNEROY_HEDGEHOG_BBOX_WIDTH = 20
-ANNEROY_HEDGEHOG_BBOX_HEIGHT = 20
+ANNEROY_HEDGEHOG_BBOX_X = -14
+ANNEROY_HEDGEHOG_BBOX_Y = 3
+ANNEROY_HEDGEHOG_BBOX_WIDTH = 28
+ANNEROY_HEDGEHOG_BBOX_HEIGHT = 28
 ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_BULLET_LIFE = 45
@@ -1126,7 +1126,7 @@ class Player(xsge_physics.Collider):
     def shoot(self):
         pass
 
-    def hurt(self, damage=1):
+    def hurt(self, damage=1, touching=False):
         if not self.hitstun and not self.invincible:
             play_sound(hurt_sound, self.x, self.y)
             if not GOD:
@@ -1652,7 +1652,6 @@ class Anneroy(Player):
                 self.ball = False
                 self.hedgehog = False
                 self.rolling = False
-                self.invincible = False
                 self.max_speed = self.__class__.max_speed
                 if self.on_floor:
                     self.crouching = True
@@ -1777,7 +1776,6 @@ class Anneroy(Player):
                         play_sound(hedgehog_spikes_sound, self.image_xcenter,
                                    self.image_ycenter)
                         self.rolling = False
-                        self.invincible = True
                         self.max_speed = 0
                         if self.on_floor or self.was_on_floor:
                             self.xvelocity = 0
@@ -1786,7 +1784,6 @@ class Anneroy(Player):
                         self.fixed_sprite = "hedgehog"
                         self.alarms["fixed_sprite"] = ANNEROY_HEDGEHOG_FRAME_TIME
                         self.rolling = True
-                        self.invincible = False
                         self.max_speed = self.__class__.max_speed
             else:
                 if self.aim_direction is None:
@@ -1936,10 +1933,13 @@ class Anneroy(Player):
             self.rolling = True
             self.bouncing = False
             self.hedgehog = False
-            self.invincible = False
             self.max_speed = self.__class__.max_speed
             self.bbox_y = ANNEROY_BALL_BBOX_Y
             self.bbox_height = ANNEROY_BALL_BBOX_HEIGHT
+
+    def hurt(self, damage=1, touching=False):
+        if (not touching) or (not self.hedgehog):
+            super(Anneroy, self).hurt(damage, touching)
 
     def kill(self):
         if self.lose_on_death:
@@ -2535,7 +2535,7 @@ class Enemy(InteractiveObject):
     hp = 1
 
     def touch(self, other):
-        other.hurt(self.touch_damage)
+        other.hurt(self.touch_damage, True)
 
     def shoot(self, other):
         # TODO: Handle different kinds of bullets

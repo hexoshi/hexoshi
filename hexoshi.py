@@ -1771,6 +1771,10 @@ class Anneroy(Player):
                     self.sprite = anneroy_hedgehog_start_sprite
 
                     if self.hedgehog:
+                        if self.fixed_sprite:
+                            self.image_speed = (abs(self.xvelocity) *
+                                                ANNEROY_BALL_FRAMES_PER_PIXEL)
+
                         self.fixed_sprite = "hedgehog"
                         self.alarms["hedgehog_extend"] = ANNEROY_HEDGEHOG_FRAME_TIME
                         play_sound(hedgehog_spikes_sound, self.image_xcenter,
@@ -2166,9 +2170,11 @@ class Anneroy(Player):
             self.destroy()
 
     def event_animation_end(self):
-        if self.fixed_sprite in {"turn", "crouch", "compress", "anim",
-                                 "decompress_fail"}:
+        if self.fixed_sprite in {"turn", "crouch", "anim"}:
             self.fixed_sprite = False
+        elif self.fixed_sprite in {"compress", "decompress_fail"}:
+            self.fixed_sprite = False
+            self.image_speed = abs(self.xvelocity) * ANNEROY_BALL_FRAMES_PER_PIXEL
         elif self.fixed_sprite == "wall":
             self.reset_image()
             if self.wall_direction < 0:

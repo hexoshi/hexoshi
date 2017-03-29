@@ -275,21 +275,22 @@ player = None
 
 class Game(sge.dsp.Game):
 
+    fps_real = FPS
     fps_time = 0
     fps_frames = 0
     fps_text = ""
     cheatcode = ""
 
     def event_step(self, time_passed, delta_mult):
-        if fps_enabled:
-            self.fps_time += time_passed
-            self.fps_frames += 1
-            if self.fps_time >= 250:
-                self.fps_text = '{:.2f}'.format(
-                    (1000 * self.fps_frames) / self.fps_time)
-                self.fps_time = 0
-                self.fps_frames = 0
+        self.fps_time += time_passed
+        self.fps_frames += 1
+        if self.fps_time >= 250:
+            self.fps_real = (1000 * self.fps_frames) / self.fps_time
+            self.fps_text = '{:.2f}'.format(self.fps_real)
+            self.fps_time = 0
+            self.fps_frames = 0
 
+        if fps_enabled:
             self.project_text(font_small, self.fps_text, self.width - 8,
                               self.height - 8, z=1000000,
                               color=sge.gfx.Color("yellow"), halign="right",
@@ -3017,7 +3018,11 @@ class Stone(xsge_physics.Solid):
         for other in self.fakes:
             other.destroy()
 
-        shard_num = random.randint(self.shard_num_min, self.shard_num_max)
+        if sge.game.fps_real >= FPS:
+            shard_num = random.randint(self.shard_num_min, self.shard_num_max)
+        else:
+            shard_num = self.shard_num_min
+
         for i in six.moves.range(shard_num):
             shard = Shard.create(self.x, self.y, self.z,
                                  sprite=stone_fragment_sprite)

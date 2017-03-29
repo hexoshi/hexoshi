@@ -163,6 +163,7 @@ ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
 ANNEROY_BALL_BBOX_Y = 10
 ANNEROY_BALL_BBOX_HEIGHT = 14
+ANNEROY_HEDGEHOG_FRAME_TIME = 4
 ANNEROY_HEDGEHOG_BBOX_X = -10
 ANNEROY_HEDGEHOG_BBOX_Y = 7
 ANNEROY_HEDGEHOG_BBOX_WIDTH = 20
@@ -1766,10 +1767,12 @@ class Anneroy(Player):
         if "shoot_lock" not in self.alarms:
             if self.ball:
                 if "hedgehog_hormone" in progress_flags:
-                    # TODO: Animation event
                     self.hedgehog = not self.hedgehog
+                    self.sprite = anneroy_hedgehog_start_sprite
 
                     if self.hedgehog:
+                        self.fixed_sprite = "hedgehog"
+                        self.alarms["hedgehog_extend"] = ANNEROY_HEDGEHOG_FRAME_TIME
                         play_sound(hedgehog_spikes_sound, self.image_xcenter,
                                    self.image_ycenter)
                         self.rolling = False
@@ -1779,8 +1782,8 @@ class Anneroy(Player):
                             self.xvelocity = 0
                             self.yvelocity = 0
                     else:
-                        play_sound(hedgehog_spikes_sound, self.image_xcenter,
-                                   self.image_ycenter)
+                        self.fixed_sprite = "hedgehog"
+                        self.alarms["fixed_sprite"] = ANNEROY_HEDGEHOG_FRAME_TIME
                         self.rolling = True
                         self.invincible = False
                         self.max_speed = self.__class__.max_speed
@@ -2023,7 +2026,11 @@ class Anneroy(Player):
                 xm = (real_xv > 0) - (real_xv < 0)
 
             if self.ball:
-                self.sprite = anneroy_ball_sprite
+                if self.hedgehog:
+                    self.sprite = anneroy_hedgehog_sprite
+                else:
+                    self.sprite = anneroy_ball_sprite
+
                 self.torso.visible = False
                 if self.on_floor:
                     if xm:
@@ -2053,6 +2060,20 @@ class Anneroy(Player):
                 else:
                     self.sprite = anneroy_legs_jump_sprite
                     self.image_index = -1
+        elif self.fixed_sprite == "hedgehog":
+            if self.on_floor:
+                if self.xvelocity:
+                    xm = (self.xvelocity > 0) - (self.xvelocity < 0)
+                else:
+                    real_xv = self.x - self.xprevious
+                    xm = (real_xv > 0) - (real_xv < 0)
+
+                if xm:
+                    self.image_speed = self.speed * ANNEROY_BALL_FRAMES_PER_PIXEL
+                    if xm != self.facing:
+                        self.image_speed *= -1
+                else:
+                    self.image_speed = 0
 
         if "shooting" in self.alarms:
             aim_direction = self.last_aim_direction
@@ -2134,6 +2155,9 @@ class Anneroy(Player):
 
         if alarm_id == "fixed_sprite":
             self.fixed_sprite = False
+        elif alarm_id == "hedgehog_extend":
+            self.sprite = anneroy_hedgehog_extend_sprite
+            self.alarms["fixed_sprite"] = ANNEROY_HEDGEHOG_FRAME_TIME
         elif alarm_id == "shoot_lock":
             if self.shoot_pressed:
                 self.shoot()
@@ -5338,6 +5362,12 @@ anneroy_ball_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_decompress_fail_sprite = sge.gfx.Sprite.from_tileset(
     fname, 150, 393, 3, xsep=5, width=27, height=32, origin_x=12, origin_y=8,
     fps=15)
+anneroy_hedgehog_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 9, 469, 8, xsep=3, width=38, height=38, origin_x=19, origin_y=3)
+anneroy_hedgehog_extend_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 9, 510, 8, xsep=3, width=38, height=38, origin_x=19, origin_y=3)
+anneroy_hedgehog_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 9, 551, 8, xsep=3, width=38, height=38, origin_x=19, origin_y=3)
 
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)

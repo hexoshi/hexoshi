@@ -3400,6 +3400,7 @@ class WarpPad(SpawnPoint):
 class DoorBarrier(InteractiveObject, xsge_physics.Solid):
 
     shootable = True
+    spikeable = True
 
     parent = None
 
@@ -3418,6 +3419,7 @@ class DoorBarrier(InteractiveObject, xsge_physics.Solid):
 class DoorFrame(InteractiveObject):
 
     shootable = True
+    spikeable = True
 
     closed_sprite = None
     open_sprite = None

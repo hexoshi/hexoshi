@@ -132,14 +132,11 @@ GRAVITY = 0.4
 PLAYER_MAX_HP = 100
 PLAYER_MAX_SPEED = 3
 PLAYER_ROLL_MAX_SPEED = 8
-PLAYER_ATTACHED_MAX_SPEED = 1
 PLAYER_ACCELERATION = 0.5
 PLAYER_ROLL_ACCELERATION = 0.25
-PLAYER_ATTACHED_ACCELERATION = 0.5
 PLAYER_AIR_ACCELERATION = 0.1
 PLAYER_FRICTION = 0.75
 PLAYER_ROLL_FRICTION = 0.02
-PLAYER_ATTACHED_FRICTION = 0.75
 PLAYER_AIR_FRICTION = 0.02
 PLAYER_JUMP_HEIGHT = 5 * TILE_SIZE + 2
 PLAYER_FALL_SPEED = 7
@@ -939,14 +936,11 @@ class Player(xsge_physics.Collider):
     max_hp = PLAYER_MAX_HP
     max_speed = PLAYER_MAX_SPEED
     roll_max_speed = PLAYER_ROLL_MAX_SPEED
-    attached_max_speed = PLAYER_ATTACHED_MAX_SPEED
     acceleration = PLAYER_ACCELERATION
     roll_acceleration = PLAYER_ROLL_ACCELERATION
-    attached_acceleration = PLAYER_ATTACHED_ACCELERATION
     air_acceleration = PLAYER_AIR_ACCELERATION
     friction = PLAYER_FRICTION
     roll_friction = PLAYER_ROLL_FRICTION
-    attached_friction = PLAYER_ATTACHED_FRICTION
     air_friction = PLAYER_AIR_FRICTION
     jump_height = PLAYER_JUMP_HEIGHT
     gravity = GRAVITY
@@ -1038,7 +1032,6 @@ class Player(xsge_physics.Collider):
         self.facing = 1
         self.has_jumped = False
         self.rolling = False
-        self.attached = False
         self.aim_direction = None
         self.aim_direction_time = 0
         self.view = None
@@ -1252,134 +1245,6 @@ class Player(xsge_physics.Collider):
         self.view.x = self.camera_target_x
         self.view.y = self.camera_target_y
 
-    def move(self, delta_mult):
-        self.xacceleration = 0
-        self.yacceleration = 0
-        self.xdeceleration = 0
-        self.ydeceleration = 0
-
-        h_control = bool(self.right_pressed) - bool(self.left_pressed)
-        v_control = bool(self.down_pressed) - bool(self.up_pressed)
-        current_h_movement = (self.xvelocity > 0) - (self.xvelocity < 0)
-        current_v_movement = (self.yvelocity > 0) - (self.yvelocity < 0)
-
-        attached = None
-        if self.attached:
-            if isinstance(self.attached, (SolidTop, SlopeTopLeft,
-                                          SlopeTopRight)):
-                attached = "bottom"
-            elif isinstance(self.attached, (SolidBottom, SlopeBottomLeft,
-                                            SlopeBottomRight)):
-                attached = "top"
-            elif isinstance(self.attached, SolidLeft):
-                attached = "right"
-            elif isinstance(self.attached, SolidRight):
-                attached = "left"
-
-        if h_control:
-            if not self.can_move:
-                target_speed = 0
-            else:
-                if self.attached:
-                    max_speed = self.attached_max_speed
-                else:
-                    max_speed = self.max_speed
-
-                h_factor = abs(self.right_pressed - self.left_pressed)
-                target_speed = min(h_factor * max_speed, max_speed)
-
-            if (attached == "bottom" and
-                    (abs(self.xvelocity) < target_speed or
-                    (self.xvelocity > 0 and h_control < 0) or
-                    (self.xvelocity < 0 and h_control > 0))):
-                self.xacceleration = self.attached_acceleration * h_control
-            elif (attached == "top" and
-                    (abs(self.xvelocity) < target_speed or
-                    (self.xvelocity > 0 and h_control > 0) or
-                    (self.xvelocity < 0 and h_control < 0))):
-                self.xacceleration = self.attached_acceleration * -h_control
-            elif (attached == "left" and
-                    (abs(self.yvelocity) < target_speed or
-                    (self.yvelocity > 0 and h_control < 0) or
-                    (self.yvelocity < 0 and h_control > 0))):
-                self.yacceleration = self.attached_acceleration * h_control
-            elif (attached == "right" and
-                    (abs(self.yvelocity) < target_speed or
-                    (self.yvelocity > 0 and h_control > 0) or
-                    (self.yvelocity < 0 and h_control < 0))):
-                self.yacceleration = self.attached_acceleration * -h_control
-            elif (abs(self.xvelocity) < target_speed or
-                    (self.xvelocity > 0 and h_control < 0) or
-                    (self.xvelocity < 0 and h_control > 0)):
-                if self.on_floor or self.was_on_floor:
-                    if self.rolling:
-                        self.xacceleration = self.roll_acceleration * h_control
-                    else:
-                        self.xacceleration = self.acceleration * h_control
-                else:
-                    self.xacceleration = self.air_acceleration * h_control
-            elif attached in {"left", "right"}:
-                dc = self.attached_friction
-                if abs(self.yvelocity) - dc * delta_mult > target_speed:
-                    self.ydeceleration = dc
-                else:
-                    self.yvelocity = target_speed * current_v_movement
-            else:
-                if self.attached:
-                    dc = self.attached_friction
-                elif self.on_floor or self.was_on_floor:
-                    if self.rolling:
-                        dc = self.roll_friction
-                    else:
-                        dc = self.friction
-                else:
-                    dc = self.air_friction
-
-                if abs(self.xvelocity) - dc * delta_mult > target_speed:
-                    self.xdeceleration = dc
-                else:
-                    self.xvelocity = target_speed * current_h_movement
-
-        if attached == "top":
-            cm = -current_h_movement
-        elif attached == "left":
-            cm = current_v_movement
-        elif attached == "right":
-            cm = -current_v_movement
-        else:
-            cm = current_h_movement
-
-        if cm and h_control != cm:
-            if attached in {"left", "right"}:
-                self.ydeceleration = self.attached_friction
-            elif attached:
-                self.xdeceleration = self.attached_friction
-            elif self.on_floor or self.was_on_floor:
-                if self.rolling:
-                    self.xdeceleration = self.roll_friction
-                else:
-                    self.xdeceleration = self.friction
-            else:
-                self.xdeceleration = self.air_friction
-
-        if not attached:
-            if not self.on_floor and not self.was_on_floor:
-                if self.yvelocity < self.fall_speed:
-                    self.yacceleration = self.gravity
-                else:
-                    self.yvelocity = self.fall_speed
-            elif self.on_slope:
-                if self.rolling:
-                    self.yvelocity = (self.roll_slide_speed *
-                                      (self.on_slope[0].bbox_height /
-                                       self.on_slope[0].bbox_width))
-                elif self.xvelocity:
-                    self.yvelocity = (self.slide_speed *
-                                      (self.on_slope[0].bbox_height /
-                                       self.on_slope[0].bbox_width))
-                else:
-                    self.yvelocity = 0
-
     def event_create(self):
         self.z = sge.game.current_room.player_z
         sge.game.current_room.add_timeline_object(self)
@@ -1394,7 +1259,9 @@ class Player(xsge_physics.Collider):
     def event_begin_step(self, time_passed, delta_mult):
         self.refresh_input()
 
+        h_control = bool(self.right_pressed) - bool(self.left_pressed)
         v_control = bool(self.down_pressed) - bool(self.up_pressed)
+        current_h_movement = (self.xvelocity > 0) - (self.xvelocity < 0)
 
         prev_aim_direction = self.aim_direction
 
@@ -1421,7 +1288,66 @@ class Player(xsge_physics.Collider):
         else:
             self.aim_direction_time = 0
 
-        self.move(delta_mult)
+        self.xacceleration = 0
+        self.yacceleration = 0
+        self.xdeceleration = 0
+
+        if h_control:
+            if not self.can_move:
+                target_speed = 0
+            else:
+                h_factor = abs(self.right_pressed - self.left_pressed)
+                target_speed = min(h_factor * self.max_speed, self.max_speed)
+
+            if (abs(self.xvelocity) < target_speed or
+                    (self.xvelocity > 0 and h_control < 0) or
+                    (self.xvelocity < 0 and h_control > 0)):
+                if self.on_floor or self.was_on_floor:
+                    if self.rolling:
+                        self.xacceleration = self.roll_acceleration * h_control
+                    else:
+                        self.xacceleration = self.acceleration * h_control
+                else:
+                    self.xacceleration = self.air_acceleration * h_control
+            else:
+                if self.on_floor or self.was_on_floor:
+                    if self.rolling:
+                        dc = self.roll_friction
+                    else:
+                        dc = self.friction
+                else:
+                    dc = self.air_friction
+
+                if abs(self.xvelocity) - dc * delta_mult > target_speed:
+                    self.xdeceleration = dc
+                else:
+                    self.xvelocity = target_speed * current_h_movement
+
+        if current_h_movement and h_control != current_h_movement:
+            if self.on_floor or self.was_on_floor:
+                if self.rolling:
+                    self.xdeceleration = self.roll_friction
+                else:
+                    self.xdeceleration = self.friction
+            else:
+                self.xdeceleration = self.air_friction
+
+        if not self.on_floor and not self.was_on_floor:
+            if self.yvelocity < self.fall_speed:
+                self.yacceleration = self.gravity
+            else:
+                self.yvelocity = self.fall_speed
+        elif self.on_slope:
+            if self.rolling:
+                self.yvelocity = (self.roll_slide_speed *
+                                  (self.on_slope[0].bbox_height /
+                                   self.on_slope[0].bbox_width))
+            elif self.xvelocity:
+                self.yvelocity = (self.slide_speed *
+                                  (self.on_slope[0].bbox_height /
+                                   self.on_slope[0].bbox_width))
+            else:
+                self.yvelocity = 0
 
     def event_step(self, time_passed, delta_mult):
         global map_revealed
@@ -1658,7 +1584,6 @@ class Anneroy(Player):
         self.wall_direction = 0
         self.bouncing = False
         self.hedgehog = False
-        self.attached = None
         self.last_aim_direction = 0
 
     def get_up_obstructed(self, x, y, w, h, lax=0):
@@ -1724,8 +1649,6 @@ class Anneroy(Player):
                 self.torso.visible = False
                 self.fixed_sprite = "compress"
 
-                if "hedgehog_extend" in self.alarms:
-                    del self.alarms["hedgehog_extend"]
                 self.ball = False
                 self.hedgehog = False
                 self.rolling = False
@@ -1864,8 +1787,6 @@ class Anneroy(Player):
                     else:
                         self.fixed_sprite = "hedgehog"
                         self.alarms["fixed_sprite"] = ANNEROY_HEDGEHOG_FRAME_TIME
-                        if "hedgehog_extend" in self.alarms:
-                            del self.alarms["hedgehog_extend"]
                         self.rolling = True
                         self.max_speed = self.__class__.max_speed
             else:
@@ -2016,6 +1937,7 @@ class Anneroy(Player):
             self.rolling = True
             self.bouncing = False
             self.hedgehog = False
+            self.max_speed = self.__class__.max_speed
             self.bbox_y = ANNEROY_BALL_BBOX_Y
             self.bbox_height = ANNEROY_BALL_BBOX_HEIGHT
 

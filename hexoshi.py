@@ -1038,7 +1038,8 @@ class Player(xsge_physics.Collider):
         self.facing = 1
         self.has_jumped = False
         self.rolling = False
-        self.attached = False
+        self.attached = None
+        self.attached_obj = None
         self.aim_direction = None
         self.aim_direction_time = 0
         self.view = None
@@ -1263,19 +1264,6 @@ class Player(xsge_physics.Collider):
         current_h_movement = (self.xvelocity > 0) - (self.xvelocity < 0)
         current_v_movement = (self.yvelocity > 0) - (self.yvelocity < 0)
 
-        attached = None
-        if self.attached:
-            if isinstance(self.attached, (SolidTop, SlopeTopLeft,
-                                          SlopeTopRight)):
-                attached = "bottom"
-            elif isinstance(self.attached, (SolidBottom, SlopeBottomLeft,
-                                            SlopeBottomRight)):
-                attached = "top"
-            elif isinstance(self.attached, SolidLeft):
-                attached = "right"
-            elif isinstance(self.attached, SolidRight):
-                attached = "left"
-
         if h_control:
             if not self.can_move:
                 target_speed = 0
@@ -1288,22 +1276,22 @@ class Player(xsge_physics.Collider):
                 h_factor = abs(self.right_pressed - self.left_pressed)
                 target_speed = min(h_factor * max_speed, max_speed)
 
-            if (attached == "bottom" and
+            if (self.attached == "bottom" and
                     (abs(self.xvelocity) < target_speed or
                     (self.xvelocity > 0 and h_control < 0) or
                     (self.xvelocity < 0 and h_control > 0))):
                 self.xacceleration = self.attached_acceleration * h_control
-            elif (attached == "top" and
+            elif (self.attached == "top" and
                     (abs(self.xvelocity) < target_speed or
                     (self.xvelocity > 0 and h_control > 0) or
                     (self.xvelocity < 0 and h_control < 0))):
                 self.xacceleration = self.attached_acceleration * -h_control
-            elif (attached == "left" and
+            elif (self.attached == "left" and
                     (abs(self.yvelocity) < target_speed or
                     (self.yvelocity > 0 and h_control < 0) or
                     (self.yvelocity < 0 and h_control > 0))):
                 self.yacceleration = self.attached_acceleration * h_control
-            elif (attached == "right" and
+            elif (self.attached == "right" and
                     (abs(self.yvelocity) < target_speed or
                     (self.yvelocity > 0 and h_control > 0) or
                     (self.yvelocity < 0 and h_control < 0))):
@@ -1318,7 +1306,7 @@ class Player(xsge_physics.Collider):
                         self.xacceleration = self.acceleration * h_control
                 else:
                     self.xacceleration = self.air_acceleration * h_control
-            elif attached in {"left", "right"}:
+            elif self.attached in {"left", "right"}:
                 dc = self.attached_friction
                 if abs(self.yvelocity) - dc * delta_mult > target_speed:
                     self.ydeceleration = dc
@@ -1340,19 +1328,19 @@ class Player(xsge_physics.Collider):
                 else:
                     self.xvelocity = target_speed * current_h_movement
 
-        if attached == "top":
+        if self.attached == "top":
             cm = -current_h_movement
-        elif attached == "left":
+        elif self.attached == "left":
             cm = current_v_movement
-        elif attached == "right":
+        elif self.attached == "right":
             cm = -current_v_movement
         else:
             cm = current_h_movement
 
         if cm and h_control != cm:
-            if attached in {"left", "right"}:
+            if self.attached in {"left", "right"}:
                 self.ydeceleration = self.attached_friction
-            elif attached:
+            elif self.attached:
                 self.xdeceleration = self.attached_friction
             elif self.on_floor or self.was_on_floor:
                 if self.rolling:
@@ -1362,7 +1350,7 @@ class Player(xsge_physics.Collider):
             else:
                 self.xdeceleration = self.air_friction
 
-        if not attached:
+        if not self.attached:
             if not self.on_floor and not self.was_on_floor:
                 if self.yvelocity < self.fall_speed:
                     self.yacceleration = self.gravity
@@ -1658,7 +1646,6 @@ class Anneroy(Player):
         self.wall_direction = 0
         self.bouncing = False
         self.hedgehog = False
-        self.attached = None
         self.last_aim_direction = 0
 
     def get_up_obstructed(self, x, y, w, h, lax=0):
@@ -1729,7 +1716,7 @@ class Anneroy(Player):
                 self.ball = False
                 self.hedgehog = False
                 self.rolling = False
-                self.max_speed = self.__class__.max_speed
+                self.attached = None
                 if self.on_floor:
                     self.crouching = True
                     self.bbox_y = ANNEROY_CROUCH_BBOX_Y
@@ -1857,7 +1844,6 @@ class Anneroy(Player):
                         play_sound(hedgehog_spikes_sound, self.image_xcenter,
                                    self.image_ycenter)
                         self.rolling = False
-                        self.max_speed = 0
                         if self.on_floor or self.was_on_floor:
                             self.xvelocity = 0
                             self.yvelocity = 0
@@ -1867,7 +1853,7 @@ class Anneroy(Player):
                         if "hedgehog_extend" in self.alarms:
                             del self.alarms["hedgehog_extend"]
                         self.rolling = True
-                        self.max_speed = self.__class__.max_speed
+                        self.attached = None
             else:
                 if self.aim_direction is None:
                     self.aim_direction = 0
@@ -2216,6 +2202,98 @@ class Anneroy(Player):
         else:
             if self.hedgehog_spikes is not None:
                 self.hedgehog_spikes.tangible = False
+
+    def move(self, delta_mult):
+        if self.hedgehog:
+            left_walls = []
+            right_walls = []
+            bottom_walls = []
+            top_walls = []
+            dist = {}
+            for wall in self.hedgehog_spikes.collision(xsge_physics.Wall):
+                if isinstance(wall, xsge_physics.SolidTop):
+                    if self.bbox_bottom <= wall.bbox_top:
+                        bottom_walls.append(wall)
+                        dist[id(wall)] = wall.bbox_top - self.bbox_bottom
+                elif isinstance(wall, xsge_physics.SlopeTopLeft):
+                    y = wall.get_slope_y(self.bbox_right)
+                    if self.bbox_bottom <= y:
+                        bottom_walls.append(wall)
+                        dist[id(wall)] = y - self.bbox_bottom
+                elif isinstance(wall, xsge_physics.SlopeTopRight):
+                    y = wall.get_slope_y(self.bbox_left)
+                    if self.bbox_bottom <= y:
+                        bottom_walls.append(wall)
+                        dist[id(wall)] = y - self.bbox_bottom
+                if isinstance(wall, xsge_physics.SolidBottom):
+                    if self.bbox_top >= wall.bbox_bottom:
+                        top_walls.append(wall)
+                        dist[id(wall)] = self.bbox_top - wall.bbox_bottom
+                elif isinstance(wall, xsge_physics.SlopeBottomLeft):
+                    y = wall.get_slope_y(self.bbox_right)
+                    if self.bbox_top >= y:
+                        top_walls.append(wall)
+                        dist[id(wall)] = self.bbox_top - y
+                elif isinstance(wall, xsge_physics.SlopeBottomRight):
+                    y = wall.get_slope_y(self.bbox_left)
+                    if self.bbox_top >= y:
+                        top_walls.append(wall)
+                        dist[id(wall)] = self.bbox_top - y
+                if isinstance(wall, xsge_physics.SolidLeft):
+                    if self.bbox_right <= wall.bbox_left:
+                        right_walls.append(wall)
+                        dist[id(wall)] = wall.bbox_left - self.bbox_right
+                if isinstance(wall, xsge_physics.SolidRight):
+                    if self.bbox_left >= wall.bbox_right:
+                        left_walls.append(wall)
+                        dist[id(wall)] = self.bbox_left - wall.bbox_right
+            walls = left_walls + right_walls + top_walls + bottom_walls
+
+            def reset_speed(self=self):
+                self.xvelocity = 0
+                self.yvelocity = 0
+                self.xacceleration = 0
+                self.yacceleration = 0
+
+            if self.attached_obj in walls:
+                if self.yvelocity > 0 and bottom_walls:
+                    self.attached = "bottom"
+                    self.attached_obj = bottom_walls[0]
+                    reset_speed()
+                elif self.yvelocity < 0 and top_walls:
+                    self.attached = "top"
+                    self.attached_obj = top_walls[0]
+                    reset_speed()
+                elif self.xvelocity > 0 and right_walls:
+                    self.attached = "right"
+                    self.attached_obj = right_walls[0]
+                    reset_speed()
+                elif self.xvelocity < 0 and left_walls:
+                    self.attached = "left"
+                    self.attached_obj = left_walls[0]
+                    reset_speed()
+            else:
+                if bottom_walls:
+                    self.attached = "bottom"
+                    self.attached_obj = bottom_walls[0]
+                    reset_speed()
+                elif top_walls:
+                    self.attached = "top"
+                    self.attached_obj = top_walls[0]
+                    reset_speed()
+                elif right_walls:
+                    self.attached = "right"
+                    self.attached_obj = right_walls[0]
+                    reset_speed()
+                elif left_walls:
+                    self.attached = "left"
+                    self.attached_obj = left_walls[0]
+                    reset_speed()
+                else:
+                    self.attached = None
+                    self.attached_obj = None
+
+        super(Anneroy, self).move(delta_mult)
 
     def event_create(self):
         self.torso = sge.dsp.Object.create(self.x, self.y, self.z + 0.1,

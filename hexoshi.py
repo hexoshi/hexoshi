@@ -154,7 +154,7 @@ ANNEROY_WALLJUMP_HEIGHT = 3 * TILE_SIZE
 ANNEROY_WALLJUMP_SPEED = PLAYER_MAX_SPEED
 ANNEROY_WALLJUMP_FRAME_TIME = FPS / 4
 ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
-ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 3
+ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 4
 ANNEROY_BBOX_X = -7
 ANNEROY_BBOX_WIDTH = 14
 ANNEROY_STAND_BBOX_Y = -16
@@ -163,11 +163,13 @@ ANNEROY_CROUCH_BBOX_Y = -5
 ANNEROY_CROUCH_BBOX_HEIGHT = 29
 ANNEROY_BALL_BBOX_Y = 10
 ANNEROY_BALL_BBOX_HEIGHT = 14
+ANNEROY_HEDGEHOG_TIME = 15
 ANNEROY_HEDGEHOG_FRAME_TIME = 4
 ANNEROY_HEDGEHOG_BBOX_X = -14
 ANNEROY_HEDGEHOG_BBOX_Y = 3
 ANNEROY_HEDGEHOG_BBOX_WIDTH = 28
 ANNEROY_HEDGEHOG_BBOX_HEIGHT = 28
+ANNEROY_SLOTH_MAX_SPEED = 0.5
 ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_BULLET_LIFE = 45
@@ -1126,6 +1128,9 @@ class Player(xsge_physics.Collider):
     def shoot(self):
         pass
 
+    def shoot_release(self):
+        pass    
+
     def hurt(self, damage=1, touching=False):
         if not self.hitstun and not self.invincible:
             play_sound(hurt_sound, self.x, self.y)
@@ -1452,6 +1457,8 @@ class Player(xsge_physics.Collider):
         if self.human and not self.input_lock:
             if key in jump_key[self.player]:
                 self.jump_release()
+            if key in shoot_key[self.player]:
+                self.shoot_release()
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
         js = (js_id, input_type, input_id)
@@ -1472,6 +1479,8 @@ class Player(xsge_physics.Collider):
             else:
                 if js in jump_js[self.player]:
                     self.jump_release()
+                if js in shoot_js[self.player]:
+                    self.shoot_release()
 
         if not isinstance(sge.game.current_room, SpecialScreen):
             if (value >= joystick_threshold and js in pause_js[self.player]
@@ -1584,6 +1593,7 @@ class Anneroy(Player):
         self.wall_direction = 0
         self.bouncing = False
         self.hedgehog = False
+        self.hedgehog_autocancel = False
         self.last_aim_direction = 0
 
     def get_up_obstructed(self, x, y, w, h, lax=0):
@@ -1763,32 +1773,40 @@ class Anneroy(Player):
             else:
                 super(Anneroy, self).jump()
 
+    def retract_spikes(self):
+        self.hedgehog = False
+        self.sprite = anneroy_hedgehog_start_sprite
+        self.fixed_sprite = "hedgehog"
+        self.alarms["fixed_sprite"] = ANNEROY_HEDGEHOG_FRAME_TIME
+        self.alarms["hedgehog_lock"] = ANNEROY_HEDGEHOG_FRAME_TIME
+        self.rolling = True
+        self.max_speed = self.__class__.max_speed
+
     def shoot(self):
         if "shoot_lock" not in self.alarms:
             if self.ball:
-                if "hedgehog_hormone" in progress_flags:
-                    self.hedgehog = not self.hedgehog
+                if ("hedgehog_hormone" in progress_flags and
+                        not self.hedgehog and
+                        "hedgehog_lock" not in self.alarms):
+                    self.hedgehog = True
                     self.sprite = anneroy_hedgehog_start_sprite
 
-                    if self.hedgehog:
-                        if self.fixed_sprite:
-                            self.image_speed = (abs(self.xvelocity) *
-                                                ANNEROY_BALL_FRAMES_PER_PIXEL)
+                    if self.fixed_sprite:
+                        self.image_speed = (abs(self.xvelocity) *
+                                            ANNEROY_BALL_FRAMES_PER_PIXEL)
 
-                        self.fixed_sprite = "hedgehog"
-                        self.alarms["hedgehog_extend"] = ANNEROY_HEDGEHOG_FRAME_TIME
-                        play_sound(hedgehog_spikes_sound, self.image_xcenter,
-                                   self.image_ycenter)
-                        self.rolling = False
-                        self.max_speed = 0
-                        if self.on_floor or self.was_on_floor:
-                            self.xvelocity = 0
-                            self.yvelocity = 0
+                    self.fixed_sprite = "hedgehog"
+                    self.alarms["hedgehog_extend"] = ANNEROY_HEDGEHOG_FRAME_TIME
+                    play_sound(hedgehog_spikes_sound, self.image_xcenter,
+                               self.image_ycenter)
+                    self.rolling = False
+
+                    if "sloth_ball" in progress_flags:
+                        self.hedgehog_autocancel = False
+                        self.max_speed = ANNEROY_SLOTH_MAX_SPEED
                     else:
-                        self.fixed_sprite = "hedgehog"
-                        self.alarms["fixed_sprite"] = ANNEROY_HEDGEHOG_FRAME_TIME
-                        self.rolling = True
-                        self.max_speed = self.__class__.max_speed
+                        self.hedgehog_autocancel = True
+                        self.max_speed = 0
             else:
                 if self.aim_direction is None:
                     self.aim_direction = 0
@@ -1922,6 +1940,13 @@ class Anneroy(Player):
                     image_rotation=image_rotation,
                     image_blend=self.image_blend)
                 play_sound(shoot_sound, xdest, ydest)
+
+    def shoot_release(self):
+        if self.hedgehog and not self.hedgehog_autocancel:
+            if self.fixed_sprite == "hedgehog":
+                self.hedgehog_autocancel = True
+            elif "hedgehog_lock" not in self.alarms:
+                self.retract_spikes()
 
     def compress(self):
         if "atomic_compressor" in progress_flags:
@@ -2162,7 +2187,14 @@ class Anneroy(Player):
             self.fixed_sprite = False
         elif alarm_id == "hedgehog_extend":
             self.sprite = anneroy_hedgehog_extend_sprite
-            self.alarms["fixed_sprite"] = ANNEROY_HEDGEHOG_FRAME_TIME
+            self.alarms["hedgehog_extend2"] = ANNEROY_HEDGEHOG_FRAME_TIME
+        elif alarm_id == "hedgehog_extend2":
+            self.fixed_sprite = False
+            if self.hedgehog_autocancel:
+                self.alarms["hedgehog_retract"] = ANNEROY_HEDGEHOG_TIME
+                self.alarms["hedgehog_lock"] = ANNEROY_HEDGEHOG_TIME
+        elif alarm_id == "hedgehog_retract":
+            self.retract_spikes()
         elif alarm_id == "shoot_lock":
             if self.shoot_pressed:
                 self.shoot()

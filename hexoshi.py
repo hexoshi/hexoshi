@@ -1483,8 +1483,7 @@ class Player(xsge_physics.Collider):
                     self.shoot_release()
 
         if not isinstance(sge.game.current_room, SpecialScreen):
-            if (value >= joystick_threshold and js in pause_js[self.player]
-                    and not self.pause_pressed):
+            if value >= joystick_threshold and js in pause_js[self.player]:
                 sge.game.current_room.pause(player_x=self.last_xr,
                                             player_y=self.last_yr)
 

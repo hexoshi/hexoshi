@@ -1661,6 +1661,16 @@ class Anneroy(Player):
                 self.ball = False
                 self.hedgehog = False
                 self.rolling = False
+
+                if "fixed_sprite" in self.alarms:
+                    del self.alarms["fixed_sprite"]
+                if "hedgehog_retract" in self.alarms:
+                    del self.alarms["hedgehog_retract"]
+                if "hedgehog_extend" in self.alarms:
+                    del self.alarms["hedgehog_extend"]
+                if "hedgehog_extend2" in self.alarms:
+                    del self.alarms["hedgehog_extend2"]
+
                 self.max_speed = self.__class__.max_speed
                 if self.on_floor:
                     self.crouching = True

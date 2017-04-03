@@ -5541,7 +5541,8 @@ stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 d = os.path.join(DATA, "images", "objects", "powerups")
 life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
 powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
-atomic_compressor_sprite = sge.gfx.Sprite.from_tileset(fname, 9, 440, 8, xsep=8, width=16, height=16, fps=10) # TODO
+atomic_compressor_sprite = sge.gfx.Sprite(
+    "atomic_compressor", d, origin_y=1, fps=10, bbox_width=16, bbox_height=16)
 monkey_boots_sprite = sge.gfx.Sprite("artifact1", d) # TODO
 hedgehog_hormone_sprite = sge.gfx.Sprite("artifact2", d) # TODO
 

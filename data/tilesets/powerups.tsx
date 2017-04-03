@@ -28,7 +28,7 @@
   <properties>
    <property name="cls" value="atomic_compressor"/>
   </properties>
-  <image width="16" height="16" source="../images/objects/powerups/life_orb-0.png"/>
+  <image width="17" height="17" source="../images/objects/powerups/atomic_compressor-0.png"/>
  </tile>
  <tile id="5">
   <properties>

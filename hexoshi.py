@@ -5551,7 +5551,11 @@ powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
 atomic_compressor_sprite = sge.gfx.Sprite(
     "atomic_compressor", d, origin_y=1, fps=10, bbox_width=16, bbox_height=16)
 monkey_boots_sprite = sge.gfx.Sprite("artifact1", d) # TODO
-hedgehog_hormone_sprite = sge.gfx.Sprite("artifact2", d) # TODO
+hedgehog_hormone_sprite = sge.gfx.Sprite(
+    "hedgehog_hormone", d, origin_x=3, origin_y=10, fps=7, bbox_width=16,
+    bbox_height=16)
+hedgehog_hormone_bubble_sprite = sge.gfx.Sprite(
+    "hedgehog_hormone_bubble", d, fps=8)
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)

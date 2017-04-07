@@ -40,6 +40,6 @@
   <properties>
    <property name="cls" value="hedgehog_hormone"/>
   </properties>
-  <image width="16" height="16" source="../images/objects/powerups/artifact2.png"/>
+  <image width="16" height="16" source="../images/objects/powerups/hedgehog_hormone.png"/>
  </tile>
 </tileset>

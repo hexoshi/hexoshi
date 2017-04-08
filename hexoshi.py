@@ -4427,25 +4427,7 @@ class PauseMenu(ModalMenu):
         return self
 
     def event_choose(self):
-        if self.choice == 1:
-            seconds = int(time_taken % 60)
-            minutes = int((time_taken / 60) % 60)
-            hours = int(time_taken / 3600)
-            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nArtifacts collected: {powerups} ({powerups_percent}%)\nEnemy types killed: {kills} ({kills_percent}%)").format(
-                hours=hours, minutes=minutes, seconds=seconds,
-                powerups=len(powerups),
-                powerups_percent=int(100 * len(powerups) / num_powerups),
-                kills=len(enemies_killed),
-                kills_percent=int(100 * len(enemies_killed) / len(ENEMY_TYPES)))
-
-            DialogBox(gui_handler, text).show()
-        elif self.choice == 2:
-            if "map" in progress_flags:
-                play_sound(select_sound)
-                MapDialog(self.player_x, self.player_y).show()
-            else:
-                sge.game.start_room.start()
-        elif self.choice == 3:
+        def check_quit():
             if current_save_slot is not None:
                 slot = save_slots[current_save_slot]
             else:
@@ -4465,6 +4447,27 @@ class PauseMenu(ModalMenu):
                 DialogBox(gui_handler, text).show()
                 play_sound(type_sound)
                 LoseProgressMenu.create(1)
+
+        if self.choice == 1:
+            seconds = int(time_taken % 60)
+            minutes = int((time_taken / 60) % 60)
+            hours = int(time_taken / 3600)
+            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nArtifacts collected: {powerups} ({powerups_percent}%)\nEnemy types killed: {kills} ({kills_percent}%)").format(
+                hours=hours, minutes=minutes, seconds=seconds,
+                powerups=len(powerups),
+                powerups_percent=int(100 * len(powerups) / num_powerups),
+                kills=len(enemies_killed),
+                kills_percent=int(100 * len(enemies_killed) / len(ENEMY_TYPES)))
+
+            DialogBox(gui_handler, text).show()
+        elif self.choice == 2:
+            if "map" in progress_flags:
+                play_sound(select_sound)
+                MapDialog(self.player_x, self.player_y).show()
+            else:
+                check_quit()
+        elif self.choice == 3:
+            check_quit()
         else:
             play_sound(select_sound)
 

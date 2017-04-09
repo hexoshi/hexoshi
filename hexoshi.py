@@ -3268,10 +3268,11 @@ class HedgehogHormone(Powerup):
 
     def event_create(self):
         self.emitter = xsge_particle.Emitter.create(
-            0, 0, interval=2, particle_cls=HedgehogHormoneBubble,
+            0, 0, interval=2, chance=0.25,
+            particle_cls=xsge_particle.AnimationBubbleParticle,
             particle_args=[self.image_xcenter, self.bbox_top],
             particle_kwargs={"sprite": hedgehog_hormone_bubble_sprite,
-                             "yvelocity": -0.5, "turn_factor": 10,
+                             "yvelocity": -0.25, "turn_factor": 20,
                              "min_angle": 225, "max_angle": 315})
 
     def collect(self, other):
@@ -5582,7 +5583,7 @@ atomic_compressor_sprite = sge.gfx.Sprite(
 monkey_boots_sprite = sge.gfx.Sprite("artifact1", d) # TODO
 hedgehog_hormone_sprite = sge.gfx.Sprite("hedgehog_hormone", d, fps=7)
 hedgehog_hormone_bubble_sprite = sge.gfx.Sprite("hedgehog_hormone_bubble", d,
-                                                fps=10)
+                                                fps=5)
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)

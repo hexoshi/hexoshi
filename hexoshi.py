@@ -42,6 +42,7 @@ import sge
 import six
 import xsge_gui
 import xsge_lighting
+import xsge_particle
 import xsge_path
 import xsge_physics
 import xsge_tmx
@@ -322,7 +323,7 @@ class Game(sge.dsp.Game):
                 elif self.cheatcode.lower() == "seenitall":
                     map_explored = map_revealed
                 elif self.cheatcode.startswith("tele"):
-                    warp(self.cheatcode[4:])
+                    warp(self.cheatcode[4:] + ".tmx")
                 else:
                     print(_("Invalid cheat code: {}").format(self.cheatcode))
 
@@ -3265,10 +3266,30 @@ class HedgehogHormone(Powerup):
         kwargs["sprite"] = hedgehog_hormone_sprite
         super(HedgehogHormone, self).__init__(x, y, **kwargs)
 
+    def event_create(self):
+        self.emitter = xsge_particle.Emitter.create(
+            0, 0, interval=2, particle_cls=HedgehogHormoneBubble,
+            particle_args=[self.image_xcenter, self.bbox_top],
+            particle_kwargs={"sprite": hedgehog_hormone_bubble_sprite,
+                             "yvelocity": -0.5, "turn_factor": 10,
+                             "min_angle": 225, "max_angle": 315})
+
     def collect(self, other):
         global progress_flags
         progress_flags = progress_flags[:]
         progress_flags.append("hedgehog_hormone")
+
+    def event_destroy(self):
+        self.emitter.destroy()
+
+
+class HedgehogHormoneBubble(xsge_particle.AnimationBubbleParticle):
+
+    def event_create(self):
+        super(HedgehogHormoneBubble, self).event_create()
+
+        if random.random() < 0.75:
+            self.destroy()
 
 
 class Tunnel(InteractiveObject):
@@ -5561,7 +5582,7 @@ atomic_compressor_sprite = sge.gfx.Sprite(
 monkey_boots_sprite = sge.gfx.Sprite("artifact1", d) # TODO
 hedgehog_hormone_sprite = sge.gfx.Sprite("hedgehog_hormone", d, fps=7)
 hedgehog_hormone_bubble_sprite = sge.gfx.Sprite("hedgehog_hormone_bubble", d,
-                                                fps=8)
+                                                fps=10)
 
 d = os.path.join(DATA, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)

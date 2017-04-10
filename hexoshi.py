@@ -3268,12 +3268,13 @@ class HedgehogHormone(Powerup):
 
     def event_create(self):
         self.emitter = xsge_particle.Emitter.create(
-            0, 0, interval=2, chance=0.25,
+            self.image_xcenter, self.bbox_top, interval=8, chance=0.5,
             particle_cls=xsge_particle.AnimationBubbleParticle,
             particle_args=[self.image_xcenter, self.bbox_top],
             particle_kwargs={"sprite": hedgehog_hormone_bubble_sprite,
                              "yvelocity": -0.25, "turn_factor": 20,
-                             "min_angle": 225, "max_angle": 315})
+                             "min_angle": 225, "max_angle": 315},
+            particle_lambda_args=[lambda e: e.x + random.randint(-1, 1)])
 
     def collect(self, other):
         global progress_flags
@@ -3282,15 +3283,6 @@ class HedgehogHormone(Powerup):
 
     def event_destroy(self):
         self.emitter.destroy()
-
-
-class HedgehogHormoneBubble(xsge_particle.AnimationBubbleParticle):
-
-    def event_create(self):
-        super(HedgehogHormoneBubble, self).event_create()
-
-        if random.random() < 0.75:
-            self.destroy()
 
 
 class Tunnel(InteractiveObject):

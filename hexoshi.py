@@ -3268,9 +3268,9 @@ class HedgehogHormone(Powerup):
 
     def event_create(self):
         self.emitter = xsge_particle.Emitter.create(
-            self.image_xcenter, self.bbox_top, interval=8, chance=0.5,
-            particle_cls=xsge_particle.AnimationBubbleParticle,
-            particle_args=[self.image_xcenter, self.bbox_top],
+            self.image_xcenter, self.bbox_top, self.z - 1, interval=8,
+            chance=0.5, particle_cls=xsge_particle.AnimationBubbleParticle,
+            particle_args=[self.image_xcenter, self.bbox_top, self.z - 1],
             particle_kwargs={"sprite": hedgehog_hormone_bubble_sprite,
                              "yvelocity": -0.25, "turn_factor": 20,
                              "min_angle": 225, "max_angle": 315},

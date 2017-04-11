@@ -3251,11 +3251,27 @@ class MonkeyBoots(Powerup):
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = monkey_boots_sprite
         super(MonkeyBoots, self).__init__(x, y, **kwargs)
+        self.emitter = None
+
+    def event_create(self):
+        self.emitter = xsge_particle.Emitter.create(
+            self.bbox_left, self.bbox_top, self.z + 0.5, interval=(FPS * 2),
+            particle_cls=xsge_particle.AnimationParticle,
+            particle_args=[self.x, self.y, self.z + 0.5],
+            particle_kwargs={"sprite": monkey_boots_gleam_sprite},
+            particle_lambda_args=[
+                lambda e: random.uniform(e.x, e.x + 13),
+                lambda e: random.uniform(e.y, e.y + 4)])
 
     def collect(self, other):
         global progress_flags
         progress_flags = progress_flags[:]
         progress_flags.append("monkey_boots")
+
+    def event_destroy(self):
+        if self.emitter is not None:
+            self.emitter.destroy()
+            self.emitter = None
 
 
 class HedgehogHormone(Powerup):
@@ -3265,6 +3281,7 @@ class HedgehogHormone(Powerup):
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = hedgehog_hormone_sprite
         super(HedgehogHormone, self).__init__(x, y, **kwargs)
+        self.emitter = None
 
     def event_create(self):
         self.emitter = xsge_particle.Emitter.create(
@@ -3281,7 +3298,9 @@ class HedgehogHormone(Powerup):
         progress_flags.append("hedgehog_hormone")
 
     def event_destroy(self):
-        self.emitter.destroy()
+        if self.emitter is not None:
+            self.emitter.destroy()
+            self.emitter = None
 
 
 class Tunnel(InteractiveObject):
@@ -5571,8 +5590,11 @@ life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
 powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
 atomic_compressor_sprite = sge.gfx.Sprite(
     "atomic_compressor", d, origin_y=1, fps=10, bbox_width=16, bbox_height=16)
-monkey_boots_sprite = sge.gfx.Sprite("artifact1", d) # TODO
-hedgehog_hormone_sprite = sge.gfx.Sprite("hedgehog_hormone", d, fps=7)
+monkey_boots_sprite = sge.gfx.Sprite(
+    "monkey_boots", d, bbox_y=9, bbox_width=16, bbox_height=7)
+monkey_boots_gleam_sprite = sge.gfx.Sprite(
+    "monkey_boots_gleam", d, origin_x=10, origin_y=5, fps=15)
+hedgehog_hormone_sprite = sge.gfx.Sprite("hedgehog_hormone", d)
 hedgehog_hormone_bubble_sprite = sge.gfx.Sprite("hedgehog_hormone_bubble", d,
                                                 fps=5)
 

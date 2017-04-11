@@ -34,7 +34,7 @@
   <properties>
    <property name="cls" value="monkey_boots"/>
   </properties>
-  <image width="16" height="16" source="../images/objects/powerups/life_orb-0.png"/>
+  <image width="17" height="16" source="../images/objects/powerups/monkey_boots.png"/>
  </tile>
  <tile id="6">
   <properties>

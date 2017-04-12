@@ -70,7 +70,7 @@ else:
 parser = argparse.ArgumentParser(prog="Hexoshi")
 parser.add_argument(
     "--version", action="version", version="%(prog)s " + __version__,
-    help=_("Output version information and exit"))
+    help=_("Output version information and exit."))
 parser.add_argument(
     "-p", "--print-errors",
     help=_("Print errors directly to stdout rather than saving them in a file."),

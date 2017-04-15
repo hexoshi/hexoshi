@@ -8,6 +8,8 @@ information.
 ========================================================================
 
 images/objects/anneroy/anneroy_sheet.png
+images/objects/misc/warp_pad_active.png
+images/objects/misc/warp_pad_inactive.png
 images/objects/powerups/atomic_compressor-0.png
 images/objects/powerups/atomic_compressor-1.png
 images/objects/powerups/atomic_compressor-2.png
@@ -187,17 +189,6 @@ images/objects/powerups/map_disk.png
 Author: OceansDream <http://oceansdream.deviantart.com/>
 License: CC BY 3.0 <http://creativecommons.org/licenses/by/3.0/>
 Source: http://opengameart.org/content/various-inventory-24-pixel-icon-set
-
-------------------------------------------------------------------------
-
-images/objects/misc/warp_pad_active.png
-images/objects/misc/warp_pad_inactive.png
-
-Author: Julie Marchant <https://onpon4.github.io>
-License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
-Details:
-  The light in the center comes from the Abandonauts set by Adam
-  Atomic: http://adamatomic.com/abandonauts/
 
 ------------------------------------------------------------------------
 

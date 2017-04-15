@@ -149,7 +149,7 @@ PLAYER_SLIDE_SPEED = 0.25
 PLAYER_ROLL_SLIDE_SPEED = 0
 PLAYER_ROLL_SLOPE_ACCELERATION = 0.25
 PLAYER_HITSTUN = FPS
-WARP_TIME = FPS / 2
+WARP_TIME = FPS / 10
 DEATH_TIME = 3 * FPS
 DOUBLETAP_TIME = FPS / 3
 
@@ -2008,24 +2008,31 @@ class Anneroy(Player):
         self.image_speed = 0
 
     def warp_in(self):
-        super(Anneroy, self).warp_in()
-        self.alarms["fixed_sprite"] = WARP_TIME
-        self.sprite = anneroy_turn_sprite
-        self.image_index = 1
-        self.image_speed = 0
+        self.input_lock = True
+        self.reset_input()
+        self.xvelocity = 0
+        self.yvelocity = 0
+        self.reset_image()
+        self.sprite = anneroy_teleport_sprite
+        self.image_index = 0
+        self.image_fps = anneroy_teleport_sprite.fps
         self.torso.visible = False
-        self.fixed_sprite = True
+        self.fixed_sprite = "warp_in"
 
     def warp_out(self):
-        super(Anneroy, self).warp_out()
-        self.alarms["fixed_sprite"] = WARP_TIME + 1
-        self.sprite = anneroy_turn_sprite
-        self.image_index = 1
-        self.image_speed = 0
+        self.input_lock = True
+        self.reset_input()
+        self.xvelocity = 0
+        self.yvelocity = 0
+        self.reset_image()
+        self.sprite = anneroy_teleport_sprite
+        self.image_index = anneroy_teleport_sprite.frames - 1
+        self.image_fps = -anneroy_teleport_sprite.fps
         self.torso.visible = False
-        self.fixed_sprite = True
+        self.fixed_sprite = "warp_out"
 
     def reset_image(self):
+        self.visible = True
         self.torso.visible = True
         self.image_xscale = self.facing * abs(self.image_xscale)
         self.image_speed = 0
@@ -2223,6 +2230,15 @@ class Anneroy(Player):
     def event_animation_end(self):
         if self.fixed_sprite in {"turn", "crouch", "anim"}:
             self.fixed_sprite = False
+        elif self.fixed_sprite == "warp_in":
+            self.image_index = self.sprite.frames - 1
+            self.image_speed = 0
+            self.alarms["fixed_sprite"] = WARP_TIME
+            self.alarms["input_lock"] = WARP_TIME
+        elif self.fixed_sprite == "warp_out":
+            self.visible = False
+            self.image_speed = 0
+            self.alarms["warp_out"] = WARP_TIME
         elif self.fixed_sprite in {"compress", "decompress_fail"}:
             self.fixed_sprite = False
             self.image_speed = abs(self.xvelocity) * ANNEROY_BALL_FRAMES_PER_PIXEL
@@ -3391,7 +3407,6 @@ class WarpPad(SpawnPoint):
         if i not in warp_pads:
             warp_pads = warp_pads[:]
             warp_pads.append(i)
-        save_game()
 
     def spawn(self, other):
         if not self.created:
@@ -3436,15 +3451,18 @@ class WarpPad(SpawnPoint):
         global progress_flags
 
         if isinstance(other, Player):
-            if not self.activated and (xdirection or ydirection):
-                self.activate()
-                other.refresh()
-                play_sound(warp_pad_sound, self.image_xcenter,
-                           self.image_ycenter)
+            if xdirection or ydirection:
+                if not self.activated:
+                    self.activate()
+                    other.refresh()
+                    play_sound(warp_pad_sound, self.image_xcenter,
+                               self.image_ycenter)
 
-                if "warp" not in progress_flags:
-                    progress_flags.append("warp")
-                    DialogBox(gui_handler, self.message).show()
+                    if "warp" not in progress_flags:
+                        progress_flags.append("warp")
+                        DialogBox(gui_handler, self.message).show()
+
+                save_game()
 
 
 class DoorBarrier(InteractiveObject, xsge_physics.Solid):
@@ -5448,6 +5466,9 @@ fname = os.path.join(d, "anneroy_sheet.png")
 anneroy_turn_sprite = sge.gfx.Sprite.from_tileset(
     fname, 2, 109, 3, xsep=3, width=39, height=43, origin_x=19, origin_y=19,
     fps=10)
+anneroy_teleport_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 360, 455, 7, xsep=4, width=46, height=49, origin_x=23, origin_y=25,
+    fps=20)
 anneroy_wall_right_sprite = sge.gfx.Sprite.from_tileset(
     fname, 439, 228, 2, xsep=5, width=32, height=45, origin_x=23, origin_y=19,
     fps=10)

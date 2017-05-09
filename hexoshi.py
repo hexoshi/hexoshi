@@ -1996,7 +1996,6 @@ class Anneroy(Player):
             sge.game.current_room.alarms["death"] = DEATH_TIME
 
         play_sound(death_sound, self.x, self.y)
-        self.alarms["death"] = ANNEROY_EXPLODE_TIME
         self.input_lock = True
         self.tangible = False
         self.view_frozen = True
@@ -2004,8 +2003,16 @@ class Anneroy(Player):
         self.xvelocity = 0
         self.yvelocity = 0
         self.gravity = 0
-        self.fixed_sprite = True
-        self.image_speed = 0
+        self.reset_image()
+        if self.facing > 0:
+            self.sprite = anneroy_death_right_sprite
+        else:
+            self.sprite = anneroy_death_left_sprite
+        self.image_index = 0
+        self.image_fps = None
+        self.image_xscale = abs(self.image_xscale)
+        self.torso.visible = False
+        self.fixed_sprite = "death"
 
     def warp_in(self):
         self.input_lock = True
@@ -2224,8 +2231,6 @@ class Anneroy(Player):
         elif alarm_id == "shoot_lock":
             if self.shoot_pressed:
                 self.shoot()
-        elif alarm_id == "death":
-            self.destroy()
 
     def event_animation_end(self):
         if self.fixed_sprite in {"turn", "crouch", "anim"}:
@@ -2258,6 +2263,17 @@ class Anneroy(Player):
             self.xvelocity = ANNEROY_WALLJUMP_SPEED * self.facing
             self.yvelocity = get_jump_speed(ANNEROY_WALLJUMP_HEIGHT,
                                             self.gravity)
+        elif self.fixed_sprite == "death":
+            Smoke.create(self.x, self.y, z=(self.z + 0.1),
+                         sprite=anneroy_explode_sprite, tangible=False)
+            for i in six.moves.range(12):
+                shard = Shard.create(
+                    self.x, self.y, self.z, sprite=anneroy_explode_fragments,
+                    image_index=random.randrange(anneroy_explode_fragments.frames),
+                    image_fps=0)
+                shard.speed = 5
+                shard.move_direction = random.randrange(360)
+            self.destroy()
 
     def event_physics_collision_top(self, other, move_loss):
         super(Anneroy, self).event_physics_collision_top(other, move_loss)
@@ -4513,6 +4529,7 @@ class PauseMenu(ModalMenu):
                 kills_percent=int(100 * len(enemies_killed) / len(ENEMY_TYPES)))
 
             DialogBox(gui_handler, text).show()
+            PauseMenu.create(default=self.choice)
         elif self.choice == 2:
             if "map" in progress_flags:
                 play_sound(select_sound)
@@ -5493,6 +5510,17 @@ anneroy_hedgehog_extend_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 510, 8, xsep=3, width=38, height=38, origin_x=19, origin_y=3)
 anneroy_hedgehog_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 551, 8, xsep=3, width=38, height=38, origin_x=19, origin_y=3)
+anneroy_death_right_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 5, 597, 7, xsep=5, width=86, height=82, origin_x=40, origin_y=38,
+    fps=10)
+anneroy_death_left_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 5, 684, 7, xsep=5, width=86, height=82, origin_x=46, origin_y=38,
+    fps=10)
+anneroy_explode_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 369, 771, 3, xsep=5, width=86, height=82, origin_x=43, origin_y=38,
+    fps=10)
+anneroy_explode_fragments = sge.gfx.Sprite.from_tileset(
+    fname, 406, 582, 21, xsep=3, width=6, height=6, origin_x=3, origin_y=3)
 
 anneroy_torso_right_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 45, width=26, height=27, origin_x=9, origin_y=19)

@@ -215,7 +215,7 @@ SOUND_TILT_LIMIT = 0.75
 
 ETANK_CHAR = '\x80'
 
-ENEMY_TYPES = ["Bat", "Frog"]
+ENEMY_TYPES = ["Bat", "Frog", "Worm"]
 
 backgrounds = {}
 loaded_music = {}
@@ -2635,14 +2635,23 @@ class Enemy(InteractiveObject):
             self.hurt()
 
     def hurt(self):
-        pass
+        self.image_blend = sge.gfx.Color("white")
+        self.image_blend_mode = sge.BLEND_RGB_SCREEN
+        self.alarms["hurt_flash"] = FPS / 10
+        play_sound(enemy_hurt_sound, self.image_xcenter, self.image_ycenter)
 
     def kill(self):
         global enemies_killed
 
         blend = sge.gfx.Color((255, 255, 255, 0))
+        base_sprite = sge.gfx.Sprite(width=self.sprite.width,
+                                     height=self.sprite.height,
+                                     origin_x=self.sprite.origin_x,
+                                     origin_y=self.sprite.origin_y)
+        base_sprite.draw_sprite(self.sprite, self.image_index,
+                                self.sprite.origin_x, self.sprite.origin_y)
         spr = sge.gfx.Sprite.from_tween(
-            self.sprite, int(FPS / 6), fps=FPS, blend=blend,
+            base_sprite, int(FPS / 6), fps=FPS, blend=blend,
             blend_mode=sge.BLEND_RGBA_MULTIPLY)
         Smoke.create(self.x, self.y, z=self.z, sprite=spr, tangible=False,
                      image_xscale=self.image_xscale,
@@ -2663,6 +2672,11 @@ class Enemy(InteractiveObject):
 
         play_sound(enemy_death_sound, self.image_xcenter, self.image_ycenter)
         self.destroy()
+
+    def event_alarm(self, alarm_id):
+        if alarm_id == "hurt_flash":
+            self.image_blend = None
+            self.image_blend_mode = None
 
 
 class FreezableObject(InteractiveObject):
@@ -2804,6 +2818,46 @@ class Frog(Enemy, FallingObject, CrowdBlockingObject):
                                self.image_ycenter)
 
 
+class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
+
+    hp = 5
+    touch_damage = 10
+    extend_distance = 64
+    repeat_delay = 90
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["sprite"] = worm_sprite
+        kwargs["collision_precise"] = True
+        kwargs["tangible"] = False
+        kwargs["image_fps"] = 0
+        sge.dsp.Object.__init__(self, x, y, **kwargs)
+
+    def event_create(self):
+        sge.dsp.Object.create(
+            self.x, self.y, self.z + 0.1, sprite=worm_base_sprite,
+            tangible=False)
+
+    def event_step(self, time_passed, delta_mult):
+        super(Worm, self).event_step(time_passed, delta_mult)
+
+        if not self.tangible and "extend_wait" not in self.alarms:
+            target = self.get_nearest_player()
+            if target is not None:
+                xvec = target.x - self.image_xcenter
+                yvec = target.y - self.image_ycenter
+                dist = math.hypot(xvec, yvec)
+                if dist <= self.extend_distance:
+                    self.tangible = True
+                    self.image_fps = None
+                    self.image_index = 0
+
+    def event_animation_end(self):
+        self.tangible = False
+        self.image_fps = 0
+        self.image_index = 0
+        self.alarms["extend_wait"] = self.repeat_delay
+
+
 class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 
     charge_distance = 200
@@ -2814,6 +2868,7 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 
     def __init__(self, x, y, **kwargs):
         self.returning = False
+        self.path = None
         kwargs["sprite"] = bat_sprite
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
@@ -2827,6 +2882,10 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
             self.image_speed = self.sprite.speed * 2
 
     def stop(self):
+        if self.path is not None:
+            self.path.follow_stop(self)
+            self.path = None
+
         self.speed = 0
         self.image_speed = None
         if self.returning:
@@ -2867,10 +2926,11 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
         if alarm_id == "return":
             xvec = self.xstart - self.x
             yvec = self.ystart - self.y
-            pth = xsge_path.Path.create(self.x, self.y, points=[(xvec, yvec)])
-            def evt_follow_end(obj, self=pth): obj.stop()
-            pth.event_follow_end = evt_follow_end
-            pth.follow_start(self, self.return_speed)
+            self.path = xsge_path.Path.create(self.x, self.y,
+                                              points=[(xvec, yvec)])
+            def evt_follow_end(obj, self=self.path): obj.stop()
+            self.path.event_follow_end = evt_follow_end
+            self.path.follow_start(self, self.return_speed)
 
 
 class Boss(InteractiveObject):
@@ -5420,7 +5480,7 @@ TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
          "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
          "spike_right": SpikeRight, "spike_top": SpikeTop,
          "spike_bottom": SpikeBottom, "death": Death, "frog": Frog, "bat": Bat,
-         "fake_tile": FakeTile, "weak_stone": WeakStone,
+         "worm": Worm, "fake_tile": FakeTile, "weak_stone": WeakStone,
          "spike_stone": SpikeStone, "macguffin": Macguffin,
          "artifact": Powerup, "etank": Etank, "life_orb": LifeOrb, "map": Map,
          "map_disk": MapDisk, "atomic_compressor": AtomicCompressor,
@@ -5623,6 +5683,8 @@ frog_jump_sprite = sge.gfx.Sprite("frog_jump", d)
 frog_fall_sprite = sge.gfx.Sprite("frog_fall", d)
 bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
                             bbox_width=10, bbox_height=10)
+worm_sprite = sge.gfx.Sprite("worm", d, fps=10)
+worm_base_sprite = sge.gfx.Sprite("worm_base", d, fps=10)
 
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,
@@ -5735,6 +5797,7 @@ door_open_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "door_open.ogg"), volume=0.5)
 door_close_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "door_close.ogg"), volume=0.5)
+enemy_hurt_sound = stone_break_sound
 enemy_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "enemy_death.wav"))
 frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))

@@ -2822,7 +2822,7 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
 
     hp = 5
     touch_damage = 10
-    extend_distance = 64
+    extend_distance = 96
     repeat_delay = 90
 
     def __init__(self, x, y, **kwargs):
@@ -3122,11 +3122,16 @@ class AnneroyBullet(InteractiveObject):
 
 class HedgehogSpikes(InteractiveObject):
 
+    spike_hitstun = FPS / 4
+
     def event_collision(self, other, xdirection, ydirection):
         super(HedgehogSpikes, self).event_collision(other, xdirection, ydirection)
 
         if isinstance(other, InteractiveObject) and other.spikeable:
-            other.spike(self)
+            if "spike_hitstun" not in other.alarms:
+                other.spike(self)
+                other.alarms["spike_hitstun"] = self.spike_hitstun
+                
         elif isinstance(other, Stone) and other.spikeable:
             other.destroy()
 

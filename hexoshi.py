@@ -4205,7 +4205,7 @@ class KeyboardMenu(Menu):
 
         if self.choice == 0:
             play_sound(select_sound)
-            KeyboardMenu.create_page(default=self.choice, page=(self.page + 1))
+            self.__class__.create_page(default=self.choice, page=(self.page + 1))
         elif self.choice == 1:
             k = wait_key()
             if k is not None:
@@ -4214,7 +4214,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 2:
             k = wait_key()
             if k is not None:
@@ -4223,7 +4223,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 3:
             k = wait_key()
             if k is not None:
@@ -4232,7 +4232,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 4:
             k = wait_key()
             if k is not None:
@@ -4241,7 +4241,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 5:
             k = wait_key()
             if k is not None:
@@ -4250,7 +4250,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 6:
             k = wait_key()
             if k is not None:
@@ -4259,7 +4259,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 7:
             k = wait_key()
             if k is not None:
@@ -4268,7 +4268,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 8:
             k = wait_key()
             if k is not None:
@@ -4277,7 +4277,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 9:
             k = wait_key()
             if k is not None:
@@ -4286,7 +4286,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 10:
             k = wait_key()
             if k is not None:
@@ -4295,7 +4295,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 11:
             k = wait_key()
             if k is not None:
@@ -4304,7 +4304,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 12:
             k = wait_key()
             if k is not None:
@@ -4313,7 +4313,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 13:
             k = wait_key()
             if k is not None:
@@ -4322,7 +4322,7 @@ class KeyboardMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            KeyboardMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         else:
             play_sound(cancel_sound)
             OptionsMenu.create_page(default=5)
@@ -4390,7 +4390,7 @@ class JoystickMenu(Menu):
 
         if self.choice == 0:
             play_sound(select_sound)
-            JoystickMenu.create_page(default=self.choice, page=(self.page + 1))
+            self.__class__.create_page(default=self.choice, page=(self.page + 1))
         elif self.choice == 1:
             js = wait_js()
             if js is not None:
@@ -4399,7 +4399,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 2:
             js = wait_js()
             if js is not None:
@@ -4408,7 +4408,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 3:
             js = wait_js()
             if js is not None:
@@ -4417,7 +4417,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 4:
             js = wait_js()
             if js is not None:
@@ -4426,7 +4426,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 5:
             js = wait_js()
             if js is not None:
@@ -4435,7 +4435,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 6:
             js = wait_js()
             if js is not None:
@@ -4444,7 +4444,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 7:
             js = wait_js()
             if js is not None:
@@ -4453,7 +4453,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 8:
             js = wait_js()
             if js is not None:
@@ -4462,7 +4462,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 9:
             js = wait_js()
             if js is not None:
@@ -4471,7 +4471,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 10:
             js = wait_js()
             if js is not None:
@@ -4480,7 +4480,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 11:
             js = wait_js()
             if js is not None:
@@ -4489,7 +4489,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 12:
             js = wait_js()
             if js is not None:
@@ -4498,7 +4498,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 13:
             js = wait_js()
             if js is not None:
@@ -4507,7 +4507,7 @@ class JoystickMenu(Menu):
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            JoystickMenu.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice, page=self.page)
         else:
             play_sound(cancel_sound)
             OptionsMenu.create_page(default=6)
@@ -4529,6 +4529,7 @@ class ModalMenu(xsge_gui.MenuDialog):
                 valign="middle")
             default %= len(self.widgets)
             self.keyboard_focused_widget = self.widgets[default]
+            sge.game.refresh()
             self.show()
             return self
 
@@ -4541,11 +4542,12 @@ class PauseMenu(ModalMenu):
     @classmethod
     def create(cls, default=0, player_x=None, player_y=None):
         if "map" in progress_flags:
-            items = [_("Continue"), _("View Stats"), _("View Map"),
+            items = [_("Continue"), _("View Stats"), _("Configure keyboard"),
+                     _("Configure joysticks"), _("View Map"),
                      _("Return to Title Screen")]
         else:
-            items = [_("Continue"), _("View Stats"),
-                     _("Return to Title Screen")]
+            items = [_("Continue"), _("View Stats"), _("Configure keyboard"),
+                     _("Configure joysticks"), _("Return to Title Screen")]
 
         self = cls.from_text(
             gui_handler, sge.game.width / 2, sge.game.height / 2,
@@ -4557,10 +4559,14 @@ class PauseMenu(ModalMenu):
         self.keyboard_focused_widget = self.widgets[default]
         self.player_x = player_x
         self.player_y = player_y
+        sge.game.refresh()
         self.show()
         return self
 
     def event_choose(self):
+        self.hide()
+        sge.game.refresh()
+
         def check_quit():
             if current_save_slot is not None:
                 slot = save_slots[current_save_slot]
@@ -4596,15 +4602,41 @@ class PauseMenu(ModalMenu):
             DialogBox(gui_handler, text).show()
             PauseMenu.create(default=self.choice)
         elif self.choice == 2:
+            play_sound(confirm_sound)
+            ModalKeyboardMenu.create_page()
+            PauseMenu.create(default=self.choice)
+        elif self.choice == 3:
+            play_sound(confirm_sound)
+            ModalJoystickMenu.create_page()
+            PauseMenu.create(default=self.choice)
+        elif self.choice == 4:
             if "map" in progress_flags:
                 play_sound(select_sound)
                 MapDialog(self.player_x, self.player_y).show()
             else:
                 check_quit()
-        elif self.choice == 3:
+        elif self.choice == 5:
             check_quit()
         else:
             play_sound(select_sound)
+
+
+class ModalKeyboardMenu(ModalMenu, KeyboardMenu):
+
+    def event_choose(self):
+        if self.choice < len(self.items) - 1:
+            super(ModalKeyboardMenu, self).event_choose()
+        else:
+            play_sound(cancel_sound)
+
+
+class ModalJoystickMenu(ModalMenu, JoystickMenu):
+
+    def event_choose(self):
+        if self.choice < len(self.items) - 1:
+            super(ModalJoystickMenu, self).event_choose()
+        else:
+            play_sound(cancel_sound)
 
 
 class LoseProgressMenu(ModalMenu):

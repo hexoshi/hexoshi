@@ -4624,6 +4624,8 @@ class PauseMenu(ModalMenu):
 class ModalKeyboardMenu(ModalMenu, KeyboardMenu):
 
     def event_choose(self):
+        self.hide()
+        sge.game.refresh()
         if self.choice < len(self.items) - 1:
             super(ModalKeyboardMenu, self).event_choose()
         else:
@@ -4633,6 +4635,8 @@ class ModalKeyboardMenu(ModalMenu, KeyboardMenu):
 class ModalJoystickMenu(ModalMenu, JoystickMenu):
 
     def event_choose(self):
+        self.hide()
+        sge.game.refresh()
         if self.choice < len(self.items) - 1:
             super(ModalJoystickMenu, self).event_choose()
         else:

@@ -2651,7 +2651,7 @@ class Enemy(InteractiveObject):
         base_sprite.draw_sprite(self.sprite, self.image_index,
                                 self.sprite.origin_x, self.sprite.origin_y)
         spr = sge.gfx.Sprite.from_tween(
-            base_sprite, int(FPS / 6), fps=FPS, blend=blend,
+            base_sprite, int(FPS / 4), fps=FPS, blend=blend,
             blend_mode=sge.BLEND_RGBA_MULTIPLY)
         Smoke.create(self.x, self.y, z=self.z, sprite=spr, tangible=False,
                      image_xscale=self.image_xscale,

@@ -4600,15 +4600,18 @@ class PauseMenu(ModalMenu):
                 kills_percent=int(100 * len(enemies_killed) / len(ENEMY_TYPES)))
 
             DialogBox(gui_handler, text).show()
-            PauseMenu.create(default=self.choice)
+            PauseMenu.create(default=self.choice, player_x=self.player_x,
+                             player_y=self.player_y)
         elif self.choice == 2:
             play_sound(confirm_sound)
             ModalKeyboardMenu.create_page()
-            PauseMenu.create(default=self.choice)
+            PauseMenu.create(default=self.choice, player_x=self.player_x,
+                             player_y=self.player_y)
         elif self.choice == 3:
             play_sound(confirm_sound)
             ModalJoystickMenu.create_page()
-            PauseMenu.create(default=self.choice)
+            PauseMenu.create(default=self.choice, player_x=self.player_x,
+                             player_y=self.player_y)
         elif self.choice == 4:
             if "map" in progress_flags:
                 play_sound(select_sound)

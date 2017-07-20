@@ -312,6 +312,8 @@ tilesets/main_white.tsx
 tilesets/objects.tsx
 tilesets/powerups.tsx
 tilesets/stones.tsx
+sounds/cancel.wav
+sounds/confirm.wav
 sounds/enemy_death.wav
 sounds/heal.wav
 sounds/shoot.wav

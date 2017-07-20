@@ -5847,9 +5847,9 @@ enemy_death_sound = sge.snd.Sound(
 frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
-confirm_sound = sge.snd.Sound(None)
-cancel_sound = sge.snd.Sound(None)
-error_sound = sge.snd.Sound(None)
+confirm_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "confirm.wav"))
+cancel_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "cancel.wav"))
+error_sound = cancel_sound
 type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
 
 # Create objects

@@ -5730,6 +5730,16 @@ bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
 worm_sprite = sge.gfx.Sprite("worm", d, fps=10)
 worm_base_sprite = sge.gfx.Sprite("worm_base", d, fps=10)
 
+fname = os.path.join(d, "mantanoid.png")
+mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 41, 51, width=32, height=48, origin_x=16, origin_y=15)
+mantanoid_idle_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=16, origin_y=17,
+    fps=15)
+mantanoid_turn_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=16, origin_y=14,
+    fps=15)
+
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,
                                        bbox_y=8, bbox_width=8, bbox_height=48)

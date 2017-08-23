@@ -3523,7 +3523,9 @@ class WarpPad(SpawnPoint):
         other.z = self.z - 0.5
         other.init_position()
         other.warp_in()
+        other.refresh()
         self.activate()
+        save_game()
         play_sound(teleport_sound, self.image_xcenter, self.image_ycenter)
 
     def teleport(self, other):

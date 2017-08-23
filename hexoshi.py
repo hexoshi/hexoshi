@@ -181,6 +181,15 @@ ANNEROY_BULLET_LIFE = 45
 ANNEROY_EXPLODE_TIME = 0.6 * FPS
 ANNEROY_DECOMPRESS_LAX = 4
 
+MANTANOID_WALK_FRAMES_PER_PIXEL = 1 / 6
+MANTANOID_BBOX_X = -12
+MANTANOID_BBOX_Y = -16
+MANTANOID_BBOX_WIDTH = 24
+MANTANOID_BBOX_HEIGHT = 48
+MANTANOID_SLASH_FRAMES = [3]
+MANTANOID_DOUBLESLASH_FRAMES = [3, 7]
+MANTANOID_DOUBLESLASH_OFFSET = 18
+
 CEILING_LAX = 2
 
 CAMERA_HSPEED_FACTOR = 1 / 8
@@ -215,7 +224,7 @@ SOUND_TILT_LIMIT = 0.75
 
 ETANK_CHAR = '\x80'
 
-ENEMY_TYPES = ["Bat", "Frog", "Worm"]
+ENEMY_TYPES = ["Bat", "Frog", "Worm", "Mantanoid"]
 
 backgrounds = {}
 loaded_music = {}
@@ -2618,6 +2627,7 @@ class Shard(FallingObject):
 
 class Enemy(InteractiveObject):
 
+    classname = None
     shootable = True
     spikeable = True
     touch_damage = 5
@@ -2666,7 +2676,7 @@ class Enemy(InteractiveObject):
             LifeForce.create(self.image_xcenter, self.image_ycenter,
                              z=self.z - 0.1)
 
-        cn = self.__class__.__name__
+        cn = self.classname or self.__class__.__name__
         if cn in ENEMY_TYPES and cn not in enemies_killed:
             enemies_killed.append(cn)
 
@@ -2931,6 +2941,22 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
             def evt_follow_end(obj, self=self.path): obj.stop()
             self.path.event_follow_end = evt_follow_end
             self.path.follow_start(self, self.return_speed)
+
+
+class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
+
+    classname = "Mantanoid"
+    hp = 5
+    touch_damage = 10
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["sprite"] = mantanoid_stand_sprite
+        kwargs["bbox_x"] = MANTANOID_BBOX_X
+        kwargs["bbox_y"] = MANTANOID_BBOX_Y
+        kwargs["bbox_width"] = MANTANOID_BBOX_WIDTH
+        kwargs["bbox_height"] = MANTANOID_BBOX_HEIGHT
+        kwargs["regulate_origin"] = True
+        super(Mantanoid, self).__init__(x, y, **kwargs)
 
 
 class Boss(InteractiveObject):
@@ -5516,32 +5542,44 @@ def update_fullscreen():
         sge.game.scale = None
 
 
-TYPES = {"solid_left": SolidLeft, "solid_right": SolidRight,
-         "solid_top": SolidTop, "solid_bottom": SolidBottom, "solid": Solid,
-         "slope_topleft": SlopeTopLeft, "slope_topright": SlopeTopRight,
-         "slope_bottomleft": SlopeBottomLeft,
-         "slope_bottomright": SlopeBottomRight,
-         "moving_platform": MovingPlatform, "spike_left": SpikeLeft,
-         "spike_right": SpikeRight, "spike_top": SpikeTop,
-         "spike_bottom": SpikeBottom, "death": Death, "frog": Frog, "bat": Bat,
-         "worm": Worm, "fake_tile": FakeTile, "weak_stone": WeakStone,
-         "spike_stone": SpikeStone, "macguffin": Macguffin,
-         "artifact": Powerup, "etank": Etank, "life_orb": LifeOrb, "map": Map,
-         "map_disk": MapDisk, "atomic_compressor": AtomicCompressor,
-         "monkey_boots": MonkeyBoots, "hedgehog_hormone": HedgehogHormone,
-         "warp_pad": WarpPad, "doorframe_x": DoorFrameX,
-         "doorframe_y": DoorFrameY, "door_left": LeftDoor,
-         "door_right": RightDoor, "door_up": UpDoor, "door_down": DownDoor,
-         "timeline_switcher": TimelineSwitcher, "enemies": get_object,
-         "doors": get_object, "stones": get_object, "powerups": get_object,
-         "objects": get_object, "moving_platform_path": MovingPlatformPath,
-         "triggered_moving_platform_path": TriggeredMovingPlatformPath,
-         "player": PlayerLayer, "camera_x_guide": CameraXGuide,
-         "camera_y_guide": CameraYGuide, "map_wall_left": MapLeftWall,
-         "map_wall_right": MapRightWall, "map_wall_top": MapTopWall,
-         "map_wall_bottom": MapBottomWall, "map_door_left": MapLeftDoor,
-         "map_door_right": MapRightDoor, "map_door_top": MapTopDoor,
-         "map_door_bottom": MapBottomDoor, "map_ignore_region": IgnoreRegion}
+TYPES = {
+    "solid_left": SolidLeft, "solid_right": SolidRight, "solid_top": SolidTop,
+    "solid_bottom": SolidBottom, "solid": Solid, "slope_topleft": SlopeTopLeft,
+    "slope_topright": SlopeTopRight, "slope_bottomleft": SlopeBottomLeft,
+    "slope_bottomright": SlopeBottomRight, "moving_platform": MovingPlatform,
+    "spike_left": SpikeLeft, "spike_right": SpikeRight, "spike_top": SpikeTop,
+    "spike_bottom": SpikeBottom, "death": Death,
+
+    "frog": Frog, "bat": Bat, "worm": Worm, "mantanoid": Mantanoid,
+
+    "fake_tile": FakeTile, "weak_stone": WeakStone, "spike_stone": SpikeStone,
+
+    "macguffin": Macguffin, "artifact": Powerup, "etank": Etank,
+    "life_orb": LifeOrb, "map": Map, "map_disk": MapDisk,
+    "atomic_compressor": AtomicCompressor, "monkey_boots": MonkeyBoots,
+    "hedgehog_hormone": HedgehogHormone,
+
+    "warp_pad": WarpPad, "doorframe_x": DoorFrameX, "doorframe_y": DoorFrameY,
+    "door_left": LeftDoor, "door_right": RightDoor, "door_up": UpDoor,
+    "door_down": DownDoor,
+
+    "timeline_switcher": TimelineSwitcher,
+
+    "enemies": get_object, "doors": get_object, "stones": get_object,
+    "powerups": get_object, "objects": get_object,
+
+    "moving_platform_path": MovingPlatformPath,
+    "triggered_moving_platform_path": TriggeredMovingPlatformPath,
+
+    "player": PlayerLayer,
+
+    "camera_x_guide": CameraXGuide, "camera_y_guide": CameraYGuide,
+    "map_wall_left": MapLeftWall, "map_wall_right": MapRightWall,
+    "map_wall_top": MapTopWall, "map_wall_bottom": MapBottomWall,
+    "map_door_left": MapLeftDoor, "map_door_right": MapRightDoor,
+    "map_door_top": MapTopDoor, "map_door_bottom": MapBottomDoor,
+    "map_ignore_region": IgnoreRegion,
+    }
 
 
 print(_("Initializing game system..."))
@@ -5730,15 +5768,45 @@ bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
 worm_sprite = sge.gfx.Sprite("worm", d, fps=10)
 worm_base_sprite = sge.gfx.Sprite("worm_base", d, fps=10)
 
-fname = os.path.join(d, "mantanoid.png")
+fname = os.path.join(d, "mantanoid_sheet.png")
 mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 51, width=32, height=48, origin_x=16, origin_y=15)
+    fname, 41, 51, width=32, height=48, origin_x=15, origin_y=15)
 mantanoid_idle_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=16, origin_y=17,
+    fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=15, origin_y=17,
     fps=15)
 mantanoid_turn_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=16, origin_y=14,
+    fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=15, origin_y=14,
     fps=15)
+mantanoid_walk_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 41, 657, 10, xsep=3, width=40, height=49, origin_x=23, origin_y=16)
+mantanoid_hop_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 41, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
+    fps=15)
+mantanoid_jump_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 41, 372, 5, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
+    fps=15)
+mantanoid_jump_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 156, 299, width=32, height=57, origin_x=15, origin_y=24)
+mantanoid_fall_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 193, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
+    fps=15)
+mantanoid_fall_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 304, 299, width=32, height=57, origin_x=15, origin_y=24)
+mantanoid_land_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 341, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
+    fps=15)
+mantanoid_swing_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 41, 470, 3, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
+    fps=15)
+mantanoid_swing_single_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 191, 470, 4, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
+    fps=15)
+mantanoid_swing_double_first_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 233, 551, 4, xsep=3, width=61, height=65, origin_x=15, origin_y=32,
+    fps=15)
+mantanoid_swing_double_second_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 489, 551, 3, xsep=3, width=61, height=65,
+    origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=15)
 
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,

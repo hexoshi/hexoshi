@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="enemies" tilewidth="32" tileheight="40" tilecount="3">
+<tileset name="enemies" tilewidth="32" tileheight="48" tilecount="4">
  <tile id="0">
   <properties>
    <property name="cls" value="bat"/>
@@ -17,5 +17,11 @@
    <property name="cls" value="worm"/>
   </properties>
   <image width="32" height="40" source="../images/objects/enemies/worm-4.png"/>
+ </tile>
+ <tile id="3">
+  <properties>
+   <property name="cls" value="mantanoid"/>
+  </properties>
+  <image width="32" height="48" source="../images/objects/enemies/mantanoid.png"/>
  </tile>
 </tileset>

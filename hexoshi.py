@@ -2964,6 +2964,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     sight_distance = 150
 
     def __init__(self, x, y, **kwargs):
+        x += mantanoid_stand_sprite.origin_x
+        y += mantanoid_stand_sprite.origin_y
         kwargs["sprite"] = mantanoid_stand_sprite
         kwargs["bbox_x"] = MANTANOID_BBOX_X
         kwargs["bbox_y"] = MANTANOID_BBOX_Y
@@ -3012,15 +3014,15 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if self.image_xscale > 0:
             self.image_xscale = -abs(self.image_xscale)
             self.sprite = mantanoid_turn_sprite
-            self.image_fps = -mantanoid_turn_sprite.fps
-            self.image_index = mantanoid_turn_sprite.frames - 1
+            self.image_fps = None
+            self.image_index = 0
             self.action = "animation"
 
     def action_turn_right(self):
         if self.image_xscale < 0:
             self.image_xscale = abs(self.image_xscale)
             self.sprite = mantanoid_turn_sprite
-            self.image_fps = mantanoid_turn_sprite.fps
+            self.image_fps = None
             self.image_index = 0
             self.action = "animation"
 
@@ -5962,43 +5964,43 @@ worm_base_sprite = sge.gfx.Sprite("worm_base", d, fps=10)
 
 fname = os.path.join(d, "mantanoid_sheet.png")
 mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 51, width=32, height=48, origin_x=15, origin_y=15)
+    fname, 41, 51, width=32, height=48, origin_x=15, origin_y=14)
 mantanoid_idle_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=15, origin_y=17,
+    fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=15, origin_y=16,
     fps=10)
 mantanoid_turn_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=15, origin_y=14,
+    fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=15, origin_y=13,
     fps=10)
 mantanoid_walk_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 657, 10, xsep=3, width=41, height=49, origin_x=23, origin_y=16)
+    fname, 41, 657, 10, xsep=3, width=41, height=49, origin_x=23, origin_y=15)
 mantanoid_hop_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
+    fname, 41, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=23,
     fps=10)
 mantanoid_jump_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 372, 5, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
+    fname, 41, 372, 5, xsep=5, width=32, height=57, origin_x=15, origin_y=23,
     fps=10)
 mantanoid_jump_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 156, 299, width=32, height=57, origin_x=15, origin_y=24)
+    fname, 156, 299, width=32, height=57, origin_x=15, origin_y=23)
 mantanoid_fall_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 193, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
+    fname, 193, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=23,
     fps=10)
 mantanoid_fall_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 304, 299, width=32, height=57, origin_x=15, origin_y=24)
+    fname, 304, 299, width=32, height=57, origin_x=15, origin_y=23)
 mantanoid_land_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 341, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
+    fname, 341, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=23,
     fps=10)
 mantanoid_slash_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 470, 3, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
+    fname, 41, 470, 3, xsep=5, width=45, height=65, origin_x=15, origin_y=31,
     fps=10)
 mantanoid_slash_single_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 191, 470, 4, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
+    fname, 191, 470, 4, xsep=5, width=45, height=65, origin_x=15, origin_y=31,
     fps=10)
 mantanoid_slash_double_first_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 233, 551, 4, xsep=3, width=61, height=65, origin_x=15, origin_y=32,
+    fname, 233, 551, 4, xsep=3, width=61, height=65, origin_x=15, origin_y=31,
     fps=10)
 mantanoid_slash_double_second_sprite = sge.gfx.Sprite.from_tileset(
     fname, 489, 551, 3, xsep=3, width=61, height=65,
-    origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=10)
+    origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=31, fps=10)
 
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,

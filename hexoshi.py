@@ -181,14 +181,26 @@ ANNEROY_BULLET_LIFE = 45
 ANNEROY_EXPLODE_TIME = 0.6 * FPS
 ANNEROY_DECOMPRESS_LAX = 4
 
+MANTANOID_WANDER_SPEED = 1
+MANTANOID_WANDER_INTERVAL = FPS * 2
+MANTANOID_APPROACH_SPEED = 2
 MANTANOID_WALK_FRAMES_PER_PIXEL = 1 / 6
+MANTANOID_LEVEL_DISTANCE = 48
+MANTANOID_SLASH_DISTANCE = 30
+MANTANOID_SLASH2_DISTANCE = 44
 MANTANOID_BBOX_X = -12
 MANTANOID_BBOX_Y = -16
 MANTANOID_BBOX_WIDTH = 24
 MANTANOID_BBOX_HEIGHT = 48
-MANTANOID_SLASH_FRAMES = [3]
-MANTANOID_DOUBLESLASH_FRAMES = [3, 7]
+MANTANOID_SLASH_BBOX_X = -12
+MANTANOID_SLASH_BBOX_Y = -27
+MANTANOID_SLASH_BBOX_WIDTH = 38
+MANTANOID_SLASH_BBOX_HEIGHT = 59
 MANTANOID_DOUBLESLASH_OFFSET = 18
+MANTANOID_SLASH2_BBOX_X = 0
+MANTANOID_SLASH2_BBOX_Y = -20
+MANTANOID_SLASH2_BBOX_WIDTH = 24
+MANTANOID_SLASH2_BBOX_HEIGHT = 32
 
 CEILING_LAX = 2
 
@@ -2948,6 +2960,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     classname = "Mantanoid"
     hp = 5
     touch_damage = 10
+    slash_damage = 20
+    sight_distance = 150
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = mantanoid_stand_sprite
@@ -2957,6 +2971,182 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         kwargs["bbox_height"] = MANTANOID_BBOX_HEIGHT
         kwargs["regulate_origin"] = True
         super(Mantanoid, self).__init__(x, y, **kwargs)
+        self.action = None
+        self.target = None
+        self.movement_speed = 0
+
+    def set_direction(self, direction):
+        if not self.action:
+            if direction > 0:
+                if self.image_xscale < 0:
+                    self.perform_action(self.action_turn_right)
+            elif direction < 0:
+                if self.image_xscale > 0:
+                    self.perform_action(self.action_turn_left)
+
+    def stop_left(self):
+        if not self.action:
+            self.action_turn_right()
+
+    def stop_right(self):
+        if not self.action:
+            self.action_turn_left()
+
+    def update_wander(self):
+        if self.was_on_floor and "move_lock" not in self.alarms:
+            choices = [1] * 3 + [0] * 10 + [-1]
+            xv = random.choice(choices)
+            if self.x > self.xstart:
+                xv *= -1
+
+            self.set_direction(xv)
+            self.movement_speed = MANTANOID_WANDER_SPEED
+            self.alarms["move_lock"] = MANTANOID_WANDER_INTERVAL
+
+    def perform_action(self, action):
+        if not self.action:
+            self.xvelocity = 0
+            action()
+
+    def action_turn_left(self):
+        if self.image_xscale > 0:
+            self.image_xscale = -abs(self.image_xscale)
+            self.sprite = mantanoid_turn_sprite
+            self.image_fps = -mantanoid_turn_sprite.fps
+            self.image_index = mantanoid_turn_sprite.frames - 1
+            self.action = "animation"
+
+    def action_turn_right(self):
+        if self.image_xscale < 0:
+            self.image_xscale = abs(self.image_xscale)
+            self.sprite = mantanoid_turn_sprite
+            self.image_fps = mantanoid_turn_sprite.fps
+            self.image_index = 0
+            self.action = "animation"
+
+    def action_approach(self):
+        if self.target is not None:
+            if self.x < self.target.x:
+                self.action_turn_right()
+            else:
+                self.action_turn_left()
+
+            self.movement_speed = MANTANOID_APPROACH_SPEED
+
+    def action_slash(self):
+        if self.target is not None:
+            self.action = "slash"
+            self.sprite = mantanoid_slash_start_sprite
+            self.image_fps = None
+            self.image_index = 0
+
+    def check_hazards(self):
+        return None
+
+    def update_action(self):
+        action = self.check_hazards()
+        if not action:
+            if self.target is not None:
+                xdist = abs(self.target.x - self.x)
+                ydist = abs(self.target.y - self.y)
+                if ydist <= MANTANOID_LEVEL_DISTANCE:
+                    if xdist <= MANTANOID_SLASH_DISTANCE:
+                        action = self.action_slash
+                    else:
+                        action = self.action_approach
+
+        if action:
+            self.perform_action(action)
+        else:
+            self.update_wander()
+
+    def set_image(self):
+        if not self.action:
+            if self.was_on_floor:
+                if self.xvelocity:
+                    self.sprite = mantanoid_walk_sprite
+                    self.image_speed = abs(
+                        self.xvelocity * MANTANOID_WALK_FRAMES_PER_PIXEL)
+                else:
+                    self.sprite = mantanoid_idle_sprite
+                    self.image_fps = None
+            else:
+                pass
+
+    def event_step(self, time_passed, delta_mult):
+        if not self.action:
+            self.target = self.get_nearest_player()
+            dist = 0
+            if self.target is not None:
+                xvec = self.target.x - self.x
+                yvec = self.target.y - self.y
+                dist = math.hypot(xvec, yvec)
+                if dist > self.sight_distance:
+                    self.target = None
+
+            self.update_action()
+
+        if not self.action:
+            self.xvelocity = self.movement_speed * self.image_xscale
+            self.set_image()
+
+    def event_animation_end(self):
+        if self.action == "slash":
+            double = False
+            if self.target is not None:
+                w = MANTANOID_SLASH_BBOX_WIDTH
+                h = MANTANOID_SLASH_BBOX_HEIGHT
+                if self.image_xscale > 0:
+                    x = self.x + MANTANOID_SLASH_BBOX_X
+                    y = self.y + MANTANOID_SLASH_BBOX_Y
+                else:
+                    x = self.x - MANTANOID_SLASH_BBOX_X - w
+                    y = self.y - MANTANOID_SLASH_BBOX_Y - h
+
+                if sge.collision.rectangle(x, y, w, h, other=self.target):
+                    self.target.hurt(self.slash_damage)
+                else:
+                    xdist = abs(self.target.x - self.x)
+                    ydist = abs(self.target.y - self.y)
+                    if (ydist <= MANTANOID_LEVEL_DISTANCE and
+                            xdist <= MANTANOID_SLASH2_DISTANCE):
+                        double = True
+
+            if double:
+                self.sprite = mantanoid_slash_double_first_sprite
+                self.image_fps = None
+                self.image_index = 0
+                self.action = "doubleslash"
+            else:
+                self.sprite = mantanoid_slash_single_sprite
+                self.image_fps = None
+                self.image_index = 0
+                self.action = "animation"
+        elif self.action == "doubleslash":
+            self.move_x(MANTANOID_DOUBLESLASH_OFFSET * self.image_xscale)
+
+            if self.target is not None:
+                w = MANTANOID_SLASH2_BBOX_WIDTH
+                h = MANTANOID_SLASH2_BBOX_HEIGHT
+                if self.image_xscale > 0:
+                    x = self.x + MANTANOID_SLASH2_BBOX_X
+                    y = self.y + MANTANOID_SLASH2_BBOX_Y
+                else:
+                    x = self.x - MANTANOID_SLASH2_BBOX_X - w
+                    y = self.y - MANTANOID_SLASH2_BBOX_Y - h
+
+                if sge.collision.rectangle(x, y, w, h, other=self.target):
+                    self.target.hurt(self.slash_damage)
+
+            self.sprite = mantanoid_slash_double_second_sprite
+            self.image_fps = None
+            self.image_index = 0
+            self.action = "animation"
+        elif self.action == "animation":
+            self.sprite = mantanoid_stand_sprite
+            self.image_fps = None
+            self.image_index = 0
+            self.action = None
 
 
 class Boss(InteractiveObject):
@@ -5775,40 +5965,40 @@ mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 51, width=32, height=48, origin_x=15, origin_y=15)
 mantanoid_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=15, origin_y=17,
-    fps=15)
+    fps=10)
 mantanoid_turn_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=15, origin_y=14,
-    fps=15)
+    fps=10)
 mantanoid_walk_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 657, 10, xsep=3, width=40, height=49, origin_x=23, origin_y=16)
+    fname, 41, 657, 10, xsep=3, width=41, height=49, origin_x=23, origin_y=16)
 mantanoid_hop_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
-    fps=15)
+    fps=10)
 mantanoid_jump_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 372, 5, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
-    fps=15)
+    fps=10)
 mantanoid_jump_sprite = sge.gfx.Sprite.from_tileset(
     fname, 156, 299, width=32, height=57, origin_x=15, origin_y=24)
 mantanoid_fall_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 193, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
-    fps=15)
+    fps=10)
 mantanoid_fall_sprite = sge.gfx.Sprite.from_tileset(
     fname, 304, 299, width=32, height=57, origin_x=15, origin_y=24)
 mantanoid_land_sprite = sge.gfx.Sprite.from_tileset(
     fname, 341, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
-    fps=15)
-mantanoid_swing_start_sprite = sge.gfx.Sprite.from_tileset(
+    fps=10)
+mantanoid_slash_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 470, 3, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
-    fps=15)
-mantanoid_swing_single_sprite = sge.gfx.Sprite.from_tileset(
+    fps=10)
+mantanoid_slash_single_sprite = sge.gfx.Sprite.from_tileset(
     fname, 191, 470, 4, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
-    fps=15)
-mantanoid_swing_double_first_sprite = sge.gfx.Sprite.from_tileset(
+    fps=10)
+mantanoid_slash_double_first_sprite = sge.gfx.Sprite.from_tileset(
     fname, 233, 551, 4, xsep=3, width=61, height=65, origin_x=15, origin_y=32,
-    fps=15)
-mantanoid_swing_double_second_sprite = sge.gfx.Sprite.from_tileset(
+    fps=10)
+mantanoid_slash_double_second_sprite = sge.gfx.Sprite.from_tileset(
     fname, 489, 551, 3, xsep=3, width=61, height=65,
-    origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=15)
+    origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=10)
 
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,

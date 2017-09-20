@@ -183,7 +183,7 @@ ANNEROY_DECOMPRESS_LAX = 4
 
 MANTANOID_WANDER_SPEED = 1
 MANTANOID_WANDER_INTERVAL = FPS * 2
-MANTANOID_APPROACH_SPEED = 2
+MANTANOID_APPROACH_SPEED = 1.5
 MANTANOID_WALK_FRAMES_PER_PIXEL = 1 / 6
 MANTANOID_LEVEL_DISTANCE = 48
 MANTANOID_SLASH_DISTANCE = 30
@@ -2958,10 +2958,10 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     classname = "Mantanoid"
-    hp = 5
+    hp = 10
     touch_damage = 10
     slash_damage = 20
-    sight_distance = 150
+    sight_distance = 300
 
     def __init__(self, x, y, **kwargs):
         x += mantanoid_stand_sprite.origin_x
@@ -2988,21 +2988,29 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     def stop_left(self):
         if not self.action:
-            self.action_turn_right()
+            if self.target is not None:
+                # TODO: Jump
+                pass
+            else:
+                self.action_turn_right()
 
     def stop_right(self):
         if not self.action:
-            self.action_turn_left()
+            if self.target is not None:
+                # TODO: Jump
+                pass
+            else:
+                self.action_turn_left()
 
     def update_wander(self):
         if self.was_on_floor and "move_lock" not in self.alarms:
-            choices = [1] * 3 + [0] * 10 + [-1]
+            choices = 3 * [1] + 7 * [0] + [-1]
             xv = random.choice(choices)
             if self.x > self.xstart:
                 xv *= -1
 
             self.set_direction(xv)
-            self.movement_speed = MANTANOID_WANDER_SPEED
+            self.movement_speed = MANTANOID_WANDER_SPEED * abs(xv)
             self.alarms["move_lock"] = MANTANOID_WANDER_INTERVAL
 
     def perform_action(self, action):
@@ -3033,7 +3041,9 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             else:
                 self.action_turn_left()
 
-            self.movement_speed = MANTANOID_APPROACH_SPEED
+            if self.movement_speed != MANTANOID_APPROACH_SPEED:
+                self.movement_speed = MANTANOID_APPROACH_SPEED
+                play_sound(mantanoid_approach_sound, self.x, self.y)
 
     def action_slash(self):
         if self.target is not None:
@@ -3070,8 +3080,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                     self.image_speed = abs(
                         self.xvelocity * MANTANOID_WALK_FRAMES_PER_PIXEL)
                 else:
-                    self.sprite = mantanoid_idle_sprite
-                    self.image_fps = None
+                    self.sprite = mantanoid_stand_sprite
+                    if random.random() < 1 / (2 * FPS):
+                        self.sprite = mantanoid_idle_sprite
+                        self.image_fps = None
+                        self.image_index = 0
+                        self.action = "animation"
             else:
                 pass
 
@@ -6117,6 +6131,8 @@ enemy_hurt_sound = stone_break_sound
 enemy_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "enemy_death.wav"))
 frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))
+mantanoid_approach_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "mantanoid_approach.wav"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
 confirm_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "confirm.wav"))

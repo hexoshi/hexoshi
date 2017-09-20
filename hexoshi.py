@@ -3128,15 +3128,14 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                             xdist <= MANTANOID_SLASH2_DISTANCE):
                         double = True
 
+            play_sound(mantanoid_slash_sound, self.x, self.y)
+            self.image_fps = None
+            self.image_index = 0
             if double:
                 self.sprite = mantanoid_slash_double_first_sprite
-                self.image_fps = None
-                self.image_index = 0
                 self.action = "doubleslash"
             else:
                 self.sprite = mantanoid_slash_single_sprite
-                self.image_fps = None
-                self.image_index = 0
                 self.action = "animation"
         elif self.action == "doubleslash":
             self.move_x(MANTANOID_DOUBLESLASH_OFFSET * self.image_xscale)
@@ -3154,6 +3153,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 if sge.collision.rectangle(x, y, w, h, other=self.target):
                     self.target.hurt(self.slash_damage)
 
+            play_sound(mantanoid_slash_sound, self.x, self.y)
             self.sprite = mantanoid_slash_double_second_sprite
             self.image_fps = None
             self.image_index = 0
@@ -6133,6 +6133,8 @@ enemy_death_sound = sge.snd.Sound(
 frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))
 mantanoid_approach_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "mantanoid_approach.wav"))
+mantanoid_slash_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "mantanoid_slash.wav"))
 select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
 pause_sound = select_sound
 confirm_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "confirm.wav"))

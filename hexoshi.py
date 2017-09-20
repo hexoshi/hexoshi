@@ -6091,7 +6091,18 @@ for fname in os.listdir(d):
         portrait_sprites[root] = portrait
 
 # Load backgrounds
-# TODO
+d = os.path.join(DATA, "images", "backgrounds")
+layers = []
+
+if not NO_BACKGROUNDS:
+    layers = [
+        sge.gfx.BackgroundLayer(
+            sge.gfx.Sprite("iridia", d), 0, 0, -100000, xscroll_rate=0.7,
+            yscroll_rate=0.7, repeat_left=True, repeat_right=True,
+            repeat_up=True, repeat_down=True)]
+
+backgrounds["iridia"] = sge.gfx.Background(layers,
+                                           sge.gfx.Color((21, 17, 22)))
 
 # Load fonts
 chars = ([six.unichr(i) for i in six.moves.range(32, 127)] +

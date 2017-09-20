@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="54">
  <properties>
+  <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="233" source="../tilesets/stones.tsx"/>
- <tileset firstgid="235" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="242" source="../tilesets/doors.tsx"/>
- <tileset firstgid="248" source="../tilesets/objects.tsx"/>
- <tileset firstgid="249" source="../tilesets/artifact.tsx"/>
+ <tileset firstgid="234" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="236" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="243" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="249" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="250" source="../tilesets/artifact.tsx"/>
  <layer name="Decorations" width="200" height="28">
   <data encoding="base64" compression="zlib">
    eJzt2NtOxCAQgGEe39Odq95pL3XXw1t42Kqb6JVvIyStYSdFqBRq4f+SSdiWlnbYISlKAQAQ71LHVRfNH64/mvRp5hsj1fh2fkOiiRyvd6pj5emTKq+u+57ruBgIX46aEWOHvHdOZxnGWHJ9/OfxctcH0pg73weZx1t6fRwmui+GzV0fueX6f9WW11Ixj2mQ1zIwj2mQ1zLk2AOoEXkFAAAAAAAAAKBud1b7VpxbB1x/P+GzlEjm1Gej9udE8uU7ZM4Q7s1qv4pzW/H7ZOD692kfpzgyp9Kn+N2q/TmRfPmWc4ZlGbueAjXxracAAABI62vg2CbifmO+f+x9pFr2hcw7u3IUk3ejlhzOrbXaxwH97T5jvn/sfaRa9oXMO7tyZPI+tIepuuOuc72t1edRx5Oj34PnPr1rHTfimK8GTf3H1jkwp53V/m39e9bx0rX7uvOtY6b+W3HsI/zRAAAAfnwD0ONQQQ==
@@ -44,7 +45,7 @@
   <object id="2" x="-8" y="0" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="8" gid="245" x="1592" y="152" width="8" height="64">
+  <object id="8" gid="246" x="1592" y="152" width="8" height="64">
    <properties>
     <property name="dest" value="23.tmx"/>
    </properties>
@@ -86,7 +87,7 @@
   <object id="30" type="slope_topright" x="960" y="184" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Map Hints">
-  <object id="7" gid="244" x="0" y="208" width="8" height="64">
+  <object id="7" gid="245" x="0" y="208" width="8" height="64">
    <properties>
     <property name="dest" value="12.tmx"/>
    </properties>

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="28" tilewidth="8" tileheight="8" nextobjectid="31">
  <properties>
+  <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="233" source="../tilesets/stones.tsx"/>
- <tileset firstgid="235" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="242" source="../tilesets/doors.tsx"/>
- <tileset firstgid="248" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="234" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="236" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="243" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="249" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="150" height="28">
   <data encoding="base64" compression="zlib">
    eJzt2ssKgzAQhWFfv5dd223rstfX6M120ydqBioEER3RNEPyfzBQa5QTGQOKRQEAadm62v2qVIyfB02j42fW5p7CFHOvs5cjc6xcrSfIY4WFvorFytyt5JhSinPSsjL3TewAAVi5tjHkPPfQcr62qc79FDtAke611ZjFDhBI5f1eurq6uv05Q859hXDoK4RAXyGEFJ9xAQCAbZfYAZCkd8t/n7+nAAAAAPodYwdAkp4Dx8uzOb2IsRaNbXk21/TiWTGmqz/9fZpzifp91N7VQXmM5h7hPrLjpRjT1Z/+Ps25RP0+6u7qoTymLUPzXhq6pgM5kfVcu/YLC9+8wp7mN6qynmvXflH1DwGQmS8lCTFT
@@ -31,12 +32,12 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="3" gid="247" x="40" y="224" width="64" height="8">
+  <object id="3" gid="248" x="40" y="224" width="64" height="8">
    <properties>
     <property name="dest" value="17.tmx"/>
    </properties>
   </object>
-  <object id="4" gid="245" x="1192" y="72" width="8" height="64">
+  <object id="4" gid="246" x="1192" y="72" width="8" height="64">
    <properties>
     <property name="dest" value="19.tmx"/>
    </properties>

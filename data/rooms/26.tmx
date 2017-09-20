@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="150" height="112" tilewidth="8" tileheight="8" nextobjectid="72">
  <properties>
+  <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="233" source="../tilesets/stones.tsx"/>
- <tileset firstgid="235" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="242" source="../tilesets/doors.tsx"/>
- <tileset firstgid="248" source="../tilesets/objects.tsx"/>
- <tileset firstgid="249" source="../tilesets/artifact.tsx"/>
+ <tileset firstgid="234" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="236" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="243" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="249" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="250" source="../tilesets/artifact.tsx"/>
  <layer name="Decorations" width="150" height="112">
   <data encoding="base64" compression="zlib">
    eJzt3dFulEAUAFA+v1bfrPqm+6h1tX/Ral1tok/2a2QTJsHtAMN2Bxj2nGRCA/QykJs0ZYa5VQUAAAAAAAAA5Xpdt6uE8y6bBqckr8jhopJX5CGv1mHbbL/0nNN37NTeTHgt8tk125+RY7d1u+s4BgAAAAAAAABTCnMiPs/aC9YmzIn4MWsvAOB/KfN+U7+ngcB8cnK4mLsDAAAMeu479esTxGB9ht6p/xk4fp8QAwCmsO3YfzNpL1ibXcf+h0l7AQDzel+3Dwlt84xrGAMnB3lFDvKKHORVua7n7kAPeVWu+7k70ENekYO8Igd5RQ7WbgcAAMin6zuX/f7Uul0pNcA4L13fuez3p9bt6qsBBgAl2I+ZxOaAbqr08ZTw+5vTd49C9eWOcTqOJa/IoW+MV16Rg7wiB3lFDtYcpVR/5+4AwAB/YwEAAM5DmPc8tN5ImNPctU4utIV5z7H1Rn63fg5zmrvWyQUAniph7sVl9bSfobbxu7q9bba57qWEZ7Q0JTyzfR9Txq/k1XKU8MxeJJ6X616s/zReCXmVypj8cqwpr1gOeUUO8ooc5FU5SqrZnfq/FvNTsxsAjhfGvgAAAFiuvnfr7W9oUmsAxOoL3IzqEWvQ9269/Q1N+F7mZUK8w3oBD2M7BQBnbmhOxdiaTx/r9unI6x1bX+owZle9qrA/nP81MV7sWDt2LE7sXrYDsddkaE5Fas2nV832W92+j7jeY8+1but2l3Dtw5hd9arC/nD+r8R4sWPt2LE4see2G4gNULp/mp96hg==
@@ -46,12 +47,12 @@
   <object id="2" x="-8" y="0" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="16" gid="244" x="0" y="160" width="8" height="64">
+  <object id="16" gid="245" x="0" y="160" width="8" height="64">
    <properties>
     <property name="dest" value="12.tmx"/>
    </properties>
   </object>
-  <object id="17" gid="245" x="1192" y="888" width="8" height="64">
+  <object id="17" gid="246" x="1192" y="888" width="8" height="64">
    <properties>
     <property name="dest" value="27.tmx"/>
    </properties>

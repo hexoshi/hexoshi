@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="112" tilewidth="8" tileheight="8" nextobjectid="14">
  <properties>
+  <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="232" source="../tilesets/stones.tsx"/>
- <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="238" source="../tilesets/doors.tsx"/>
- <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="234" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="236" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="243" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="249" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="112">
   <data encoding="base64" compression="zlib">
    eJzt3L0KwjAUBtC+vq7+bepsFd9DK4KjT2OWQpHaxJbWCOfAByFpbnNp5xQFAAAAkKNtyO7L7EPWIZuQeaR+bD0X+siLPtKcBu5PNUYfz8b41mN/H7FzriY5xXD/8v/HjNXHImQ5Uu02vkde9JGX2a8PAAAAAAAAAAAAAAAAAADA5I4tc133I5Qhh4RaZeS958a4rpd6L8OjZa5qmeu6H+EacvmwVr091+XeGNf1prqXgeFeRZMmvw==
@@ -22,12 +23,12 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="6" gid="241" x="392" y="216" width="8" height="64">
+  <object id="6" gid="246" x="392" y="216" width="8" height="64">
    <properties>
     <property name="dest" value="14.tmx"/>
    </properties>
   </object>
-  <object id="7" gid="241" x="392" y="888" width="8" height="64">
+  <object id="7" gid="246" x="392" y="888" width="8" height="64">
    <properties>
     <property name="dest" value="17.tmx"/>
    </properties>

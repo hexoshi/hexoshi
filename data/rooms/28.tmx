@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="140" tilewidth="8" tileheight="8" nextobjectid="55">
  <properties>
+  <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="232" source="../tilesets/stones.tsx"/>
- <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="238" source="../tilesets/doors.tsx"/>
- <tileset firstgid="244" source="../tilesets/objects.tsx"/>
- <tileset firstgid="245" source="../tilesets/artifact.tsx"/>
+ <tileset firstgid="234" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="236" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="243" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="249" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="250" source="../tilesets/artifact.tsx"/>
  <layer name="Decorations" width="50" height="140">
   <data encoding="base64" compression="zlib">
    eJzt3MlOwzAQgOE+fincoHCDnlnfAiTKIsGNpyGREsmETDzY43rh/yQrbdK4M1VVJfa4qxVKt+naZdeuurYbnm8C+jjt2pmzDelnztifJobp85A85vZZ5BEaA3nE9xMjVR7rgH5ipMpjaX8KFnlslX2nZJGHtu+UWs1ja/j+0vctBek3szYt57E+eBTxavzs55BHWVrJ4yh3AACacLNw7Fpx/q1VIJH2zuOvybFnxfkvhrEAAIB2aeeLev2958XQzp1tbfek0nhSbXlIWskjdhy4lOv6WO51/We2KAAAKNud5/h95PkpnEy2vVfhtR/D9s3Tp3Q+AAAAAOTy2LWnBP2662w0Y+KljptvhMea15fErfmrOQ+XJsYa6pdr+Kw1Drl2ANCS6hCXahdLJNUh7oX9AICfaqpNOV44Rs05AKBVOepBLI01JdSDAPCR1oSM/3vma7vJea2MLZNHWSzy8N2Hu+OzmrXkISzy8N2Hu+OzmrXkIZh7AQA7D7kDMPKeOwAAwC81zUUuYS4SaMPcnEtttXK9uTkXauVg5S//3wS0wHe9mmqc3prvejXVOD3wH30Dqttm8g==
@@ -37,17 +38,17 @@
   <object id="2" x="-8" y="0" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="9" gid="241" x="392" y="216" width="8" height="64">
+  <object id="9" gid="246" x="392" y="216" width="8" height="64">
    <properties>
     <property name="dest" value="12.tmx"/>
    </properties>
   </object>
-  <object id="13" gid="241" x="392" y="1096" width="8" height="64">
+  <object id="13" gid="246" x="392" y="1096" width="8" height="64">
    <properties>
     <property name="dest" value="32.tmx"/>
    </properties>
   </object>
-  <object id="14" gid="240" x="0" y="856" width="8" height="64">
+  <object id="14" gid="245" x="0" y="856" width="8" height="64">
    <properties>
     <property name="dest" value="29.tmx"/>
    </properties>

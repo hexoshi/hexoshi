@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="112" tilewidth="8" tileheight="8" nextobjectid="116">
  <properties>
+  <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
  <tileset firstgid="89" source="../tilesets/extras.tsx"/>
  <tileset firstgid="166" source="../tilesets/plants.tsx"/>
  <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="232" source="../tilesets/stones.tsx"/>
- <tileset firstgid="234" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="238" source="../tilesets/doors.tsx"/>
- <tileset firstgid="244" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="234" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="236" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="243" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="249" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="112">
   <data encoding="base64" compression="zlib">
    eJzt3MtywiAUgOE8vtWldatZWquv4d2NddP2ZYRFxkzESAJ6Dsz/zTDjBU5OXIQAwaKARoMebYYRjuuKMTVl1lLKCMd9loNEjFCcx81HhBihNPyWMXAeukykEwAAAED2Vh51vgPiV22Xtc/+A+I9cvKoc2i8H3WIX7U9dmiDPI1N+ZROAgCU+5VOAMmjvwV0WBRh40Et9sX9ePCvZ6zl8ypJYGyr19qUjXQSANTpMoerua9yzeE2r3vMwwLA+zEPAwCAvBzmYa3mPKzL5eVZQINqj1jpUVfDXiAANwvpBCLZSycAVey91tyUL+lEejjXXtt7ra0pO6FckKdc9uByHrpI7onWvFbaBWulAJAG2+/kMI62/Q7jaPhy/T9YKZlQYlzPAaa2RmT3i7meA/RZIwKAupSufz8t33H9Q5srNMBAow==
@@ -32,51 +33,51 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="4" gid="240" x="0" y="208" width="8" height="64">
+  <object id="4" gid="245" x="0" y="208" width="8" height="64">
    <properties>
     <property name="dest" value="11.tmx"/>
    </properties>
   </object>
-  <object id="5" gid="241" x="392" y="200" width="8" height="64">
+  <object id="5" gid="246" x="392" y="200" width="8" height="64">
    <properties>
     <property name="dest" value="22.tmx"/>
    </properties>
   </object>
-  <object id="8" gid="240" x="0" y="360" width="8" height="64">
+  <object id="8" gid="245" x="0" y="360" width="8" height="64">
    <properties>
     <property name="dest" value="13.tmx"/>
    </properties>
   </object>
-  <object id="10" gid="241" x="392" y="832" width="8" height="64">
+  <object id="10" gid="246" x="392" y="832" width="8" height="64">
    <properties>
     <property name="dest" value="26.tmx"/>
    </properties>
   </object>
-  <object id="11" gid="240" x="0" y="888" width="8" height="64">
+  <object id="11" gid="245" x="0" y="888" width="8" height="64">
    <properties>
     <property name="dest" value="28.tmx"/>
    </properties>
   </object>
-  <object id="48" gid="232" x="128" y="208" width="16" height="16"/>
-  <object id="50" gid="232" x="160" y="208" width="16" height="16"/>
-  <object id="52" gid="232" x="192" y="208" width="16" height="16"/>
-  <object id="54" gid="232" x="224" y="208" width="16" height="16"/>
-  <object id="56" gid="232" x="256" y="208" width="16" height="16"/>
-  <object id="97" gid="232" x="144" y="208" width="16" height="16"/>
-  <object id="98" gid="232" x="176" y="208" width="16" height="16"/>
-  <object id="99" gid="232" x="208" y="208" width="16" height="16"/>
-  <object id="100" gid="232" x="240" y="208" width="16" height="16"/>
-  <object id="101" gid="232" x="112" y="176" width="16" height="16"/>
-  <object id="102" gid="232" x="128" y="176" width="16" height="16"/>
-  <object id="103" gid="232" x="144" y="176" width="16" height="16"/>
-  <object id="104" gid="232" x="160" y="176" width="16" height="16"/>
-  <object id="105" gid="232" x="176" y="176" width="16" height="16"/>
-  <object id="106" gid="232" x="192" y="176" width="16" height="16"/>
-  <object id="107" gid="232" x="208" y="176" width="16" height="16"/>
-  <object id="108" gid="232" x="224" y="176" width="16" height="16"/>
-  <object id="109" gid="232" x="240" y="176" width="16" height="16"/>
-  <object id="110" gid="232" x="256" y="176" width="16" height="16"/>
-  <object id="111" gid="232" x="272" y="176" width="16" height="16"/>
+  <object id="48" gid="234" x="128" y="208" width="16" height="16"/>
+  <object id="50" gid="234" x="160" y="208" width="16" height="16"/>
+  <object id="52" gid="234" x="192" y="208" width="16" height="16"/>
+  <object id="54" gid="234" x="224" y="208" width="16" height="16"/>
+  <object id="56" gid="234" x="256" y="208" width="16" height="16"/>
+  <object id="97" gid="234" x="144" y="208" width="16" height="16"/>
+  <object id="98" gid="234" x="176" y="208" width="16" height="16"/>
+  <object id="99" gid="234" x="208" y="208" width="16" height="16"/>
+  <object id="100" gid="234" x="240" y="208" width="16" height="16"/>
+  <object id="101" gid="234" x="112" y="176" width="16" height="16"/>
+  <object id="102" gid="234" x="128" y="176" width="16" height="16"/>
+  <object id="103" gid="234" x="144" y="176" width="16" height="16"/>
+  <object id="104" gid="234" x="160" y="176" width="16" height="16"/>
+  <object id="105" gid="234" x="176" y="176" width="16" height="16"/>
+  <object id="106" gid="234" x="192" y="176" width="16" height="16"/>
+  <object id="107" gid="234" x="208" y="176" width="16" height="16"/>
+  <object id="108" gid="234" x="224" y="176" width="16" height="16"/>
+  <object id="109" gid="234" x="240" y="176" width="16" height="16"/>
+  <object id="110" gid="234" x="256" y="176" width="16" height="16"/>
+  <object id="111" gid="234" x="272" y="176" width="16" height="16"/>
  </objectgroup>
  <layer name="fake_tile" width="50" height="112">
   <data encoding="base64" compression="zlib">

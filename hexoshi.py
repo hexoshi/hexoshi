@@ -2275,6 +2275,7 @@ class Anneroy(Player):
             else:
                 self.sprite = anneroy_walljump_left_sprite
             self.image_xscale = abs(self.image_xscale)
+            self.torso.visible = False
             self.fixed_sprite = "walljump"
             self.alarms["fixed_sprite"] = ANNEROY_WALLJUMP_FRAME_TIME
             self.walljumping = False

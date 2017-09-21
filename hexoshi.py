@@ -3109,25 +3109,32 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     def event_animation_end(self):
         if self.action == "slash":
-            double = False
-            if self.target is not None:
-                w = MANTANOID_SLASH_BBOX_WIDTH
-                h = MANTANOID_SLASH_BBOX_HEIGHT
-                if self.image_xscale > 0:
-                    x = self.x + MANTANOID_SLASH_BBOX_X
-                    y = self.y + MANTANOID_SLASH_BBOX_Y
-                else:
-                    x = self.x - MANTANOID_SLASH_BBOX_X - w
-                    y = self.y - MANTANOID_SLASH_BBOX_Y - h
+            hit_target = False
 
-                if sge.collision.rectangle(x, y, w, h, other=self.target):
-                    self.target.hurt(self.slash_damage)
-                else:
-                    xdist = abs(self.target.x - self.x)
-                    ydist = abs(self.target.y - self.y)
-                    if (ydist <= MANTANOID_LEVEL_DISTANCE and
-                            xdist <= MANTANOID_SLASH2_DISTANCE):
-                        double = True
+            w = MANTANOID_SLASH_BBOX_WIDTH
+            h = MANTANOID_SLASH_BBOX_HEIGHT
+            if self.image_xscale > 0:
+                x = self.x + MANTANOID_SLASH_BBOX_X
+                y = self.y + MANTANOID_SLASH_BBOX_Y
+            else:
+                x = self.x - MANTANOID_SLASH_BBOX_X - w
+                y = self.y - MANTANOID_SLASH_BBOX_Y - h
+
+            for other in sge.collision.rectangle(x, y, w, h):
+                if isinstance(other, Player):
+                    player.hurt(self.slash_damage)
+                    if other is self.target:
+                        hit_target = True
+                elif isinstance(other, AnneroyBullet):
+                    other.dissipate(other.xvelocity, other.yvelocity)
+
+            double = False
+            if self.target is not None and not hit_target:
+                xdist = abs(self.target.x - self.x)
+                ydist = abs(self.target.y - self.y)
+                if (ydist <= MANTANOID_LEVEL_DISTANCE and
+                        xdist <= MANTANOID_SLASH2_DISTANCE):
+                    double = True
 
             play_sound(mantanoid_slash_sound, self.x, self.y)
             self.image_fps = None
@@ -3141,18 +3148,20 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         elif self.action == "doubleslash":
             self.move_x(MANTANOID_DOUBLESLASH_OFFSET * self.image_xscale)
 
-            if self.target is not None:
-                w = MANTANOID_SLASH2_BBOX_WIDTH
-                h = MANTANOID_SLASH2_BBOX_HEIGHT
-                if self.image_xscale > 0:
-                    x = self.x + MANTANOID_SLASH2_BBOX_X
-                    y = self.y + MANTANOID_SLASH2_BBOX_Y
-                else:
-                    x = self.x - MANTANOID_SLASH2_BBOX_X - w
-                    y = self.y - MANTANOID_SLASH2_BBOX_Y - h
+            w = MANTANOID_SLASH2_BBOX_WIDTH
+            h = MANTANOID_SLASH2_BBOX_HEIGHT
+            if self.image_xscale > 0:
+                x = self.x + MANTANOID_SLASH2_BBOX_X
+                y = self.y + MANTANOID_SLASH2_BBOX_Y
+            else:
+                x = self.x - MANTANOID_SLASH2_BBOX_X - w
+                y = self.y - MANTANOID_SLASH2_BBOX_Y - h
 
-                if sge.collision.rectangle(x, y, w, h, other=self.target):
-                    self.target.hurt(self.slash_damage)
+            for other in sge.collision.rectangle(x, y, w, h):
+                if isinstance(other, Player):
+                    player.hurt(self.slash_damage)
+                elif isinstance(other, AnneroyBullet):
+                    other.dissipate(other.xvelocity, other.yvelocity)
 
             play_sound(mantanoid_slash_sound, self.x, self.y)
             self.sprite = mantanoid_slash_double_second_sprite

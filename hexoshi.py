@@ -2017,6 +2017,9 @@ class Anneroy(Player):
             sge.game.current_room.alarms["death"] = DEATH_TIME
 
         play_sound(death_sound, self.x, self.y)
+        self.ball = False
+        self.hedgehog = False
+        self.rolling = False
         self.input_lock = True
         self.tangible = False
         self.view_frozen = True
@@ -2034,6 +2037,9 @@ class Anneroy(Player):
         self.image_xscale = abs(self.image_xscale)
         self.torso.visible = False
         self.fixed_sprite = "death"
+        
+        # Delete all alarms to prevent any problems
+        self.alarms = []
 
     def warp_in(self):
         self.input_lock = True

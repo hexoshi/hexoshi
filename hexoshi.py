@@ -3611,6 +3611,8 @@ class MonkeyBoots(Powerup):
                 lambda e: random.uniform(e.x, e.x + 13),
                 lambda e: random.uniform(e.y, e.y + 4)])
 
+        super(MonkeyBoots, self).event_create()
+
     def collect(self, other):
         global progress_flags
         progress_flags = progress_flags[:]
@@ -3639,6 +3641,8 @@ class HedgehogHormone(Powerup):
             particle_kwargs={"sprite": hedgehog_hormone_bubble_sprite,
                              "yvelocity": -0.25, "turn_factor": 20,
                              "min_angle": 225, "max_angle": 315})
+
+        super(HedgehogHormone, self).event_create()
 
     def collect(self, other):
         global progress_flags

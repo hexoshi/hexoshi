@@ -16,6 +16,9 @@ To run the source code, you will need the following dependencies:
 - Python 2 (2.7 or later) or 3 (3.1 or later) <http://www.python.org>
 - Pygame 1.9.1 or later <http://pygame.org>
 
+If you are using a version of Python older than 3.4, you will also need
+to install pathlib: <https://pypi.python.org/pypi/pathlib/>
+
 Once you have installed the dependencies, you can start the game by
 running "hexoshi.py". On most systems, this should be done by
 double-clicking on it; if you are shown a dialog asking you if you want

@@ -19,7 +19,7 @@
  </layer>
  <objectgroup name="Powerups">
   <object id="9" gid="236" x="728" y="376" width="24" height="8"/>
-  <object id="34" gid="240" x="144" y="152" width="16" height="16"/>
+  <object id="34" gid="240" x="144" y="152" width="17" height="17"/>
  </objectgroup>
  <objectgroup name="Enemies"/>
  <objectgroup name="player">
@@ -64,7 +64,7 @@
   <object id="31" x="320" y="240" width="64" height="176"/>
  </objectgroup>
  <objectgroup name="Collision Objects"/>
- <objectgroup name="Camera Guides">
+ <objectgroup name="Camera Guides" visible="0">
   <object id="32" type="camera_y_guide" x="96" y="0" width="704" height="224"/>
   <object id="33" type="camera_x_guide" x="0" y="208" width="320" height="240"/>
  </objectgroup>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="9">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" nextobjectid="22">
  <properties>
   <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
@@ -28,7 +28,17 @@
     <property name="dest" value="7.tmx"/>
    </properties>
   </object>
-  <object id="4" gid="249" x="288" y="144" width="48" height="8"/>
+  <object id="4" gid="249" x="240" y="136" width="48" height="8"/>
+  <object id="11" gid="247" x="120" y="8" width="64" height="8">
+   <properties>
+    <property name="dest" value="15.tmx"/>
+   </properties>
+  </object>
+  <object id="12" gid="248" x="80" y="224" width="64" height="8">
+   <properties>
+    <property name="dest" value="11.tmx"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="fake_tile" width="50" height="28">
   <data encoding="base64" compression="zlib">
@@ -37,14 +47,23 @@
  </layer>
  <layer name="Tile Layer 1" width="50" height="28">
   <data encoding="base64" compression="zlib">
-   eJy12FuO5CAMBVCo1EdCVtgaTe9/GVMtcTUnbj6TkhCpBIzfvubVWutz7MzjM7bPeH3G+zMORl88v+f6Pud9vvuZzzJ31h+8H/O80Ovz/z7X1nV9vtuge8znvTz3ue/kjHOON3KenDtYl/MHskU/kTvfBzTD/4u1G3sj6yh7o//IHl7yLJ+hL/91f/SZWVov9JLz5akX2tl7IEN0PdqVx8G3yByeo395fEM3Z8eGyjrKeTmj6kCdrnzwXb7FHw6+6Wuu104b//d2teMo342HrEsMqlNjz1iMvWpM5L/8vtrV/urF+JV+9L213zbdoNPb1e+MF/1GvmIn4854yNnhQ95Dp7dr/BjLvezP2uizt6svqs/wXPX29Rl/bxpf8GIuq36R5+hPXWlf5TYna5vY57vd9/uGv5W/GY/mvMRHHdqnl/fqaH9AjviK8baKqZN15p3M1qPEWPZlnTnibjnkxfxSY9IaX/OZ8bH6Fh/Tt56wR/iN3+RMa0jFAZHfXDqgt7PW+ImMd8rxNWfxgj6hj5gbzdORyTxRc5Z1KXTvlCO/FaY4Fv+t9dFvbBZ5qi/FP60ld+cr5RDnVgwUHpM/rTXWpMgd21SdRJ7XQ3LoT+rdWA2fJ8+R0xgTT4jHlf1Jv6o4Qj8XK1T8aPxX/F9xl/I+JUd8x1pW60P8/2B9/KdiaWU3Nz9pD7GxWLTm08SNONrYMWev6ol+9pMr/9w4Wvtvf3sCa3ryZWSIL0XnYvEVns0sdhEfRz7rp7TskYxJe7Eav5HBOjb4L74Wj9h/xr+yz37BWFQW++vo0vxj7kvcmv9r3yVGjy7Vl/2nvVjtmytGtGfJHu2pP1iPsj/85tk7DXth7ylWuSc6Cq/qSVtU7G6+lU9xaNZZi9SrvmhNjX0G78R/kXeFncy5nfdi3RoD5mt14T2EvOm/+oL6tgcVd0SPnmW+tLap16OsOfjmufVOzPPsne0fxdrq2Rrn/YK9rf2s8Wl/Z72ILeU/tCtWEU97t5CztY33JrUeiTPsu80N+rv8eQ+ir6zugOyZaj4wz+wLmtq+5qV6v1nvxI52jdua53r77WvKUe8bxGP2Zuq59o+hqR1qvl/VCPPhPwfmLpU=
+   eJztmGtuxCAMhE3IjwQO1Pb+F2uQ/KkT+ko2Dy1oLVkskBAPNmbHg5kF10natGhcdFh0XHQWDd7+J6Ovlas2+Fz0dRhP/r3Z54P3J3+2fi74WPTxjwP6mxxZc68m17/seXYpthd/9IBjdG0dR/FHLziytY+j5LfB2sdRcm4PccU99QiOo/fLWUJcxZu+d5Xgjx7OeZHW70Gk/Nd64XgeaT3vIr34404c77b93nnbufaj9+BeAUOyNTeEA8ENmdvL5e7Iu2CAI8NtlU8n++KzcGfl1oP3s62xD95efZ+DARv5JrbBz/ET43DzKM/BxxWTcv+rcICBfceuLP3k+JL08Vuu5qknBBlDrzrnYNC4J6awVesy7De/1SeM4wt8GGyN+2wc6geNefZO91TrTToPLnykfuQ98FEXOhOHngdqS8QA9QD1CXZozYrYZx9Q6iLEEX5gnbNwKAbNQ3qmJ1Fsxd4oCh72QGNztPXZ35qrt9xJmls1Z2qu1HyLHbPM1fmU/JZ/GFfsyb7HLa2evbwBBzyZmCVesEFzk9YziRGNPbVD81yU93K1B5+vrCZZ
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">
-  <object id="5" x="0" y="0" width="400" height="56"/>
+  <object id="5" x="176" y="0" width="224" height="16"/>
   <object id="6" x="384" y="56" width="16" height="40"/>
-  <object id="7" x="0" y="56" width="240" height="88"/>
-  <object id="8" x="0" y="144" width="400" height="80"/>
+  <object id="7" x="0" y="16" width="16" height="192"/>
+  <object id="8" x="136" y="216" width="264" height="8"/>
+  <object id="14" x="0" y="216" width="88" height="8"/>
+  <object id="15" x="0" y="208" width="72" height="8"/>
+  <object id="16" x="0" y="0" width="128" height="16"/>
+  <object id="17" x="224" y="136" width="80" height="80"/>
+  <object id="18" x="304" y="144" width="96" height="72"/>
+  <object id="21" x="112" y="72" width="80" height="8"/>
  </objectgroup>
- <objectgroup name="Collision Objects"/>
+ <objectgroup name="Collision Objects">
+  <object id="19" type="slope_topright" x="304" y="136" width="8" height="8"/>
+  <object id="20" type="slope_topleft" x="144" y="136" width="80" height="80"/>
+ </objectgroup>
 </map>

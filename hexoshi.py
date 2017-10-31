@@ -5813,7 +5813,7 @@ TYPES = {
 print(_("Initializing game system..."))
 Game(SCREEN_SIZE[0], SCREEN_SIZE[1], scale=SCALE, fps=FPS, delta=DELTA,
      delta_min=DELTA_MIN, delta_max=DELTA_MAX,
-     window_text="Hexoshi {}".format(__version__))
+     window_text="Hexoshi DEMO {}".format(__version__))
      #window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
 sge.game.scale = None
 

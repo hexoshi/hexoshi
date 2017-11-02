@@ -2970,7 +2970,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     slash_damage = 20
     sight_distance = 300
 
-    def __init__(self, x, y, **kwargs):
+    def __init__(self, x, y, hiding=False, **kwargs):
         x += mantanoid_stand_sprite.origin_x
         y += mantanoid_stand_sprite.origin_y
         kwargs["sprite"] = mantanoid_stand_sprite
@@ -2980,6 +2980,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         kwargs["bbox_height"] = MANTANOID_BBOX_HEIGHT
         kwargs["regulate_origin"] = True
         super(Mantanoid, self).__init__(x, y, **kwargs)
+        self.hiding = hiding
         self.action = None
         self.target = None
         self.movement_speed = 0
@@ -3010,7 +3011,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.action_turn_left()
 
     def update_wander(self):
-        if self.was_on_floor and "move_lock" not in self.alarms:
+        if (not self.hiding and self.was_on_floor and
+                "move_lock" not in self.alarms):
             choices = 3 * [1] + 7 * [0] + [-1]
             xv = random.choice(choices)
             if self.x > self.xstart:
@@ -3042,6 +3044,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.action = "animation"
 
     def action_approach(self):
+        self.hiding = False
         if self.target is not None:
             if self.x < self.target.x:
                 self.action_turn_right()
@@ -3053,6 +3056,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 play_sound(mantanoid_approach_sound, self.x, self.y)
 
     def action_slash(self):
+        self.hiding = False
         if self.target is not None:
             self.action = "slash"
             self.sprite = mantanoid_slash_start_sprite

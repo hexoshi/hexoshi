@@ -3555,6 +3555,7 @@ class MapDisk(Powerup):
         global map_revealed
 
         for fname in self.rooms:
+            sge.game.pump_input()
             if fname in map_rooms:
                 room = Level.load(fname, True)
                 rm_x, rm_y = map_rooms[fname]
@@ -3563,6 +3564,7 @@ class MapDisk(Powerup):
 
                 ignore_regions = set()
                 for obj in room.objects:
+                    sge.game.pump_input()
                     if isinstance(obj, IgnoreRegion):
                         rx1 = rm_x + get_xregion(obj.bbox_left)
                         rx2 = rm_x + get_xregion(obj.bbox_right - 1)
@@ -3574,12 +3576,15 @@ class MapDisk(Powerup):
 
                 for y in six.moves.range(rm_y, rm_y + rm_h):
                     for x in six.moves.range(rm_x, rm_x + rm_w):
+                        sge.game.pump_input()
                         if ((x, y) not in ignore_regions and
                                 (x, y) not in map_revealed):
                             map_revealed = map_revealed[:]
                             map_revealed.append((x, y))
 
         sge.game.regulate_speed()
+        sge.game.pump_input()
+        sge.game.input_events = []
 
 
 class AtomicCompressor(Powerup):

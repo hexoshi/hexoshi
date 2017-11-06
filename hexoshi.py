@@ -1627,46 +1627,42 @@ class Anneroy(Player):
         self.last_aim_direction = 0
 
     def get_up_obstructed(self, x, y, w, h, lax=0):
-        for other in sge.collision.rectangle(self.x + x, self.y + y, w, h):
-            if isinstance(other, (xsge_physics.SolidBottom,
-                                  xsge_physics.SlopeBottomLeft,
-                                  xsge_physics.SlopeBottomRight)):
-                if not self.collision(other):
-                    break
-        else:
+        def _get_up_obstructed(self=self, x=x, y=y, w=w, h=h):
+            for other in sge.collision.rectangle(self.x + x, self.y + y, w, h):
+                if isinstance(other, xsge_physics.SolidBottom):
+                    if not self.collision(other):
+                        return True
+                elif isinstance(other, xsge_physics.SlopeBottomLeft):
+                    if self.bbox_top >= other.get_slope_y(self.bbox_right):
+                        return True
+                elif isinstance(other, xsge_physics.SlopeBottomRight):
+                    if self.bbox_top >= other.get_slope_y(self.bbox_left):
+                        return True
+
             return False
 
-        xstart = self.x
+        rv = _get_up_obstructed()
 
-        for i in six.moves.range(lax):
-            self.move_x(-1)
-            if self.x != xstart:
-                for other in sge.collision.rectangle(self.x + x, self.y + y, w,
-                                                     h):
-                    if isinstance(other, (xsge_physics.SolidBottom,
-                                          xsge_physics.SlopeBottomLeft,
-                                          xsge_physics.SlopeBottomRight)):
-                        if not self.collision(other):
-                            break
+        if rv:
+            xstart = self.x
+
+            for i in six.moves.range(lax):
+                self.move_x(-1)
+                rv = _get_up_obstructed()
+                if not rv:
+                    break
+            else:
+                self.move_x(xstart - self.x)
+
+                for i in six.moves.range(lax):
+                    self.move_x(1)
+                    rv = _get_up_obstructed()
+                    if not rv:
+                        break
                 else:
-                    return False
-        self.move_x(xstart - self.x)
+                    self.move_x(xstart - self.x)
 
-        for i in six.moves.range(lax):
-            self.move_x(1)
-            if self.x != xstart:
-                for other in sge.collision.rectangle(self.x + x, self.y + y, w,
-                                                     h):
-                    if isinstance(other, (xsge_physics.SolidBottom,
-                                          xsge_physics.SlopeBottomLeft,
-                                          xsge_physics.SlopeBottomRight)):
-                        if not self.collision(other):
-                            break
-                else:
-                    return False
-        self.move_x(xstart - self.x)
-
-        return True
+        return rv
 
     def press_up(self):
         if self.ball:

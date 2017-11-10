@@ -24,7 +24,6 @@
   <object id="31" gid="230" x="616" y="80" width="16" height="16"/>
   <object id="56" gid="231" x="808" y="184" width="16" height="16"/>
   <object id="57" gid="231" x="288" y="200" width="16" height="16"/>
-  <object id="58" gid="231" x="392" y="200" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="53" x="0" y="-8" width="8" height="8"/>

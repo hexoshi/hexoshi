@@ -19,18 +19,13 @@
  </layer>
  <objectgroup name="Powerups"/>
  <objectgroup name="Enemies">
-  <object id="56" gid="231" x="216" y="1264" width="16" height="16"/>
-  <object id="57" gid="231" x="280" y="880" width="16" height="16"/>
   <object id="59" gid="230" x="56" y="1056" width="16" height="16"/>
   <object id="60" gid="230" x="56" y="648" width="16" height="16"/>
-  <object id="61" gid="230" x="168" y="584" width="16" height="16"/>
   <object id="62" gid="230" x="240" y="936" width="16" height="16"/>
   <object id="82" gid="230" x="176" y="320" width="16" height="16"/>
   <object id="85" gid="231" x="248" y="256" width="16" height="16"/>
   <object id="86" gid="231" x="200" y="256" width="16" height="16"/>
-  <object id="88" gid="230" x="120" y="120" width="16" height="16"/>
-  <object id="89" gid="230" x="56" y="112" width="16" height="16"/>
-  <object id="90" gid="230" x="104" y="432" width="16" height="16"/>
+  <object id="88" gid="230" x="104" y="72" width="16" height="16"/>
   <object id="91" gid="232" x="208" y="464" width="32" height="40"/>
  </objectgroup>
  <objectgroup name="player">

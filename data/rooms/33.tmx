@@ -21,9 +21,6 @@
  <objectgroup name="Powerups"/>
  <objectgroup name="Enemies">
   <object id="35" gid="231" x="120" y="496" width="16" height="16"/>
-  <object id="43" gid="230" x="88" y="368" width="16" height="16"/>
-  <object id="44" gid="230" x="360" y="192" width="16" height="16"/>
-  <object id="45" gid="230" x="328" y="168" width="16" height="16"/>
   <object id="50" gid="232" x="176" y="624" width="32" height="40"/>
   <object id="52" gid="232" x="592" y="656" width="32" height="40"/>
   <object id="53" gid="232" x="568" y="528" width="32" height="40"/>

@@ -25,14 +25,6 @@
   <object id="33" gid="231" x="1208" y="176" width="16" height="16"/>
   <object id="34" gid="231" x="1056" y="80" width="16" height="16"/>
   <object id="35" gid="231" x="1400" y="160" width="16" height="16"/>
-  <object id="36" gid="230" x="1272" y="64" width="16" height="16"/>
-  <object id="39" gid="230" x="816" y="40" width="16" height="16"/>
-  <object id="40" gid="230" x="760" y="40" width="16" height="16"/>
-  <object id="41" gid="230" x="688" y="88" width="16" height="16"/>
-  <object id="42" gid="230" x="584" y="48" width="16" height="16"/>
-  <object id="43" gid="230" x="440" y="64" width="16" height="16"/>
-  <object id="44" gid="230" x="320" y="40" width="16" height="16"/>
-  <object id="45" gid="230" x="256" y="104" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="player"/>
  <objectgroup name="Special Blocks">

@@ -3111,6 +3111,25 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if not self.action:
             self.xvelocity = self.movement_speed * self.image_xscale
+
+            # XXX: This method doesn't catch slopes.
+            # TODO: Should be split into a separate method later.
+            if self.was_on_floor:
+                on_floor = self.get_bottom_touching_wall()
+                if on_floor:
+                    if self.xvelocity < 0:
+                        for tile in on_floor:
+                            if tile.bbox_left < self.x:
+                                break
+                        else:
+                            self.xvelocity = 0
+                    elif self.xvelocity > 0:
+                        for tile in on_floor:
+                            if tile.bbox_right > self.x:
+                                break
+                        else:
+                            self.xvelocity = 0
+
             self.set_image()
 
     def event_animation_end(self):

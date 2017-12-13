@@ -69,6 +69,15 @@ images/objects/doors/regular_x_open.png
 images/objects/doors/regular_y_closed.png
 images/objects/doors/regular_y_open.png
 images/tiles/extras.png
+
+Authors:
+  Adam Atomic <http://www.adamatomic.com/>
+  Julie Marchant <https://onpon4.github.io>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: http://adamatomic.com/abandonauts/
+
+------------------------------------------------------------------------
+
 images/tiles/main_blue.png
 images/tiles/main_green.png
 images/tiles/main_orange.png
@@ -76,8 +85,9 @@ images/tiles/main_white.png
 
 Authors:
   Adam Atomic <http://www.adamatomic.com/>
+  Trevor McAleese (Drixxel)
   Julie Marchant <https://onpon4.github.io>
-License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+License: CC BY-SA 4.0 <http://creativecommons.org/licenses/by-sa/4.0/>
 Source: http://adamatomic.com/abandonauts/
 
 ------------------------------------------------------------------------

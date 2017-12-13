@@ -5,27 +5,27 @@
   <property name="music" value="late_night_runaway.ogg"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/main_blue.tsx"/>
- <tileset firstgid="89" source="../tilesets/extras.tsx"/>
- <tileset firstgid="166" source="../tilesets/plants.tsx"/>
- <tileset firstgid="230" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="234" source="../tilesets/stones.tsx"/>
- <tileset firstgid="236" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="243" source="../tilesets/doors.tsx"/>
- <tileset firstgid="249" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="111" source="../tilesets/extras.tsx"/>
+ <tileset firstgid="188" source="../tilesets/plants.tsx"/>
+ <tileset firstgid="252" source="../tilesets/enemies.tsx"/>
+ <tileset firstgid="256" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="258" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="265" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="271" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="28">
   <data encoding="base64" compression="zlib">
    eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
   </data>
  </layer>
  <objectgroup name="Powerups">
-  <object id="4" gid="238" x="320" y="152" width="16" height="16"/>
+  <object id="4" gid="260" x="320" y="152" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Enemies"/>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="3" gid="245" x="0" y="104" width="8" height="64">
+  <object id="3" gid="267" x="0" y="104" width="8" height="64">
    <properties>
     <property name="dest" value="5.tmx"/>
    </properties>
@@ -38,7 +38,7 @@
  </layer>
  <layer name="Tile Layer 1" width="50" height="28">
   <data encoding="base64" compression="zlib">
-   eJztmGFqwzAMhe0kP+rmz07RU/QiYaz3P8byQB95lGRQNuZoTCCsOI6rV0mWrFpKuQQPK19jrCEzr3GKOcZx5RbjGPM1WPNzfDvFe/ZnzRz7tng32u8PtmezNdV0abGeb5aVP5LyYlgeJS9Jd2yfHYd8bSr5cYwhLz0V+SZhj+zk9shMwjH0VuIH6N+vzkV/yR4t5PcdzkLYQyz/Ul6nBsyIg1r2UrYaNxsO6kRhmI2z4aDe5/7A/SAbDsXCbKPiXr6VDYds4Hc3Yj0bDvT2e6vGM+DYywV7epE/uDu7XY72+G18bweyEziIieeeATJ26nGO3Q5kJ+GQjvKrVrb8QT+C+Odc7uFvr+Ag94GFnC4c2IV+zllx0BMibxDn+JPXLT3qlVfsQS+L/54zjJqlZ368H8hO1FfkdD93pXezOeLkq3OsF9OHo2/pOYR4oK95LVsPc7D3bkvizG3p9uWZ85Cz47nnWU0ebc7znNfmQzx/AlU0OwE=
+   eJztmEtqxDAMhv3IIp5seoo5xVyoKdP7LxuBPvJj8GJoqaNSgbDiOB79I+th5ZTS6lwOvvmYXWbexsXnGOvBzcfq89nZ5jf/dvH37M+azfdt/q7K7xfZs8maLLo0X883+8HPoLwLls8Ul0x3bB8dh521JcXHUV1+n6nINwl7RCe1R2QyHGW2Ej9A/+fqWvSX7NFc/ug4UhzGHsZ2viyvUwNGyovgoJZd01njRsNBnWgYNuFoOKj3uT9wP4iGw3xhk9H8Pqd4OMwGenfD16PhQG+9t67pGjj6XAD3RP7g7qx22Qd7/HZeeRvISuDAJ/qeATJ2mhHH7gNZyXQyHe1ctXTmD/oR+D9xecZ5ewUHuQ8s5HTDgV3o51wVBz0h8gZ+znnSumVGvfKKPehl8d8Tw6hZZubHx0BWor4ip2vcNb2bzOEnozg2k+nD0bfUHII/0Ne8pbOHWeS92hI/U1uqfXkmHhI7+p5nFrnKnOY5rc2LP38B7jxEIg==
   </data>
  </layer>
  <objectgroup color="#000000" name="solid">

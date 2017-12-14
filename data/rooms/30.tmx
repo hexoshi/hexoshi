@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="168" tilewidth="8" tileheight="8" nextobjectid="149">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="168" tilewidth="8" tileheight="8" nextobjectid="152">
  <properties>
   <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
@@ -8,11 +8,11 @@
  <tileset firstgid="111" source="../tilesets/extras.tsx"/>
  <tileset firstgid="188" source="../tilesets/plants.tsx"/>
  <tileset firstgid="252" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="256" source="../tilesets/stones.tsx"/>
- <tileset firstgid="258" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="265" source="../tilesets/doors.tsx"/>
- <tileset firstgid="271" source="../tilesets/objects.tsx"/>
- <tileset firstgid="272" source="../tilesets/artifact.tsx"/>
+ <tileset firstgid="258" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="260" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="267" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="273" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="274" source="../tilesets/artifact.tsx"/>
  <layer name="Decorations" width="100" height="168">
   <data encoding="base64" compression="zlib">
    eJzt3cly1DAUhWG//0OQk+yYdsASmuktEmiGVGUFPAIOtIllNLptXQ//V6VqlayWTzqbdHwtNw0AAOvxuG1PJl7zRdtetu1VwXt05nFM62niuGqEQDZZB4DjkXUAzO69dYAduTq9XrftJjDnW6UsAAAAALB1HwLj7wrWeDtFEPzxPTD+NfP9d237MlEWAAAAAADW5LJtP61DwJR6rauPVOZ7S+Z350Ccmv8/K3nmpdZIuRix7h6p+VvfpsFY6RpTztszDV7vXYxcIyVVF4yHz7L0d+BbA+fTBGuc87uEi88Sa0S997JQ7w0AAFLG/P12mDoE/hnz99tx6hAAUFFJvTzml1svDwAAAACWrtJTRlPh/OFeoql9QNXEa2B9e5OWZMqZ22XsWsmepbWpwvpdK3nPHHPXQBXW71qukvrMknXXQBXWH9Y9T73+lmjm9bs6wrnOM9e6VrTy82ytbrTWz7O1zw2AK7Q3F2yE9uYCAAAAgCU7BMan3MvZd2/GcKyrm/3omZuqqT30+q/b9iYvVtE5+ubc5/oYGJ9yL2ffvRnDsa5u9tYzN1VTe+z1P7Xtc2L+jxHn6GOfa2A/1LZnbXvee5Vhnr1T5hjqUOYY6lDmGOpQ5hjq8D1PWbVDIErWASIU6G+ZrANEKNDfMlkHiFCgv2WyDhChQH/LZB0gQoH+li15r2cF+rChQB82FOjDhnp933fZGu6MzrtEsg4Ah6wDwCHrAHDIOgAcsg4Ah6wDwCHrAHDIOgAcVt8BfbWzPrFa10PkmK/uNbTvOvvg+mtnfWK1rsfIMV/da2jfdfbBBQAAAAAAWJZD5Bj/W6vvGDnG/9aA5VNT91qZ7xkHMTq10vvZS8+zFGqWvX+xmodrebKLUY2sAyT0r6vKKkRFsg5QQNYBKpB1gAKyDlCBrAMUWPL9VlORdQA4rOqQ1mTOZ6wBAAAAwFKlnjMWuu7suy+k9Jll51zTPkSO5d4TU7puicuR70s9Zyx03dl3X0h/rV8Z5z7nmvbx9HrdtpvBsdx7YmLrAlgnNQ/Xq2WaBPcU6MOGAn3YUKAPGwr0YWNvNTlrIusAcMg6AByyDgCHrAPAIesAcMg6ABx7qOkEAAAAAAAAkC+0Xz5shPbLB5biNwXRv64=
@@ -26,8 +26,6 @@
   <object id="131" gid="253" x="520" y="624" width="16" height="16"/>
   <object id="132" gid="253" x="360" y="624" width="16" height="16"/>
   <object id="136" gid="253" x="600" y="944" width="16" height="16"/>
-  <object id="137" gid="253" x="560" y="1104" width="16" height="16"/>
-  <object id="138" gid="253" x="400" y="1104" width="16" height="16"/>
   <object id="140" gid="254" x="432" y="368" width="32" height="40"/>
   <object id="141" gid="254" x="504" y="368" width="32" height="40"/>
   <object id="142" gid="254" x="448" y="624" width="32" height="40"/>
@@ -35,23 +33,25 @@
   <object id="144" gid="254" x="216" y="848" width="32" height="40"/>
   <object id="145" gid="254" x="248" y="1336" width="32" height="40"/>
   <object id="147" gid="253" x="552" y="368" width="16" height="16"/>
-  <object id="148" gid="253" x="224" y="1104" width="16" height="16"/>
+  <object id="149" gid="256" x="296" y="1104" width="62" height="36"/>
+  <object id="150" gid="253" x="472" y="1104" width="16" height="16"/>
+  <object id="151" gid="253" x="560" y="1104" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="0" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="14" gid="268" x="792" y="88" width="8" height="64">
+  <object id="14" gid="270" x="792" y="88" width="8" height="64">
    <properties>
     <property name="dest" value="29.tmx"/>
    </properties>
   </object>
-  <object id="15" gid="267" x="0" y="632" width="8" height="64">
+  <object id="15" gid="269" x="0" y="632" width="8" height="64">
    <properties>
     <property name="dest" value="31.tmx"/>
    </properties>
   </object>
-  <object id="16" gid="270" x="296" y="1344" width="64" height="8">
+  <object id="16" gid="272" x="296" y="1344" width="64" height="8">
    <properties>
     <property name="dest" value="32.tmx"/>
    </properties>

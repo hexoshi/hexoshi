@@ -2535,6 +2535,7 @@ class WalkingObject(FallingObject):
 
     walk_speed = PLAYER_MAX_SPEED
     stayonplatform = False
+    slopeisplatform = True
 
     def set_direction(self, direction):
         self.xvelocity = self.walk_speed * direction
@@ -2551,18 +2552,18 @@ class WalkingObject(FallingObject):
                 self.set_direction(-1)
 
         on_floor = self.get_bottom_touching_wall()
-        on_slope = self.get_bottom_touching_slope()
+        on_slope = self.slopeisplatform and self.get_bottom_touching_slope()
         if (on_floor or on_slope) and self.stayonplatform:
             if self.xvelocity < 0:
                 for tile in on_floor:
-                    if tile.bbox_left < self.x:
+                    if tile.bbox_left < self.bbox_left:
                         break
                 else:
                     if not on_slope:
                         self.set_direction(1)
             else:
                 for tile in on_floor:
-                    if tile.bbox_right > self.x:
+                    if tile.bbox_right > self.bbox_right:
                         break
                 else:
                     if not on_slope:
@@ -2843,6 +2844,12 @@ class Frog(Enemy, FallingObject, CrowdBlockingObject):
                                self.image_ycenter)
 
 
+class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
+
+    hp = 3
+    touch_damage = 7
+
+
 class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
 
     hp = 5
@@ -3112,22 +3119,22 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if not self.action:
             self.xvelocity = self.movement_speed * self.image_xscale
 
-            # XXX: This method doesn't catch slopes.
-            # TODO: Should be split into a separate method later.
-            if self.was_on_floor:
-                on_floor = self.get_bottom_touching_wall()
-                if on_floor:
-                    if self.xvelocity < 0:
-                        for tile in on_floor:
-                            if tile.bbox_left < self.x:
-                                break
-                        else:
+            on_floor = self.get_bottom_touching_wall()
+            on_slope = self.get_bottom_touching_slope()
+            if (on_floor or on_slope):
+                if self.xvelocity < 0:
+                    for tile in on_floor:
+                        if tile.bbox_left < self.bbox_left:
+                            break
+                    else:
+                        if not on_slope:
                             self.xvelocity = 0
-                    elif self.xvelocity > 0:
-                        for tile in on_floor:
-                            if tile.bbox_right > self.x:
-                                break
-                        else:
+                else:
+                    for tile in on_floor:
+                        if tile.bbox_right > self.bbox_right:
+                            break
+                    else:
+                        if not on_slope:
                             self.xvelocity = 0
 
             self.set_image()

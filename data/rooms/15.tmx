@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="48">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="49">
  <properties>
   <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
@@ -8,10 +8,10 @@
  <tileset firstgid="111" source="../tilesets/extras.tsx"/>
  <tileset firstgid="188" source="../tilesets/plants.tsx"/>
  <tileset firstgid="252" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="256" source="../tilesets/stones.tsx"/>
- <tileset firstgid="258" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="265" source="../tilesets/doors.tsx"/>
- <tileset firstgid="271" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="258" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="260" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="267" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="273" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="200" height="28">
   <data encoding="base64" compression="zlib">
    eJzt2UsKwjAUheHufxF6caZO1aFWxV34FkEEcQum0ExKGmJTe6P+H1xKmjY9FklfWQYAwHcamho12E88fRNTU1OzJoFazBHK5vXVJ3+LBGbo6py6SAfHsOfgF4h2gNJYO0ALRDtAANEO8GV+4X+ZCtEOEKCnHQB/S7QDAAkT7QBAwvraAQAAAAAAAAAAAIAAG+0ACVpqB4CKm2PdtdIedBEkcSftAAAAAAjmerbJPduvIo9nx56bWjj615HjA21yPdscPdufI49nx96bOjj6L5Hjwy8vl7HvfIp5LHauBDRtTe0q647l8t13PvdKu5jHYudKAOhacW9Qd21P5VvRQzsA/saz0i7uDequ7XwrAgB8wgvk+Ty3
@@ -21,23 +21,23 @@
  <objectgroup name="Enemies">
   <object id="15" gid="253" x="400" y="144" width="16" height="16"/>
   <object id="17" gid="253" x="696" y="208" width="16" height="16"/>
-  <object id="18" gid="253" x="904" y="144" width="16" height="16"/>
   <object id="28" gid="254" x="560" y="192" width="32" height="40"/>
   <object id="29" gid="254" x="1016" y="128" width="32" height="40"/>
   <object id="30" gid="254" x="1264" y="176" width="32" height="40"/>
   <object id="32" gid="253" x="1320" y="176" width="16" height="16"/>
   <object id="47" gid="253" x="656" y="192" width="16" height="16"/>
+  <object id="48" gid="257" x="920" y="144" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="7" gid="270" x="128" y="224" width="64" height="8">
+  <object id="7" gid="272" x="128" y="224" width="64" height="8">
    <properties>
     <property name="dest" value="8.tmx"/>
    </properties>
   </object>
-  <object id="8" gid="268" x="1592" y="216" width="8" height="64">
+  <object id="8" gid="270" x="1592" y="216" width="8" height="64">
    <properties>
     <property name="dest" value="16.tmx"/>
    </properties>

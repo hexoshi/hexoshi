@@ -2848,6 +2848,9 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
 
     hp = 3
     touch_damage = 7
+    charge_distance = 400
+    max_speed = PLAYER_MAX_SPEED
+    roll_max_speed = PLAYER_ROLL_MAX_SPEED
 
 
 class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):

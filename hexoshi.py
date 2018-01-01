@@ -2848,9 +2848,110 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
 
     hp = 3
     touch_damage = 7
-    charge_distance = 400
-    max_speed = PLAYER_MAX_SPEED
-    roll_max_speed = PLAYER_ROLL_MAX_SPEED
+    charge_distance = 300
+    acceleration = 0.25
+    walk_speed = 1
+    max_speed = 4
+    roll_slope_acceleration = 0.2
+    roll_max_speed = 8
+    friction = PLAYER_FRICTION
+    roll_friction = 0.05
+    walk_frames_per_pixel = 1 / 4
+    roll_frames_per_pixel = 1 / 5
+
+    @property
+    def slope_acceleration(self):
+        if self.rolling:
+            return self.roll_slope_acceleration
+        else:
+            return 0
+
+    def stop_left(self):
+        self.xvelocity = 0
+
+    def stop_right(self):
+        self.xvelocity = 0
+
+    def event_create(self):
+        self.bbox_x = 4
+        self.bbox_y = 6
+        self.bbox_width = 12
+        self.bbox_height = 14
+        self.rolling = False
+        self.anim_lock = False
+        self.sprite = hedgehog_stand_sprite
+
+    def event_step(self, time_passed, delta_mult):
+        self.xacceleration = 0
+        if self.rolling:
+            if self.was_on_floor:
+                self.xdeceleration = self.roll_friction
+                target = self.get_nearest_player()
+                if target is not None:
+                    xvec = target.x - self.image_xcenter
+                    tdir = (xvec > 0) - (xvec < 0)
+                    vdir = (self.xvelocity > 0) - (self.xvelocity < 0)
+                    yvec = target.y - self.image_ycenter
+                    dist = math.hypot(xvec, yvec)
+                    if dist <= self.charge_distance and tdir == vdir:
+                        if abs(self.xvelocity) < self.max_speed:
+                            self.xacceleration = math.copysign(
+                                self.acceleration, xvec)
+                            self.xdeceleration = 0
+                            
+            else:
+                self.xdeceleration = 0
+
+            if abs(self.xvelocity) < self.walk_speed:
+                self.rolling = False
+                self.anim_lock = True
+                self.sprite = hedgehog_uncompress_sprite
+                self.image_index = 0
+                self.image_speed = None
+
+            if not self.anim_lock:
+                self.sprite = hedgehog_ball_sprite
+                self.image_speed = (abs(self.xvelocity) *
+                                    self.roll_frames_per_pixel)
+
+            if abs(self.xvelocity) >= self.roll_max_speed:
+                self.xvelocity = math.copysign(self.roll_max_speed,
+                                               self.xvelocity)
+        else:
+            if self.was_on_floor:
+                self.xdeceleration = self.friction
+                target = self.get_nearest_player()
+                if target is not None:
+                    xvec = target.x - self.image_xcenter
+                    yvec = target.y - self.image_ycenter
+                    dist = math.hypot(xvec, yvec)
+                    if dist <= self.charge_distance:
+                        self.xacceleration = math.copysign(self.acceleration,
+                                                           xvec)
+                        self.xdeceleration = 0
+                        if abs(self.xvelocity) >= self.max_speed:
+                            self.xvelocity = math.copysign(self.max_speed,
+                                                           self.xvelocity)
+                            self.rolling = True
+                            self.anim_lock = True
+                            self.sprite = hedgehog_compress_sprite
+                            self.image_index = 0
+                            self.image_speed = None
+            else:
+                self.xdeceleration = 0
+
+            if not self.anim_lock:
+                if self.xvelocity:
+                    self.sprite = hedgehog_walk_sprite
+                    self.image_speed = (abs(self.xvelocity) *
+                                        self.walk_frames_per_pixel)
+                else:
+                    self.sprite = hedgehog_stand_sprite
+
+        self.image_xscale = math.copysign(self.image_xscale, self.xvelocity)
+
+    def event_animation_end(self):
+        self.anim_lock = False
 
 
 class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
@@ -5812,7 +5913,8 @@ TYPES = {
     "spike_left": SpikeLeft, "spike_right": SpikeRight, "spike_top": SpikeTop,
     "spike_bottom": SpikeBottom, "death": Death,
 
-    "frog": Frog, "bat": Bat, "worm": Worm, "mantanoid": Mantanoid,
+    "frog": Frog, "hedgehog": Hedgehog, "bat": Bat, "worm": Worm,
+    "mantanoid": Mantanoid,
 
     "fake_tile": FakeTile, "weak_stone": WeakStone, "spike_stone": SpikeStone,
 
@@ -6029,6 +6131,18 @@ bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
                             bbox_width=10, bbox_height=10)
 worm_sprite = sge.gfx.Sprite("worm", d, fps=10)
 worm_base_sprite = sge.gfx.Sprite("worm_base", d, fps=10)
+
+fname = os.path.join(d, "hedgehog_sheet.png")
+hedgehog_stand_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 0, width=20, height=20)
+hedgehog_walk_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 20, 6, width=20, height=20)
+hedgehog_compress_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 40, 2, width=20, height=20, fps=15)
+hedgehog_ball_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 60, 8, width=20, height=20)
+hedgehog_uncompress_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 80, 2, width=20, height=20, fps=15)
 
 fname = os.path.join(d, "mantanoid_sheet.png")
 mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(

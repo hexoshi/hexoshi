@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="49">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="51">
  <properties>
   <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
@@ -19,14 +19,11 @@
  </layer>
  <objectgroup name="Powerups"/>
  <objectgroup name="Enemies">
-  <object id="15" gid="253" x="400" y="144" width="16" height="16"/>
-  <object id="17" gid="253" x="696" y="208" width="16" height="16"/>
   <object id="28" gid="254" x="560" y="192" width="32" height="40"/>
   <object id="29" gid="254" x="1016" y="128" width="32" height="40"/>
   <object id="30" gid="254" x="1264" y="176" width="32" height="40"/>
   <object id="32" gid="253" x="1320" y="176" width="16" height="16"/>
-  <object id="47" gid="253" x="656" y="192" width="16" height="16"/>
-  <object id="48" gid="257" x="920" y="144" width="16" height="16"/>
+  <object id="49" gid="257" x="952" y="144" width="20" height="20"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>

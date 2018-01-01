@@ -34,6 +34,6 @@
   <properties>
    <property name="cls" value="hedgehog"/>
   </properties>
-  <image width="16" height="16" source="../images/objects/enemies/hedgehog.png"/>
+  <image width="20" height="20" source="../images/objects/enemies/hedgehog.png"/>
  </tile>
 </tileset>

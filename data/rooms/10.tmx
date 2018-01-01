@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="50">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="51">
  <properties>
   <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
@@ -26,7 +26,7 @@
   <object id="28" gid="254" x="456" y="128" width="32" height="40"/>
   <object id="32" gid="253" x="1208" y="96" width="16" height="16"/>
   <object id="33" gid="255" x="328" y="128" width="32" height="48"/>
-  <object id="49" gid="257" x="488" y="128" width="16" height="16"/>
+  <object id="50" gid="257" x="488" y="128" width="20" height="20"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>

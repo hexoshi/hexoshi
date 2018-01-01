@@ -3069,6 +3069,75 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
             self.path.follow_start(self, self.return_speed)
 
 
+class Jellyfish(Enemy, InteractiveCollider, CrowdBlockingObject):
+
+    hp = 3
+    touch_damage = 7
+    swim_speed = 3
+    friction = 0.05
+    swim_interval = FPS
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["sprite"] = jellyfish_idle_sprite
+        kwargs["regulate_origin"] = True
+        sge.dsp.Object.__init__(self, x, y, **kwargs)
+
+    def stop_left(self):
+        self.xvelocity = 0
+        self.yvelocity = 0
+
+    def stop_right(self):
+        self.xvelocity = 0
+        self.yvelocity = 0
+
+    def stop_up(self):
+        self.xvelocity = 0
+        self.yvelocity = 0
+
+    def stop_down(self):
+        self.xvelocity = 0
+        self.yvelocity = 0
+
+    def event_create(self):
+        self.x += self.image_origin_x
+        self.y += self.image_origin_y
+        self.bbox_x = -9
+        self.bbox_y = -9
+        self.bbox_width = 17
+        self.bbox_height = 17
+        self.xdeceleration = self.friction
+        self.ydeceleration = self.friction
+        self.alarms["swim"] = self.swim_interval
+
+    def event_alarm(self, alarm_id):
+        super(Jellyfish, self).event_alarm(alarm_id)
+
+        if alarm_id == "swim":
+            choices = 3 * [1] + [-1]
+            xv = random.choice(choices)
+            if self.x > self.xstart:
+                xv *= -1
+            yv = random.choice(choices)
+            if self.y > self.ystart:
+                yv *= -1
+
+            self.image_xscale = math.copysign(self.image_xscale, xv)
+            self.image_yscale = math.copysign(self.image_yscale, yv)
+            self.sprite = jellyfish_swim_start_sprite
+            self.image_index = 0
+
+    def event_animation_end(self):
+        if self.sprite == jellyfish_swim_start_sprite:
+            self.sprite = jellyfish_swim_sprite
+            self.image_index = 0
+            self.xvelocity = math.copysign(self.swim_speed, self.image_xscale)
+            self.yvelocity = math.copysign(self.swim_speed, self.image_yscale)
+            self.alarms["swim"] = self.swim_interval
+        elif self.sprite != jellyfish_idle_sprite:
+            self.sprite = jellyfish_idle_sprite
+            self.image_index = 0
+
+
 class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     classname = "Mantanoid"
@@ -5913,8 +5982,8 @@ TYPES = {
     "spike_left": SpikeLeft, "spike_right": SpikeRight, "spike_top": SpikeTop,
     "spike_bottom": SpikeBottom, "death": Death,
 
-    "frog": Frog, "hedgehog": Hedgehog, "bat": Bat, "worm": Worm,
-    "mantanoid": Mantanoid,
+    "frog": Frog, "hedgehog": Hedgehog, "bat": Bat, "jellyfish": Jellyfish,
+    "worm": Worm, "mantanoid": Mantanoid,
 
     "fake_tile": FakeTile, "weak_stone": WeakStone, "spike_stone": SpikeStone,
 
@@ -6143,6 +6212,14 @@ hedgehog_ball_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 60, 8, width=20, height=20)
 hedgehog_uncompress_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 80, 2, width=20, height=20, fps=15)
+
+fname = os.path.join(d, "jellyfish_sheet.png")
+jellyfish_idle_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 0, 7, width=32, height=32, origin_x=24, origin_y=24, fps=20)
+jellyfish_swim_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 64, 6, width=32, height=32, origin_x=24, origin_y=24, fps=50)
+jellyfish_swim_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 192, 64, 6, width=32, height=32, origin_x=24, origin_y=24, fps=50)
 
 fname = os.path.join(d, "mantanoid_sheet.png")
 mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(

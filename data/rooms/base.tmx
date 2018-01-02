@@ -39,4 +39,5 @@
  <objectgroup name="Collision Objects"/>
  <objectgroup name="Camera Guides"/>
  <objectgroup name="Map Hints"/>
+ <objectgroup name="Foreground Enemies"/>
 </map>

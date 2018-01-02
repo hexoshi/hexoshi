@@ -23,7 +23,6 @@
   <object id="38" gid="253" x="360" y="456" width="16" height="16"/>
   <object id="43" gid="252" x="232" y="112" width="16" height="16"/>
   <object id="46" gid="254" x="304" y="120" width="32" height="40"/>
-  <object id="48" gid="258" x="304" y="248" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="8" width="8" height="8"/>
@@ -80,5 +79,8 @@
   <object id="34" type="slope_topleft" x="304" y="472" width="8" height="8"/>
   <object id="35" type="slope_topleft" x="328" y="464" width="8" height="8"/>
   <object id="36" type="slope_topleft" x="352" y="456" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Foreground Enemies">
+  <object id="48" gid="258" x="304" y="248" width="32" height="32"/>
  </objectgroup>
 </map>

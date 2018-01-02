@@ -3069,12 +3069,12 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
             self.path.follow_start(self, self.return_speed)
 
 
-class Jellyfish(Enemy, InteractiveCollider, CrowdBlockingObject):
+class Jellyfish(Enemy, CrowdBlockingObject):
 
     hp = 3
     touch_damage = 7
-    swim_speed = 3
-    friction = 0.05
+    swim_speed = 2
+    friction = 0.025
     swim_interval = FPS
 
     def __init__(self, x, y, **kwargs):

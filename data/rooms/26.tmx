@@ -30,7 +30,6 @@
   <object id="78" gid="253" x="544" y="832" width="16" height="16"/>
   <object id="79" gid="254" x="312" y="344" width="32" height="40"/>
   <object id="81" gid="257" x="264" y="848" width="20" height="20"/>
-  <object id="82" gid="258" x="296" y="464" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="0" width="8" height="8"/>
@@ -95,5 +94,8 @@
  <objectgroup name="Map Hints">
   <object id="13" type="map_wall_right" x="392" y="0" width="8" height="672"/>
   <object id="14" type="map_wall_top" x="400" y="672" width="800" height="8"/>
+ </objectgroup>
+ <objectgroup name="Foreground Enemies">
+  <object id="82" gid="258" x="296" y="464" width="32" height="32"/>
  </objectgroup>
 </map>

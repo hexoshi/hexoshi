@@ -36,7 +36,6 @@
   <object id="149" gid="256" x="296" y="1104" width="62" height="36"/>
   <object id="150" gid="253" x="472" y="1104" width="16" height="16"/>
   <object id="151" gid="253" x="560" y="1104" width="16" height="16"/>
-  <object id="152" gid="258" x="656" y="816" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="player">
   <object id="2" x="-8" y="0" width="8" height="8"/>
@@ -142,5 +141,8 @@
   <object id="24" type="map_wall_top" x="400" y="672" width="400" height="8"/>
   <object id="25" type="map_wall_bottom" x="0" y="888" width="400" height="8"/>
   <object id="26" type="map_wall_top" x="0" y="896" width="400" height="8"/>
+ </objectgroup>
+ <objectgroup name="Foreground Enemies">
+  <object id="152" gid="258" x="656" y="816" width="32" height="32"/>
  </objectgroup>
 </map>

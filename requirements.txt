@@ -7,4 +7,4 @@ xsge_particle>=0.1
 xsge_path>=1.0
 xsge_physics>=0.13
 tmx>=1.9
-xsge_tmx>=1.1
+xsge_tmx>=1.1.2

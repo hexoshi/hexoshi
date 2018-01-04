@@ -39,13 +39,20 @@ import weakref
 import webbrowser
 
 import sge
+print("SGE", sge.IMPLEMENTATION, sge.__version__)
 import six
 import xsge_gui
+print("xsge_gui", xsge_gui.__version__)
 import xsge_lighting
+print("xsge_lighting", xsge_lighting.__version__)
 import xsge_particle
+print("xsge_particle", xsge_particle.__version__)
 import xsge_path
+print("xsge_path", xsge_path.__version__)
 import xsge_physics
+print("xsge_physics", xsge_physics.__version__)
 import xsge_tmx
+print("xsge_tmx", xsge_tmx.__version__)
 
 
 if getattr(sys, "frozen", False):

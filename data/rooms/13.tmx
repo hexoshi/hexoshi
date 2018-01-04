@@ -8,17 +8,17 @@
  <tileset firstgid="111" source="../tilesets/extras.tsx"/>
  <tileset firstgid="188" source="../tilesets/plants.tsx"/>
  <tileset firstgid="252" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="256" source="../tilesets/stones.tsx"/>
- <tileset firstgid="258" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="265" source="../tilesets/doors.tsx"/>
- <tileset firstgid="271" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="259" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="261" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="268" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="274" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="50" height="28">
   <data encoding="base64" compression="zlib">
    eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==
   </data>
  </layer>
  <objectgroup name="Powerups">
-  <object id="5" gid="261" x="112" y="104" width="16" height="16">
+  <object id="5" gid="264" x="112" y="104" width="16" height="16">
    <properties>
     <property name="rooms" value="0.tmx,1.tmx,2.tmx,4.tmx,5.tmx,6.tmx,7.tmx,8.tmx,9.tmx,10.tmx,11.tmx,12.tmx,13.tmx,14.tmx,15.tmx,16.tmx,17.tmx,18.tmx,19.tmx,20.tmx,21.tmx,22.tmx,26.tmx,28.tmx"/>
    </properties>
@@ -29,7 +29,7 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="4" gid="268" x="392" y="136" width="8" height="64">
+  <object id="4" gid="271" x="392" y="136" width="8" height="64">
    <properties>
     <property name="dest" value="12.tmx"/>
    </properties>

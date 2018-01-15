@@ -37,6 +37,7 @@
  </layer>
  <objectgroup color="#000000" name="solid"/>
  <objectgroup name="Collision Objects"/>
+ <objectgroup name="Enemy Hints"/>
  <objectgroup name="Camera Guides"/>
  <objectgroup name="Map Hints"/>
  <objectgroup name="Foreground Enemies"/>

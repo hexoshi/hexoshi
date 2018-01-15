@@ -243,7 +243,8 @@ SOUND_TILT_LIMIT = 0.75
 
 ETANK_CHAR = '\x80'
 
-ENEMY_TYPES = ["Bat", "Frog", "Worm", "Mantanoid"]
+ENEMY_TYPES = ["Bat", "Frog", "Hedgehog", "Worm", "Jellyfish", "Scorpion",
+               "Mantanoid"]
 
 backgrounds = {}
 loaded_music = {}
@@ -2398,7 +2399,6 @@ class Smoke(sge.dsp.Object):
 
 class InteractiveObject(sge.dsp.Object):
 
-    killed_by_void = True
     shootable = False
     spikeable = False
     freezable = False
@@ -2416,6 +2416,7 @@ class InteractiveObject(sge.dsp.Object):
 
     def set_direction(self, direction):
         self.image_xscale = abs(self.image_xscale) * direction
+        self.xvelocity = math.copysign(self.xvelocity, self.image_xscale)
 
     def move(self):
         pass
@@ -2536,8 +2537,10 @@ class FallingObject(InteractiveCollider):
 class WalkingObject(FallingObject):
 
     """
-    Walks toward the player.  Turns around at walls, and can also be set
-    to turn around at ledges with the stayonplatform attribute.
+    Walks in the direction it faces.  Turns around at walls, and can
+    also be set to turn around at ledges with the stayonplatform
+    attribute.  If slopeisplatform is False, slopes are regarded as
+    ledges.
     """
 
     walk_speed = PLAYER_MAX_SPEED
@@ -2552,11 +2555,7 @@ class WalkingObject(FallingObject):
         super(WalkingObject, self).move()
 
         if not self.xvelocity:
-            player = self.get_nearest_player()
-            if player is not None:
-                self.set_direction(1 if self.x < player.x else -1)
-            else:
-                self.set_direction(-1)
+            self.set_direction(math.copysign(1, self.image_xscale))
 
         on_floor = self.get_bottom_touching_wall()
         on_slope = self.slopeisplatform and self.get_bottom_touching_slope()
@@ -2590,7 +2589,7 @@ class CrowdBlockingObject(InteractiveObject):
     pass
 
 
-class CrowdObject(WalkingObject, CrowdBlockingObject):
+class CrowdObject(CrowdBlockingObject):
 
     """
     Turns around when colliding with a CrowdBlockingObject.  (Note: this
@@ -2791,7 +2790,7 @@ class FrozenObject(InteractiveObject, xsge_physics.Solid):
                 self.thaw()
 
 
-class Frog(Enemy, FallingObject, CrowdBlockingObject):
+class Frog(Enemy, FallingObject, CrowdObject):
 
     slide_speed = 0
     jump_distance = 200
@@ -3143,6 +3142,39 @@ class Jellyfish(Enemy, CrowdBlockingObject):
         elif self.sprite != jellyfish_idle_sprite:
             self.sprite = jellyfish_idle_sprite
             self.image_index = 0
+
+
+class Scorpion(Enemy, WalkingObject, CrowdObject):
+
+    hp = 10
+    touch_damage = 10
+    shoot_damage = 15
+    stayonplatform = True
+    slopeisplatform = False
+    sight_distance = 1000
+    sight_threshold = 64
+    shoot_interval = FPS
+
+    def __init__(self, x, y, **kwargs):
+        x += scorpion_stand_sprite.origin_x
+        y += scorpion_stand_sprite.origin_y
+        kwargs["sprite"] = scorpion_stand_sprite
+        kwargs["bbox_x"] = 2
+        kwargs["bbox_y"] = 8
+        kwargs["bbox_width"] = 56
+        kwargs["bbox_height"] = 28
+        super(Scorpion, self).__init__(x, y, **kwargs)
+
+    def event_create(self):
+        super(Scorpion, self).event_create()
+        self.alarms["shoot"] = shoot_interval
+        self.action = False
+
+    def event_alarm(self, alarm_id):
+        super(Scorpion, self).event_alarm(alarm_id)
+
+        if alarm_id == "shoot":
+            pass
 
 
 class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
@@ -6227,6 +6259,19 @@ jellyfish_swim_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 64, 6, width=32, height=32, origin_x=24, origin_y=24, fps=50)
 jellyfish_swim_sprite = sge.gfx.Sprite.from_tileset(
     fname, 192, 64, 6, width=32, height=32, origin_x=24, origin_y=24, fps=50)
+
+fname = os.path.join(d, "scorpion_sheet.png")
+scorpion_stand_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 0, width=60, height=36, origin_x=30, origin_y=9)
+scorpion_walk_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 36, 6, width=60, height=36, origin_x=30, origin_y=9)
+scorpion_shoot_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 108, 11, width=60, height=36, origin_x=30, origin_y=9, fps=20)
+scorpion_shoot_end_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 0, 144, 11, width=60, height=36, origin_x=30, origin_y=9, fps=20)
+
+scorpion_projectile_sprite = sge.gfx.Sprite("scorpion_projectile", d,
+                                            origin_y=2)
 
 fname = os.path.join(d, "mantanoid_sheet.png")
 mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(

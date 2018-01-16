@@ -3419,6 +3419,50 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.action = None
 
 
+class MantanoidZone(sge.dsp.Object):
+
+    """
+    A zone which is designated as an area that Mantanoids can freely
+    move about in.  This means that they can move left and right at
+    will without having to jump.
+    """
+
+    def __init__(self, x, y, zid=None, **kwargs):
+        self.zid = zid
+        kwargs.setdefault("visible", False)
+        kwargs.setdefault("checks_collisions", False)
+        super(MantanoidZone, self).__init__(x, y, **kwargs)
+
+
+class MantanoidWanderZone(MantanoidZone):
+
+    """
+    A Mantanoid zone that is sought out as an area to wander in, as
+    opposed to just being "reachable".
+    """
+
+
+class MantanoidWaypoint(sge.dsp.Object):
+
+    """
+    Used to indicate points that Mantanoids can move between, and define
+    exactly how.
+
+    ``action`` can be "hop" (short hop), "jump" (high jump), or ``None``
+    (walk).
+    """
+
+    def __init__(self, x, y, wid=None, dest=None, action=None, action_speed=0,
+                 **kwargs):
+        self.wid = zid
+        self.dest = dest
+        self.action = action
+        self.action_speed = action_speed
+        kwargs.setdefault("visible", False)
+        kwargs.setdefault("checks_collisions", False)
+        super(MantanoidZone, self).__init__(x, y, **kwargs)
+
+
 class Boss(InteractiveObject):
 
     def __init__(self, x, y, ID="boss", death_timeline=None, stage=0,

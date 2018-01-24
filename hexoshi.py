@@ -209,6 +209,8 @@ MANTANOID_SLASH2_BBOX_Y = -20
 MANTANOID_SLASH2_BBOX_WIDTH = 24
 MANTANOID_SLASH2_BBOX_HEIGHT = 32
 
+SCORPION_WALK_FRAMES_PER_PIXEL = 1 / 6
+
 CEILING_LAX = 2
 
 CAMERA_HSPEED_FACTOR = 1 / 8
@@ -3146,35 +3148,83 @@ class Jellyfish(Enemy, CrowdBlockingObject):
 
 class Scorpion(Enemy, WalkingObject, CrowdObject):
 
+    walk_speed = 1
     hp = 10
     touch_damage = 10
-    shoot_damage = 15
     stayonplatform = True
     slopeisplatform = False
     sight_distance = 1000
     sight_threshold = 64
     shoot_interval = FPS
+    shoot_recheck_interval = FPS / 10
+    bullet_speed = 3
 
     def __init__(self, x, y, **kwargs):
         x += scorpion_stand_sprite.origin_x
         y += scorpion_stand_sprite.origin_y
         kwargs["sprite"] = scorpion_stand_sprite
-        kwargs["bbox_x"] = 2
-        kwargs["bbox_y"] = 8
+        kwargs["bbox_x"] = -28
+        kwargs["bbox_y"] = -1
         kwargs["bbox_width"] = 56
         kwargs["bbox_height"] = 28
         super(Scorpion, self).__init__(x, y, **kwargs)
 
+    def move(self):
+        if not self.action:
+            super(Scorpion, self).move()
+            if self.xvelocity:
+                self.sprite = scorpion_walk_sprite
+                self.image_speed = (abs(self.xvelocity) *
+                                    SCORPION_WALK_FRAMES_PER_PIXEL)
+            else:
+                self.sprite = scorpion_stand_sprite
+
+    def attack(self):
+        target = self.get_nearest_player()
+        if target is not None:
+            xvec = target.x - self.image_xcenter
+            yvec = target.y - self.image_ycenter
+            if (abs(xvec) <= self.sight_distance and
+                    abs(yvec) < self.sight_threshold):
+                self.xvelocity = 0
+                self.action = "shoot_start"
+                self.sprite = scorpion_shoot_start_sprite
+                self.image_index = 0
+                self.image_fps = None
+                self.image_xscale = math.copysign(self.image_xscale, xvec)
+                return
+
+        self.alarms["shoot"] = self.shoot_recheck_interval
+
     def event_create(self):
         super(Scorpion, self).event_create()
-        self.alarms["shoot"] = shoot_interval
-        self.action = False
+        self.alarms["shoot"] = self.shoot_interval
+        self.action = None
 
     def event_alarm(self, alarm_id):
         super(Scorpion, self).event_alarm(alarm_id)
 
         if alarm_id == "shoot":
-            pass
+            self.attack()
+
+    def event_animation_end(self):
+        if self.action == "shoot_start":
+            self.action = "shoot_end"
+            self.sprite = scorpion_shoot_end_sprite
+            self.image_index = 0
+            self.image_fps = None
+            xv = math.copysign(self.bullet_speed, self.image_xscale)
+            x = self.x
+            if self.image_xscale < 0:
+                x -= scorpion_projectile_sprite.width
+            ScorpionBullet.create(
+                x, self.y, self.z + 0.1,
+                sprite=scorpion_projectile_sprite, xvelocity=xv,
+                image_xscale=self.image_xscale, image_yscale=self.image_yscale)
+        elif self.action == "shoot_end":
+            self.action = None
+            self.sprite = scorpion_stand_sprite
+            self.alarms["shoot"] = self.shoot_interval
 
 
 class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
@@ -3509,42 +3559,33 @@ class LifeForce(InteractiveObject):
         self.destroy()
 
 
-class AnneroyBullet(InteractiveObject):
+class Bullet(InteractiveObject):
+
+    attacks_player = False
+    attacks_enemy = False
+    attacks_bullet = True
+    attacks_wall = True
+    breaks_stone = False
+    player_damage = 5
+    life = None
 
     def dissipate(self, xdirection=0, ydirection=0):
-        if self in sge.game.current_room.objects:
-            image_rotation = 0
-            if abs(xdirection) > abs(ydirection):
-                if xdirection < 0:
-                    image_rotation = 180
-                else:
-                    image_rotation = 0
-            elif abs(ydirection) > abs(xdirection):
-                if ydirection < 0:
-                    image_rotation = 270
-                else:
-                    image_rotation = 90
-            elif abs(self.xvelocity) > abs(self.yvelocity):
-                if self.xvelocity < 0:
-                    image_rotation = 180
-                else:
-                    image_rotation = 0
-            else:
-                if self.yvelocity < 0:
-                    image_rotation = 270
-                else:
-                    image_rotation = 90
+        """
+        Show the appropriate dissipation animation for the bullet, based
+        on what direction the bullet hit something in, and destroy the
+        bullet.  Default behavior just calls "self.destroy()".
+        """
+        self.destroy()
 
-            play_sound(bullet_death_sound, self.x, self.y)
-            Smoke.create(
-                self.x, self.y, self.z, sprite=anneroy_bullet_dissipate_sprite,
-                regulate_origin=True, image_xscale=self.image_xscale,
-                image_yscale=self.image_yscale, image_rotation=image_rotation,
-                image_blend=self.image_blend)
-            self.destroy()
+    def shoot_player(self, other):
+        other.hurt(self.player_damage)
+
+    def shoot_enemy(self, other):
+        other.shoot(self)
 
     def event_create(self):
-        self.alarms["die"] = ANNEROY_BULLET_LIFE
+        if self.life is not None:
+            self.alarms["die"] = self.life
 
     def event_step(self, time_passed, delta_mult):
         room = sge.game.current_room
@@ -3553,12 +3594,24 @@ class AnneroyBullet(InteractiveObject):
             self.destroy()
 
     def event_collision(self, other, xdirection, ydirection):
-        super(AnneroyBullet, self).event_collision(other, xdirection, ydirection)
+        super(Bullet, self).event_collision(other, xdirection, ydirection)
 
-        if isinstance(other, InteractiveObject) and other.shootable:
-            other.shoot(self)
-            self.dissipate(xdirection, ydirection)
-        elif isinstance(other, xsge_physics.Wall):
+        if isinstance(other, Player):
+            if self.attacks_player:
+                self.shoot_player(other)
+                self.dissipate(xdirection, ydirection)
+        elif isinstance(other, Bullet):
+            if (self.attacks_bullet and
+                    ((self.attacks_player and other.attacks_enemy) or
+                     (self.attacks_enemy and other.attacks_player))):
+                xd = math.copysign(1, other.xvelocity)
+                yd = math.copysign(1, other.yvelocity)
+                other.dissipate(xd, yd)
+        elif isinstance(other, InteractiveObject) and other.shootable:
+            if self.attacks_enemy:
+                self.shoot_enemy(other)
+                self.dissipate(xdirection, ydirection)
+        elif isinstance(other, xsge_physics.Wall) and self.attacks_wall:
             point_x = self.x
             point_y = self.y
             if ((self.xvelocity > 0 and self.yvelocity > 0) or
@@ -3607,7 +3660,9 @@ class AnneroyBullet(InteractiveObject):
 
                             if collision_real:
                                 touching = True
-                                if isinstance(obj, Stone) and obj.shootable:
+                                if (self.breaks_stone and
+                                        isinstance(obj, Stone) and
+                                        obj.shootable):
                                     obj.destroy()
 
                 if touching:
@@ -3639,7 +3694,9 @@ class AnneroyBullet(InteractiveObject):
 
                             if collision_real:
                                 touching = True
-                                if isinstance(obj, Stone) and obj.shootable:
+                                if (self.breaks_stone and
+                                        isinstance(obj, Stone) and
+                                        obj.shootable):
                                     obj.destroy()
 
                 if touching:
@@ -3648,6 +3705,55 @@ class AnneroyBullet(InteractiveObject):
     def event_alarm(self, alarm_id):
         if alarm_id == "die":
             self.destroy()
+
+
+class AnneroyBullet(Bullet):
+
+    attacks_enemy = True
+    attacks_bullet = False
+    breaks_stone = True
+    life = ANNEROY_BULLET_LIFE
+
+    def dissipate(self, xdirection=0, ydirection=0):
+        if self in sge.game.current_room.objects:
+            image_rotation = 0
+            if abs(xdirection) > abs(ydirection):
+                if xdirection < 0:
+                    image_rotation = 180
+                else:
+                    image_rotation = 0
+            elif abs(ydirection) > abs(xdirection):
+                if ydirection < 0:
+                    image_rotation = 270
+                else:
+                    image_rotation = 90
+            elif abs(self.xvelocity) > abs(self.yvelocity):
+                if self.xvelocity < 0:
+                    image_rotation = 180
+                else:
+                    image_rotation = 0
+            else:
+                if self.yvelocity < 0:
+                    image_rotation = 270
+                else:
+                    image_rotation = 90
+
+            play_sound(bullet_death_sound, self.x, self.y)
+            Smoke.create(
+                self.x, self.y, self.z, sprite=anneroy_bullet_dissipate_sprite,
+                regulate_origin=True, image_xscale=self.image_xscale,
+                image_yscale=self.image_yscale, image_rotation=image_rotation,
+                image_blend=self.image_blend)
+            self.destroy()
+
+
+class ScorpionBullet(Bullet):
+
+    attacks_player = True
+    player_damage = 15
+
+    def dissipate(self, xdirection=0, ydirection=0):
+        self.destroy()
 
 
 class HedgehogSpikes(InteractiveObject):
@@ -6066,7 +6172,7 @@ TYPES = {
     "spike_bottom": SpikeBottom, "death": Death,
 
     "frog": Frog, "hedgehog": Hedgehog, "bat": Bat, "jellyfish": Jellyfish,
-    "worm": Worm, "mantanoid": Mantanoid,
+    "worm": Worm, "scorpion": Scorpion, "mantanoid": Mantanoid,
 
     "fake_tile": FakeTile, "weak_stone": WeakStone, "spike_stone": SpikeStone,
 
@@ -6312,10 +6418,11 @@ scorpion_walk_sprite = sge.gfx.Sprite.from_tileset(
 scorpion_shoot_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 108, 11, width=60, height=36, origin_x=30, origin_y=9, fps=20)
 scorpion_shoot_end_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 0, 144, 11, width=60, height=36, origin_x=30, origin_y=9, fps=20)
+    fname, 0, 144, 5, width=60, height=36, origin_x=30, origin_y=9, fps=20)
 
-scorpion_projectile_sprite = sge.gfx.Sprite("scorpion_projectile", d,
-                                            origin_y=2)
+scorpion_projectile_sprite = sge.gfx.Sprite(
+    "scorpion_projectile", d, origin_y=2, bbox_x=2, bbox_y=1, bbox_width=17,
+    bbox_height=4)
 
 fname = os.path.join(d, "mantanoid_sheet.png")
 mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(

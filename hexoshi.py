@@ -3342,6 +3342,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         action = self.action_slash
                     else:
                         action = self.action_approach
+                else:
+                    self.target = None
 
         if action:
             self.perform_action(action)

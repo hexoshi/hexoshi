@@ -191,6 +191,8 @@ ANNEROY_DECOMPRESS_LAX = 4
 MANTANOID_WANDER_SPEED = 1
 MANTANOID_WANDER_INTERVAL = FPS * 2
 MANTANOID_APPROACH_SPEED = 1.5
+MANTANOID_HOP_HEIGHT = 2 * TILE_SIZE
+MANTANOID_JUMP_HEIGHT = 4 * TILE_SIZE
 MANTANOID_WALK_FRAMES_PER_PIXEL = 1 / 6
 MANTANOID_LEVEL_DISTANCE = 48
 MANTANOID_SLASH_DISTANCE = 30
@@ -2522,7 +2524,6 @@ class FallingObject(InteractiveCollider):
             if on_floor:
                 if self.yvelocity > 0:
                     self.yvelocity = 0
-                    self.stop_down()
             elif on_slope:
                 self.yvelocity = self.slide_speed * (on_slope[0].bbox_height /
                                                      on_slope[0].bbox_width)
@@ -3261,20 +3262,34 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                     self.perform_action(self.action_turn_left)
 
     def stop_left(self):
-        if not self.action:
+        if self.yvelocity >= 0:
+            self.xvelocity = 0
+
+        if not self.action and self.was_on_floor:
             if self.target is not None:
-                # TODO: Jump
-                pass
+                self.perform_action(self.action_jump)
             else:
-                self.action_turn_right()
+                self.perform_action(self.action_turn_right)
 
     def stop_right(self):
-        if not self.action:
+        if self.yvelocity >= 0:
+            self.xvelocity = 0
+
+        if not self.action and self.was_on_floor:
             if self.target is not None:
-                # TODO: Jump
-                pass
+                self.perform_action(self.action_jump)
             else:
-                self.action_turn_left()
+                self.perform_action(self.action_turn_left)
+
+    def stop_down(self):
+        if not self.was_on_floor:
+            self.xvelocity = 0
+            self.yvelocity = 0
+            if not self.action or self.action == "animation":
+                self.sprite = mantanoid_land_sprite
+                self.fps = None
+                self.image_index = 0
+                self.action = "animation"
 
     def update_wander(self):
         if (not self.hiding and self.was_on_floor and
@@ -3309,13 +3324,31 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.image_index = 0
             self.action = "animation"
 
+    def action_hop(self):
+        if (self.was_on_floor and self.yvelocity >= 0 and
+                (self.get_bottom_touching_wall() or
+                 self.get_bottom_touching_slope())):
+            self.sprite = mantanoid_hop_start_sprite
+            self.image_fps = None
+            self.image_index = 0
+            self.action = "hop"
+
+    def action_jump(self):
+        if (self.was_on_floor and self.yvelocity >= 0 and
+                (self.get_bottom_touching_wall() or
+                 self.get_bottom_touching_slope())):
+            self.sprite = mantanoid_jump_start_sprite
+            self.image_fps = None
+            self.image_index = 0
+            self.action = "jump"
+
     def action_approach(self):
         self.hiding = False
         if self.target is not None:
             if self.x < self.target.x:
-                self.action_turn_right()
+                self.perform_action(self.action_turn_right)
             else:
-                self.action_turn_left()
+                self.perform_action(self.action_turn_left)
 
             if self.movement_speed != MANTANOID_APPROACH_SPEED:
                 self.movement_speed = MANTANOID_APPROACH_SPEED
@@ -3366,7 +3399,16 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         self.image_index = 0
                         self.action = "animation"
             else:
-                pass
+                if self.yvelocity < 0:
+                    self.sprite = mantanoid_jump_sprite
+                else:
+                    if self.sprite == mantanoid_jump_sprite:
+                        self.sprite = mantanoid_fall_start_sprite
+                        self.image_fps = None
+                        self.image_index = 0
+                        self.action = "animation"
+                    else:
+                        self.sprite = mantanoid_fall_sprite
 
     def event_step(self, time_passed, delta_mult):
         if not self.action:
@@ -3405,7 +3447,25 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.set_image()
 
     def event_animation_end(self):
-        if self.action == "slash":
+        if self.action == "hop":
+            self.action = None
+            self.set_image()
+            if self.was_on_floor and (self.get_bottom_touching_wall() or
+                                      self.get_bottom_touching_slope()):
+                self.xvelocity = math.copysign(MANTANOID_APPROACH_SPEED,
+                                               self.image_xscale)
+                self.yvelocity = get_jump_speed(MANTANOID_HOP_HEIGHT,
+                                                self.gravity)
+        if self.action == "jump":
+            self.action = None
+            self.set_image()
+            if self.was_on_floor and (self.get_bottom_touching_wall() or
+                                      self.get_bottom_touching_slope()):
+                self.xvelocity = math.copysign(MANTANOID_APPROACH_SPEED,
+                                               self.image_xscale)
+                self.yvelocity = get_jump_speed(MANTANOID_JUMP_HEIGHT,
+                                                self.gravity)
+        elif self.action == "slash":
             hit_target = False
 
             w = MANTANOID_SLASH_BBOX_WIDTH
@@ -3466,10 +3526,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.image_index = 0
             self.action = "animation"
         elif self.action == "animation":
-            self.sprite = mantanoid_stand_sprite
-            self.image_fps = None
-            self.image_index = 0
             self.action = None
+            self.set_image()
 
 
 class Boss(InteractiveObject):
@@ -6385,43 +6443,43 @@ scorpion_projectile_sprite = sge.gfx.Sprite(
 
 fname = os.path.join(d, "mantanoid_sheet.png")
 mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 51, width=32, height=48, origin_x=15, origin_y=14)
+    fname, 41, 51, width=32, height=48, origin_x=15, origin_y=15)
 mantanoid_idle_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=15, origin_y=16,
+    fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=15, origin_y=17,
     fps=10)
 mantanoid_turn_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=15, origin_y=13,
+    fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=15, origin_y=14,
     fps=10)
 mantanoid_walk_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 657, 10, xsep=3, width=41, height=49, origin_x=23, origin_y=15)
+    fname, 41, 657, 10, xsep=3, width=41, height=49, origin_x=23, origin_y=16)
 mantanoid_hop_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=23,
+    fname, 41, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
     fps=10)
 mantanoid_jump_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 372, 5, xsep=5, width=32, height=57, origin_x=15, origin_y=23,
+    fname, 41, 372, 5, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
     fps=10)
 mantanoid_jump_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 156, 299, width=32, height=57, origin_x=15, origin_y=23)
+    fname, 156, 299, width=32, height=57, origin_x=15, origin_y=24)
 mantanoid_fall_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 193, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=23,
+    fname, 193, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
     fps=10)
 mantanoid_fall_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 304, 299, width=32, height=57, origin_x=15, origin_y=23)
+    fname, 304, 299, width=32, height=57, origin_x=15, origin_y=24)
 mantanoid_land_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 341, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=23,
+    fname, 341, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
     fps=10)
 mantanoid_slash_start_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 41, 470, 3, xsep=5, width=45, height=65, origin_x=15, origin_y=31,
+    fname, 41, 470, 3, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
     fps=10)
 mantanoid_slash_single_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 191, 470, 4, xsep=5, width=45, height=65, origin_x=15, origin_y=31,
+    fname, 191, 470, 4, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
     fps=10)
 mantanoid_slash_double_first_sprite = sge.gfx.Sprite.from_tileset(
-    fname, 233, 551, 4, xsep=3, width=61, height=65, origin_x=15, origin_y=31,
+    fname, 233, 551, 4, xsep=3, width=61, height=65, origin_x=15, origin_y=32,
     fps=10)
 mantanoid_slash_double_second_sprite = sge.gfx.Sprite.from_tileset(
     fname, 489, 551, 3, xsep=3, width=61, height=65,
-    origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=31, fps=10)
+    origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=10)
 
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,

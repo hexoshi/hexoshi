@@ -27,7 +27,7 @@
   <object id="56" gid="255" x="560" y="192" width="32" height="48">
    <properties>
     <property name="hiding" value="1"/>
-    <property name="wander_x" value="696"/>
+    <property name="wander_x" value="712"/>
    </properties>
   </object>
  </objectgroup>

@@ -3291,6 +3291,11 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             else:
                 self.perform_action(self.action_turn_left)
 
+    def stop_up(self):
+        self.yvelocity = 0
+        if self.was_on_floor and self.action_check_verify == "stop_down":
+            self.verify_action()
+
     def stop_down(self):
         if not self.was_on_floor:
             self.xvelocity = 0
@@ -3344,7 +3349,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.action_check_y = self.y
             self.action_check_dest_x = target_x
             self.action_check_dest_y = target_y
-            self.action_check_verify = verify_event
+
+            if verify_event == "alarm":
+                self.alarms["verify"] = FPS
+            else:
+                self.action_check_verify = verify_event
+
             self.perform_action(action)
             return True
 
@@ -3439,11 +3449,27 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                     else:
                         action = self.action_approach
                 else:
-                    self.target = None
+                    if (self.target.x - self.x < 0) == (self.image_xscale < 0):
+                        x = self.target.x
+                        y = self.target.y
+                        if abs(self.x - x) / abs(self.y - y) <= 2:
+                            x = self.x
+
+                        if self.check_action(self.action_approach, x, y,
+                                             "alarm"):
+                            return
+                        elif self.check_action(self.action_hop, x, y,
+                                               "stop_down"):
+                            return
+                        elif self.check_action(self.action_jump, x, y,
+                                               "stop_down"):
+                            return
+                        else:
+                            self.target = None
 
         if action:
             self.perform_action(action)
-        else:
+        elif self.was_on_floor:
             self.update_wander()
 
     def set_image(self):
@@ -3509,6 +3535,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                             self.xvelocity = 0
 
             self.set_image()
+
+    def event_alarm(self, alarm_id):
+        super(Mantanoid, self).event_alarm(alarm_id)
+
+        if alarm_id == "verify":
+            self.verify_action()
 
     def event_animation_end(self):
         if self.action == "hop":

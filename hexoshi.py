@@ -6722,10 +6722,9 @@ else:
             save_slots[i] = None
 
 
-if __name__ == '__main__':
-    print(_("Starting game..."))
+print(_("Starting game..."))
 
-    try:
-        sge.game.start()
-    finally:
-        write_to_disk()
+try:
+    sge.game.start()
+finally:
+    write_to_disk()

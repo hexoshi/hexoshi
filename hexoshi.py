@@ -289,6 +289,7 @@ mode_js = [[(0, "button", 8)]]
 pause_js = [[(0, "button", 9)]]
 map_js = [[]]
 save_slots = [None for i in six.moves.range(SAVE_NSLOTS)]
+ai_data = []
 
 abort = False
 
@@ -568,12 +569,6 @@ class Level(sge.dsp.Room):
                                         getattr(obj, method, lambda: None)(*fa)
                                 elif obj == "__level__":
                                     getattr(self, method, lambda: None)(*fa)
-                        elif command == "dialog":
-                            args = arg.split(None, 1)
-                            if len(args) >= 2:
-                                portrait, text = args[:2]
-                                sprite = portrait_sprites.get(portrait)
-                                DialogBox(gui_handler, _(text), sprite).show()
                         elif command == "play_music":
                             self.music = arg
                             play_music(arg)
@@ -3251,6 +3246,13 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         self.action = None
         self.target = None
         self.movement_speed = 0
+        self.action_check = None
+        self.action_check_id = None
+        self.action_check_x = None
+        self.action_check_y = None
+        self.action_check_dest_x = None
+        self.action_check_dest_y = None
+        self.action_check_verify = None
 
     def set_direction(self, direction):
         if not self.action:
@@ -3267,7 +3269,11 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if not self.action and self.was_on_floor:
             if self.target is not None:
-                self.perform_action(self.action_jump)
+                if not self.check_action(self.action_hop, self.target.x,
+                                         self.target.y, "stop_down"):
+                    if not self.check_action(self.action_jump, self.target.x,
+                                             self.target.y, "stop_down"):
+                        pass
             else:
                 self.perform_action(self.action_turn_right)
 
@@ -3277,7 +3283,11 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if not self.action and self.was_on_floor:
             if self.target is not None:
-                self.perform_action(self.action_jump)
+                if not self.check_action(self.action_hop, self.target.x,
+                                         self.target.y, "stop_down"):
+                    if not self.check_action(self.action_jump, self.target.x,
+                                             self.target.y, "stop_down"):
+                        pass
             else:
                 self.perform_action(self.action_turn_left)
 
@@ -3290,6 +3300,9 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.fps = None
                 self.image_index = 0
                 self.action = "animation"
+
+            if self.action_check_verify == "stop_down":
+                self.verify_action()
 
     def update_wander(self):
         if (not self.hiding and self.was_on_floor and
@@ -3307,6 +3320,55 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if not self.action:
             self.xvelocity = 0
             action()
+
+    def check_action(self, action, target_x, target_y, verify_event):
+        def rough(x): return int(math.floor(x / 16))
+
+        action_id = "{}; {}: ({},{})->({},{})!{} -- ".format(
+            self.__class__.__name__, sge.game.current_room.fname,
+            rough(self.x), rough(self.y), rough(target_x), rough(target_y),
+            action.__name__)
+
+        action_id_pass = action_id + "pass"
+        action_id_fail = action_id + "fail"
+
+        if action_id_fail in ai_data:
+            return False
+        elif action_id_pass in ai_data:
+            self.perform_action(action)
+            return True
+        else:
+            self.action_check = action
+            self.action_check_id = action_id
+            self.action_check_x = self.x
+            self.action_check_y = self.y
+            self.action_check_dest_x = target_x
+            self.action_check_dest_y = target_y
+            self.action_check_verify = verify_event
+            self.perform_action(action)
+            return True
+
+    def verify_action(self):
+        if self.action_check is not None:
+            orig_dist = abs(math.hypot(
+                self.action_check_dest_x - self.action_check_x,
+                self.action_check_dest_y - self.action_check_y))
+            new_dist = abs(math.hypot(
+                self.action_check_dest_x - self.x,
+                self.action_check_dest_y - self.y))
+
+            if new_dist < orig_dist:
+                ai_data.append(self.action_check_id + "pass")
+            else:
+                ai_data.append(self.action_check_id + "fail")
+
+            self.action_check = None
+            self.action_check_id = None
+            self.action_check_x = None
+            self.action_check_y = None
+            self.action_check_dest_x = None
+            self.action_check_dest_y = None
+            self.action_check_verify = None
 
     def action_turn_left(self):
         if self.image_xscale > 0:
@@ -3424,7 +3486,9 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.update_action()
 
         if not self.action:
-            self.xvelocity = self.movement_speed * self.image_xscale
+            if ((self.image_xscale > 0 or not self.get_left_touching_wall()) and
+                    (self.image_xscale < 0 or not self.get_right_touching_wall())):
+                self.xvelocity = self.movement_speed * self.image_xscale
 
             on_floor = self.get_bottom_touching_wall()
             on_slope = self.get_bottom_touching_slope()
@@ -5820,7 +5884,7 @@ def write_to_disk():
            "music_enabled": music_enabled, "stereo_enabled": stereo_enabled,
            "fps_enabled": fps_enabled, "metroid_controls": metroid_controls,
            "joystick_threshold": joystick_threshold, "keys": keys_cfg,
-           "joystick": js_cfg}
+           "joystick": js_cfg, "ai_data": ai_data}
 
     with open(os.path.join(CONFIG, "config.json"), 'w') as f:
         json.dump(cfg, f, indent=4)
@@ -6544,17 +6608,6 @@ etank_full_sprite = sge.gfx.Sprite("etank_full", d)
 life_force_sprite = sge.gfx.Sprite(
     "life_force", d, origin_x=7, origin_y=7, fps=10)
 
-d = os.path.join(DATA, "images", "portraits")
-portrait_sprites = {}
-for fname in os.listdir(d):
-    root, ext = os.path.splitext(fname)
-    try:
-        portrait = sge.gfx.Sprite(root, d)
-    except (IOError, OSError):
-        pass
-    else:
-        portrait_sprites[root] = portrait
-
 # Load backgrounds
 d = os.path.join(DATA, "images", "backgrounds")
 layers = []
@@ -6688,6 +6741,7 @@ finally:
     metroid_controls = cfg.get("metroid_controls", metroid_controls)
     joystick_threshold = cfg.get("joystick_threshold", joystick_threshold)
     xsge_gui.joystick_threshold = joystick_threshold
+    ai_data = cfg.get("ai_data", ai_data)
 
     keys_cfg = cfg.get("keys", {})
     left_key = keys_cfg.get("left", left_key)

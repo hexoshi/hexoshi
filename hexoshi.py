@@ -3235,7 +3235,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     slash_damage = 20
     sight_distance = 300
 
-    def __init__(self, x, y, hiding=False, **kwargs):
+    def __init__(self, x, y, hiding=False, wander_x=None, **kwargs):
         x += mantanoid_stand_sprite.origin_x
         y += mantanoid_stand_sprite.origin_y
         kwargs["sprite"] = mantanoid_stand_sprite
@@ -3246,6 +3246,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         kwargs["regulate_origin"] = True
         super(Mantanoid, self).__init__(x, y, **kwargs)
         self.hiding = hiding
+        self.wander_x = wander_x if wander_x else x
         self.action = None
         self.target = None
         self.movement_speed = 0
@@ -3280,7 +3281,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 "move_lock" not in self.alarms):
             choices = 3 * [1] + 7 * [0] + [-1]
             xv = random.choice(choices)
-            if self.x > self.xstart:
+            if self.x > self.wander_x:
                 xv *= -1
 
             self.set_direction(xv)

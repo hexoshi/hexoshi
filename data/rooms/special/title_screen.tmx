@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="28" tilewidth="8" tileheight="8" backgroundcolor="#250038" nextobjectid="1">
+ <properties>
+  <property name="bgname" value="iridia"/>
+ </properties>
  <tileset firstgid="1" name="logo" tilewidth="250" tileheight="34" tilecount="1">
   <tile id="0">
    <image width="250" height="34" source="../../images/misc/logo.png"/>

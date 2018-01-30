@@ -3577,7 +3577,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
             for other in sge.collision.rectangle(x, y, w, h):
                 if isinstance(other, Player):
-                    player.hurt(self.slash_damage)
+                    other.hurt(self.slash_damage)
                     if other is self.target:
                         hit_target = True
                 elif isinstance(other, AnneroyBullet):
@@ -3614,7 +3614,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
             for other in sge.collision.rectangle(x, y, w, h):
                 if isinstance(other, Player):
-                    player.hurt(self.slash_damage)
+                    other.hurt(self.slash_damage)
                 elif isinstance(other, AnneroyBullet):
                     other.dissipate(other.xvelocity, other.yvelocity)
 

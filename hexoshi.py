@@ -3864,9 +3864,24 @@ class ScorpionBullet(Bullet):
 
     attacks_player = True
     player_damage = 15
+    shard_num = 20
+    shard_speed_min = 1
+    shard_speed_max = 3
 
     def dissipate(self, xdirection=0, ydirection=0):
         self.destroy()
+
+        for i in six.moves.range(self.shard_num):
+            life = random.uniform(FPS / 8, FPS / 2)
+            image_index = random.randrange(
+                0, scorpion_projectile_shard_sprite.frames)
+            shard = xsge_particle.TimedParticle.create(
+                self.x, self.y, self.z, life=life,
+                sprite=scorpion_projectile_shard_sprite,
+                image_index=image_index)
+            shard.speed = random.randint(self.shard_speed_min,
+                                         self.shard_speed_max)
+            shard.move_direction = random.randrange(360)
 
 
 class HedgehogSpikes(InteractiveObject):
@@ -6536,6 +6551,8 @@ scorpion_shoot_end_sprite = sge.gfx.Sprite.from_tileset(
 scorpion_projectile_sprite = sge.gfx.Sprite(
     "scorpion_projectile", d, origin_y=2, bbox_x=2, bbox_y=1, bbox_width=17,
     bbox_height=4)
+scorpion_projectile_shard_sprite = sge.gfx.Sprite(
+    "scorpion_projectile_shard", d, fps=0)
 
 fname = os.path.join(d, "mantanoid_sheet.png")
 mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(

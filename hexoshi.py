@@ -2559,15 +2559,17 @@ class WalkingObject(FallingObject):
         on_slope = self.slopeisplatform and self.get_bottom_touching_slope()
         if (on_floor or on_slope) and self.stayonplatform:
             if self.xvelocity < 0:
+                my_left = self.bbox_left + (self.x - self.bbox_left) / 2
                 for tile in on_floor:
-                    if tile.bbox_left < self.bbox_left:
+                    if tile.bbox_left < my_left:
                         break
                 else:
                     if not on_slope:
                         self.set_direction(1)
             else:
+                my_right = self.bbox_right - (self.bbox_right - self.x) / 2
                 for tile in on_floor:
-                    if tile.bbox_right > self.bbox_right:
+                    if tile.bbox_right > my_right:
                         break
                 else:
                     if not on_slope:

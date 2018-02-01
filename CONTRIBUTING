@@ -1,0 +1,55 @@
+This file has been dedicated to the public domain, to the extent
+possible under applicable law, via CC0. See
+http://creativecommons.org/publicdomain/zero/1.0/ for more
+information. This file is offered as-is, without any warranty.
+
+========================================================================
+
+
+Any contributions to this project should be based on the latest revision
+found in the Git repository. This repository can be found here:
+
+https://savannah.nongnu.org/git/?group=hexoshi
+
+This document is designed to help you understand how to make changes,
+how to run the version of the game from the repo, and how to forward
+your changes upstream.
+
+
+MAKING CHANGES
+
+To make changes to the main game program, simply edit "hexoshi.py".  If
+you like, you can add your own copyright notice to the top of the file.
+
+To add any sort of game data, place it in the appropriate section of the
+"data" directory, and add licensing information to "data/LICENSES".
+Note: Any data contribution which is not given a proper libre license
+WILL BE REJECTED.  Please adhere to the formatting of the rest of the
+entries in the LICENSES file as closely as possible.
+
+Whatever your contributions, please ensure that you add your name to
+data/credits.json in the appropriate section(s). Make sure to test your
+modification of this file with the "Credits" option from the main menu
+of the game.
+
+
+RUNNING THE GAME
+
+Running the version of the game from the repo is similar to running the
+source code releases, but the main difference is that dependencies are
+not included.  The main dependencies are:
+
+- SGE Game Engine - http://stellarengine.nongnu.org
+- xSGE - http://xsge.nongnu.org
+- Six - https://pypi.python.org/pypi/six
+
+Of course, all dependencies of these libraries must also be installed.
+
+Note: The version of xsge_tmx needed by the game has not been released
+yet.  Please use the latest Git revision of xsge_tmx in the meantime.
+
+
+FORWARDING YOUR CHANGES
+
+To forward your changes, please clone the Git repo, push it to your own
+Git repo (any Git service will do), and send me a link to your repo.

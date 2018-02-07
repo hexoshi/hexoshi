@@ -289,7 +289,7 @@ mode_js = [[(0, "button", 8)]]
 pause_js = [[(0, "button", 9)]]
 map_js = [[]]
 save_slots = [None for i in six.moves.range(SAVE_NSLOTS)]
-ai_data = []
+ai_data = set()
 
 abort = False
 
@@ -3371,9 +3371,9 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.action_check_dest_y - self.y))
 
             if new_dist < orig_dist:
-                ai_data.append(self.action_check_id + "pass")
+                ai_data.add(self.action_check_id + "pass")
             else:
-                ai_data.append(self.action_check_id + "fail")
+                ai_data.add(self.action_check_id + "fail")
 
             self.action_check = None
             self.action_check_id = None
@@ -5936,7 +5936,7 @@ def write_to_disk():
            "music_enabled": music_enabled, "stereo_enabled": stereo_enabled,
            "fps_enabled": fps_enabled, "metroid_controls": metroid_controls,
            "joystick_threshold": joystick_threshold, "keys": keys_cfg,
-           "joystick": js_cfg, "ai_data": ai_data}
+           "joystick": js_cfg, "ai_data": sorted(list(ai_data))}
 
     with open(os.path.join(CONFIG, "config.json"), 'w') as f:
         json.dump(cfg, f, indent=4)
@@ -6799,7 +6799,7 @@ finally:
     metroid_controls = cfg.get("metroid_controls", metroid_controls)
     joystick_threshold = cfg.get("joystick_threshold", joystick_threshold)
     xsge_gui.joystick_threshold = joystick_threshold
-    ai_data = cfg.get("ai_data", ai_data)
+    ai_data = set(cfg.get("ai_data", ai_data))
 
     keys_cfg = cfg.get("keys", {})
     left_key = keys_cfg.get("left", left_key)

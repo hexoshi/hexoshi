@@ -39,7 +39,7 @@ import weakref
 import webbrowser
 
 import sge
-print("SGE", sge.IMPLEMENTATION, sge.__version__)
+print(sge.IMPLEMENTATION, sge.__version__)
 import six
 import xsge_gui
 print("xsge_gui", xsge_gui.__version__)
@@ -3219,6 +3219,7 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
                 x, self.y, self.z + 0.1,
                 sprite=scorpion_projectile_sprite, xvelocity=xv,
                 image_xscale=self.image_xscale, image_yscale=self.image_yscale)
+            play_sound(scorpion_shoot_sound, self.x, self.y)
         elif self.action == "shoot_end":
             self.action = None
             self.sprite = scorpion_stand_sprite
@@ -3872,6 +3873,8 @@ class ScorpionBullet(Bullet):
 
     def dissipate(self, xdirection=0, ydirection=0):
         self.destroy()
+        play_sound(scorpion_projectile_break_sound, self.image_xcenter,
+                   self.image_ycenter)
 
         for i in six.moves.range(self.shard_num):
             life = random.uniform(FPS / 8, FPS / 2)
@@ -6711,6 +6714,10 @@ enemy_hurt_sound = stone_break_sound
 enemy_death_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "enemy_death.wav"))
 frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))
+scorpion_shoot_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "scorpion_shoot.wav"))
+scorpion_projectile_break_sound = sge.snd.Sound(
+    os.path.join(DATA, "sounds", "scorpion_projectile_break.ogg"), volume=0.5)
 mantanoid_approach_sound = sge.snd.Sound(
     os.path.join(DATA, "sounds", "mantanoid_approach.wav"))
 mantanoid_slash_sound = sge.snd.Sound(

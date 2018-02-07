@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="51">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="28" tilewidth="8" tileheight="8" nextobjectid="53">
  <properties>
   <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
@@ -8,17 +8,17 @@
  <tileset firstgid="111" source="../tilesets/extras.tsx"/>
  <tileset firstgid="188" source="../tilesets/plants.tsx"/>
  <tileset firstgid="252" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="258" source="../tilesets/stones.tsx"/>
- <tileset firstgid="260" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="267" source="../tilesets/doors.tsx"/>
- <tileset firstgid="273" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="259" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="261" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="268" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="274" source="../tilesets/objects.tsx"/>
  <layer name="Decorations" width="200" height="28">
   <data encoding="base64" compression="zlib">
    eJzt2kFOg0AUBuC5/yEU3anb1qWivYZatBs1MdEbOCY2NQ2dQnA6gt+XvNAwr/CzmxcIAQDym8WaJ+qyXLRB1s/1lf8s1nmm+1SZ+6eiKh2AIqqe/Rc5QoxAVToARRyVDjASx6UDAAAAADBJdazb0iHgj2piPSXWTw+UAwDGahEOv9e8SazVA6+9GPh//p+XxNoqbPaaJx2vdxfrvsf9n7+P633rY6K32XG+65531bEPAADGpg7758HULApT1oT2efD9x+/ULAoAAOR3Feu6Y2/bu13vSPlNbz37c3+f9xBruXXudUdv23eE2zPxx+BEAACw8QnAUzAl
   </data>
  </layer>
  <objectgroup name="Powerups">
-  <object id="5" gid="260" x="1560" y="64" width="24" height="8"/>
+  <object id="5" gid="261" x="1560" y="64" width="24" height="8"/>
  </objectgroup>
  <objectgroup name="Enemies">
   <object id="26" gid="254" x="808" y="200" width="32" height="40"/>
@@ -32,18 +32,18 @@
   <object id="2" x="-8" y="8" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="3" gid="272" x="1416" y="224" width="64" height="8">
+  <object id="3" gid="273" x="1416" y="224" width="64" height="8">
    <properties>
     <property name="dest" value="4.tmx"/>
    </properties>
   </object>
-  <object id="4" gid="269" x="0" y="136" width="8" height="64">
+  <object id="4" gid="270" x="0" y="136" width="8" height="64">
    <properties>
     <property name="dest" value="14.tmx"/>
    </properties>
   </object>
-  <object id="14" gid="259" x="1472" y="80" width="16" height="16"/>
-  <object id="15" gid="259" x="1488" y="80" width="16" height="16"/>
+  <object id="14" gid="260" x="1472" y="80" width="16" height="16"/>
+  <object id="15" gid="260" x="1488" y="80" width="16" height="16"/>
  </objectgroup>
  <layer name="fake_tile" width="200" height="28">
   <data encoding="base64" compression="zlib">
@@ -75,5 +75,8 @@
   <object id="40" type="slope_topright" x="1256" y="96" width="64" height="64"/>
   <object id="41" type="slope_bottomleft" x="976" y="72" width="64" height="64"/>
   <object id="42" type="slope_bottomleft" x="840" y="16" width="56" height="56"/>
+ </objectgroup>
+ <objectgroup name="Zones">
+  <object id="52" type="mantanoid_nogo" x="1104" y="0" width="496" height="224"/>
  </objectgroup>
 </map>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="112" tilewidth="8" tileheight="8" nextobjectid="93">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="112" tilewidth="8" tileheight="8" nextobjectid="94">
  <properties>
   <property name="bgname" value="iridia"/>
   <property name="music" value="late_night_runaway.ogg"/>
@@ -8,11 +8,11 @@
  <tileset firstgid="111" source="../tilesets/extras.tsx"/>
  <tileset firstgid="188" source="../tilesets/plants.tsx"/>
  <tileset firstgid="252" source="../tilesets/enemies.tsx"/>
- <tileset firstgid="256" source="../tilesets/stones.tsx"/>
- <tileset firstgid="258" source="../tilesets/powerups.tsx"/>
- <tileset firstgid="265" source="../tilesets/doors.tsx"/>
- <tileset firstgid="271" source="../tilesets/objects.tsx"/>
- <tileset firstgid="272" source="../tilesets/artifact.tsx"/>
+ <tileset firstgid="259" source="../tilesets/stones.tsx"/>
+ <tileset firstgid="261" source="../tilesets/powerups.tsx"/>
+ <tileset firstgid="268" source="../tilesets/doors.tsx"/>
+ <tileset firstgid="274" source="../tilesets/objects.tsx"/>
+ <tileset firstgid="275" source="../tilesets/artifact.tsx"/>
  <layer name="Decorations" width="100" height="112">
   <data encoding="base64" compression="zlib">
    eJzt3cuOm0AQhWHe/yEmZ7zLbZdkmZDbW+TCJJlNpEh5hIDGjChEtxtTpsD5P6mFTZfpI0uD6cHgqgKAZZ627VnbXg7ai2Prn88hz3BYTNEBYCg6AAxFB4Ch6AAwFB0AhqIDwFB0ABiKDgBD0QFgKDoADEUHgKHoADCeRwcI8jGxvl4zBB79TKxv1gwBAAAAALgaqXk/YqTm/QBwDhX05WrgSwV9uRr4UkFfrga+VNCXq4EvFfTlapZ6f8Ft75EK+nI1S90dl1/a9vWC4+yFCvpyNfClgr5cDXypoC9XA18q6MvVwJcyfTcFNfAlpxr4UEHNk0uHwCNFB4ChFcfifOFpWnEszheepugAMBQdAMb/es0LAADAtXjVttcn2puK4/CtUXQAGIoOAEPRARJK9rfD/e4cHxLrP42e1zO360EBY0Y5HJc/Ev2/Rs+by0VJUsCYSFN0ABj8nxPAtUsdM3b640a+U7+e8THjYfC4P268qwB4YN+2LezbcK3637M6x83pEsAFn4nbMvWZ+Gf1FAAA7M/btr2rOLZZy+/B49uJx9/a9r1ivg9f3fkM/sa3ozufwd84AADANo2Pm+uJGu7p8WCN92F83NxM1HBPjwe8D8A+zflehBzG89jG0JLvdeydHLbBtRZ+FB0ABveaBJBTV8yr56ir/HVLvf6c/1xNxXxyjqay1y39TdT15/yHDqMlsCd1dAAYTXQAAABwtVLz9dJ5fH3GmLnXdOfuS+bEvc9njL9lqfn6cH3uNyibgjHGc9Tha25Hy+7c/dT931Lz3PuC8QFs3z8/LI4l
@@ -33,12 +33,12 @@
   <object id="2" x="-8" y="0" width="8" height="8"/>
  </objectgroup>
  <objectgroup name="Special Blocks">
-  <object id="10" gid="267" x="400" y="152" width="8" height="64">
+  <object id="10" gid="270" x="400" y="152" width="8" height="64">
    <properties>
     <property name="dest" value="22.tmx"/>
    </properties>
   </object>
-  <object id="13" gid="267" x="0" y="544" width="8" height="64">
+  <object id="13" gid="270" x="0" y="544" width="8" height="64">
    <properties>
     <property name="dest" value="24.tmx"/>
    </properties>
@@ -103,6 +103,9 @@
   <object id="68" type="slope_topleft" x="576" y="816" width="8" height="8"/>
   <object id="69" type="slope_topleft" x="592" y="808" width="8" height="8"/>
   <object id="70" type="slope_topleft" x="608" y="800" width="8" height="8"/>
+ </objectgroup>
+ <objectgroup name="Zones">
+  <object id="93" type="mantanoid_nogo" x="0" y="0" width="800" height="720"/>
  </objectgroup>
  <objectgroup name="Camera Guides">
   <object id="15" type="camera_x_guide" x="400" y="0" width="400" height="728"/>

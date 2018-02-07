@@ -3272,7 +3272,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if not self.action and self.was_on_floor:
             if self.target is not None:
-                y = self.target.y if ledge else self.y
+                y = self.target.y if ledge else None
 
                 if not self.check_action(self.action_hop, self.target.x, y,
                                          "stop_down"):
@@ -3288,7 +3288,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if not self.action and self.was_on_floor:
             if self.target is not None:
-                y = self.target.y if ledge else self.y
+                y = self.target.y if ledge else None
 
                 if not self.check_action(self.action_hop, self.target.x, y,
                                          "stop_down"):
@@ -3334,7 +3334,14 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             action()
 
     def check_action(self, action, target_x, target_y, verify_event):
-        def rough(x): return int(math.floor(x / 16))
+        if target_x is None and target_y is None:
+            return True
+        elif target_x is not None and target_y is not None:
+            if sge.collision.rectangle(target_x, target_y, 1, 1, MantanoidNoGo):
+                # No-go zone, which means we can't go there no matter what.
+                return False
+
+        def rough(x): return int(math.floor(x / 16)) if x is not None else None
 
         action_id = "{}; {}: ({},{})->({},{})!{} -- ".format(
             self.__class__.__name__, sge.game.current_room.fname,
@@ -3367,12 +3374,19 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     def verify_action(self):
         if self.action_check is not None:
-            orig_dist = abs(math.hypot(
-                self.action_check_dest_x - self.action_check_x,
-                self.action_check_dest_y - self.action_check_y))
-            new_dist = abs(math.hypot(
-                self.action_check_dest_x - self.x,
-                self.action_check_dest_y - self.y))
+            if self.action_check_dest_x is None:
+                orig_dist = self.action_check_dest_y - self.action_check_y
+                new_dist = self.action_check_dest_y - self.y
+            elif self.action_check_dest_y is None:
+                orig_dist = self.action_check_dest_x - self.action_check_x
+                new_dist = self.action_check_dest_x - self.x
+            else:
+                orig_dist = abs(math.hypot(
+                    self.action_check_dest_x - self.action_check_x,
+                    self.action_check_dest_y - self.action_check_y))
+                new_dist = abs(math.hypot(
+                    self.action_check_dest_x - self.x,
+                    self.action_check_dest_y - self.y))
 
             if new_dist < orig_dist:
                 ai_data.add(self.action_check_id + "pass")
@@ -3450,7 +3464,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     def update_action(self):
         action = self.check_hazards()
         if not action:
-            if self.target is not None:
+            if (self.target is not None and
+                    not self.target.collision(MantanoidNoGo)):
                 xdist = abs(self.target.x - self.x)
                 ydist = abs(self.target.y - self.y)
                 if ydist <= MANTANOID_LEVEL_DISTANCE:
@@ -3463,12 +3478,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         x = self.target.x
                         y = self.target.y
                         if abs(self.x - x) / abs(self.y - y) <= 2:
-                            x = self.x
-
-                        if self.target.on_floor:
-                            last_height_verify = "stop_down"
-                        else:
-                            last_height_verify = "peak"
+                            x = None
 
                         if self.check_action(self.action_approach, x, y,
                                              "alarm"):
@@ -3477,7 +3487,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                                                "stop_down"):
                             return
                         elif self.check_action(self.action_jump, x, y,
-                                               last_height_verify):
+                                               "stop_down"):
                             return
                         else:
                             self.target = None
@@ -3641,6 +3651,14 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         elif self.action == "animation":
             self.action = None
             self.set_image()
+
+
+class MantanoidNoGo(sge.dsp.Object):
+
+    def __init__(self, x, y, **kwargs):
+        kwargs["visible"] = False
+        kwargs["checks_collisions"] = False
+        super(MantanoidNoGo, self).__init__(x, y, **kwargs)
 
 
 class Boss(InteractiveObject):
@@ -3881,7 +3899,7 @@ class ScorpionBullet(Bullet):
 
     attacks_player = True
     player_damage = 15
-    shard_num = 20
+    shard_num = 50
     shard_speed_min = 1
     shard_speed_max = 3
 
@@ -6347,7 +6365,7 @@ TYPES = {
     "map_wall_top": MapTopWall, "map_wall_bottom": MapBottomWall,
     "map_door_left": MapLeftDoor, "map_door_right": MapRightDoor,
     "map_door_top": MapTopDoor, "map_door_bottom": MapBottomDoor,
-    "map_ignore_region": IgnoreRegion,
+    "map_ignore_region": IgnoreRegion, "mantanoid_nogo": MantanoidNoGo
     }
 
 

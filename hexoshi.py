@@ -3266,30 +3266,34 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 if self.image_xscale > 0:
                     self.perform_action(self.action_turn_left)
 
-    def stop_left(self):
+    def stop_left(self, ledge=False):
         if self.yvelocity >= 0:
             self.xvelocity = 0
 
         if not self.action and self.was_on_floor:
             if self.target is not None:
-                if not self.check_action(self.action_hop, self.target.x,
-                                         self.target.y, "stop_down"):
+                y = self.target.y if ledge else self.y
+
+                if not self.check_action(self.action_hop, self.target.x, y,
+                                         "stop_down"):
                     if not self.check_action(self.action_jump, self.target.x,
-                                             self.target.y, "stop_down"):
+                                             y, "stop_down"):
                         pass
             else:
                 self.perform_action(self.action_turn_right)
 
-    def stop_right(self):
+    def stop_right(self, ledge=False):
         if self.yvelocity >= 0:
             self.xvelocity = 0
 
         if not self.action and self.was_on_floor:
             if self.target is not None:
-                if not self.check_action(self.action_hop, self.target.x,
-                                         self.target.y, "stop_down"):
+                y = self.target.y if ledge else self.y
+
+                if not self.check_action(self.action_hop, self.target.x, y,
+                                         "stop_down"):
                     if not self.check_action(self.action_jump, self.target.x,
-                                             self.target.y, "stop_down"):
+                                             y, "stop_down"):
                         pass
             else:
                 self.perform_action(self.action_turn_left)
@@ -3384,7 +3388,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.action_check_verify = None
 
     def action_turn_left(self):
-        if self.image_xscale > 0:
+        if (self.image_xscale > 0 and not self.action and
+                self.was_on_floor and self.get_bottom_touching_wall()):
             self.image_xscale = -abs(self.image_xscale)
             self.sprite = mantanoid_turn_sprite
             self.image_fps = None
@@ -3392,7 +3397,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.action = "animation"
 
     def action_turn_right(self):
-        if self.image_xscale < 0:
+        if (self.image_xscale < 0 and not self.action and
+                self.was_on_floor and self.get_bottom_touching_wall()):
             self.image_xscale = abs(self.image_xscale)
             self.sprite = mantanoid_turn_sprite
             self.image_fps = None
@@ -3431,7 +3437,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     def action_slash(self):
         self.hiding = False
-        if self.target is not None:
+        if (self.target is not None and not self.action and
+                self.was_on_floor and self.get_bottom_touching_wall()):
             self.action = "slash"
             self.sprite = mantanoid_slash_start_sprite
             self.image_fps = None
@@ -3458,6 +3465,11 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         if abs(self.x - x) / abs(self.y - y) <= 2:
                             x = self.x
 
+                        if self.target.on_floor:
+                            last_height_verify = "stop_down"
+                        else:
+                            last_height_verify = "peak"
+
                         if self.check_action(self.action_approach, x, y,
                                              "alarm"):
                             return
@@ -3465,7 +3477,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                                                "stop_down"):
                             return
                         elif self.check_action(self.action_jump, x, y,
-                                               "stop_down"):
+                                               last_height_verify):
                             return
                         else:
                             self.target = None
@@ -3498,6 +3510,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         self.image_fps = None
                         self.image_index = 0
                         self.action = "animation"
+                        if self.action_check_verify == "peak":
+                            self.verify_action()
                     else:
                         self.sprite = mantanoid_fall_sprite
 
@@ -3528,14 +3542,14 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                             break
                     else:
                         if not on_slope:
-                            self.xvelocity = 0
+                            self.stop_left(True)
                 else:
                     for tile in on_floor:
                         if tile.bbox_right > self.bbox_right:
                             break
                     else:
                         if not on_slope:
-                            self.xvelocity = 0
+                            self.stop_right(True)
 
             self.set_image()
 

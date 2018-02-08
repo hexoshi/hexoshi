@@ -3335,11 +3335,21 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     def check_action(self, action, target_x, target_y, verify_event):
         if target_x is None and target_y is None:
+            self.perform_action(action)
             return True
         elif target_x is not None and target_y is not None:
             if sge.collision.rectangle(target_x, target_y, 1, 1, MantanoidNoGo):
                 # No-go zone, which means we can't go there no matter what.
                 return False
+
+        if target_x is not None:
+            if self.target.x < self.x and self.image_xscale > 0:
+                self.perform_action(self.action_turn_left)
+                return True
+            elif self.target.x > self.x and self.image_xscale < 0:
+                self.perform_action(self.action_turn_right)
+                return True
+            
 
         def rough(x): return int(math.floor(x / 16)) if x is not None else None
 
@@ -3357,6 +3367,9 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.perform_action(action)
             return True
         else:
+            # Finish any ongoing check first.
+            self.verify_action()
+
             self.action_check = action
             self.action_check_id = action_id
             self.action_check_x = self.x
@@ -3472,25 +3485,27 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                     if xdist <= MANTANOID_SLASH_DISTANCE:
                         action = self.action_slash
                     else:
-                        action = self.action_approach
-                else:
-                    if (self.target.x - self.x < 0) == (self.image_xscale < 0):
-                        x = self.target.x
-                        y = self.target.y
-                        if abs(self.x - x) / abs(self.y - y) <= 2:
-                            x = None
-
-                        if self.check_action(self.action_approach, x, y,
-                                             "alarm"):
-                            return
-                        elif self.check_action(self.action_hop, x, y,
-                                               "stop_down"):
-                            return
-                        elif self.check_action(self.action_jump, x, y,
-                                               "stop_down"):
+                        if self.check_action(
+                                self.action_approach, self.target.x,
+                                self.target.y, "alarm"):
                             return
                         else:
                             self.target = None
+                else:
+                    if self.check_action(self.action_approach, None,
+                                         self.target.y, "alarm"):
+                        return
+                    elif self.check_action(self.action_hop, None,
+                                           self.target.y, "stop_down"):
+                        return
+                    elif self.check_action(self.action_jump, None,
+                                           self.target.y, "stop_down"):
+                        return
+                    elif self.check_action(self.action_approach, self.target.x,
+                                           self.target.y, "alarm"):
+                        return
+                    else:
+                        self.target = None
 
         if action:
             self.perform_action(action)

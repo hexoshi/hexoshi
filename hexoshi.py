@@ -3250,6 +3250,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         self.action = None
         self.target = None
         self.movement_speed = 0
+        self.can_act = False
         self.action_check = None
         self.action_check_id = None
         self.action_check_x = None
@@ -3259,19 +3260,17 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         self.action_check_verify = None
 
     def set_direction(self, direction):
-        if not self.action:
+        if not self.action and self.can_act:
             if direction > 0:
-                if self.image_xscale < 0:
-                    self.perform_action(self.action_turn_right)
+                self.perform_action(self.action_turn_right)
             elif direction < 0:
-                if self.image_xscale > 0:
-                    self.perform_action(self.action_turn_left)
+                self.perform_action(self.action_turn_left)
 
     def stop_left(self):
-        if self.yvelocity >= 0:
+        if self.yvelocity > 0:
             self.xvelocity = 0
 
-        if not self.action and self.was_on_floor:
+        if not self.action and self.can_act:
             if self.target is not None:
                 if not self.check_action(self.action_hop, self.target.x,
                                          self.target.y, "stop_down"):
@@ -3282,10 +3281,10 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.perform_action(self.action_turn_right)
 
     def stop_right(self):
-        if self.yvelocity >= 0:
+        if self.yvelocity > 0:
             self.xvelocity = 0
 
-        if not self.action and self.was_on_floor:
+        if not self.action and self.can_act:
             if self.target is not None:
                 if not self.check_action(self.action_hop, self.target.x,
                                          self.target.y, "stop_down"):
@@ -3302,17 +3301,18 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.verify_action()
 
     def stop_down(self):
+        self.xvelocity = 0
+        self.yvelocity = 0
+
         if not self.was_on_floor:
-            self.xvelocity = 0
-            self.yvelocity = 0
             if not self.action or self.action == "animation":
                 self.sprite = mantanoid_land_sprite
                 self.fps = None
                 self.image_index = 0
                 self.action = "animation"
 
-            if self.action_check_verify == "stop_down":
-                self.verify_action()
+        if self.action_check_verify == "stop_down":
+            self.verify_action()
 
     def update_wander(self):
         if (not self.hiding and self.was_on_floor and
@@ -3327,19 +3327,24 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.alarms["move_lock"] = MANTANOID_WANDER_INTERVAL
 
     def perform_action(self, action):
-        if not self.action:
+        if not self.action and self.can_act:
+            self.can_act = False
+            self.reset_action_check()
             self.xvelocity = 0
             action()
 
     def check_action(self, action, target_x, target_y, verify_event):
+        if not self.can_act:
+            return False
+
         if target_x is None and target_y is None:
             self.perform_action(action)
             return True
-        elif target_x is not None and target_y is not None:
+
+        if target_x is not None and target_y is not None:
             if sge.collision.rectangle(target_x, target_y, 1, 1, MantanoidNoGo):
                 # No-go zone, which means we can't go there no matter what.
                 return False
-            
 
         def rough(x):
             return int(math.floor(x / 8)) * 8 if x is not None else None
@@ -3354,7 +3359,6 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if action_id_pass in ai_data:
             if action_id_fail not in ai_data or random.random() < 0.25:
-                self.verify_action()
                 if self.target.x < self.x and self.image_xscale > 0:
                     self.perform_action(self.action_turn_left)
                     return True
@@ -3374,6 +3378,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.perform_action(self.action_turn_right)
                 return True
             else:
+                self.perform_action(action)
                 self.action_check = action
                 self.action_check_id = action_id
                 self.action_check_x = self.x
@@ -3381,20 +3386,21 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.action_check_dest_x = target_x
                 self.action_check_dest_y = target_y
                 self.action_check_verify = verify_event
-
-                self.perform_action(action)
                 return True
 
         return False
 
     def verify_action(self):
         if self.action_check is not None:
-            if self.action_check_dest_x is None:
-                orig_dist = self.action_check_dest_y - self.action_check_y
-                new_dist = self.action_check_dest_y - self.y
+            if (self.action_check_dest_x is None and
+                    self.action_check_dest_y is None):
+                ai_data.add(self.action_check_id + "pass")
+            elif self.action_check_dest_x is None:
+                orig_dist = abs(self.action_check_dest_y - self.action_check_y)
+                new_dist = abs(self.action_check_dest_y - self.y)
             elif self.action_check_dest_y is None:
-                orig_dist = self.action_check_dest_x - self.action_check_x
-                new_dist = self.action_check_dest_x - self.x
+                orig_dist = abs(self.action_check_dest_x - self.action_check_x)
+                new_dist = abs(self.action_check_dest_x - self.x)
             else:
                 orig_dist = abs(math.hypot(
                     self.action_check_dest_x - self.action_check_x,
@@ -3462,7 +3468,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     def action_approach(self):
         self.hiding = False
-        if self.target is not None and "approach_lock" not in self.alarms:
+        if self.target is not None:
             if self.x < self.target.x:
                 self.perform_action(self.action_turn_right)
             else:
@@ -3472,12 +3478,11 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.movement_speed = MANTANOID_APPROACH_SPEED
                 play_sound(mantanoid_approach_sound, self.x, self.y)
 
-            self.alarms["approach_lock"] = MANTANOID_APPROACH_INTERVAL
+            self.alarms["action_lock"] = MANTANOID_APPROACH_INTERVAL
 
     def action_slash(self):
         self.hiding = False
-        if (self.target is not None and not self.action and
-                self.was_on_floor and self.get_bottom_touching_wall()):
+        if self.target is not None:
             self.action = "slash"
             self.sprite = mantanoid_slash_start_sprite
             self.image_fps = None
@@ -3487,37 +3492,42 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         return None
 
     def update_action(self):
-        action = self.check_hazards()
-        if not action:
-            if (self.target is not None and
-                    not self.target.collision(MantanoidNoGo)):
-                xdist = abs(self.target.x - self.x)
-                ydist = abs(self.target.y - self.y)
-                if ydist <= MANTANOID_LEVEL_DISTANCE:
-                    if xdist <= MANTANOID_SLASH_DISTANCE:
-                        action = self.action_slash
+        if "action_lock" not in self.alarms:
+            action = self.check_hazards()
+            if not action:
+                if (self.target is not None and
+                        not self.target.collision(MantanoidNoGo)):
+                    xdist = abs(self.target.x - self.x)
+                    ydist = abs(self.target.y - self.y)
+                    if ydist <= MANTANOID_LEVEL_DISTANCE:
+                        if xdist <= MANTANOID_SLASH_DISTANCE:
+                            action = self.action_slash
+                        else:
+                            action = self.action_approach
                     else:
-                        action = self.action_approach
-                else:
-                    if self.check_action(self.action_approach, None,
-                                         self.target.y, "approach_lock"):
-                        return
-                    elif self.check_action(self.action_jump, None,
-                                           self.target.y, "stop_down"):
-                        return
-                    elif self.check_action(self.action_hop, None,
-                                           self.target.y, "stop_down"):
-                        return
-                    elif self.check_action(self.action_approach, self.target.x,
-                                           self.target.y, "approach_lock"):
-                        return
-                    else:
-                        self.target = None
+                        if self.target.on_floor and self.check_action(
+                                self.action_approach, None, self.target.y,
+                                "action_lock"):
+                            return
+                        elif self.target.on_floor and self.check_action(
+                                self.action_jump, None, self.target.y,
+                                "stop_down"):
+                            return
+                        elif self.target.on_floor and self.check_action(
+                                self.action_hop, None, self.target.y,
+                                "stop_down"):
+                            return
+                        elif self.check_action(
+                                self.action_approach, self.target.x,
+                                self.target.y, "action_lock"):
+                            return
+                        else:
+                            self.target = None
 
-        if action:
-            self.perform_action(action)
-        elif self.was_on_floor:
-            self.update_wander()
+            if action:
+                self.perform_action(action)
+            else:
+                self.update_wander()
 
     def set_image(self):
         if not self.action:
@@ -3548,7 +3558,10 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         self.sprite = mantanoid_fall_sprite
 
     def event_step(self, time_passed, delta_mult):
-        if not self.action:
+        on_floor = self.get_bottom_touching_wall()
+        self.can_act = (self.was_on_floor and on_floor and self.yvelocity >= 0)
+
+        if not self.action and self.can_act:
             self.target = self.get_nearest_player()
             dist = 0
             if self.target is not None:
@@ -3565,7 +3578,6 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                     (self.image_xscale < 0 or not self.get_right_touching_wall())):
                 self.xvelocity = self.movement_speed * self.image_xscale
 
-            on_floor = self.get_bottom_touching_wall()
             on_slope = self.get_bottom_touching_slope()
             if (on_floor or on_slope):
                 if self.xvelocity < 0:
@@ -3574,51 +3586,62 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                             break
                     else:
                         if not on_slope:
-                            if self.target is not None:
-                                if (not self.check_action(
-                                            self.action_hop, self.target.x,
-                                            self.target.y, "stop_down") and
-                                        not self.check_action(
-                                            self.action_jump, self.target.x,
-                                            self.target.y, "stop_down") and
-                                        not self.check_action(
-                                            self.action_approach, self.target.x,
-                                            self.target.y, "stop_down")):
-                                    self.target = None
+                            if self.can_act:
+                                if self.target is not None:
+                                    if (not self.check_action(
+                                                self.action_hop, self.target.x,
+                                                self.target.y, "stop_down") and
+                                            not self.check_action(
+                                                self.action_jump,
+                                                self.target.x, self.target.y,
+                                                "stop_down") and
+                                            not self.check_action(
+                                                self.action_approach,
+                                                self.target.x, self.target.y,
+                                                "stop_down")):
+                                        self.target = None
+                                else:
+                                    self.perform_action(self.action_turn_right)
                             else:
-                                self.perform_action(self.action_turn_right)
+                                self.xvelocity = 0
                 else:
                     for tile in on_floor:
                         if tile.bbox_right > self.bbox_right:
                             break
                     else:
                         if not on_slope:
-                            if self.target is not None:
-                                if (not self.check_action(
-                                            self.action_hop, self.target.x,
-                                            self.target.y, "stop_down") and
-                                        not self.check_action(
-                                            self.action_jump, self.target.x,
-                                            self.target.y, "stop_down") and
-                                        not self.check_action(
-                                            self.action_approach, self.target.x,
-                                            self.target.y, "stop_down")):
-                                    self.target = None
+                            if self.can_act:
+                                if self.target is not None:
+                                    if (not self.check_action(
+                                                self.action_hop, self.target.x,
+                                                self.target.y, "stop_down") and
+                                            not self.check_action(
+                                                self.action_jump,
+                                                self.target.x, self.target.y,
+                                                "stop_down") and
+                                            not self.check_action(
+                                                self.action_approach,
+                                                self.target.x, self.target.y,
+                                                "stop_down")):
+                                        self.target = None
+                                else:
+                                    self.perform_action(self.action_turn_left)
                             else:
-                                self.perform_action(self.action_turn_left)
+                                self.xvelocity = 0
 
             self.set_image()
 
     def event_alarm(self, alarm_id):
         super(Mantanoid, self).event_alarm(alarm_id)
 
-        if alarm_id == "approach_lock":
-            if self.action_check_verify == "approach_lock":
+        if alarm_id == "action_lock":
+            if self.action_check_verify == "action_lock":
                 self.verify_action()
 
     def event_animation_end(self):
         if self.action == "hop":
             self.action = None
+            self.can_act = False
             self.set_image()
             if self.was_on_floor and (self.get_bottom_touching_wall() or
                                       self.get_bottom_touching_slope()):
@@ -3628,6 +3651,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                                                 self.gravity)
         if self.action == "jump":
             self.action = None
+            self.can_act = False
             self.set_image()
             if self.was_on_floor and (self.get_bottom_touching_wall() or
                                       self.get_bottom_touching_slope()):

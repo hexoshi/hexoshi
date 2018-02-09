@@ -3331,9 +3331,11 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.can_act = False
             self.reset_action_check()
             self.xvelocity = 0
-            if self.target.x < self.x and self.image_xscale > 0:
+            if (self.target is not None and self.target.x < self.x and
+                    self.image_xscale > 0):
                 self.action_turn_left()
-            elif self.target.x > self.x and self.image_xscale < 0:
+            elif (self.target is not None and self.target.x > self.x and
+                  self.image_xscale < 0):
                 self.action_turn_right()
             else:
                 action()

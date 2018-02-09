@@ -3331,7 +3331,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.can_act = False
             self.reset_action_check()
             self.xvelocity = 0
-            action()
+            if self.target.x < self.x and self.image_xscale > 0:
+                self.action_turn_left()
+            elif self.target.x > self.x and self.image_xscale < 0:
+                self.action_turn_right()
+            else:
+                action()
 
     def check_action(self, action, target_x, target_y, verify_event):
         if not self.can_act:
@@ -3469,11 +3474,6 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     def action_approach(self):
         self.hiding = False
         if self.target is not None:
-            if self.x < self.target.x:
-                self.perform_action(self.action_turn_right)
-            else:
-                self.perform_action(self.action_turn_left)
-
             if self.movement_speed != MANTANOID_APPROACH_SPEED:
                 self.movement_speed = MANTANOID_APPROACH_SPEED
                 play_sound(mantanoid_approach_sound, self.x, self.y)

@@ -3484,19 +3484,19 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         return None
 
     def update_action(self):
-        if "action_lock" not in self.alarms:
-            action = self.check_hazards()
-            if not action:
-                if (self.target is not None and
-                        not self.target.collision(MantanoidNoGo)):
-                    xdist = abs(self.target.x - self.x)
-                    ydist = abs(self.target.y - self.y)
+        action = self.check_hazards()
+        if not action:
+            if (self.target is not None and
+                    not self.target.collision(MantanoidNoGo)):
+                xdist = abs(self.target.x - self.x)
+                ydist = abs(self.target.y - self.y)
+                if (xdist <= MANTANOID_SLASH_DISTANCE and
+                        ydist <= MANTANOID_LEVEL_DISTANCE):
+                    action = self.action_slash
+                elif "action_lock" not in self.alarms:
                     if ydist <= MANTANOID_LEVEL_DISTANCE:
-                        if xdist <= MANTANOID_SLASH_DISTANCE:
-                            action = self.action_slash
-                        else:
-                            action = self.action_approach
-                    else:
+                        action = self.action_approach
+                    elif not self.hiding:
                         if self.target.on_floor and self.check_action(
                                 self.action_approach, None, self.target.y,
                                 "action_lock"):
@@ -3516,10 +3516,10 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         else:
                             self.target = None
 
-            if action:
-                self.perform_action(action)
-            else:
-                self.update_wander()
+        if action:
+            self.perform_action(action)
+        else:
+            self.update_wander()
 
     def set_image(self):
         if not self.action:

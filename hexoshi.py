@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Hexoshi
-# Copyright (C) 2014-2017 Julie Marchant <onpon4@riseup.net>
+# Copyright (C) 2014-2018 Julie Marchant <onpon4@riseup.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -248,9 +248,6 @@ SOUND_TILT_LIMIT = 0.75
 
 ETANK_CHAR = '\x80'
 
-ENEMY_TYPES = ["Bat", "Frog", "Hedgehog", "Worm", "Jellyfish", "Scorpion",
-               "Mantanoid"]
-
 backgrounds = {}
 loaded_music = {}
 tux_grab_sprites = {}
@@ -304,7 +301,6 @@ map_explored = []
 map_removed = []
 warp_pads = []
 powerups = []
-enemies_killed = []
 progress_flags = []
 etanks = 0
 time_taken = 0
@@ -2674,8 +2670,6 @@ class Enemy(InteractiveObject):
         play_sound(enemy_hurt_sound, self.image_xcenter, self.image_ycenter)
 
     def kill(self):
-        global enemies_killed
-
         blend = sge.gfx.Color((255, 255, 255, 0))
         base_sprite = sge.gfx.Sprite(width=self.sprite.width,
                                      height=self.sprite.height,
@@ -2698,10 +2692,6 @@ class Enemy(InteractiveObject):
                 random.random() < LIFE_FORCE_CHANCE):
             LifeForce.create(self.image_xcenter, self.image_ycenter,
                              z=self.z - 0.1)
-
-        cn = self.classname or self.__class__.__name__
-        if cn in ENEMY_TYPES and cn not in enemies_killed:
-            enemies_killed.append(cn)
 
         play_sound(enemy_death_sound, self.image_xcenter, self.image_ycenter)
         self.destroy()
@@ -5463,7 +5453,6 @@ class PauseMenu(ModalMenu):
                     slot.get("map_removed") == map_removed and
                     slot.get("warp_pads") == warp_pads and
                     slot.get("powerups") == powerups and
-                    slot.get("enemies_killed") == enemies_killed and
                     slot.get("progress_flags") == progress_flags and
                     slot.get("etanks") == etanks):
                 sge.game.start_room.start()
@@ -5477,12 +5466,10 @@ class PauseMenu(ModalMenu):
             seconds = int(time_taken % 60)
             minutes = int((time_taken / 60) % 60)
             hours = int(time_taken / 3600)
-            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nArtifacts collected: {powerups} ({powerups_percent}%)\nEnemy types killed: {kills} ({kills_percent}%)").format(
+            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nArtifacts collected: {powerups} ({powerups_percent}%)").format(
                 hours=hours, minutes=minutes, seconds=seconds,
                 powerups=len(powerups),
-                powerups_percent=int(100 * len(powerups) / num_powerups),
-                kills=len(enemies_killed),
-                kills_percent=int(100 * len(enemies_killed) / len(ENEMY_TYPES)))
+                powerups_percent=int(100 * len(powerups) / num_powerups))
 
             DialogBox(gui_handler, text).show()
             PauseMenu.create(default=self.choice, player_x=self.player_x,
@@ -6003,7 +5990,6 @@ def set_new_game():
     global map_explored
     global map_removed
     global powerups
-    global enemies_killed
     global progress_flags
     global etanks
     global time_taken
@@ -6017,7 +6003,6 @@ def set_new_game():
     map_removed = []
     warp_pads = []
     powerups = []
-    enemies_killed = []
     progress_flags = []
     etanks = 0
     time_taken = 0
@@ -6065,7 +6050,6 @@ def save_game():
             "map_removed": map_removed[:],
             "warp_pads": warp_pads[:],
             "powerups": powerups[:],
-            "enemies_killed": enemies_killed[:],
             "progress_flags": progress_flags[:],
             "etanks": etanks,
             "time_taken": time_taken}
@@ -6083,7 +6067,6 @@ def load_game():
     global map_removed
     global warp_pads
     global powerups
-    global enemies_killed
     global progress_flags
     global etanks
     global time_taken
@@ -6103,7 +6086,6 @@ def load_game():
             map_removed = [tuple(i) for i in slot.get("map_removed", [])]
             warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
             powerups = [tuple(i) for i in slot.get("powerups", [])]
-            enemies_killed = slot.get("enemies_killed", [])
             progress_flags = slot.get("progress_flags", [])
             etanks = slot.get("etanks", 0)
             time_taken = slot.get("time_taken", 0)

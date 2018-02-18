@@ -287,7 +287,9 @@ mode_js = [[(0, "button", 8)]]
 pause_js = [[(0, "button", 9)]]
 map_js = [[]]
 save_slots = [None for i in six.moves.range(SAVE_NSLOTS)]
-ai_data = set()
+
+with open(os.path.join(DATA, "ai_data.json"), 'r') as f:
+    ai_data = set(json.load(f))
 
 abort = False
 
@@ -6888,7 +6890,7 @@ finally:
     metroid_controls = cfg.get("metroid_controls", metroid_controls)
     joystick_threshold = cfg.get("joystick_threshold", joystick_threshold)
     xsge_gui.joystick_threshold = joystick_threshold
-    ai_data = set(cfg.get("ai_data", ai_data))
+    ai_data |= set(cfg.get("ai_data", ai_data))
 
     keys_cfg = cfg.get("keys", {})
     left_key = keys_cfg.get("left", left_key)

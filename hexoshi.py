@@ -2681,6 +2681,8 @@ class Enemy(InteractiveObject):
             base_sprite, int(FPS / 4), fps=FPS, blend=blend,
             blend_mode=sge.BLEND_RGBA_MULTIPLY)
         Smoke.create(self.x, self.y, z=self.z, sprite=spr, tangible=False,
+                     image_origin_x=self.image_origin_x,
+                     image_origin_y=self.image_origin_y,
                      image_xscale=self.image_xscale,
                      image_yscale=self.image_yscale,
                      image_rotation=self.image_rotation,

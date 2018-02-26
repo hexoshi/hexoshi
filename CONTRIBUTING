@@ -45,9 +45,6 @@ not included.  The main dependencies are:
 
 Of course, all dependencies of these libraries must also be installed.
 
-Note: The version of xsge_tmx needed by the game has not been released
-yet.  Please use the latest Git revision of xsge_tmx in the meantime.
-
 
 FORWARDING YOUR CHANGES
 

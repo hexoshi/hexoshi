@@ -237,10 +237,6 @@ msgid "Credits"
 msgstr ""
 
 #: hexoshi.py:4816
-msgid "Support on Patreon"
-msgstr ""
-
-#: hexoshi.py:4816
 msgid "Quit"
 msgstr ""
 

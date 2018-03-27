@@ -67,7 +67,6 @@ DELTA_MIN = FPS / 2
 DELTA_MAX = FPS * 4
 SCALE = 2
 FSSCALE = None
-MOUSE_STANDARD_SENSITIVITY = 0.1
 
 if six.PY2:
     gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")),
@@ -260,20 +259,22 @@ music_enabled = True
 stereo_enabled = True
 fps_enabled = False
 metroid_controls = False
-mouse_sensitivity = 1
 joystick_threshold = 0.1
 
 # Standard keyboard controls
-left_key = [["left", "a"]]
-right_key = [["right", "d"]]
-up_key = [["up", "w"]]
-down_key = [["down", "s"]]
-jump_key = [["space"]]
+left_key = [["a"]]
+right_key = [["d"]]
+down_key = [["s"]]
+jump_key = [["w", "space"]]
 pause_key = [["enter", "p"]]
 equip_key = [["e"]]
 map_key = [["tab"]]
 
 # Metroid-style keyboard controls
+metroid_left_key = [["left"]]
+metroid_right_key = [["right"]]
+metroid_up_key = [["up"]]
+metroid_down_key = [["down"]]
 metroid_jump_key = [["space"]]
 metroid_shoot_key = [["d"]]
 metroid_shoot2_key = [["s"]]
@@ -305,6 +306,10 @@ equip_js = [[(0, "button", 4)]]
 map_js = [[(0, "button", 8)]]
 
 # Metroid-style joystick controls
+metroid_left_js = [[(0, "axis-", 0), (0, "hat_left", 0)]]
+metroid_right_js = [[(0, "axis+", 0), (0, "hat_right", 0)]]
+metroid_up_js = [[(0, "axis-", 1), (0, "hat_up", 0)]]
+metroid_down_js = [[(0, "axis+", 1), (0, "hat_down", 0)]]
 metroid_jump_js = [[(0, "button", 1)]]
 metroid_shoot_js = [[(0, "button", 0)]]
 metroid_shoot2_js = [[(0, "button", 2)]]
@@ -817,6 +822,7 @@ class CreditsScreen(SpecialScreen):
                 for obj in self.sections:
                     obj.yvelocity += 0.1
         elif (key in itertools.chain.from_iterable(jump_key) or
+                key in itertools.chain.from_iterable(shoot_key) or
                 key in itertools.chain.from_iterable(pause_key)):
             sge.game.start_room.start()
 
@@ -1094,7 +1100,6 @@ class Player(xsge_physics.Collider):
         self.rolling = False
         self.aim_direction = None
         self.aim_direction_time = 0
-        self.mouse_pos = 0
         self.view = None
         self.__hp = self.max_hp
         healthbar_front_sprite.width = healthbar_width
@@ -1140,15 +1145,17 @@ class Player(xsge_physics.Collider):
         if self.human and not self.input_lock:
             if metroid_controls:
                 key_controls = [
-                    left_key, right_key, up_key, down_key, metroid_jump_key,
-                    metroid_shoot_key, metroid_shoot2_key, metroid_mode_key,
+                    metroid_left_key, metroid_right_key, metroid_up_key,
+                    metroid_down_key, metroid_jump_key, metroid_shoot_key,
+                    metroid_shoot2_key, metroid_mode_key,
                     metroid_mode_prev_key, metroid_aim_diag_key,
                     metroid_aim_up_key, metroid_aim_down_key]
                 js_controls = [
-                    left_js, right_js, up_js, down_js, metroid_jump_js,
-                    metroid_shoot_js, metroid_shoot2_js, metroid_mode_js,
-                    metroid_mode_prev_js, metroid_aim_diag_js,
-                    metroid_aim_up_js, metroid_aim_down_js]
+                    metroid_left_js, metroid_right_js, metroid_up_js,
+                    metroid_down_js, metroid_jump_js, metroid_shoot_js,
+                    metroid_shoot2_js, metroid_mode_js, metroid_mode_prev_js,
+                    metroid_aim_diag_js, metroid_aim_up_js,
+                    metroid_aim_down_js]
             else:
                 key_controls = [left_key, right_key, up_key, down_key, jump_key]
                 js_controls = [
@@ -1174,21 +1181,21 @@ class Player(xsge_physics.Collider):
             self.right_pressed = states[1]
             self.up_pressed = states[2]
             self.down_pressed = states[3]
-            self.jump_pressed = states[4]
-            self.shoot_pressed = states[5]
-            self.shoot2_pressed = states[6]
-            self.mode_pressed = states[7]
-            self.mode_prev_pressed = states[8]
+            self.jump_pressed = states[5]
+            self.shoot_pressed = states[6]
+            self.shoot2_pressed = states[7]
+            self.mode_pressed = states[8]
+            self.mode_prev_pressed = states[9]
 
             if metroid_controls:
-                self.aim_diag_pressed = states[9]
-                self.aim_up_pressed = states[10]
-                self.aim_down_pressed = states[11]
-            else:
-                self.aim_left_pressed = states[9]
-                self.aim_right_pressed = states[10]
+                self.aim_diag_pressed = states[10]
                 self.aim_up_pressed = states[11]
                 self.aim_down_pressed = states[12]
+            else:
+                self.aim_left_pressed = states[10]
+                self.aim_right_pressed = states[11]
+                self.aim_up_pressed = states[12]
+                self.aim_down_pressed = states[13]
 
                 # Mouse input
                 self.shoot_pressed = max(
@@ -1269,11 +1276,6 @@ class Player(xsge_physics.Collider):
         self.reset_input()
         self.xvelocity = 0
         self.yvelocity = 0
-
-    def view_map(self):
-        if "map" in progress_flags:
-            play_sound(select_sound)
-            MapDialog(self.last_xr, self.last_yr).show()
 
     def update_hud(self):
         self.hud_sprite.draw_clear()
@@ -1402,17 +1404,13 @@ class Player(xsge_physics.Collider):
             if h_component and h_component * self.facing > 0:
                 if v_component < 0:
                     self.aim_direction = 1
-                    self.mouse_pos = 0
                 elif v_component > 0:
                     self.aim_direction = -1
-                    self.mouse_pos = 0
             else:
                 if v_component < 0:
                     self.aim_direction = 2
-                    self.mouse_pos = 0
                 elif v_component > 0:
                     self.aim_direction = -2
-                    self.mouse_pos = 0
 
         if self.aim_direction == prev_aim_direction:
             self.aim_direction_time += 1
@@ -1561,31 +1559,19 @@ class Player(xsge_physics.Collider):
 
     def event_key_press(self, key, char):
         if self.human and not self.input_lock:
-            if metroid_controls:
-                if key in up_key[self.player] and not self.up_pressed:
-                    self.press_up()
-                if key in down_key[self.player] and not self.down_pressed:
-                    self.press_down()
-                if (key in metroid_jump_key[self.player] and
-                        not self.jump_pressed):
-                    self.jump()
-                if (key in metroid_shoot_key[self.player] and
-                        not self.shoot_pressed):
-                    self.shoot()
-                if (key in metroid_shoot2_key[self.player] and
-                        not self.shoot2_pressed):
-                    self.shoot()
-                if key in metroid_map_key[self.player]:
-                    self.view_map()
-            else:
-                if key in up_key[self.player] and not self.up_pressed:
-                    self.press_up()
-                if key in down_key[self.player] and not self.down_pressed:
-                    self.press_down()
-                if key in jump_key[self.player] and not self.jump_pressed:
-                    self.jump()
-                if key in map_key[self.player]:
-                    self.view_map()
+            # FIXME!!!!!!!
+            if key in up_key[self.player] and not self.up_pressed:
+                self.press_up()
+            if key in down_key[self.player] and not self.down_pressed:
+                self.press_down()
+            if key in jump_key[self.player] and not self.jump_pressed:
+                self.jump()
+            if key in shoot_key[self.player] and not self.shoot_pressed:
+                self.shoot()
+            if key in map_key[self.player]:
+                if "map" in progress_flags:
+                    play_sound(select_sound)
+                    MapDialog(self.last_xr, self.last_yr).show()
 
         if not isinstance(sge.game.current_room, SpecialScreen):
             pk = metroid_pause_key if metroid_controls else pause_key
@@ -1595,36 +1581,12 @@ class Player(xsge_physics.Collider):
 
     def event_key_release(self, key):
         if self.human and not self.input_lock:
-            if metroid_controls:
-                if key in metroid_jump_key[self.player]:
-                    self.jump_release()
-                if key in metroid_shoot_key[self.player]:
-                    self.shoot_release()
-                if key in metroid_shoot2_key[self.player]:
-                    self.shoot_release()
-            else:
-                if key in jump_key[self.player]:
-                    self.jump_release()
-
-    def event_mouse_move(self, x, y):
-        if self.human and not self.input_lock and not metroid_controls:
-            self.mouse_pos += y * MOUSE_STANDARD_SENSITIVITY * mouse_sensitivity
-            self.mouse_pos = max(-1, min(self.mouse_pos, 1))
-            self.aim_direction = int(round(self.mouse_pos * 2))
-
-    def event_mouse_button_press(self, button):
-        if self.human and not self.input_lock and not metroid_controls:
-            if button == "left" and not self.shoot_pressed:
-                self.shoot()
-            elif button == "right" and not self.shoot2_pressed:
-                self.shoot()
-
-    def event_mouse_button_release(self, button):
-        if self.human and not self.input_lock and not metroid_controls:
-            if button == "left":
+            if key in jump_key[self.player]:
+                self.jump_release()
+            if key in shoot_key[self.player]:
                 self.shoot_release()
-            elif button == "right":
-                self.shoot_release()
+
+    # FIXME: Mouse control here
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
         js = (js_id, input_type, input_id)
@@ -1640,7 +1602,9 @@ class Player(xsge_physics.Collider):
                 if js in shoot_js[self.player] and not self.shoot_pressed:
                     self.shoot()
                 if js in map_js[self.player]:
-                    self.view_map()
+                    if "map" in progress_flags:
+                        play_sound(select_sound)
+                        MapDialog(self.last_xr, self.last_yr).show()
             else:
                 if js in jump_js[self.player]:
                     self.jump_release()
@@ -2387,7 +2351,7 @@ class Anneroy(Player):
         elif alarm_id == "hedgehog_retract":
             self.retract_spikes()
         elif alarm_id == "shoot_lock":
-            if self.shoot_pressed or self.shoot2_pressed:
+            if self.shoot_pressed:
                 self.shoot()
 
     def event_animation_end(self):
@@ -5149,133 +5113,9 @@ class KeyboardMenu(Menu):
     @classmethod
     def create_page(cls, default=0, page=0):
         page %= min(len(left_key), len(right_key), len(up_key), len(down_key),
-                    len(jump_key), len(pause_key), len(equip_key), len(map_key))
-
-        def format_key(key):
-            if key:
-                return " ".join(key)
-            else:
-                return None
-
-        cls.items = [_("Player {}").format(page + 1),
-                     _("Left: {}").format(format_key(left_key[page])),
-                     _("Right: {}").format(format_key(right_key[page])),
-                     _("Up: {}").format(format_key(up_key[page])),
-                     _("Down: {}").format(format_key(down_key[page])),
-                     _("Jump: {}").format(format_key(jump_key[page])),
-                     _("Pause: {}").format(format_key(pause_key[page])),
-                     _("Equipment: {}").format(format_key(equip_key[page])),
-                     _("Map: {}").format(format_key(map_key[page])),
-                     _("Back")]
-        self = cls.create(default)
-        self.page = page
-        return self
-
-    def event_choose(self):
-        def toggle_key(key, new_key, self=self):
-            if new_key in key:
-                if len(key) > 1:
-                    key.remove(new_key)
-            else:
-                refused = False
-                for other_key in [
-                        left_key[self.page], right_key[self.page],
-                        up_key[self.page], down_key[self.page],
-                        jump_key[self.page], shoot_key[self.page],
-                        aim_diag_key[self.page], aim_up_key[self.page],
-                        aim_down_key[self.page], mode_reset_key[self.page],
-                        mode_key[self.page], pause_key[self.page],
-                        map_key[self.page]]:
-                    if new_key in other_key:
-                        if len(other_key) > 1:
-                            other_key.remove(new_key)
-                        else:
-                            refused = True
-
-                if not refused:
-                    key.append(new_key)
-                    while len(key) > 2:
-                        key.pop(0)
-
-        if self.choice == 0:
-            play_sound(select_sound)
-            self.__class__.create_page(default=self.choice, page=(self.page + 1))
-        elif self.choice == 1:
-            k = wait_key()
-            if k is not None:
-                toggle_key(left_key[self.page], k)
-                set_gui_controls()
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 2:
-            k = wait_key()
-            if k is not None:
-                toggle_key(right_key[self.page], k)
-                set_gui_controls()
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 3:
-            k = wait_key()
-            if k is not None:
-                toggle_key(up_key[self.page], k)
-                set_gui_controls()
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 4:
-            k = wait_key()
-            if k is not None:
-                toggle_key(down_key[self.page], k)
-                set_gui_controls()
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 5:
-            k = wait_key()
-            if k is not None:
-                toggle_key(jump_key[self.page], k)
-                set_gui_controls()
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 6:
-            k = wait_key()
-            if k is not None:
-                toggle_key(pause_key[self.page], k)
-                set_gui_controls()
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 7:
-            k = wait_key()
-            if k is not None:
-                toggle_key(map_key[self.page], k)
-                set_gui_controls()
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        else:
-            play_sound(cancel_sound)
-            OptionsMenu.create_page(default=5)
-
-
-class MetroidKeyboardMenu(Menu):
-
-    page = 0
-
-    @classmethod
-    def create_page(cls, default=0, page=0):
-        page %= min(len(left_key), len(right_key), len(up_key), len(down_key),
-                    len(jump_key), len(pause_key), len(equip_key), len(map_key))
+                    len(jump_key), len(shoot_key), len(aim_diag_key),
+                    len(aim_up_key), len(aim_down_key), len(mode_reset_key),
+                    len(mode_key), len(pause_key), len(map_key))
 
         def format_key(key):
             if key:
@@ -6024,17 +5864,12 @@ def set_gui_controls():
     xsge_gui.right_keys = list(itertools.chain.from_iterable(right_key))
     xsge_gui.up_keys = list(itertools.chain.from_iterable(up_key))
     xsge_gui.down_keys = list(itertools.chain.from_iterable(down_key))
-    xsge_gui.enter_keys = (
-        list(itertools.chain.from_iterable(jump_key)) +
-        list(itertools.chain.from_iterable(pause_key)) +
-        list(itertools.chain.from_iterable(metroid_jump_key)) +
-        list(itertools.chain.from_iterable(metroid_shoot_key)) +
-        list(itertools.chain.from_iterable(metroid_shoot2_key)) +
-        list(itertools.chain.from_iterable(metroid_pause_key)))
-    xsge_gui.escape_keys = (
-        list(itertools.chain.from_iterable(map_key)) +
-        list(itertools.chain.from_iterable(metroid_map_key)) +
-        ["escape"])
+    xsge_gui.enter_keys = (list(itertools.chain.from_iterable(jump_key)) +
+                           list(itertools.chain.from_iterable(shoot_key)) +
+                           list(itertools.chain.from_iterable(pause_key)))
+    xsge_gui.escape_keys = (list(itertools.chain.from_iterable(mode_key)) +
+                            list(itertools.chain.from_iterable(map_key)) +
+                            ["escape"])
     xsge_gui.next_widget_joystick_events = (
         list(itertools.chain.from_iterable(down_js)))
     xsge_gui.previous_widget_joystick_events = (
@@ -6047,15 +5882,10 @@ def set_gui_controls():
     xsge_gui.enter_joystick_events = (
         list(itertools.chain.from_iterable(jump_js)) +
         list(itertools.chain.from_iterable(shoot_js)) +
-        list(itertools.chain.from_iterable(shoot2_js)) +
-        list(itertools.chain.from_iterable(pause_js)) +
-        list(itertools.chain.from_iterable(metroid_jump_js)) +
-        list(itertools.chain.from_iterable(metroid_shoot_js)) +
-        list(itertools.chain.from_iterable(metroid_shoot2_js)) +
-        list(itertools.chain.from_iterable(metroid_pause_js)))
+        list(itertools.chain.from_iterable(pause_js)))
     xsge_gui.escape_joystick_events = (
-        list(itertools.chain.from_iterable(map_js)) +
-        list(itertools.chain.from_iterable(metroid_map_js)))
+        list(itertools.chain.from_iterable(mode_js)) +
+        list(itertools.chain.from_iterable(map_js)))
 
 
 def wait_key():
@@ -6269,36 +6099,22 @@ def set_new_game():
 def write_to_disk():
     # Write our saves and settings to disk.
     keys_cfg = {"left": left_key, "right": right_key, "up": up_key,
-                "down": down_key, "jump": jump_key, "pause": pause_key,
-                "equip": equip_key, "map": map_key}
-    metroid_keys_cfg = {
-        "jump": metroid_jump_key, "shoot": metroid_shoot_key,
-        "shoot2": metroid_shoot2_key, "mode": metroid_mode_key,
-        "mode_prev": metroid_mode_prev_key, "aim_diag": metroid_aim_diag_key,
-        "aim_up": metroid_aim_up_key, "aim_down": metroid_aim_down_key,
-        "pause": metroid_pause_key, "equip": metroid_equip_key,
-        "map": metroid_map_key}
+                "down": down_key, "aim_diag": aim_diag_key, "jump": jump_key,
+                "shoot": shoot_key, "aim_up": aim_up_key,
+                "aim_down": aim_down_key, "mode_reset": mode_reset_key,
+                "mode": mode_key, "pause": pause_key, "map": map_key}
     js_cfg = {"left": left_js, "right": right_js, "up": up_js,
-              "down": down_js, "jump": jump_js, "shoot": shoot_js,
-              "shoot2": shoot2_js, "mode": mode_js, "mode_prev": mode_prev_js,
-              "aim_left": aim_left_js, "aim_right": aim_right_js,
-              "aim_up": aim_up_js, "aim_down": aim_down_js, "pause": pause_js,
-              "equip": equip_js, "map": map_js}
-    metroid_js_cfg = {
-        "jump": metroid_jump_js, "shoot": metroid_shoot_js,
-        "shoot2": metroid_shoot2_js, "mode": metroid_mode_js,
-        "mode_prev": metroid_mode_prev_js, "aim_diag": metroid_aim_diag_js,
-        "aim_up": metroid_aim_up_js, "aim_down": metroid_aim_down_js,
-        "pause": metroid_pause_js, "euip": metroid_equip_js,
-        "map": metroid_map_js}
+              "down": down_js, "aim_diag": aim_diag_js, "jump": jump_js,
+              "shoot": shoot_js, "aim_up": aim_up_js, "aim_down": aim_down_js,
+              "mode_reset": mode_reset_js, "mode": mode_js, "pause": pause_js,
+              "map": map_js}
 
     cfg = {"version": 1, "fullscreen": fullscreen,
            "scale_method": scale_method, "sound_enabled": sound_enabled,
            "music_enabled": music_enabled, "stereo_enabled": stereo_enabled,
            "fps_enabled": fps_enabled, "metroid_controls": metroid_controls,
-           "joystick_threshold": joystick_threshold, "keys_standard": keys_cfg,
-           "keys_metroid": metroid_keys_cfg, "joystick_standard": js_cfg,
-           "joystick_metroid": metroid_js_cfg, "ai_data": sorted(list(ai_data))}
+           "joystick_threshold": joystick_threshold, "keys": keys_cfg,
+           "joystick": js_cfg, "ai_data": sorted(list(ai_data))}
 
     with open(os.path.join(CONFIG, "config.json"), 'w') as f:
         json.dump(cfg, f, indent=4)
@@ -6698,7 +6514,7 @@ TYPES = {
 
 print(_("Initializing game system..."))
 Game(SCREEN_SIZE[0], SCREEN_SIZE[1], scale=SCALE, fps=FPS, delta=DELTA,
-     delta_min=DELTA_MIN, delta_max=DELTA_MAX, grab_input=True,
+     delta_min=DELTA_MIN, delta_max=DELTA_MAX,
      window_text="Hexoshi DEMO {}".format(__version__))
      #window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
 sge.game.scale = None
@@ -7096,8 +6912,6 @@ type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
 sge.game.start_room = TitleScreen.load(
     os.path.join("special", "title_screen.tmx"), True)
 
-sge.game.mouse.visible = False
-
 # Load map data
 map_rooms = {}
 map_objects = {}
@@ -7171,6 +6985,10 @@ finally:
     map_key = keys_cfg.get("map", map_key)
 
     keys_cfg = cfg.get("keys_metroid", {})
+    metroid_left_key = keys_cfg.get("left", metroid_left_key)
+    metroid_right_key = keys_cfg.get("right", metroid_right_key)
+    metroid_up_key = keys_cfg.get("up", metroid_up_key)
+    metroid_down_key = keys_cfg.get("down", metroid_down_key)
     metroid_jump_key = keys_cfg.get("jump", metroid_jump_key)
     metroid_shoot_key = keys_cfg.get("shoot", metroid_shoot_key)
     metroid_shoot2_key = keys_cfg.get("shoot2", metroid_shoot2_key)
@@ -7205,6 +7023,14 @@ finally:
     map_js = [[tuple(j) for j in js] for js in js_cfg.get("map", map_js)]
 
     js_cfg = cfg.get("joystick_metroid", {})
+    metroid_left_js = [[tuple(j) for j in js]
+                       for js in js_cfg.get("left", metroid_left_js)]
+    metroid_right_js = [[tuple(j) for j in js]
+                        for js in js_cfg.get("right", metroid_right_js)]
+    metroid_up_js = [[tuple(j) for j in js]
+                     for js in js_cfg.get("up", metroid_up_js)]
+    metroid_down_js = [[tuple(j) for j in js]
+                       for js in js_cfg.get("down", metroid_down_js)]
     metroid_jump_js = [[tuple(j) for j in js]
                        for js in js_cfg.get("jump", metroid_jump_js)]
     metroid_shoot_js = [[tuple(j) for j in js]

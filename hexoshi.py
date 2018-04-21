@@ -5051,7 +5051,11 @@ class KeyboardMenu(Menu):
 
     def event_choose(self):
         def toggle_key(key, new_key, self=self):
-            if new_key not in key:
+            if new_key in key:
+                if len(key) > 1:
+                    key.remove(new_key)
+            else:
+                refused = False
                 for other_key in [
                         left_key[self.page], right_key[self.page],
                         up_key[self.page], down_key[self.page],
@@ -5064,16 +5068,12 @@ class KeyboardMenu(Menu):
                         if len(other_key) > 1:
                             other_key.remove(new_key)
                         else:
-                            if len(key) > 0:
-                                other_key.remove(new_key)
-                                other_key.append(key.pop(0))
-                            else:
-                                w = _("Failed to exchange key bindings.")
-                                warnings.warn(w)
+                            refused = True
 
-                key.append(new_key)
-                while len(key) > 2:
-                    key.pop(0)
+                if not refused:
+                    key.append(new_key)
+                    while len(key) > 2:
+                        key.pop(0)
 
         if self.choice == 0:
             play_sound(select_sound)

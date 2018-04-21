@@ -36,7 +36,6 @@ import time
 import traceback
 import warnings
 import weakref
-import webbrowser
 
 import sge
 print(sge.IMPLEMENTATION, sge.__version__)
@@ -5050,147 +5049,127 @@ class KeyboardMenu(Menu):
         return self
 
     def event_choose(self):
-        def toggle_key(key, new_key, self=self):
-            if new_key in key:
-                if len(key) > 1:
-                    key.remove(new_key)
-            else:
-                refused = False
-                for other_key in [
-                        left_key[self.page], right_key[self.page],
-                        up_key[self.page], down_key[self.page],
-                        jump_key[self.page], shoot_key[self.page],
-                        aim_diag_key[self.page], aim_up_key[self.page],
-                        aim_down_key[self.page], mode_reset_key[self.page],
-                        mode_key[self.page], pause_key[self.page],
-                        map_key[self.page]]:
-                    if new_key in other_key:
-                        if len(other_key) > 1:
-                            other_key.remove(new_key)
-                        else:
-                            refused = True
+        def bind_key(key, new_key, self=self):
+            for other_key in [
+                    left_key[self.page], right_key[self.page],
+                    up_key[self.page], down_key[self.page],
+                    jump_key[self.page], shoot_key[self.page],
+                    aim_diag_key[self.page], aim_up_key[self.page],
+                    aim_down_key[self.page], mode_reset_key[self.page],
+                    mode_key[self.page], pause_key[self.page],
+                    map_key[self.page]]:
+                if new_key in other_key:
+                    other_key.remove(new_key)
 
-                if not refused:
-                    key.append(new_key)
-                    while len(key) > 2:
-                        key.pop(0)
+            key.append(new_key)
+            while len(key) > 2:
+                key.pop(0)
+
+        text = _("Press the key you wish to toggle, or Escape to cancel.")
 
         if self.choice == 0:
             play_sound(select_sound)
             self.__class__.create_page(default=self.choice, page=(self.page + 1))
         elif self.choice == 1:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(left_key[self.page], k)
-                set_gui_controls()
+                bind_key(left_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 2:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(right_key[self.page], k)
-                set_gui_controls()
+                bind_key(right_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 3:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(up_key[self.page], k)
-                set_gui_controls()
+                bind_key(up_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 4:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(down_key[self.page], k)
-                set_gui_controls()
+                bind_key(down_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 5:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(jump_key[self.page], k)
-                set_gui_controls()
+                bind_key(jump_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 6:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(shoot_key[self.page], k)
-                set_gui_controls()
+                bind_key(shoot_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 7:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(aim_diag_key[self.page], k)
-                set_gui_controls()
+                bind_key(aim_diag_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 8:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(aim_up_key[self.page], k)
-                set_gui_controls()
+                bind_key(aim_up_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 9:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(aim_down_key[self.page], k)
-                set_gui_controls()
+                bind_key(aim_down_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 10:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(mode_reset_key[self.page], k)
-                set_gui_controls()
+                bind_key(mode_reset_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 11:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(mode_key[self.page], k)
-                set_gui_controls()
+                bind_key(mode_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 12:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(pause_key[self.page], k)
-                set_gui_controls()
+                bind_key(pause_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 13:
-            k = wait_key()
+            k = wait_key(text)
             if k is not None:
-                toggle_key(map_key[self.page], k)
-                set_gui_controls()
+                bind_key(map_key[self.page], k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
@@ -5241,141 +5220,127 @@ class JoystickMenu(Menu):
         return self
 
     def event_choose(self):
-        def toggle_js(js, new_js, self=self):
-            if new_js in js:
-                js.remove(new_js)
-            else:
-                for other_js in [
-                        left_js[self.page], right_js[self.page],
-                        up_js[self.page], down_js[self.page],
-                        jump_js[self.page], shoot_js[self.page],
-                        aim_diag_js[self.page], aim_up_js[self.page],
-                        aim_down_js[self.page], mode_reset_js[self.page],
-                        mode_js[self.page], pause_js[self.page],
-                        map_js[self.page]]:
-                    if new_js in other_js:
-                        other_js.remove(new_js)
+        def bind_js(js, new_js, self=self):
+            for other_js in [
+                    left_js[self.page], right_js[self.page],
+                    up_js[self.page], down_js[self.page],
+                    jump_js[self.page], shoot_js[self.page],
+                    aim_diag_js[self.page], aim_up_js[self.page],
+                    aim_down_js[self.page], mode_reset_js[self.page],
+                    mode_js[self.page], pause_js[self.page],
+                    map_js[self.page]]:
+                if new_js in other_js:
+                    other_js.remove(new_js)
 
-                js.append(new_js)
-                while len(js) > 2:
-                    js.pop(0)
+            js.append(new_js)
+            while len(js) > 2:
+                js.pop(0)
+
+        text = _("Press the joystick button, axis, or hat direction you wish to bind to this function, or the Escape key to cancel.")
 
         if self.choice == 0:
             play_sound(select_sound)
             self.__class__.create_page(default=self.choice, page=(self.page + 1))
         elif self.choice == 1:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(left_js[self.page], js)
-                set_gui_controls()
+                bind_js(left_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 2:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(right_js[self.page], js)
-                set_gui_controls()
+                bind_js(right_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 3:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(up_js[self.page], js)
-                set_gui_controls()
+                bind_js(up_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 4:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(down_js[self.page], js)
-                set_gui_controls()
+                bind_js(down_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 5:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(jump_js[self.page], js)
-                set_gui_controls()
+                bind_js(jump_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 6:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(shoot_js[self.page], js)
-                set_gui_controls()
+                bind_js(shoot_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 7:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(aim_diag_js[self.page], js)
-                set_gui_controls()
+                bind_js(aim_diag_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 8:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(aim_up_js[self.page], js)
-                set_gui_controls()
+                bind_js(aim_up_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 9:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(aim_down_js[self.page], js)
-                set_gui_controls()
+                bind_js(aim_down_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 10:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(mode_reset_js[self.page], js)
-                set_gui_controls()
+                bind_js(mode_reset_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 11:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(mode_js[self.page], js)
-                set_gui_controls()
+                bind_js(mode_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 12:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(pause_js[self.page], js)
-                set_gui_controls()
+                bind_js(pause_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
             self.__class__.create_page(default=self.choice, page=self.page)
         elif self.choice == 13:
-            js = wait_js()
+            js = wait_js(text)
             if js is not None:
-                toggle_js(map_js[self.page], js)
-                set_gui_controls()
+                bind_js(map_js[self.page], js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
@@ -5765,37 +5730,29 @@ def warp(dest):
 
 def set_gui_controls():
     # Set the controls for xsge_gui based on the player controls.
-    xsge_gui.next_widget_keys = list(itertools.chain.from_iterable(down_key))
-    xsge_gui.previous_widget_keys = list(itertools.chain.from_iterable(up_key))
-    xsge_gui.left_keys = list(itertools.chain.from_iterable(left_key))
-    xsge_gui.right_keys = list(itertools.chain.from_iterable(right_key))
-    xsge_gui.up_keys = list(itertools.chain.from_iterable(up_key))
-    xsge_gui.down_keys = list(itertools.chain.from_iterable(down_key))
-    xsge_gui.enter_keys = (list(itertools.chain.from_iterable(jump_key)) +
-                           list(itertools.chain.from_iterable(shoot_key)) +
-                           list(itertools.chain.from_iterable(pause_key)))
-    xsge_gui.escape_keys = (list(itertools.chain.from_iterable(mode_key)) +
-                            list(itertools.chain.from_iterable(map_key)) +
-                            ["escape"])
-    xsge_gui.next_widget_joystick_events = (
-        list(itertools.chain.from_iterable(down_js)))
-    xsge_gui.previous_widget_joystick_events = (
-        list(itertools.chain.from_iterable(up_js)))
-    xsge_gui.left_joystick_events = list(itertools.chain.from_iterable(left_js))
-    xsge_gui.right_joystick_events = (
-        list(itertools.chain.from_iterable(right_js)))
-    xsge_gui.up_joystick_events = list(itertools.chain.from_iterable(up_js))
-    xsge_gui.down_joystick_events = list(itertools.chain.from_iterable(down_js))
-    xsge_gui.enter_joystick_events = (
-        list(itertools.chain.from_iterable(jump_js)) +
-        list(itertools.chain.from_iterable(shoot_js)) +
-        list(itertools.chain.from_iterable(pause_js)))
-    xsge_gui.escape_joystick_events = (
-        list(itertools.chain.from_iterable(mode_js)) +
-        list(itertools.chain.from_iterable(map_js)))
+    xsge_gui.next_widget_keys = ["down", "tab", "s", "kp_2"]
+    xsge_gui.previous_widget_keys = ["up", "w", "kp_8"]
+    xsge_gui.left_keys = ["left", "a", "kp_4"]
+    xsge_gui.right_keys = ["right", "d", "kp_6"]
+    xsge_gui.up_keys = []
+    xsge_gui.down_keys = []
+    xsge_gui.enter_keys = ["enter", "kp_enter", "space", "end"]
+    xsge_gui.escape_keys = ["escape"]
+    xsge_gui.next_widget_joystick_events = [
+        (0, "axis+", 1), (0, "hat_down", 0)]
+    xsge_gui.previous_widget_joystick_events = [
+        (0, "axis-", 1), (0, "hat_up", 0)]
+    xsge_gui.left_joystick_events = [(0, "axis-", 0), (0, "hat_left", 0)]
+    xsge_gui.right_joystick_events = [(0, "axis+", 0), (0, "hat_right", 0)]
+    xsge_gui.up_joystick_events = []
+    xsge_gui.down_joystick_events = []
+    xsge_gui.enter_joystick_events = [
+        (0, "button", 0), (0, "button", 1), (0, "button", 2), (0, "button", 3),
+        (0, "button", 9)]
+    xsge_gui.escape_joystick_events = [(0, "button", 8)]
 
 
-def wait_key():
+def wait_key(text):
     # Wait for a key press and return it.
     while True:
         # Input events
@@ -5814,7 +5771,6 @@ def wait_key():
         sge.game.regulate_speed(fps=10)
 
         # Project text
-        text = _("Press the key you wish to toggle, or Escape to cancel.")
         sge.game.project_text(font, text, sge.game.width / 2,
                               sge.game.height / 2, width=sge.game.width,
                               height=sge.game.height,
@@ -5825,7 +5781,7 @@ def wait_key():
         sge.game.refresh()
 
 
-def wait_js():
+def wait_js(text):
     # Wait for a joystick press and return it.
     sge.game.pump_input()
     sge.game.input_events = []
@@ -5852,7 +5808,6 @@ def wait_js():
         sge.game.regulate_speed(fps=10)
 
         # Project text
-        text = _("Press the joystick button, axis, or hat direction you wish to toggle, or the Escape key to cancel.")
         sge.game.project_text(font, text, sge.game.width / 2,
                               sge.game.height / 2, width=sge.game.width,
                               height=sge.game.height,

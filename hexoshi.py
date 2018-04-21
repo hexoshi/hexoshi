@@ -5065,7 +5065,7 @@ class KeyboardMenu(Menu):
             while len(key) > 2:
                 key.pop(0)
 
-        text = _("Press the key you wish to toggle, or Escape to cancel.")
+        text = _("Press the key you wish to bind to this function, or the Escape key to cancel.")
 
         if self.choice == 0:
             play_sound(select_sound)

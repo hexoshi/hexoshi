@@ -567,6 +567,8 @@ class Level(sge.dsp.Room):
                                         getattr(obj, method, lambda: None)(*fa)
                                 elif obj == "__level__":
                                     getattr(self, method, lambda: None)(*fa)
+                        elif command == "dialog":
+                            DialogBox(gui_handler, _(arg)).show()
                         elif command == "play_music":
                             self.music = arg
                             play_music(arg)
@@ -5729,7 +5731,7 @@ def warp(dest):
 
 
 def set_gui_controls():
-    # Set the controls for xsge_gui based on the player controls.
+    # Set the controls for xsge_gui.
     xsge_gui.next_widget_keys = ["down", "tab", "s", "kp_2"]
     xsge_gui.previous_widget_keys = ["up", "w", "kp_8"]
     xsge_gui.left_keys = ["left", "a", "kp_4"]
@@ -5819,15 +5821,8 @@ def wait_js(text):
 
 
 def show_error(message):
-    if sge.game.current_room is not None:
-        sge.game.pump_input()
-        sge.game.input_events = []
-        sge.game.mouse.visible = True
-        xsge_gui.show_message(message=message, title=_("Error"),
-                              buttons=[_("Ok")], width=392)
-        sge.game.mouse.visible = False
-    else:
-        print(message)
+    print(message)
+    raise
 
 
 def play_sound(sound, x=None, y=None, force=True):

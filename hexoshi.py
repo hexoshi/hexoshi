@@ -249,7 +249,6 @@ ETANK_CHAR = '\x80'
 
 backgrounds = {}
 loaded_music = {}
-tux_grab_sprites = {}
 
 fullscreen = False
 scale_method = None
@@ -303,6 +302,7 @@ map_removed = []
 warp_pads = []
 powerups = []
 progress_flags = []
+artifacts = 0
 etanks = 0
 time_taken = 0
 
@@ -4082,7 +4082,7 @@ class Macguffin(InteractiveObject):
 
 class Powerup(InteractiveObject):
 
-    message = _("USELESS ARTIFACT\n\nIt doesn't seem to do anything")
+    message = _("USELESS ITEM\n\nIt doesn't seem to do anything")
 
     def collect(self, other):
         pass
@@ -4116,6 +4116,21 @@ class Powerup(InteractiveObject):
              int(self.x), int(self.y))
         if i in powerups:
             self.destroy()
+
+
+class Artifact(Powerup):
+
+    message = ""
+
+    def __init__(self, x, y, message="It doesn't seem to to anything", **kwargs):
+        super(Artifact, self).__init__(x, y, **kwargs)
+        self.message = _("HEXOSHI ARTIFACT\n\n{}").format(_(message))
+
+    def collect(self, other):
+        global artifacts
+        artifacts += 1
+        # TODO: Check to see if this is the last artifact, and set up a
+        # victory condition if so.
 
 
 class Etank(Powerup):
@@ -5418,6 +5433,7 @@ class PauseMenu(ModalMenu):
                     slot.get("warp_pads") == warp_pads and
                     slot.get("powerups") == powerups and
                     slot.get("progress_flags") == progress_flags and
+                    slot.get("artifacts") == artifacts and
                     slot.get("etanks") == etanks):
                 sge.game.start_room.start()
             else:
@@ -5430,10 +5446,13 @@ class PauseMenu(ModalMenu):
             seconds = int(time_taken % 60)
             minutes = int((time_taken / 60) % 60)
             hours = int(time_taken / 3600)
-            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nArtifacts collected: {powerups} ({powerups_percent}%)").format(
+            powerups_col = len(powerups) - artifacts
+            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nPowerups collected: {powerups} ({powerups_percent}%)\nHexoshi Artifacts collected: {artifacts} ({artifacts_percent}%)").format(
                 hours=hours, minutes=minutes, seconds=seconds,
-                powerups=len(powerups),
-                powerups_percent=int(100 * len(powerups) / num_powerups))
+                powerups=powerups_col,
+                powerups_percent=int(100 * powerups_col / num_powerups),
+                artifacts=artifacts,
+                artifacts_percent=int(100 * artifacts / num_artifacts))
 
             DialogBox(gui_handler, text).show()
             PauseMenu.create(default=self.choice, player_x=self.player_x,
@@ -5938,6 +5957,7 @@ def set_new_game():
     global map_removed
     global powerups
     global progress_flags
+    global artifacts
     global etanks
     global time_taken
 
@@ -5951,6 +5971,7 @@ def set_new_game():
     warp_pads = []
     powerups = []
     progress_flags = []
+    artifacts = 0
     etanks = 0
     time_taken = 0
 
@@ -5998,6 +6019,7 @@ def save_game():
             "warp_pads": warp_pads[:],
             "powerups": powerups[:],
             "progress_flags": progress_flags[:],
+            "artifacts": artifacts,
             "etanks": etanks,
             "time_taken": time_taken}
 
@@ -6034,6 +6056,7 @@ def load_game():
             warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
             powerups = [tuple(i) for i in slot.get("powerups", [])]
             progress_flags = slot.get("progress_flags", [])
+            artifacts = slot.get("artifacts", 0)
             etanks = slot.get("etanks", 0)
             time_taken = slot.get("time_taken", 0)
     else:
@@ -6062,6 +6085,7 @@ def generate_map():
     global map_rooms
     global map_objects
     global num_powerups
+    global num_artifacts
 
     print(_("Generating new map files; this may take some time."))
     files_checked = set()
@@ -6069,6 +6093,7 @@ def generate_map():
     map_rooms = {}
     map_objects = {}
     num_powerups = 0
+    num_artifacts = 0
 
     while files_remaining:
         fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
@@ -6144,7 +6169,11 @@ def generate_map():
                 if (wx, wy) not in ignore_regions:
                     map_objects.setdefault((wx, wy), []).append("warp_pad")
             elif isinstance(obj, Powerup):
-                num_powerups += 1
+                if isinstance(obj, Artifact):
+                    num_artifacts += 1
+                else:
+                    num_powerups += 1
+
                 px = rm_x + get_xregion(obj.image_xcenter)
                 py = rm_y + get_yregion(obj.image_ycenter)
                 if (px, py) not in ignore_regions:
@@ -6233,7 +6262,7 @@ def generate_map():
         i = "{},{}".format(x, y)
         f_objects[i] = map_objects[(x, y)]
 
-    info = {"powerups": num_powerups}
+    info = {"powerups": num_powerups, "artifacts": num_artifacts}
 
     with open(os.path.join(DATA, "map", "rooms.json"), 'w') as f:
         json.dump(map_rooms, f, indent=4, sort_keys=True)
@@ -6804,6 +6833,7 @@ if not GEN_MAP:
         generate_map()
     else:
         num_powerups = d.get("powerups", 0)
+        num_artifacts = d.get("artifacts", 0)
 else:
     generate_map()
 

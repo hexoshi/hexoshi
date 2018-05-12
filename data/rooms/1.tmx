@@ -31,7 +31,7 @@
  <objectgroup name="Special Blocks">
   <object id="1" gid="268" x="1192" y="216" width="8" height="64">
    <properties>
-    <property name="dest" value="start.tmx"/>
+    <property name="dest" value="0.tmx"/>
    </properties>
   </object>
   <object id="55" gid="270" x="16" y="224" width="64" height="8">

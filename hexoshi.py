@@ -5447,12 +5447,12 @@ class PauseMenu(ModalMenu):
             minutes = int((time_taken / 60) % 60)
             hours = int(time_taken / 3600)
             powerups_col = len(powerups) - artifacts
-            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nPowerups collected: {powerups} ({powerups_percent}%)\nHexoshi Artifacts collected: {artifacts} ({artifacts_percent}%)").format(
+            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nPowerups collected: {powerups} ({powerups_percent}%)\nArtifacts collected: {artifacts} ({artifacts_percent}%)").format(
                 hours=hours, minutes=minutes, seconds=seconds,
                 powerups=powerups_col,
-                powerups_percent=int(100 * powerups_col / num_powerups),
+                powerups_percent=int(100 * powerups_col / max(num_powerups, 1)),
                 artifacts=artifacts,
-                artifacts_percent=int(100 * artifacts / num_artifacts))
+                artifacts_percent=int(100 * artifacts / max(num_artifacts, 1)))
 
             DialogBox(gui_handler, text).show()
             PauseMenu.create(default=self.choice, player_x=self.player_x,
@@ -6069,7 +6069,7 @@ def start_game():
     player = Anneroy(0, 0)
 
     if current_level is None:
-        level = Level.load("0.tmx")
+        level = Level.load("special/intro.tmx")
     else:
         level = Level.load(current_level)
 

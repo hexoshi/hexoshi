@@ -6069,7 +6069,7 @@ def start_game():
     player = Anneroy(0, 0)
 
     if current_level is None:
-        level = Level.load("special/intro.tmx")
+        level = SpecialScreen.load("special/intro.tmx")
     else:
         level = Level.load(current_level)
 

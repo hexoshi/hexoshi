@@ -16,9 +16,6 @@
         "# You should have received a copy of the GNU General Public License",
         "# along with this program.  If not, see <http://www.gnu.org/licenses/>."
     ],
-    "0": [
-        "exec for obj in sge.game.current_room.objects:\n    if isinstance(obj, Player): obj.destroy()"
-    ],
     "1": [
         "dialog MISSION DESCRIPTION\n\nLand on the hostile Thadus QHY and retrieve the priceless Hexoshi Artifacts stolen by the Mantanoid Alliance. Be prepared for resistance.",
         "exec Level.load('0.tmx').start()"

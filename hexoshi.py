@@ -6387,7 +6387,7 @@ TYPES = {
 
     "fake_tile": FakeTile, "weak_stone": WeakStone, "spike_stone": SpikeStone,
 
-    "macguffin": Macguffin, "artifact": Powerup, "etank": Etank,
+    "macguffin": Macguffin, "artifact": Artifact, "etank": Etank,
     "life_orb": LifeOrb, "map": Map, "map_disk": MapDisk,
     "atomic_compressor": AtomicCompressor, "monkey_boots": MonkeyBoots,
     "hedgehog_hormone": HedgehogHormone,

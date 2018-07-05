@@ -2010,7 +2010,7 @@ class Anneroy(Player):
                 self.retract_spikes()
 
     def compress(self):
-        if "atomic_compressor" in progress_flags:
+        if "atomic_compressor" in progress_flags and not self.shoot_pressed:
             if self.fixed_sprite != "compress":
                 self.reset_image()
                 self.sprite = anneroy_compress_sprite

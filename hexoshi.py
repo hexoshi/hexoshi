@@ -155,6 +155,7 @@ PLAYER_SLIDE_SPEED = 0.25
 PLAYER_ROLL_SLIDE_SPEED = 0
 PLAYER_ROLL_SLOPE_ACCELERATION = 0.25
 PLAYER_HITSTUN = FPS
+PLAYER_AIM_LOCK_TIME = FPS / 2
 WARP_TIME = FPS / 10
 DEATH_TIME = 3 * FPS
 DOUBLETAP_TIME = FPS / 3
@@ -1039,6 +1040,17 @@ class Player(xsge_physics.Collider):
             self.camera_guided_y = False
             return self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
 
+    @property
+    def aim_lock(self):
+        return "aim_lock" in self.alarms
+
+    @aim_lock.setter
+    def aim_lock(self, value):
+        if value:
+            self.alarms["aim_lock"] = PLAYER_AIM_LOCK_TIME
+        elif "aim_lock" in self.alarms:
+            del self.alarms["aim_lock"]
+
     def __init__(self, x, y, z=0, sprite=None, visible=True, active=True,
                  checks_collisions=True, tangible=True, bbox_x=8, bbox_y=0,
                  bbox_width=16, bbox_height=16, regulate_origin=True,
@@ -1301,35 +1313,36 @@ class Player(xsge_physics.Collider):
         v_control = bool(self.down_pressed) - bool(self.up_pressed)
         current_h_movement = (self.xvelocity > 0) - (self.xvelocity < 0)
 
-        prev_aim_direction = self.aim_direction
+        if not self.aim_lock:
+            prev_aim_direction = self.aim_direction
 
-        if "shooting" in self.alarms:
-            self.aim_direction = 0
-        else:
-            self.aim_direction = None
+            if "shooting" in self.alarms:
+                self.aim_direction = 0
+            else:
+                self.aim_direction = None
 
-        if v_control:
-            if self.aim_diag_pressed or (h_control and metroid_controls):
-                self.aim_direction = 1 * -v_control
-            else:
-                self.aim_direction = 2 * -v_control
-        elif metroid_controls and self.aim_diag_pressed:
-            if prev_aim_direction is not None and prev_aim_direction < 0:
-                self.aim_direction = -1
-            else:
+            if v_control:
+                if self.aim_diag_pressed or (h_control and metroid_controls):
+                    self.aim_direction = 1 * -v_control
+                else:
+                    self.aim_direction = 2 * -v_control
+            elif metroid_controls and self.aim_diag_pressed:
+                if prev_aim_direction is not None and prev_aim_direction < 0:
+                    self.aim_direction = -1
+                else:
+                    self.aim_direction = 1
+
+            if self.aim_up_pressed and self.aim_down_pressed:
+                self.aim_direction = 2
+            elif self.aim_up_pressed:
                 self.aim_direction = 1
+            elif self.aim_down_pressed:
+                self.aim_direction = -1
 
-        if self.aim_up_pressed and self.aim_down_pressed:
-            self.aim_direction = 2
-        elif self.aim_up_pressed:
-            self.aim_direction = 1
-        elif self.aim_down_pressed:
-            self.aim_direction = -1
-
-        if self.aim_direction == prev_aim_direction:
-            self.aim_direction_time += 1
-        else:
-            self.aim_direction_time = 0
+            if self.aim_direction == prev_aim_direction:
+                self.aim_direction_time += 1
+            else:
+                self.aim_direction_time = 0
 
         self.xacceleration = 0
         self.yacceleration = 0
@@ -1497,6 +1510,8 @@ class Player(xsge_physics.Collider):
                 self.jump_release()
             if key in shoot_key[self.player]:
                 self.shoot_release()
+            elif key in up_key[self.player] or key in down_key[self.player]:
+                self.aim_lock = False
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
         js = (js_id, input_type, input_id)
@@ -1695,6 +1710,7 @@ class Anneroy(Player):
                 self.ball = False
                 self.hedgehog = False
                 self.rolling = False
+                self.aim_lock = True
 
                 if "fixed_sprite" in self.alarms:
                     del self.alarms["fixed_sprite"]
@@ -1735,6 +1751,7 @@ class Anneroy(Player):
                     self.crouching = False
                     self.bbox_y = ANNEROY_STAND_BBOX_Y
                     self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
+                    self.aim_lock = True
         else:
             super(Anneroy, self).press_up()
 
@@ -1758,6 +1775,7 @@ class Anneroy(Player):
                         self.crouching = True
                         self.bbox_y = ANNEROY_CROUCH_BBOX_Y
                         self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
+                        self.aim_lock = True
                     else:
                         if "compress_pressed" in self.alarms:
                             self.compress()

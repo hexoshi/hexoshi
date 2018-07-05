@@ -1078,6 +1078,7 @@ class Player(xsge_physics.Collider):
         self.invincible = False
         self.facing = 1
         self.has_jumped = False
+        self.current_mode = None
         self.rolling = False
         self.aim_direction = None
         self.aim_direction_time = 0
@@ -1116,13 +1117,17 @@ class Player(xsge_physics.Collider):
         self.aim_diag_pressed = False
         self.aim_up_pressed = False
         self.aim_down_pressed = False
+        self.mode_pressed = False
+        self.mode_reset_pressed = False
 
     def refresh_input(self):
         if self.human and not self.input_lock:
             key_controls = [left_key, right_key, up_key, down_key, aim_diag_key,
-                            jump_key, shoot_key, aim_up_key, aim_down_key]
+                            jump_key, shoot_key, aim_up_key, aim_down_key,
+                            mode_key, mode_reset_key]
             js_controls = [left_js, right_js, up_js, down_js, aim_diag_js,
-                           jump_js, shoot_js, aim_up_js, aim_down_js]
+                           jump_js, shoot_js, aim_up_js, aim_down_js, mode_js,
+                           mode_reset_js]
             states = [0 for i in key_controls]
 
             for i in six.moves.range(len(key_controls)):
@@ -1146,6 +1151,8 @@ class Player(xsge_physics.Collider):
             self.shoot_pressed = states[6]
             self.aim_up_pressed = states[7]
             self.aim_down_pressed = states[8]
+            self.mode_pressed = states[9]
+            self.mode_reset_pressed = states[10]
 
     def press_up(self):
         if not self.aim_diag_pressed:
@@ -1174,7 +1181,32 @@ class Player(xsge_physics.Collider):
         pass
 
     def shoot_release(self):
-        pass    
+        pass
+
+    def mode(self):
+        all_modes = [None, "compress"]
+        if self.current_mode in all_modes:
+            i = all_modes.index(self.current_mode)
+            while True:
+                i += 1
+
+                if i >= len(all_modes):
+                    self.current_mode = None
+                    break
+                elif (all_modes[i] == "compress" and
+                        "atomic_compressor" in progress_flags):
+                    self.current_mode = all_modes[i]
+                    break
+        else:
+            self.current_mode = None
+
+        self.update_hud()
+        play_sound(type_sound)
+
+    def mode_reset(self):
+        self.current_mode = None
+        self.update_hud()
+        play_sound(cancel_sound)
 
     def hurt(self, damage=1, touching=False):
         if not self.hitstun and not self.invincible:
@@ -1232,15 +1264,22 @@ class Player(xsge_physics.Collider):
             w = etank_empty_sprite.width
             h = etank_empty_sprite.height
             for i in six.moves.range(etanks):
+                if x + w >= start_x + healthbar_width:
+                    x = start_x
+                    y += h
+
                 if i < etanks - self.etanks_used:
                     self.hud_sprite.draw_sprite(etank_full_sprite, 0, x, y)
                 else:
                     self.hud_sprite.draw_sprite(etank_empty_sprite, 0, x, y)
 
                 x += w
-                if x + w >= start_x + healthbar_width:
-                    x = start_x
-                    y += h
+
+            # Mode image
+            x = start_x
+            y += 12
+            if self.current_mode == "compress":
+                self.hud_sprite.draw_sprite(atomic_compressor_sprite, 0, x, y)
 
             if "map" in progress_flags:
                 w = 7
@@ -1494,6 +1533,11 @@ class Player(xsge_physics.Collider):
                 self.jump()
             if key in shoot_key[self.player] and not self.shoot_pressed:
                 self.shoot()
+            if key in mode_key[self.player] and not self.mode_pressed:
+                self.mode()
+            if (key in mode_reset_key[self.player] and
+                    not self.mode_reset_pressed):
+                self.mode_reset()
             if key in map_key[self.player]:
                 if "map" in progress_flags:
                     play_sound(select_sound)
@@ -1525,6 +1569,11 @@ class Player(xsge_physics.Collider):
                     self.jump()
                 if js in shoot_js[self.player] and not self.shoot_pressed:
                     self.shoot()
+                if js in mode_js[self.player] and not self.mode_pressed:
+                    self.mode()
+                if (js in mode_reset_js[self.player] and
+                        not self.mode_reset_pressed):
+                    self.mode_reset()
                 if js in map_js[self.player]:
                     if "map" in progress_flags:
                         play_sound(select_sound)
@@ -1843,7 +1892,7 @@ class Anneroy(Player):
         self.rolling = True
         self.max_speed = self.__class__.max_speed
 
-    def shoot(self):
+    def shoot_default(self):
         if "shoot_lock" not in self.alarms:
             if self.ball:
                 if ("hedgehog_hormone" in progress_flags and
@@ -2001,6 +2050,16 @@ class Anneroy(Player):
                     image_rotation=image_rotation,
                     image_blend=self.image_blend)
                 play_sound(shoot_sound, xdest, ydest)
+
+    def shoot(self):
+        if self.current_mode == "compress":
+            if not self.shoot_pressed:
+                if self.ball:
+                    self.shoot_default()
+                else:
+                    self.compress()
+        else:
+            self.shoot_default()
 
     def shoot_release(self):
         if self.hedgehog and not self.hedgehog_autocancel:
@@ -4239,7 +4298,7 @@ class MapDisk(Powerup):
 
 class AtomicCompressor(Powerup):
 
-    message = _('ATOMIC COMPRESSOR\n\nPress "down" to compress into a ball, then press "up" to uncompress')
+    message = _('ATOMIC COMPRESSOR\n\nTo compress: press "down" while crouching, or select with "mode" and then press "shoot"\n\nTo uncompress: press "up"')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = atomic_compressor_sprite

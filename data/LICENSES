@@ -39,6 +39,13 @@ License: CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0/>
 
 ------------------------------------------------------------------------
 
+images/objects/enemies/fungus_cloud.png
+images/objects/enemies/fungus_down.png
+images/objects/enemies/fungus_left.png
+images/objects/enemies/fungus_right.png
+images/objects/enemies/fungus_spray_diagonal_sheet.png
+images/objects/enemies/fungus_spray_horizontal_sheet.png
+images/objects/enemies/fungus_up.png
 images/objects/enemies/hedgehog.png
 images/objects/enemies/hedgehog_sheet.png
 images/objects/enemies/jellyfish.png

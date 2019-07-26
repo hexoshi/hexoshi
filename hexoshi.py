@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Hexoshi
-# Copyright (C) 2014-2018 Julie Marchant <onpon4@riseup.net>
+# Copyright (C) 2014-2019 Julie Marchant <onpon4@riseup.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,10 +52,9 @@ import xsge_physics
 print("xsge_physics", xsge_physics.__version__)
 import xsge_tmx
 print("xsge_tmx", xsge_tmx.__version__)
+import xsge_lvl
+print("xsge_lvl", xsge_lvl.__version__)
 
-
-if getattr(sys, "frozen", False):
-    __file__ = sys.executable
 
 DATA = os.path.join(os.path.dirname(__file__), "data")
 CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
@@ -372,6 +371,13 @@ class Game(sge.dsp.Game):
 
     def event_paused_close(self):
         self.event_close()
+
+
+class LevelSegment(xsge_lvl.Level):
+
+    entrances = None
+    exits = None
+    exit_reqs = None
 
 
 class Level(sge.dsp.Room):

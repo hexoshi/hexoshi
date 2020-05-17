@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Hexoshi
 # Copyright (C) 2014-2018 Julie Marchant <onpon4@riseup.net>
@@ -16,10 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import division
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
 
 __version__ = "0.2.1a0"
 
@@ -39,7 +35,6 @@ import weakref
 
 import sge
 print(sge.IMPLEMENTATION, sge.__version__)
-import six
 import xsge_gui
 print("xsge_gui", xsge_gui.__version__)
 import xsge_lighting
@@ -67,11 +62,7 @@ DELTA_MAX = FPS * 4
 SCALE = 2
 FSSCALE = None
 
-if six.PY2:
-    gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")),
-                    unicode=True)
-else:
-    gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
+gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
 
 parser = argparse.ArgumentParser(prog="Hexoshi")
 parser.add_argument(
@@ -133,10 +124,7 @@ if args.lang:
     lang = gettext.translation("hexoshi",
                                os.path.abspath(os.path.join(DATA, "locale")),
                                [args.lang])
-    if six.PY2:
-        lang.install(unicode=True)
-    else:
-        lang.install()
+    lang.install()
 
 GRAVITY = 0.4
 
@@ -285,7 +273,7 @@ mode_reset_js = [[(0, "button", 2)]]
 mode_js = [[(0, "button", 8)]]
 pause_js = [[(0, "button", 9)]]
 map_js = [[]]
-save_slots = [None for i in six.moves.range(SAVE_NSLOTS)]
+save_slots = [None for i in range(SAVE_NSLOTS)]
 
 with open(os.path.join(DATA, "ai_data.json"), 'r') as f:
     ai_data = set(json.load(f))
@@ -589,7 +577,7 @@ class Level(sge.dsp.Room):
                                 break
                         elif command == "exec":
                             try:
-                                six.exec_(arg)
+                                exec(arg)
                             except Exception as e:
                                 m = _("An error occurred in a timeline 'exec' command:\n\n{}").format(
                                     traceback.format_exc())
@@ -1130,12 +1118,12 @@ class Player(xsge_physics.Collider):
                            mode_reset_js]
             states = [0 for i in key_controls]
 
-            for i in six.moves.range(len(key_controls)):
+            for i in range(len(key_controls)):
                 for choice in key_controls[i][self.player]:
                     value = sge.keyboard.get_pressed(choice)
                     states[i] = max(states[i], value)
 
-            for i in six.moves.range(len(js_controls)):
+            for i in range(len(js_controls)):
                 for choice in js_controls[i][self.player]:
                     j, t, c = choice
                     value = min(sge.joystick.get_value(j, t, c), 1)
@@ -1263,7 +1251,7 @@ class Player(xsge_physics.Collider):
             y += 8
             w = etank_empty_sprite.width
             h = etank_empty_sprite.height
-            for i in six.moves.range(etanks):
+            for i in range(etanks):
                 if x + w >= start_x + healthbar_width:
                     x = start_x
                     y += h
@@ -1613,7 +1601,7 @@ class Player(xsge_physics.Collider):
         top_touching = self.get_top_touching_wall()
 
         tmv = 0
-        for i in six.moves.range(CEILING_LAX):
+        for i in range(CEILING_LAX):
             if (not self.get_left_touching_wall() and
                     not self.get_left_touching_slope()):
                 self.x -= 1
@@ -1625,7 +1613,7 @@ class Player(xsge_physics.Collider):
         else:
             self.x -= tmv
             tmv = 0
-            for i in six.moves.range(CEILING_LAX):
+            for i in range(CEILING_LAX):
                 if (not self.get_left_touching_wall() and
                         not self.get_left_touching_slope()):
                     self.x += 1
@@ -1717,7 +1705,7 @@ class Anneroy(Player):
         if rv:
             xstart = self.x
 
-            for i in six.moves.range(lax):
+            for i in range(lax):
                 self.move_x(-1)
                 rv = _get_up_obstructed()
                 if not rv:
@@ -1725,7 +1713,7 @@ class Anneroy(Player):
             else:
                 self.move_x(xstart - self.x)
 
-                for i in six.moves.range(lax):
+                for i in range(lax):
                     self.move_x(1)
                     rv = _get_up_obstructed()
                     if not rv:
@@ -2014,9 +2002,9 @@ class Anneroy(Player):
                 ysteps = int(abs(y) / guide.bbox_height)
                 xfinal = math.copysign(abs(x) - xsteps * guide.bbox_width, x)
                 yfinal = math.copysign(abs(y) - ysteps * guide.bbox_height, y)
-                for i in six.moves.range(xsteps):
+                for i in range(xsteps):
                     guide.move_x(math.copysign(guide.bbox_width, x))
-                for i in six.moves.range(ysteps):
+                for i in range(ysteps):
                     guide.move_y(math.copysign(guide.bbox_height, y))
                 guide.move_x(xfinal)
                 guide.move_y(yfinal)
@@ -2374,7 +2362,7 @@ class Anneroy(Player):
         elif self.fixed_sprite == "death":
             Smoke.create(self.x, self.y, z=(self.z + 0.1),
                          sprite=anneroy_explode_sprite, tangible=False)
-            for i in six.moves.range(12):
+            for i in range(12):
                 shard = Shard.create(
                     self.x, self.y, self.z, sprite=anneroy_explode_fragments,
                     image_index=random.randrange(anneroy_explode_fragments.frames),
@@ -4053,7 +4041,7 @@ class ScorpionBullet(Bullet):
         play_sound(scorpion_projectile_break_sound, self.image_xcenter,
                    self.image_ycenter)
 
-        for i in six.moves.range(self.shard_num):
+        for i in range(self.shard_num):
             life = random.uniform(FPS / 8, FPS / 2)
             image_index = random.randrange(
                 0, scorpion_projectile_shard_sprite.frames)
@@ -4123,7 +4111,7 @@ class Stone(xsge_physics.Solid):
         else:
             shard_num = self.shard_num_min
 
-        for i in six.moves.range(shard_num):
+        for i in range(shard_num):
             shard = Shard.create(self.x, self.y, self.z,
                                  sprite=stone_fragment_sprite)
             shard.speed = random.randint(self.shard_speed_min,
@@ -4279,12 +4267,12 @@ class MapDisk(Powerup):
                         rx2 = rm_x + get_xregion(obj.bbox_right - 1)
                         ry1 = rm_y + get_yregion(obj.bbox_top)
                         ry2 = rm_y + get_yregion(obj.bbox_bottom - 1)
-                        for ry in six.moves.range(ry1, ry2 + 1):
-                            for rx in six.moves.range(rx1, rx2 + 1):
+                        for ry in range(ry1, ry2 + 1):
+                            for rx in range(rx1, rx2 + 1):
                                 ignore_regions.add((rx, ry))
 
-                for y in six.moves.range(rm_y, rm_y + rm_h):
-                    for x in six.moves.range(rm_x, rm_x + rm_w):
+                for y in range(rm_y, rm_y + rm_h):
+                    for x in range(rm_x, rm_x + rm_w):
                         sge.game.pump_input()
                         if ((x, y) not in ignore_regions and
                                 (x, y) not in map_revealed):
@@ -4952,7 +4940,7 @@ class NewGameMenu(Menu):
 
         abort = False
 
-        if self.choice in six.moves.range(len(save_slots)):
+        if self.choice in range(len(save_slots)):
             play_sound(confirm_sound)
             current_save_slot = self.choice
             if save_slots[current_save_slot] is None:
@@ -4998,7 +4986,7 @@ class LoadGameMenu(NewGameMenu):
 
         abort = False
 
-        if self.choice in six.moves.range(len(save_slots)):
+        if self.choice in range(len(save_slots)):
             play_sound(confirm_sound)
             current_save_slot = self.choice
             load_game()
@@ -6212,8 +6200,8 @@ def generate_map():
                 rx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 ry1 = rm_y + get_yregion(obj.bbox_top)
                 ry2 = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for ry in six.moves.range(ry1, ry2 + 1):
-                    for rx in six.moves.range(rx1, rx2 + 1):
+                for ry in range(ry1, ry2 + 1):
+                    for rx in range(rx1, rx2 + 1):
                         ignore_regions.add((rx, ry))
 
         for obj in room.objects:
@@ -6259,60 +6247,60 @@ def generate_map():
                 wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for wy in six.moves.range(wy1, wy2 + 1):
+                for wy in range(wy1, wy2 + 1):
                     if (wx, wy) not in ignore_regions:
                         map_objects.setdefault((wx, wy), []).append("wall_left")
             elif isinstance(obj, MapRightWall):
                 wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for wy in six.moves.range(wy1, wy2 + 1):
+                for wy in range(wy1, wy2 + 1):
                     if (wx, wy) not in ignore_regions:
                         map_objects.setdefault((wx, wy), []).append("wall_right")
             elif isinstance(obj, MapTopWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_top)
-                for wx in six.moves.range(wx1, wx2 + 1):
+                for wx in range(wx1, wx2 + 1):
                     if (wx, wy) not in ignore_regions:
                         map_objects.setdefault((wx, wy), []).append("wall_top")
             elif isinstance(obj, MapBottomWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for wx in six.moves.range(wx1, wx2 + 1):
+                for wx in range(wx1, wx2 + 1):
                     if (wx, wy) not in ignore_regions:
                         map_objects.setdefault((wx, wy), []).append("wall_bottom")
             elif isinstance(obj, MapLeftDoor):
                 wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for wy in six.moves.range(wy1, wy2 + 1):
+                for wy in range(wy1, wy2 + 1):
                     if (wx, wy) not in ignore_regions:
                         map_objects.setdefault((wx, wy), []).append("door_left")
             elif isinstance(obj, MapRightDoor):
                 wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for wy in six.moves.range(wy1, wy2 + 1):
+                for wy in range(wy1, wy2 + 1):
                     if (wx, wy) not in ignore_regions:
                         map_objects.setdefault((wx, wy), []).append("door_right")
             elif isinstance(obj, MapTopDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_top)
-                for wx in six.moves.range(wx1, wx2 + 1):
+                for wx in range(wx1, wx2 + 1):
                     if (wx, wy) not in ignore_regions:
                         map_objects.setdefault((wx, wy), []).append("door_top")
             elif isinstance(obj, MapBottomDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_bottom - 1)
-                for wx in six.moves.range(wx1, wx2 + 1):
+                for wx in range(wx1, wx2 + 1):
                     if (wx, wy) not in ignore_regions:
                         map_objects.setdefault((wx, wy), []).append("door_bottom")
 
-        for x in six.moves.range(rm_x, rm_x + rm_w):
+        for x in range(rm_x, rm_x + rm_w):
             y = rm_y
             if ((x, y) not in ignore_regions and
                     "door_top" not in map_objects.setdefault((x, y), [])):
@@ -6323,7 +6311,7 @@ def generate_map():
                     "door_bottom" not in map_objects.setdefault((x, y), [])):
                 map_objects[(x, y)].append("wall_bottom")
 
-        for y in six.moves.range(rm_y, rm_y + rm_h):
+        for y in range(rm_y, rm_y + rm_h):
             x = rm_x
             if ((x, y) not in ignore_regions and
                     "door_left" not in map_objects.setdefault((x, y), [])):
@@ -6817,11 +6805,10 @@ backgrounds["iridia"] = sge.gfx.Background(layers,
                                            sge.gfx.Color((21, 17, 22)))
 
 # Load fonts
-chars = ([six.unichr(i) for i in six.moves.range(32, 127)] +
-         [None, ETANK_CHAR] + [' '] * 11 +
-         [six.unichr(i) for i in six.moves.range(161, 384)])
+chars = ([chr(i) for i in range(32, 127)] + [None, ETANK_CHAR] + [' ']*11
+         + [chr(i) for i in range(161, 384)])
 font = sge.gfx.Font.from_sprite(font_sprite, chars, size=9, hsep=-1)
-chars = [six.unichr(i) for i in six.moves.range(32, 127)] + [None]
+chars = [chr(i) for i in range(32, 127)] + [None]
 font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=14,
                                     hsep=2, vsep=2)
 
@@ -6984,7 +6971,7 @@ try:
 except (IOError, ValueError):
     pass
 else:
-    for i in six.moves.range(min(len(loaded_slots), len(save_slots))):
+    for i in range(min(len(loaded_slots), len(save_slots))):
         slot = loaded_slots[i]
         if slot is not None and slot.get("save_format", 0) > 0:
             save_slots[i] = slot

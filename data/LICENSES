@@ -92,7 +92,7 @@ images/tiles/extras.png
 
 Authors:
   Adam Atomic <http://www.adamatomic.com/>
-  Julie Marchant <https://onpon4.github.io>
+  The Diligent Circle <https://onpon4.github.io>
 License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 Source: http://adamatomic.com/abandonauts/
 
@@ -106,7 +106,7 @@ images/tiles/main_white.png
 Authors:
   Adam Atomic <http://www.adamatomic.com/>
   Trevor McAleese (Drixxel)
-  Julie Marchant <https://onpon4.github.io>
+  The Diligent Circle <https://onpon4.github.io>
 License: CC BY-SA 4.0 <http://creativecommons.org/licenses/by-sa/4.0/>
 Source: http://adamatomic.com/abandonauts/
 
@@ -191,7 +191,7 @@ Source: http://opengameart.org/content/simple-broad-purpose-tileset
 images/objects/powerups/etank.png
 
 Authors:
-  Julie Marchant <https://onpon4.github.io>
+  The Diligent Circle <https://onpon4.github.io>
   Adam Atomic <http://www.adamatomic.com/>
 License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 Source: http://adamatomic.com/abandonauts/
@@ -230,7 +230,7 @@ images/objects/powerups/map-7.png
 
 Authors:
   MoikMellah <http://opengameart.org/users/moikmellah>
-  Julie Marchant <https://onpon4.github.io>
+  The Diligent Circle <https://onpon4.github.io>
 License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 Source: http://opengameart.org/content/communication-terminal-32x32
 
@@ -248,7 +248,7 @@ images/misc/font.png
 
 Authors:
   domsson <http://opengameart.org/users/domsson>
-  Julie Marchant <https://onpon4.github.io>
+  The Diligent Circle <https://onpon4.github.io>
   Tomasz Kramkowski
 License: CC0 <http://creativecommons.org/publicdomain/zero/1.0/>
 Source: http://opengameart.org/content/ascii-bitmap-font-futuristic
@@ -354,7 +354,7 @@ sounds/shoot.wav
 sounds/teleport.wav
 sounds/type.wav
 
-Author: Julie Marchant <https://onpon4.github.io>
+Author: The Diligent Circle <https://onpon4.github.io>
 License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 
 ------------------------------------------------------------------------
@@ -362,7 +362,7 @@ License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
 locale/build.py
 locale/hexoshi.pot
 
-Author: Julie Marchant <https://onpon4.github.io>
+Author: The Diligent Circle <https://onpon4.github.io>
 License: GNU GPLv3 or later <https://gnu.org/licenses/gpl.html>
 
 ------------------------------------------------------------------------

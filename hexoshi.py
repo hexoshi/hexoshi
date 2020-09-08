@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 # Hexoshi
-# Copyright (C) 2014-2018 Julie Marchant <onpon4@riseup.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__version__ = "0.2.1a0"
+__version__ = "0.3a0"
 
 import argparse
 import datetime

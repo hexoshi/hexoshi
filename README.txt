@@ -11,22 +11,17 @@ HOW TO RUN
 If you have downloaded a version of the game designated for a particular
 system, simply run the executable.
 
-To run the source code, you will need the following dependencies:
+To run the source code, you will need Python 3.6 or later
+<https://www.python.org>. You will also need the dependencies listed in
+requirements.txt, which you can install automatically by using the
+following command:
 
-- Python 2 (2.7 or later) or 3 (3.1 or later) <http://www.python.org>
-- Pygame 1.9.1 or later <http://pygame.org>
-
-If you are using a version of Python older than 3.4, you will also need
-to install pathlib: <https://pypi.python.org/pypi/pathlib/>
+    python3 -m pip install -r requirements.txt
 
 Once you have installed the dependencies, you can start the game by
 running "hexoshi.py". On most systems, this should be done by
 double-clicking on it; if you are shown a dialog asking you if you want
 to display or run the file, choose to run it.
-
-To run the game with a particular Python version, open "hexoshi.py" in a
-text editor and change the shebang on line one to indicate the version
-you want to use, e.g. "python2" or "python3" instead of just "python".
 
 There are some command-line options that can be passed. Run the game in
 a terminal with the "-h" command-line option for more information.
@@ -35,7 +30,5 @@ a terminal with the "-h" command-line option for more information.
 SPECIAL CONTROLS
 
 You can exit the game by pressing the middle mouse button. This is a
-workaround for a rare bug in Pygame which can lock up the keyboard
-controls, explained in detail here:
-
-https://savannah.nongnu.org/forum/forum.php?forum_id=8113
+workaround for a rare bug in SDL 1.2 which can lock up the keyboard
+controls.

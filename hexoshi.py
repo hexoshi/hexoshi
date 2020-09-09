@@ -197,6 +197,7 @@ SCORPION_WALK_FRAMES_PER_PIXEL = 1 / 6
 
 CEILING_LAX = 2
 
+CAMERA_STOPPED_HSPEED_MAX = 1
 CAMERA_HSPEED_FACTOR = 1 / 8
 CAMERA_VSPEED_FACTOR = 1 / 20
 CAMERA_OFFSET_FACTOR = 10
@@ -1394,7 +1395,7 @@ class Player(xsge_physics.Collider):
                 else:
                     dc = self.air_friction
 
-                if abs(self.xvelocity) - dc * delta_mult > target_speed:
+                if abs(self.xvelocity) - dc*delta_mult > target_speed:
                     self.xdeceleration = dc
                 else:
                     self.xvelocity = target_speed * current_h_movement
@@ -1415,13 +1416,13 @@ class Player(xsge_physics.Collider):
                 self.yvelocity = self.fall_speed
         elif self.on_slope:
             if self.rolling:
-                self.yvelocity = (self.roll_slide_speed *
-                                  (self.on_slope[0].bbox_height /
-                                   self.on_slope[0].bbox_width))
+                self.yvelocity = (self.roll_slide_speed
+                                  * (self.on_slope[0].bbox_height
+                                     / self.on_slope[0].bbox_width))
             elif self.xvelocity:
-                self.yvelocity = (self.slide_speed *
-                                  (self.on_slope[0].bbox_height /
-                                   self.on_slope[0].bbox_width))
+                self.yvelocity = (self.slide_speed
+                                  * (self.on_slope[0].bbox_height
+                                     / self.on_slope[0].bbox_width))
             else:
                 self.yvelocity = 0
 
@@ -1447,8 +1448,15 @@ class Player(xsge_physics.Collider):
         if self.view is not None and not self.view_frozen:
             view_target_x = self.camera_target_x
             if abs(view_target_x - self.view.x) > 0.5:
-                self.view.x += ((view_target_x - self.view.x) *
-                                CAMERA_HSPEED_FACTOR)
+                camera_xvel = ((view_target_x - self.view.x)
+                               * CAMERA_HSPEED_FACTOR)
+                if self.xvelocity:
+                    self.view.x += camera_xvel
+                else:
+                    self.view.x += max(-CAMERA_STOPPED_HSPEED_MAX,
+                                       min(camera_xvel,
+                                           CAMERA_STOPPED_HSPEED_MAX))
+                        
             else:
                 self.view.x = view_target_x
 
@@ -1458,8 +1466,8 @@ class Player(xsge_physics.Collider):
             view_target_y = self.camera_target_y
             if (self.on_floor and self.was_on_floor) or self.camera_guided_y:
                 if abs(view_target_y - self.view.y) > 0.5:
-                    self.view.y += ((view_target_y - self.view.y) *
-                                    CAMERA_VSPEED_FACTOR)
+                    self.view.y += ((view_target_y - self.view.y)
+                                    * CAMERA_VSPEED_FACTOR)
                 else:
                     self.view.y = view_target_y
 

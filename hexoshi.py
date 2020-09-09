@@ -18,6 +18,7 @@
 
 __version__ = "0.3a0"
 
+
 import argparse
 import datetime
 import gettext
@@ -33,19 +34,12 @@ import warnings
 import weakref
 
 import sge
-print(sge.IMPLEMENTATION, sge.__version__)
 import xsge_gui
-print("xsge_gui", xsge_gui.__version__)
 import xsge_lighting
-print("xsge_lighting", xsge_lighting.__version__)
 import xsge_particle
-print("xsge_particle", xsge_particle.__version__)
 import xsge_path
-print("xsge_path", xsge_path.__version__)
 import xsge_physics
-print("xsge_physics", xsge_physics.__version__)
-import xsge_tmx
-print("xsge_tmx", xsge_tmx.__version__)
+import xsge_tiled
 
 
 if getattr(sys, "frozen", False):
@@ -346,7 +340,7 @@ class Game(sge.dsp.Game):
                 elif self.cheatcode.lower() == "seenitall":
                     map_explored = map_revealed
                 elif self.cheatcode.startswith("tele"):
-                    warp(self.cheatcode[4:] + ".tmx")
+                    warp(self.cheatcode[4:] + ".json")
                 else:
                     print(_("Invalid cheat code: {}").format(self.cheatcode))
 
@@ -470,7 +464,7 @@ class Level(sge.dsp.Room):
 
     def win_game(self):
         credits_room = CreditsScreen.load(os.path.join("special",
-                                                       "credits.tmx"))
+                                                       "credits.json"))
         credits_room.start()
 
     def event_room_start(self):
@@ -681,8 +675,8 @@ class Level(sge.dsp.Room):
                 print(_("Loading \"{}\"...").format(fname))
 
         try:
-            r = xsge_tmx.load(os.path.join(DATA, "rooms", fname), cls=cls,
-                              types=TYPES)
+            r = xsge_tiled.load(os.path.join(DATA, "rooms", fname), cls=cls,
+                                types=TYPES)
         except Exception as e:
             m = _("An error occurred when trying to load the level:\n\n{}").format(
                 traceback.format_exc())
@@ -4906,7 +4900,7 @@ class MainMenu(Menu):
             OptionsMenu.create_page()
         elif self.choice == 3:
             credits_room = CreditsScreen.load(os.path.join("special",
-                                                           "credits.tmx"))
+                                                           "credits.json"))
             credits_room.start()
         else:
             sge.game.end()
@@ -5761,7 +5755,7 @@ class DialogBox(xsge_gui.Dialog):
 
 
 def get_object(x, y, cls=None, **kwargs):
-    cls = TYPES.get(cls, xsge_tmx.Decoration)
+    cls = TYPES.get(cls, xsge_tiled.Decoration)
     return cls(x, y, **kwargs)
 
 
@@ -6133,7 +6127,7 @@ def start_game():
     player = Anneroy(0, 0)
 
     if current_level is None:
-        level = SpecialScreen.load("special/intro.tmx")
+        level = SpecialScreen.load("special/intro.json")
     else:
         level = Level.load(current_level)
 
@@ -6153,7 +6147,7 @@ def generate_map():
 
     print(_("Generating new map files; this may take some time."))
     files_checked = set()
-    files_remaining = {("0.tmx", 0, 0, None, None)}
+    files_remaining = {("0.json", 0, 0, None, None)}
     map_rooms = {}
     map_objects = {}
     num_powerups = 0
@@ -6861,7 +6855,7 @@ type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
 
 # Create rooms
 sge.game.start_room = TitleScreen.load(
-    os.path.join("special", "title_screen.tmx"), True)
+    os.path.join("special", "title_screen.json"), True)
 
 sge.game.mouse.visible = False
 

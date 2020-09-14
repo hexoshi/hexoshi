@@ -46,7 +46,9 @@ if getattr(sys, "frozen", False):
     __file__ = sys.executable
 
 DATA = os.path.join(os.path.dirname(__file__), "data")
-CONFIG = os.path.join(os.path.expanduser("~"), ".config", "hexoshi")
+CONFIG = os.path.join(
+    os.getenv("XDG_CONFIG_HOME", os.path.join(os.path.expanduser("~"),
+                                              ".config")), "hexoshi")
 SCREEN_SIZE = [400, 224]
 TILE_SIZE = 16
 FPS = 60
@@ -197,7 +199,8 @@ SCORPION_WALK_FRAMES_PER_PIXEL = 1 / 6
 
 CEILING_LAX = 2
 
-CAMERA_STOPPED_HSPEED_MAX = 1
+CAMERA_STOPPED_THRESHOLD = 1
+CAMERA_STOPPED_HSPEED_MAX = 2
 CAMERA_HSPEED_FACTOR = 1 / 8
 CAMERA_VSPEED_FACTOR = 1 / 20
 CAMERA_OFFSET_FACTOR = 10
@@ -1449,13 +1452,12 @@ class Player(xsge_physics.Collider):
             view_target_x = self.camera_target_x
             if abs(view_target_x - self.view.x) > 0.5:
                 camera_xvel = ((view_target_x - self.view.x)
-                               * CAMERA_HSPEED_FACTOR)
-                if self.xvelocity:
+                               * CAMERA_HSPEED_FACTOR * delta_mult)
+                if abs(self.xvelocity) > CAMERA_STOPPED_THRESHOLD:
                     self.view.x += camera_xvel
                 else:
-                    self.view.x += max(-CAMERA_STOPPED_HSPEED_MAX,
-                                       min(camera_xvel,
-                                           CAMERA_STOPPED_HSPEED_MAX))
+                    xvel_max = CAMERA_STOPPED_HSPEED_MAX * delta_mult
+                    self.view.x += max(-xvel_max, min(camera_xvel, xvel_max))
                         
             else:
                 self.view.x = view_target_x
@@ -1467,7 +1469,7 @@ class Player(xsge_physics.Collider):
             if (self.on_floor and self.was_on_floor) or self.camera_guided_y:
                 if abs(view_target_y - self.view.y) > 0.5:
                     self.view.y += ((view_target_y - self.view.y)
-                                    * CAMERA_VSPEED_FACTOR)
+                                    * CAMERA_VSPEED_FACTOR * delta_mult)
                 else:
                     self.view.y = view_target_y
 

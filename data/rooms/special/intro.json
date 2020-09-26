@@ -1,5 +1,12 @@
 { "backgroundcolor":"#000000",
  "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
  "height":28,
  "infinite":false,
  "layers":[],
@@ -7,6 +14,11 @@
  "nextobjectid":1,
  "orientation":"orthogonal",
  "properties":[
+        {
+         "name":"music",
+         "type":"string",
+         "value":"dark_city.ogg"
+        }, 
         {
          "name":"timeline",
          "type":"string",

@@ -1,0 +1,23 @@
+{ "backgroundcolor":"#000000",
+ "compressionlevel":-1,
+ "height":28,
+ "infinite":false,
+ "layers":[],
+ "nextlayerid":1,
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"timeline",
+         "type":"string",
+         "value":"intro.json"
+        }],
+ "renderorder":"right-down",
+ "tiledversion":"1.3.4",
+ "tileheight":8,
+ "tilesets":[],
+ "tilewidth":8,
+ "type":"map",
+ "version":1.2,
+ "width":50
+}

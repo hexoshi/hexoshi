@@ -273,7 +273,7 @@ map_js = [[]]
 save_slots = [None for i in range(SAVE_NSLOTS)]
 
 with open(os.path.join(DATA, "ai_data.json"), 'r') as f:
-    ai_data = set(json.load(f))
+    ai_data = json.load(f)
 
 abort = False
 
@@ -3330,7 +3330,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.perform_action(self.action_turn_left)
 
     def stop_left(self):
-        if self.yvelocity > 0:
+        if self.yvelocity > 0 and not self.was_on_floor:
             self.xvelocity = 0
 
         if not self.action and self.can_act:
@@ -3344,7 +3344,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.perform_action(self.action_turn_right)
 
     def stop_right(self):
-        if self.yvelocity > 0:
+        if self.yvelocity > 0 and not self.was_on_floor:
             self.xvelocity = 0
 
         if not self.action and self.can_act:
@@ -3389,21 +3389,20 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.movement_speed = MANTANOID_WANDER_SPEED * abs(xv)
             self.alarms["move_lock"] = MANTANOID_WANDER_INTERVAL
 
+    def log_action_result(self, action, success):
+        ai_data.setdefault(action, [0, 0])
+        i = 0 if success else 1
+        ai_data[action][i] += 1
+
     def perform_action(self, action):
         if not self.action and self.can_act:
             self.can_act = False
             self.reset_action_check()
             self.xvelocity = 0
-            if (self.target is not None and self.target.x < self.x and
-                    self.image_xscale > 0):
-                self.action_turn_left()
-            elif (self.target is not None and self.target.x > self.x and
-                  self.image_xscale < 0):
-                self.action_turn_right()
-            else:
-                action()
+            action()
 
-    def check_action(self, action, target_x, target_y, verify_event):
+    def check_action(self, action, target_x, target_y, verify_event,
+                     check_x=None, check_y=None):
         if not self.can_act:
             return False
 
@@ -3419,44 +3418,49 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         def rough(x):
             return int(math.floor(x / 8)) * 8 if x is not None else None
 
-        action_id = "{}; {}: ({},{})->({},{})!{}~{} -- ".format(
+        if check_x is None:
+            check_x = target_x
+        if check_y is None:
+            check_y = target_y
+
+        action_id = "{}; {}: ({},{};{})->({},{})!{}~{}".format(
             self.__class__.__name__, sge.game.current_room.fname,
-            rough(self.x), rough(self.y), rough(target_x), rough(target_y),
-            action.__name__, verify_event)
+            rough(self.x), rough(self.y), self.image_xscale, rough(target_x),
+            rough(target_y), action.__name__, verify_event)
 
-        action_id_pass = action_id + "pass"
-        action_id_fail = action_id + "fail"
+        ai_data.setdefault(action_id, [0, 0])
+        successes = ai_data[action_id][0]
+        fails = ai_data[action_id][1]
 
-        if action_id_pass in ai_data:
-            if action_id_fail not in ai_data or random.random() < 0.25:
-                if self.target.x < self.x and self.image_xscale > 0:
+        if successes >= 3 and successes > fails:
+            if target_x is not None:
+                if target_x < self.x and self.image_xscale > 0:
                     self.perform_action(self.action_turn_left)
                     return True
-                elif self.target.x > self.x and self.image_xscale < 0:
+                elif target_x > self.x and self.image_xscale < 0:
                     self.perform_action(self.action_turn_right)
                     return True
-                else:
-                    self.perform_action(action)
+
+            self.perform_action(action)
+            return True
+        elif fails < 3:
+            if target_x is not None:
+                if target_x < self.x and self.image_xscale > 0:
+                    self.perform_action(self.action_turn_left)
                     return True
-            else:
-                return False
-        elif action_id_fail not in ai_data:
-            if self.target.x < self.x and self.image_xscale > 0:
-                self.perform_action(self.action_turn_left)
-                return True
-            elif self.target.x > self.x and self.image_xscale < 0:
-                self.perform_action(self.action_turn_right)
-                return True
-            else:
-                self.perform_action(action)
-                self.action_check = action
-                self.action_check_id = action_id
-                self.action_check_x = self.x
-                self.action_check_y = self.y
-                self.action_check_dest_x = target_x
-                self.action_check_dest_y = target_y
-                self.action_check_verify = verify_event
-                return True
+                elif target_x > self.x and self.image_xscale < 0:
+                    self.perform_action(self.action_turn_right)
+                    return True
+
+            self.perform_action(action)
+            self.action_check = action
+            self.action_check_id = action_id
+            self.action_check_x = self.x
+            self.action_check_y = self.y
+            self.action_check_dest_x = check_x
+            self.action_check_dest_y = check_y
+            self.action_check_verify = verify_event
+            return True
 
         return False
 
@@ -3464,7 +3468,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if self.action_check is not None:
             if (self.action_check_dest_x is None and
                     self.action_check_dest_y is None):
-                ai_data.add(self.action_check_id + "pass")
+                self.log_action_result(self.action_check_id, True)
             elif self.action_check_dest_x is None:
                 orig_dist = abs(self.action_check_dest_y - self.action_check_y)
                 new_dist = abs(self.action_check_dest_y - self.y)
@@ -3480,15 +3484,10 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                     self.action_check_dest_y - self.y))
 
             if new_dist < orig_dist:
-                ai_data.add(self.action_check_id + "pass")
+                self.log_action_result(self.action_check_id, True)
             else:
-                ai_data.add(self.action_check_id + "fail")
+                self.log_action_result(self.action_check_id, False)
 
-            self.reset_action_check()
-
-    def deverify_action(self):
-        if self.action_check is not None:
-            ai_data.add(self.action_check_id + "fail")
             self.reset_action_check()
 
     def reset_action_check(self):
@@ -3571,16 +3570,16 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         action = self.action_approach
                     elif not self.hiding:
                         if self.target.on_floor and self.check_action(
-                                self.action_approach, None, self.target.y,
-                                "action_lock"):
+                                self.action_approach, self.target.x,
+                                self.target.y, "action_lock", check_x=None):
                             return
                         elif self.target.on_floor and self.check_action(
-                                self.action_jump, None, self.target.y,
-                                "stop_down"):
+                                self.action_jump, self.target.x, self.target.y,
+                                "stop_down", check_x=None):
                             return
                         elif self.target.on_floor and self.check_action(
-                                self.action_hop, None, self.target.y,
-                                "stop_down"):
+                                self.action_hop, self.target.x, self.target.y,
+                                "stop_down", check_x=None):
                             return
                         elif self.check_action(
                                 self.action_approach, self.target.x,
@@ -3623,7 +3622,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         self.sprite = mantanoid_fall_sprite
 
     def event_step(self, time_passed, delta_mult):
-        on_floor = self.get_bottom_touching_wall()
+        on_floor = (self.get_bottom_touching_wall()
+                    + self.get_bottom_touching_slope())
         self.can_act = (self.was_on_floor and on_floor and self.yvelocity >= 0)
 
         if not self.action and self.can_act:
@@ -3639,9 +3639,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.update_action()
 
         if not self.action:
-            if ((self.image_xscale > 0 or not self.get_left_touching_wall()) and
-                    (self.image_xscale < 0 or not self.get_right_touching_wall())):
-                self.xvelocity = self.movement_speed * self.image_xscale
+            self.xvelocity = self.movement_speed * self.image_xscale
 
             on_slope = self.get_bottom_touching_slope()
             if (on_floor or on_slope):
@@ -3655,12 +3653,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                                 if self.target is not None:
                                     if (not self.check_action(
                                                 self.action_hop, self.target.x,
-                                                self.target.y, "stop_down") and
-                                            not self.check_action(
+                                                self.target.y, "stop_down")
+                                            and not self.check_action(
                                                 self.action_jump,
                                                 self.target.x, self.target.y,
-                                                "stop_down") and
-                                            not self.check_action(
+                                                "stop_down")
+                                            and not self.check_action(
                                                 self.action_approach,
                                                 self.target.x, self.target.y,
                                                 "stop_down")):
@@ -6062,10 +6060,13 @@ def write_to_disk():
            "music_enabled": music_enabled, "stereo_enabled": stereo_enabled,
            "fps_enabled": fps_enabled, "metroid_controls": metroid_controls,
            "joystick_threshold": joystick_threshold, "keys": keys_cfg,
-           "joystick": js_cfg, "ai_data": sorted(list(ai_data))}
+           "joystick": js_cfg}
 
     with open(os.path.join(CONFIG, "config.json"), 'w') as f:
         json.dump(cfg, f, indent=4)
+
+    with open(os.path.join(CONFIG, "ai_data.json"), 'w') as f:
+        json.dump(ai_data, f)
 
     with open(os.path.join(CONFIG, "save_slots.json"), 'w') as f:
         json.dump(save_slots, f, indent=4)
@@ -6914,7 +6915,7 @@ if SAVE_MAP:
 try:
     with open(os.path.join(CONFIG, "config.json")) as f:
         cfg = json.load(f)
-except (IOError, ValueError):
+except (OSError, ValueError):
     cfg = {}
 finally:
     cfg_version = cfg.get("version", 0)
@@ -6930,7 +6931,6 @@ finally:
     metroid_controls = cfg.get("metroid_controls", metroid_controls)
     joystick_threshold = cfg.get("joystick_threshold", joystick_threshold)
     xsge_gui.joystick_threshold = joystick_threshold
-    ai_data |= set(cfg.get("ai_data", ai_data))
 
     keys_cfg = cfg.get("keys", {})
     left_key = keys_cfg.get("left", left_key)
@@ -6969,9 +6969,17 @@ finally:
     set_gui_controls()
 
 try:
+    with open(os.path.join(CONFIG, "ai_data.json")) as f:
+        d = json.load(f)
+except (OSError, ValueError):
+    pass
+else:
+    ai_data.update(d)
+
+try:
     with open(os.path.join(CONFIG, "save_slots.json")) as f:
         loaded_slots = json.load(f)
-except (IOError, ValueError):
+except (OSError, ValueError):
     pass
 else:
     for i in range(min(len(loaded_slots), len(save_slots))):

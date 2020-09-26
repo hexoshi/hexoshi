@@ -1,8 +1,16 @@
 { "columns":0,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
  "margin":0,
  "name":"artifact",
  "spacing":0,
- "tilecount":10,
+ "tilecount":22,
  "tiledversion":"1.3.4",
  "tileheight":17,
  "tiles":[
@@ -63,6 +71,78 @@
         {
          "id":9,
          "image":"..\/images\/objects\/powerups\/artifact10.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":10,
+         "image":"..\/images\/objects\/powerups\/artifact11.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":11,
+         "image":"..\/images\/objects\/powerups\/artifact12.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":12,
+         "image":"..\/images\/objects\/powerups\/artifact13.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":13,
+         "image":"..\/images\/objects\/powerups\/artifact14.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":14,
+         "image":"..\/images\/objects\/powerups\/artifact15.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":15,
+         "image":"..\/images\/objects\/powerups\/artifact16.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":16,
+         "image":"..\/images\/objects\/powerups\/artifact17.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":17,
+         "image":"..\/images\/objects\/powerups\/artifact18.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":18,
+         "image":"..\/images\/objects\/powerups\/artifact19.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":19,
+         "image":"..\/images\/objects\/powerups\/artifact20.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":20,
+         "image":"..\/images\/objects\/powerups\/artifact21.png",
+         "imageheight":16,
+         "imagewidth":16
+        }, 
+        {
+         "id":21,
+         "image":"..\/images\/objects\/powerups\/artifact22.png",
          "imageheight":16,
          "imagewidth":16
         }],

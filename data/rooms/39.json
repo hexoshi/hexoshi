@@ -1,4 +1,11 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
  "height":28,
  "infinite":false,
  "layers":[
@@ -22,7 +29,7 @@
          "name":"Powerups",
          "objects":[
                 {
-                 "gid":287,
+                 "gid":299,
                  "height":16,
                  "id":36,
                  "name":"",
@@ -396,7 +403,7 @@
          "source":"..\/tilesets\/artifact.json"
         }, 
         {
-         "firstgid":285,
+         "firstgid":297,
          "source":"..\/tilesets\/macguffin.json"
         }],
  "tilewidth":8,

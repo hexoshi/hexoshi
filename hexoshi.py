@@ -49,6 +49,9 @@ DATA = os.path.join(os.path.dirname(__file__), "data")
 CONFIG = os.path.join(
     os.getenv("XDG_CONFIG_HOME", os.path.join(os.path.expanduser("~"),
                                               ".config")), "hexoshi")
+LOCAL = os.path.join(
+    os.getenv("XDG_DATA_HOME", os.path.join(os.path.expanduser("~"), ".local",
+                                            "share")), "hexoshi")
 SCREEN_SIZE = [400, 224]
 TILE_SIZE = 16
 FPS = 60
@@ -6065,10 +6068,10 @@ def write_to_disk():
     with open(os.path.join(CONFIG, "config.json"), 'w') as f:
         json.dump(cfg, f, indent=4)
 
-    with open(os.path.join(CONFIG, "ai_data.json"), 'w') as f:
+    with open(os.path.join(LOCAL, "ai_data.json"), 'w') as f:
         json.dump(ai_data, f)
 
-    with open(os.path.join(CONFIG, "save_slots.json"), 'w') as f:
+    with open(os.path.join(LOCAL, "save_slots.json"), 'w') as f:
         json.dump(save_slots, f, indent=4)
 
 
@@ -6491,9 +6494,12 @@ print(_("Loading resources..."))
 if not os.path.exists(CONFIG):
     os.makedirs(CONFIG)
 
+if not os.path.exists(LOCAL):
+    os.makedirs(LOCAL)
+
 # Save error messages to a text file (so they aren't lost).
 if not PRINT_ERRORS:
-    stderr = os.path.join(CONFIG, "stderr.txt")
+    stderr = os.path.join(LOCAL, "stderr.txt")
     if not os.path.isfile(stderr) or os.path.getsize(stderr) > 1000000:
         sys.stderr = open(stderr, 'w')
     else:
@@ -6969,7 +6975,7 @@ finally:
     set_gui_controls()
 
 try:
-    with open(os.path.join(CONFIG, "ai_data.json")) as f:
+    with open(os.path.join(LOCAL, "ai_data.json")) as f:
         d = json.load(f)
 except (OSError, ValueError):
     pass
@@ -6977,7 +6983,7 @@ else:
     ai_data.update(d)
 
 try:
-    with open(os.path.join(CONFIG, "save_slots.json")) as f:
+    with open(os.path.join(LOCAL, "save_slots.json")) as f:
         loaded_slots = json.load(f)
 except (OSError, ValueError):
     pass

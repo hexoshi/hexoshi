@@ -1,4 +1,11 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
  "height":28,
  "infinite":false,
  "layers":[
@@ -93,18 +100,6 @@
                  "visible":true,
                  "width":8,
                  "x":392,
-                 "y":152
-                }, 
-                {
-                 "gid":259,
-                 "height":16,
-                 "id":10,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":16,
-                 "x":56,
                  "y":152
                 }],
          "opacity":1,

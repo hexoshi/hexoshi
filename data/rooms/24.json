@@ -1,4 +1,11 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
  "height":84,
  "infinite":false,
  "layers":[
@@ -675,7 +682,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":71,
+ "nextobjectid":72,
  "orientation":"orthogonal",
  "properties":[
         {

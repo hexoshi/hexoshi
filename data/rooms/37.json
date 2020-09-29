@@ -1,4 +1,11 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
  "height":28,
  "infinite":false,
  "layers":[
@@ -33,27 +40,15 @@
          "name":"Enemies",
          "objects":[
                 {
-                 "gid":255,
-                 "height":48,
-                 "id":15,
+                 "gid":256,
+                 "height":36,
+                 "id":18,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
-                 "x":280,
-                 "y":208
-                }, 
-                {
-                 "gid":255,
-                 "height":48,
-                 "id":16,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":120,
+                 "width":62,
+                 "x":184,
                  "y":208
                 }],
          "opacity":1,
@@ -249,7 +244,7 @@
          "y":0
         }],
  "nextlayerid":12,
- "nextobjectid":17,
+ "nextobjectid":19,
  "orientation":"orthogonal",
  "properties":[
         {

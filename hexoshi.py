@@ -3317,6 +3317,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         super(Mantanoid, self).__init__(x, y, **kwargs)
         self.hiding = hiding
         self.wander_x = wander_x if wander_x else x
+        self.has_approached = False
         self.action = None
         self.target = None
         self.movement_speed = 0
@@ -3573,7 +3574,9 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if self.target is not None:
             if self.movement_speed != MANTANOID_APPROACH_SPEED:
                 self.movement_speed = MANTANOID_APPROACH_SPEED
-                play_sound(mantanoid_approach_sound, self.x, self.y)
+                if not self.has_approached:
+                    self.has_approached = True
+                    play_sound(mantanoid_approach_sound, self.x, self.y)
 
             self.alarms["action_lock"] = MANTANOID_APPROACH_INTERVAL
 
@@ -3635,6 +3638,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         else:
                             # Try a random action
                             action = self.get_spitball_action()
+                    elif ydist <= MANTANOID_LEVEL_DISTANCE:
+                        action = self.action_approach
 
         if action:
             self.perform_action(action)
@@ -3683,6 +3688,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 dist = math.hypot(xvec, yvec)
                 if dist > self.sight_distance:
                     self.target = None
+                    self.has_approached = False
 
             self.update_action()
 

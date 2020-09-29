@@ -101,6 +101,9 @@ parser.add_argument(
 parser.add_argument(
     "-s", "--save-map", help=_('Save an image of the full map as "map.png".'),
     action="store_true")
+parser.add_argument(
+    "--dist_ai", help=_("Write the AI data to the game data directory instead of the user data directory (for distribution)."),
+    action="store_true")
 parser.add_argument("--god")
 args = parser.parse_args()
 
@@ -116,6 +119,7 @@ NO_BACKGROUNDS = args.no_backgrounds
 NO_HUD = args.no_hud
 GEN_MAP = args.gen_map
 SAVE_MAP = args.save_map
+DIST_AI = args.dist_ai
 GOD = (args.god and args.god.lower() == "inbailey")
 
 if args.lang:
@@ -6019,7 +6023,7 @@ def play_music(music, force_restart=False, noloop=False):
                 try:
                     music_object = sge.snd.Music(os.path.join(DATA, "music",
                                                               music))
-                except (IOError, OSError):
+                except OSError:
                     sge.snd.Music.clear_queue()
                     sge.snd.Music.stop()
                     return
@@ -6033,7 +6037,7 @@ def play_music(music, force_restart=False, noloop=False):
                 try:
                     music_start_object = sge.snd.Music(os.path.join(DATA, "music",
                                                                     music_start))
-                except (IOError, OSError):
+                except OSError:
                     pass
                 else:
                     loaded_music[music_start] = music_start_object
@@ -6109,8 +6113,18 @@ def write_to_disk():
     with open(os.path.join(CONFIG, "config.json"), 'w') as f:
         json.dump(cfg, f, indent=4)
 
-    with open(os.path.join(LOCAL, "ai_data.json"), 'w') as f:
-        json.dump(ai_data, f)
+    if DIST_AI:
+        # Save to DATA instead.
+        with open(os.path.join(DATA, "ai_data.json"), 'w') as f:
+            json.dump(ai_data, f)
+
+        # Remove the local file since it's now redundant.
+        fd = os.path.join(LOCAL, "ai_data.json")
+        if os.path.exists(fd):
+            os.remove(fd)
+    else:
+        with open(os.path.join(LOCAL, "ai_data.json"), 'w') as f:
+            json.dump(ai_data, f)
 
     with open(os.path.join(LOCAL, "save_slots.json"), 'w') as f:
         json.dump(save_slots, f, indent=4)
@@ -6924,7 +6938,7 @@ if not GEN_MAP:
     try:
         with open(os.path.join(DATA, "map", "rooms.json")) as f:
             d = json.load(f)
-    except (IOError, ValueError):
+    except (OSError, ValueError):
         generate_map()
     else:
         for i in d:
@@ -6933,7 +6947,7 @@ if not GEN_MAP:
     try:
         with open(os.path.join(DATA, "map", "objects.json")) as f:
             d = json.load(f)
-    except (IOError, ValueError):
+    except (OSError, ValueError):
         generate_map()
     else:
         for i in d:
@@ -6944,7 +6958,7 @@ if not GEN_MAP:
     try:
         with open(os.path.join(DATA, "map", "info.json")) as f:
             d = json.load(f)
-    except (IOError, ValueError):
+    except (OSError, ValueError):
         generate_map()
     else:
         num_powerups = d.get("powerups", 0)

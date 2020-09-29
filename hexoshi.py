@@ -3328,6 +3328,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         self.action_check_dest_x = None
         self.action_check_dest_y = None
         self.action_check_verify = None
+        self.spitball_checks = []
+        self.spitball_check_ids = []
 
     def set_direction(self, direction):
         if not self.action and self.can_act:
@@ -3342,11 +3344,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if not self.action and self.can_act:
             if self.target is not None:
-                if not self.check_action(self.action_hop, self.target.x,
-                                         self.target.y, "stop_down"):
-                    if not self.check_action(self.action_jump, self.target.x,
-                                             self.target.y, "stop_down"):
-                        self.target = None
+                if (not self.check_action(self.action_hop, self.target.x,
+                                          self.target.y, "stop_down")
+                        and not self.check_action(self.action_jump,
+                                                  self.target.x, self.target.y,
+                                                  "stop_down")):
+                    self.target = None
             else:
                 self.perform_action(self.action_turn_right)
 
@@ -3356,11 +3359,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if not self.action and self.can_act:
             if self.target is not None:
-                if not self.check_action(self.action_hop, self.target.x,
-                                         self.target.y, "stop_down"):
-                    if not self.check_action(self.action_jump, self.target.x,
-                                             self.target.y, "stop_down"):
-                        self.target = None
+                if (not self.check_action(self.action_hop, self.target.x,
+                                         self.target.y, "stop_down")
+                        and not self.check_action(self.action_jump,
+                                                  self.target.x, self.target.y,
+                                                  "stop_down")):
+                    self.target = None
             else:
                 self.perform_action(self.action_turn_left)
 
@@ -3401,6 +3405,16 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         i = 0 if success else 1
         ai_data[action][i] += 1
 
+        # Record the spitballs as a success. Note: we do NOT log
+        # failures here since the same spitballs might actually lead to
+        # other solutions and we don't want to impede the AI's trust in
+        # later successful spitballs just because it didn't work this
+        # time.
+        if success:
+            for spitball in self.spitball_check_ids:
+                ai_data.setdefault(spitball, [0, 0])
+                ai_data[spitball][0] += 1
+
     def perform_action(self, action):
         if not self.action and self.can_act:
             self.can_act = False
@@ -3430,10 +3444,11 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if check_y is None:
             check_y = target_y
 
-        action_id = "{}; {}: ({},{};{})->({},{})!{}~{}".format(
+        action_id = "{}; {}: ({},{};{}+{})->({},{})|({},{})!{}".format(
             self.__class__.__name__, sge.game.current_room.fname,
-            rough(self.x), rough(self.y), self.image_xscale, rough(target_x),
-            rough(target_y), action.__name__, verify_event)
+            rough(self.x), rough(self.y), self.image_xscale,
+            self.movement_speed, rough(target_x), rough(target_y),
+            rough(check_x), rough(check_y), action.__name__)
 
         ai_data.setdefault(action_id, [0, 0])
         successes = ai_data[action_id][0]
@@ -3467,6 +3482,17 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.action_check_dest_x = check_x
             self.action_check_dest_y = check_y
             self.action_check_verify = verify_event
+
+            self.spitball_check_ids = []
+            for s_action, s_x, s_y, s_ixs, s_spd in self.spitball_checks:
+                sid = "{}; {}: ({},{};{}+{})->({},{})|({},{})!{}".format(
+                    self.__class__.__name__, sge.game.current_room.fname,
+                    rough(s_x), rough(s_y), s_ixs, s_spd, rough(target_x),
+                    rough(target_y), rough(check_x), rough(check_y),
+                    s_action.__name__)
+                self.spitball_check_ids.append(sid)
+            self.spitball_checks = []
+
             return True
 
         return False
@@ -3559,6 +3585,19 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.image_fps = None
             self.image_index = 0
 
+    def get_spitball_action(self):
+        choices = 6*[self.action_approach] + [self.action_jump, self.action_hop]
+        if not self.spitball_checks:
+            if self.image_xscale < 0:
+                choices.append(self.action_turn_right)
+            else:
+                choices.append(self.action_turn_left)
+
+        action = random.choice(choices)
+        self.spitball_checks.append((action, self.x, self.y, self.image_xscale,
+                                     self.movement_speed))
+        return action
+
     def check_hazards(self):
         return None
 
@@ -3573,27 +3612,29 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         ydist <= MANTANOID_LEVEL_DISTANCE):
                     action = self.action_slash
                 elif "action_lock" not in self.alarms:
-                    if ydist <= MANTANOID_LEVEL_DISTANCE:
-                        action = self.action_approach
-                    elif not self.hiding:
-                        if self.target.on_floor and self.check_action(
+                    if not self.hiding:
+                        if random.random() < 0.1:
+                            # Randomly decide to spitball (curiosity)
+                            action = self.get_spitball_action()
+                        elif self.target.on_floor and self.check_action(
                                 self.action_approach, self.target.x,
-                                self.target.y, "action_lock", check_x=None):
+                                self.target.y, "action_lock"):
                             return
                         elif self.target.on_floor and self.check_action(
                                 self.action_jump, self.target.x, self.target.y,
-                                "stop_down", check_x=None):
+                                "stop_down"):
                             return
                         elif self.target.on_floor and self.check_action(
                                 self.action_hop, self.target.x, self.target.y,
-                                "stop_down", check_x=None):
+                                "stop_down"):
                             return
                         elif self.check_action(
                                 self.action_approach, self.target.x,
                                 self.target.y, "action_lock"):
                             return
                         else:
-                            self.target = None
+                            # Try a random action
+                            action = self.get_spitball_action()
 
         if action:
             self.perform_action(action)

@@ -3337,7 +3337,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.perform_action(self.action_turn_left)
 
     def stop_left(self):
-        if self.yvelocity > 0:
+        if self.yvelocity > 0 and not self.was_on_floor:
             self.xvelocity = 0
 
         if not self.action and self.can_act:
@@ -3351,7 +3351,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.perform_action(self.action_turn_right)
 
     def stop_right(self):
-        if self.yvelocity > 0:
+        if self.yvelocity > 0 and not self.was_on_floor:
             self.xvelocity = 0
 
         if not self.action and self.can_act:
@@ -3630,7 +3630,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         self.sprite = mantanoid_fall_sprite
 
     def event_step(self, time_passed, delta_mult):
-        on_floor = self.get_bottom_touching_wall()
+        on_floor = (self.get_bottom_touching_wall()
+                    + self.get_bottom_touching_slope())
         self.can_act = (self.was_on_floor and on_floor and self.yvelocity >= 0)
 
         if not self.action and self.can_act:
@@ -3646,9 +3647,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.update_action()
 
         if not self.action:
-            if ((self.image_xscale > 0 or not self.get_left_touching_wall()) and
-                    (self.image_xscale < 0 or not self.get_right_touching_wall())):
-                self.xvelocity = self.movement_speed * self.image_xscale
+            self.xvelocity = self.movement_speed * self.image_xscale
 
             on_slope = self.get_bottom_touching_slope()
             if (on_floor or on_slope):
@@ -3662,12 +3661,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                                 if self.target is not None:
                                     if (not self.check_action(
                                                 self.action_hop, self.target.x,
-                                                self.target.y, "stop_down") and
-                                            not self.check_action(
+                                                self.target.y, "stop_down")
+                                            and not self.check_action(
                                                 self.action_jump,
                                                 self.target.x, self.target.y,
-                                                "stop_down") and
-                                            not self.check_action(
+                                                "stop_down")
+                                            and not self.check_action(
                                                 self.action_approach,
                                                 self.target.x, self.target.y,
                                                 "stop_down")):
@@ -6069,7 +6068,7 @@ def write_to_disk():
            "music_enabled": music_enabled, "stereo_enabled": stereo_enabled,
            "fps_enabled": fps_enabled, "metroid_controls": metroid_controls,
            "joystick_threshold": joystick_threshold, "keys": keys_cfg,
-           "joystick": js_cfg, "ai_data": sorted(list(ai_data))}
+           "joystick": js_cfg}
 
     with open(os.path.join(CONFIG, "config.json"), 'w') as f:
         json.dump(cfg, f, indent=4)
@@ -6077,7 +6076,7 @@ def write_to_disk():
     if DIST_AI:
         # Save to DATA instead.
         with open(os.path.join(DATA, "ai_data.json"), 'w') as f:
-            json.dump(ai_data, f)
+            json.dump(sorted(list(ai_data)), f, indent=0)
 
         # Remove the local file since it's now redundant.
         fd = os.path.join(LOCAL, "ai_data.json")
@@ -6085,7 +6084,7 @@ def write_to_disk():
             os.remove(fd)
     else:
         with open(os.path.join(LOCAL, "ai_data.json"), 'w') as f:
-            json.dump(ai_data, f)
+            json.dump(list(ai_data), f)
 
     with open(os.path.join(LOCAL, "save_slots.json"), 'w') as f:
         json.dump(save_slots, f, indent=4)
@@ -6937,7 +6936,7 @@ if SAVE_MAP:
 try:
     with open(os.path.join(CONFIG, "config.json")) as f:
         cfg = json.load(f)
-except (IOError, ValueError):
+except (OSError, ValueError):
     cfg = {}
 finally:
     cfg_version = cfg.get("version", 0)
@@ -6953,7 +6952,6 @@ finally:
     metroid_controls = cfg.get("metroid_controls", metroid_controls)
     joystick_threshold = cfg.get("joystick_threshold", joystick_threshold)
     xsge_gui.joystick_threshold = joystick_threshold
-    ai_data |= set(cfg.get("ai_data", ai_data))
 
     keys_cfg = cfg.get("keys", {})
     left_key = keys_cfg.get("left", left_key)
@@ -6993,16 +6991,16 @@ finally:
 
 try:
     with open(os.path.join(LOCAL, "ai_data.json")) as f:
-        d = json.load(f)
+        L = json.load(f)
 except (OSError, ValueError):
     pass
 else:
-    ai_data.update(d)
+    ai_data |= set(L)
 
 try:
     with open(os.path.join(LOCAL, "save_slots.json")) as f:
         loaded_slots = json.load(f)
-except (IOError, ValueError):
+except (OSError, ValueError):
     pass
 else:
     for i in range(min(len(loaded_slots), len(save_slots))):

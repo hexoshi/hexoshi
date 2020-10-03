@@ -62,9 +62,9 @@ FSSCALE = None
 
 gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
 
-parser = argparse.ArgumentParser(prog="Hexoshi")
+parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--version", action="version", version="%(prog)s " + __version__,
+    "--version", action="version", version=f"Hexoshi {__version__}",
     help=_("Output version information and exit."))
 parser.add_argument(
     "-p", "--print-errors",

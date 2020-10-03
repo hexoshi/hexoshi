@@ -27,6 +27,29 @@ There are some command-line options that can be passed. Run the game in
 a terminal with the "-h" command-line option for more information.
 
 
+NOTES FOR GIT REPO USERS
+
+The Hexoshi Git repository excludes some automatically generated files,
+so if you are running Hexoshi directly from the Git repository (rather
+than a release archive), there are a couple extra steps to keep in mind.
+
+Hexoshi uses gettext for translations. Building gettext files can be
+done with the included build.py script in data/locale (requires msgfmt):
+
+    cd data/locale
+    ./build.py
+    cd ../..
+
+For startup efficiency, Hexoshi generates map files on first startup and
+attempts to save them to Hexoshi's data directory (either the directory
+passed via Hexoshi's -d argument, or the "data" directory in the same
+location as hexoshi.py by default). If packaging Hexoshi for
+distribution, these files should be pre-generated. You can do this
+simply by running Hexoshi beforehand. You can also use the -m argument
+to force maps to be regenerated (if, for example, you have maps that
+were generated for a previous release cached).
+
+
 SPECIAL CONTROLS
 
 You can exit the game by pressing the middle mouse button. This is a

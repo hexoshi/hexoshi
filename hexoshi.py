@@ -6397,14 +6397,17 @@ def generate_map():
 
     info = {"powerups": num_powerups, "artifacts": num_artifacts}
 
-    with open(os.path.join(DATA, "map", "rooms.json"), 'w') as f:
-        json.dump(map_rooms, f, indent=4, sort_keys=True)
+    try:
+        with open(os.path.join(DATA, "map", "rooms.json"), 'w') as f:
+            json.dump(map_rooms, f, indent=4, sort_keys=True)
 
-    with open(os.path.join(DATA, "map", "objects.json"), 'w') as f:
-        json.dump(f_objects, f, indent=4, sort_keys=True)
+        with open(os.path.join(DATA, "map", "objects.json"), 'w') as f:
+            json.dump(f_objects, f, indent=4, sort_keys=True)
 
-    with open(os.path.join(DATA, "map", "info.json"), 'w') as f:
-        json.dump(info, f, indent=4, sort_keys=True)
+        with open(os.path.join(DATA, "map", "info.json"), 'w') as f:
+            json.dump(info, f, indent=4, sort_keys=True)
+    except PermissionError as e:
+        warnings.warn(f"Could not save generated map files - {e}")
 
 
 def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):

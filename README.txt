@@ -44,10 +44,15 @@ For startup efficiency, Hexoshi generates map files on first startup and
 attempts to save them to Hexoshi's data directory (either the directory
 passed via Hexoshi's -d argument, or the "data" directory in the same
 location as hexoshi.py by default). If packaging Hexoshi for
-distribution, these files should be pre-generated. You can do this
-simply by running Hexoshi beforehand. You can also use the -m argument
-to force maps to be regenerated (if, for example, you have maps that
-were generated for a previous release cached).
+distribution, these files should be pre-generated. You can do so easily
+with the following command:
+
+    ./hexoshi.py -mq
+
+The -m option forces map generation, and the -q option causes the game
+to quit immediately after opening. Alternatively, simply running the
+game normally before distributing should work as long as no pre-existing
+map files already exist.
 
 
 SPECIAL CONTROLS

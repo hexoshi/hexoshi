@@ -104,6 +104,10 @@ parser.add_argument(
 parser.add_argument(
     "--dist_ai", help=_("Write the AI data to the game data directory instead of the user data directory (for distribution)."),
     action="store_true")
+parser.add_argument(
+    "-q", "--quit",
+    help=_("Quit immediately on startup (useful with -m or -s)."),
+    action="store_true")
 parser.add_argument("--god")
 args = parser.parse_args()
 
@@ -120,6 +124,7 @@ NO_HUD = args.no_hud
 GEN_MAP = args.gen_map
 SAVE_MAP = args.save_map
 DIST_AI = args.dist_ai
+QUIT = args.quit
 GOD = (args.god and args.god.lower() == "inbailey")
 
 if args.lang:
@@ -7063,6 +7068,9 @@ else:
 print(_("Starting game..."))
 
 try:
-    sge.game.start()
+    if not QUIT:
+        sge.game.start()
+    else:
+        print(_("Successfully started Hexoshi. Quitting now as -q was passed."))
 finally:
     write_to_disk()

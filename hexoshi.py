@@ -6865,6 +6865,9 @@ healthbar_front_sprite = sge.gfx.Sprite("healthbar_front", d,
 healthbar_width = healthbar_front_sprite.width
 healthbar_height = healthbar_front_sprite.height
 etank_empty_sprite = sge.gfx.Sprite("etank_empty", d)
+etank_empty_sprite.draw_rectangle(
+    0, 0, etank_empty_sprite.width, etank_empty_sprite.height,
+    fill=sge.gfx.Color((0, 0, 0, 128)), blend_mode=sge.BLEND_RGBA_SUBTRACT)
 etank_full_sprite = sge.gfx.Sprite("etank_full", d)
 life_force_sprite = sge.gfx.Sprite(
     "life_force", d, origin_x=7, origin_y=7, fps=10)

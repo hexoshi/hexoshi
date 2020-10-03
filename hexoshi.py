@@ -102,7 +102,7 @@ parser.add_argument(
     "-s", "--save-map", help=_('Save an image of the full map as "map.png".'),
     action="store_true")
 parser.add_argument(
-    "--dist_ai", help=_("Write the AI data to the game data directory instead of the user data directory (for distribution)."),
+    "--dist-ai", help=_("Write the AI data to the game data directory instead of the user data directory (for distribution)."),
     action="store_true")
 parser.add_argument(
     "-q", "--quit",
@@ -408,9 +408,9 @@ class Level(sge.dsp.Room):
 
         self.disable_lights = disable_lights or self.ambient_light is None
 
-        super(Level, self).__init__(objects, width, height, views, background,
-                                    background_x, background_y,
-                                    object_area_width, object_area_height)
+        super().__init__(objects, width, height, views, background,
+                         background_x, background_y, object_area_width,
+                         object_area_height)
         self.add(gui_handler)
 
     def load_timeline(self, timeline):
@@ -707,7 +707,7 @@ class Level(sge.dsp.Room):
 class SpecialScreen(Level):
 
     def event_room_start(self):
-        super(SpecialScreen, self).event_room_start()
+        super().event_room_start()
         if player is not None:
             player.destroy()
 
@@ -718,11 +718,11 @@ class TitleScreen(SpecialScreen):
         pass
 
     def event_room_start(self):
-        super(TitleScreen, self).event_room_start()
+        super().event_room_start()
         MainMenu.create()
 
     def event_room_resume(self):
-        super(TitleScreen, self).event_room_resume()
+        super().event_room_resume()
         MainMenu.create()
 
     def event_key_press(self, key, char):
@@ -732,7 +732,7 @@ class TitleScreen(SpecialScreen):
 class CreditsScreen(SpecialScreen):
 
     def event_room_start(self):
-        super(CreditsScreen, self).event_room_start()
+        super().event_room_start()
 
         with open(os.path.join(DATA, "credits.json"), 'r') as f:
             sections = json.load(f)
@@ -815,7 +815,7 @@ class SolidLeft(xsge_physics.SolidLeft):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(SolidLeft, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SolidRight(xsge_physics.SolidRight):
@@ -823,7 +823,7 @@ class SolidRight(xsge_physics.SolidRight):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(SolidRight, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SolidTop(xsge_physics.SolidTop):
@@ -831,7 +831,7 @@ class SolidTop(xsge_physics.SolidTop):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(SolidTop, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SolidBottom(xsge_physics.SolidBottom):
@@ -839,7 +839,7 @@ class SolidBottom(xsge_physics.SolidBottom):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(SolidBottom, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class Solid(xsge_physics.Solid):
@@ -847,7 +847,7 @@ class Solid(xsge_physics.Solid):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(Solid, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SlopeTopLeft(xsge_physics.SlopeTopLeft):
@@ -857,7 +857,7 @@ class SlopeTopLeft(xsge_physics.SlopeTopLeft):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(SlopeTopLeft, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def event_create(self):
         self.slope_xacceleration = -self.bbox_height / self.bbox_width
@@ -870,7 +870,7 @@ class SlopeTopRight(xsge_physics.SlopeTopRight):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(SlopeTopRight, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def event_create(self):
         self.slope_xacceleration = self.bbox_height / self.bbox_width
@@ -881,7 +881,7 @@ class SlopeBottomLeft(xsge_physics.SlopeBottomLeft):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(SlopeBottomLeft, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SlopeBottomRight(xsge_physics.SlopeBottomRight):
@@ -889,7 +889,7 @@ class SlopeBottomRight(xsge_physics.SlopeBottomRight):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(SlopeBottomRight, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class MovingPlatform(xsge_physics.SolidTop, xsge_physics.MobileWall):
@@ -898,12 +898,12 @@ class MovingPlatform(xsge_physics.SolidTop, xsge_physics.MobileWall):
 
     def __init__(self, x, y, z=0, **kwargs):
         kwargs.setdefault("sprite", platform_sprite)
-        super(MovingPlatform, self).__init__(x, y, z, **kwargs)
+        super().__init__(x, y, z, **kwargs)
         self.path = None
         self.following = False
 
     def event_step(self, time_passed, delta_mult):
-        super(MovingPlatform, self).event_step(time_passed, delta_mult)
+        super().event_step(time_passed, delta_mult)
 
         if self.path and not self.following:
             for other in self.collision(Player, y=(self.y - 1)):
@@ -960,7 +960,7 @@ class Death(sge.dsp.Object):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(Death, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class Player(xsge_physics.Collider):
@@ -1089,7 +1089,7 @@ class Player(xsge_physics.Collider):
         if GOD:
             image_blend = sge.gfx.Color("olive")
 
-        super(Player, self).__init__(
+        super().__init__(
             x, y, z=z, sprite=sprite, visible=visible, active=active,
             checks_collisions=checks_collisions, tangible=tangible,
             bbox_x=bbox_x, bbox_y=bbox_y, bbox_width=bbox_width,
@@ -1686,7 +1686,7 @@ class Anneroy(Player):
         kwargs["bbox_width"] = ANNEROY_BBOX_WIDTH
         kwargs["bbox_y"] = ANNEROY_STAND_BBOX_Y
         kwargs["bbox_height"] = ANNEROY_STAND_BBOX_HEIGHT
-        super(Anneroy, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.torso = None
         self.hedgehog_spikes = None
@@ -1805,7 +1805,7 @@ class Anneroy(Player):
                     self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
                     self.aim_lock = True
         else:
-            super(Anneroy, self).press_up()
+            super().press_up()
 
     def press_down(self):
         if not self.aim_diag_pressed:
@@ -1884,7 +1884,7 @@ class Anneroy(Player):
                     self.yvelocity = 0
                     self.gravity = 0
             else:
-                super(Anneroy, self).jump()
+                super().jump()
 
     def retract_spikes(self):
         self.hedgehog = False
@@ -2091,7 +2091,7 @@ class Anneroy(Player):
 
     def hurt(self, damage=1, touching=False):
         if (not touching) or (not self.hedgehog):
-            super(Anneroy, self).hurt(damage, touching)
+            super().hurt(damage, touching)
 
     def kill(self):
         if self.lose_on_death:
@@ -2315,16 +2315,16 @@ class Anneroy(Player):
             bbox_y=ANNEROY_HEDGEHOG_BBOX_Y,
             bbox_width=ANNEROY_HEDGEHOG_BBOX_WIDTH,
             bbox_height=ANNEROY_HEDGEHOG_BBOX_HEIGHT, regulate_origin=True)
-        super(Anneroy, self).event_create()
+        super().event_create()
 
     def event_begin_step(self, time_passed, delta_mult):
-        super(Anneroy, self).event_begin_step(time_passed, delta_mult)
+        super().event_begin_step(time_passed, delta_mult)
 
         if not self.on_floor and self.crouching:
             self.press_up()
 
     def event_alarm(self, alarm_id):
-        super(Anneroy, self).event_alarm(alarm_id)
+        super().event_alarm(alarm_id)
 
         if alarm_id == "fixed_sprite":
             self.fixed_sprite = False
@@ -2387,12 +2387,12 @@ class Anneroy(Player):
             self.destroy()
 
     def event_physics_collision_top(self, other, move_loss):
-        super(Anneroy, self).event_physics_collision_top(other, move_loss)
+        super().event_physics_collision_top(other, move_loss)
         self.event_animation_end()
 
     def event_physics_collision_bottom(self, other, move_loss):
         yv = self.yvelocity
-        super(Anneroy, self).event_physics_collision_bottom(other, move_loss)
+        super().event_physics_collision_bottom(other, move_loss)
 
         if not self.was_on_floor:
             if self.hedgehog:
@@ -2630,7 +2630,7 @@ class WalkingObject(FallingObject):
         self.image_xscale = abs(self.image_xscale) * direction
 
     def move(self):
-        super(WalkingObject, self).move()
+        super().move()
 
         if not self.xvelocity:
             self.set_direction(math.copysign(1, self.image_xscale))
@@ -2690,7 +2690,7 @@ class CrowdObject(CrowdBlockingObject):
                 else:
                     self.set_direction(-1)
         else:
-            super(CrowdObject, self).event_collision(other, xdirection,
+            super().event_collision(other, xdirection,
                                                      ydirection)
 
 
@@ -2719,7 +2719,7 @@ class Shard(FallingObject):
         self.alarms["die"] = self.life
 
     def move(self):
-        super(Shard, self).move()
+        super().move()
         self.speed *= self.friction
 
     def event_alarm(self, alarm_id):
@@ -2893,7 +2893,7 @@ class Frog(Enemy, FallingObject, CrowdObject):
         self.bbox_height = 11
 
     def event_step(self, time_passed, delta_mult):
-        super(Frog, self).event_step(time_passed, delta_mult)
+        super().event_step(time_passed, delta_mult)
 
         if ("jump" not in self.alarms and self.was_on_floor and
                 not self.yvelocity):
@@ -2905,6 +2905,11 @@ class Frog(Enemy, FallingObject, CrowdObject):
 
         if self.was_on_floor:
             self.sprite = frog_stand_sprite
+            if self.yvelocity == 0:
+                # Set xvelocity to 0 in case the frog happened to have
+                # yvelocity == 0 as it started touching the floor (which
+                # prevents stop_down from being called).
+                self.xvelocity = 0
         elif self.yvelocity < 0:
             self.sprite = frog_jump_sprite
         else:
@@ -3056,7 +3061,7 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
             tangible=False)
 
     def event_step(self, time_passed, delta_mult):
-        super(Worm, self).event_step(time_passed, delta_mult)
+        super().event_step(time_passed, delta_mult)
 
         if not self.tangible and "extend_wait" not in self.alarms:
             target = self.get_nearest_player()
@@ -3129,7 +3134,7 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
         self.image_xscale *= random.choice([1, -1])
 
     def event_step(self, time_passed, delta_mult):
-        super(Bat, self).event_step(time_passed, delta_mult)
+        super().event_step(time_passed, delta_mult)
 
         if (self.speed == 0 and "charge_wait" not in self.alarms and
                 not self.returning):
@@ -3192,7 +3197,7 @@ class Jellyfish(Enemy, CrowdBlockingObject):
         self.alarms["swim"] = self.swim_interval
 
     def event_alarm(self, alarm_id):
-        super(Jellyfish, self).event_alarm(alarm_id)
+        super().event_alarm(alarm_id)
 
         if alarm_id == "swim":
             choices = 3 * [1] + [-1]
@@ -3241,11 +3246,11 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
         kwargs["bbox_y"] = -1
         kwargs["bbox_width"] = 56
         kwargs["bbox_height"] = 28
-        super(Scorpion, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
     def move(self):
         if not self.action:
-            super(Scorpion, self).move()
+            super().move()
             if self.xvelocity:
                 self.sprite = scorpion_walk_sprite
                 self.image_speed = (abs(self.xvelocity) *
@@ -3271,12 +3276,12 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
         self.alarms["shoot"] = self.shoot_recheck_interval
 
     def event_create(self):
-        super(Scorpion, self).event_create()
+        super().event_create()
         self.alarms["shoot"] = self.shoot_interval
         self.action = None
 
     def event_alarm(self, alarm_id):
-        super(Scorpion, self).event_alarm(alarm_id)
+        super().event_alarm(alarm_id)
 
         if alarm_id == "shoot":
             self.attack()
@@ -3319,7 +3324,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         kwargs["bbox_width"] = MANTANOID_BBOX_WIDTH
         kwargs["bbox_height"] = MANTANOID_BBOX_HEIGHT
         kwargs["regulate_origin"] = True
-        super(Mantanoid, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
         self.hiding = hiding
         self.wander_x = wander_x if wander_x else x
         self.has_approached = False
@@ -3754,7 +3759,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.set_image()
 
     def event_alarm(self, alarm_id):
-        super(Mantanoid, self).event_alarm(alarm_id)
+        super().event_alarm(alarm_id)
 
         if alarm_id == "action_lock":
             if self.action_check_verify == "action_lock":
@@ -3851,7 +3856,7 @@ class MantanoidNoGo(sge.dsp.Object):
     def __init__(self, x, y, **kwargs):
         kwargs["visible"] = False
         kwargs["checks_collisions"] = False
-        super(MantanoidNoGo, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
 
 class Boss(InteractiveObject):
@@ -3861,10 +3866,10 @@ class Boss(InteractiveObject):
         self.ID = ID
         self.death_timeline = death_timeline
         self.stage = stage
-        super(Boss, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
     def event_create(self):
-        super(Boss, self).event_create()
+        super().event_create()
         sge.game.current_room.add_timeline_object(self)
 
     def event_destroy(self):
@@ -3880,7 +3885,7 @@ class LifeForce(InteractiveObject):
 
     def __init__(self, *args, **kwargs):
         kwargs["sprite"] = life_force_sprite
-        super(LifeForce, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def move(self):
         if "set_direction" not in self.alarms:
@@ -3935,7 +3940,7 @@ class Bullet(InteractiveObject):
             self.destroy()
 
     def event_collision(self, other, xdirection, ydirection):
-        super(Bullet, self).event_collision(other, xdirection, ydirection)
+        super().event_collision(other, xdirection, ydirection)
 
         if isinstance(other, Player):
             if self.attacks_player:
@@ -4119,7 +4124,7 @@ class HedgehogSpikes(InteractiveObject):
     spike_hitstun = FPS / 4
 
     def event_collision(self, other, xdirection, ydirection):
-        super(HedgehogSpikes, self).event_collision(other, xdirection, ydirection)
+        super().event_collision(other, xdirection, ydirection)
 
         if isinstance(other, InteractiveObject) and other.spikeable:
             if "spike_hitstun" not in other.alarms:
@@ -4248,7 +4253,7 @@ class Artifact(Powerup):
     message = ""
 
     def __init__(self, x, y, message="It doesn't seem to to anything", **kwargs):
-        super(Artifact, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
         self.message = _("HEXOSHI ARTIFACT\n\n{}").format(_(message))
 
     def collect(self, other):
@@ -4274,7 +4279,7 @@ class LifeOrb(Powerup):
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = life_orb_sprite
-        super(LifeOrb, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
     def collect(self, other):
         global progress_flags
@@ -4289,7 +4294,7 @@ class Map(Powerup):
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = powerup_map_sprite
-        super(Map, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
     def collect(self, other):
         global progress_flags
@@ -4306,7 +4311,7 @@ class MapDisk(Powerup):
             self.rooms = rooms.split(',')
         else:
             self.rooms = []
-        super(MapDisk, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
     def collect(self, other):
         global map_revealed
@@ -4350,7 +4355,7 @@ class AtomicCompressor(Powerup):
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = atomic_compressor_sprite
-        super(AtomicCompressor, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
     def collect(self, other):
         global progress_flags
@@ -4364,7 +4369,7 @@ class MonkeyBoots(Powerup):
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = monkey_boots_sprite
-        super(MonkeyBoots, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
         self.emitter = None
 
     def event_create(self):
@@ -4377,7 +4382,7 @@ class MonkeyBoots(Powerup):
                 lambda e: random.uniform(e.x, e.x + 13),
                 lambda e: random.uniform(e.y, e.y + 4)])
 
-        super(MonkeyBoots, self).event_create()
+        super().event_create()
 
     def collect(self, other):
         global progress_flags
@@ -4396,7 +4401,7 @@ class HedgehogHormone(Powerup):
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = hedgehog_hormone_sprite
-        super(HedgehogHormone, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
         self.emitter = None
 
     def event_create(self):
@@ -4408,7 +4413,7 @@ class HedgehogHormone(Powerup):
                              "yvelocity": -0.25, "turn_factor": 20,
                              "min_angle": 225, "max_angle": 315})
 
-        super(HedgehogHormone, self).event_create()
+        super().event_create()
 
     def collect(self, other):
         global progress_flags
@@ -4544,7 +4549,7 @@ class WarpPad(SpawnPoint):
         SlopeTopRight.create(self.x + 40, self.y, bbox_width=8, bbox_height=8)
 
     def event_create(self):
-        super(WarpPad, self).event_create()
+        super().event_create()
         if not self.created:
             self.create_children()
 
@@ -4632,7 +4637,7 @@ class DoorFrameX(DoorFrame):
         self.closed_sprite = doorframe_regular_x_closed_sprite
         self.open_sprite = doorframe_regular_x_open_sprite
         self.barrier_sprite = door_barrier_x_sprite
-        super(DoorFrameX, self).event_create()
+        super().event_create()
 
 
 class DoorFrameY(DoorFrame):
@@ -4643,7 +4648,7 @@ class DoorFrameY(DoorFrame):
         self.closed_sprite = doorframe_regular_y_closed_sprite
         self.open_sprite = doorframe_regular_y_open_sprite
         self.barrier_sprite = door_barrier_y_sprite
-        super(DoorFrameY, self).event_create()
+        super().event_create()
 
 
 class Door(sge.dsp.Object):
@@ -4770,7 +4775,7 @@ class MovingObjectPath(xsge_path.PathLink):
         self.prime = prime
         self.parent = parent
         self.obj = lambda: None
-        super(MovingObjectPath, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
     def event_create(self):
         if self.parent is not None:
@@ -4802,13 +4807,13 @@ class MovingPlatformPath(MovingObjectPath):
     default_decel = 0.02
 
     def event_create(self):
-        super(MovingPlatformPath, self).event_create()
+        super().event_create()
         obj = self.obj()
         if obj:
             obj.path = self
 
     def follow_start(self, obj, *args, **kwargs):
-        super(MovingPlatformPath, self).follow_start(obj, *args, **kwargs)
+        super().follow_start(obj, *args, **kwargs)
         obj.following = True
 
     def event_follow_end(self, obj):
@@ -4833,7 +4838,7 @@ class CircoflamePath(xsge_path.Path):
         self.rvelocity = rvelocity
         x += TILE_SIZE / 2
         y += TILE_SIZE / 2
-        super(CircoflamePath, self).__init__(x, y, z=z, points=points)
+        super().__init__(x, y, z=z, points=points)
 
     def event_create(self):
         if self.points:
@@ -4860,7 +4865,7 @@ class CameraGuide(sge.dsp.Object):
     def __init__(self, x, y, **kwargs):
         kwargs.setdefault("visible", False)
         kwargs.setdefault("checks_collisions", False)
-        super(CameraGuide, self).__init__(x, y, **kwargs)
+        super().__init__(x, y, **kwargs)
 
 
 class CameraXGuide(CameraGuide):
@@ -5610,7 +5615,7 @@ class ModalKeyboardMenu(ModalMenu, KeyboardMenu):
         self.hide()
         sge.game.refresh()
         if self.choice is not None and self.choice < len(self.items) - 1:
-            super(ModalKeyboardMenu, self).event_choose()
+            super().event_choose()
         else:
             play_sound(cancel_sound)
 
@@ -5621,7 +5626,7 @@ class ModalJoystickMenu(ModalMenu, JoystickMenu):
         self.hide()
         sge.game.refresh()
         if self.choice is not None and self.choice < len(self.items) - 1:
-            super(ModalJoystickMenu, self).event_choose()
+            super().event_choose()
         else:
             play_sound(cancel_sound)
 
@@ -5649,7 +5654,7 @@ class MapDialog(xsge_gui.Dialog):
         ycells = int(sge.game.height / MAP_CELL_HEIGHT)
         w = sge.game.width
         h = sge.game.height
-        super(MapDialog, self).__init__(
+        super().__init__(
             gui_handler, 0, 0, w, h, background_color=sge.gfx.Color("black"),
             border=False)
         self.map = xsge_gui.Widget(self, 0, 0, 0)
@@ -5696,7 +5701,7 @@ class TeleportDialog(MapDialog):
         self.selection = selection
         w = sge.game.width
         h = sge.game.height
-        super(MapDialog, self).__init__(
+        super().__init__(
             gui_handler, 0, 0, w, h, background_color=sge.gfx.Color("black"),
             border=False)
         self.map = xsge_gui.Widget(self, 0, 0, 0)
@@ -5794,9 +5799,8 @@ class DialogBox(xsge_gui.Dialog):
                      font.get_height(text, width=label_w) + y_padding)
         x = sge.game.width / 2 - width / 2
         y = sge.game.height / 2 - height / 2
-        super(DialogBox, self).__init__(
-            parent, x, y, width, height,
-            background_color=menu_color, border=False)
+        super().__init__(parent, x, y, width, height,
+                         background_color=menu_color, border=False)
         label_h = max(1, height - y_padding)
 
         self.label = DialogLabel(self, label_x, label_y, 0, text, font=font,
@@ -6127,7 +6131,7 @@ def write_to_disk():
     if DIST_AI:
         # Save to DATA instead.
         with open(os.path.join(DATA, "ai_data.json"), 'w') as f:
-            json.dump(ai_data, f)
+            json.dump(ai_data, f, indent=4)
 
         # Remove the local file since it's now redundant.
         fd = os.path.join(LOCAL, "ai_data.json")

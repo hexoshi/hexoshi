@@ -1,1 +1,430 @@
-{}
+{
+    "Mantanoid; 23.json: (336,840;-1+0)->(584,784)|(584,784)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (336,840;1+0)->(544,808)|(544,808)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (344,840;1+0)->(504,824)|(504,824)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (360,840;1+1.5)->(472,848)|(472,848)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (384,840;1+1.5)->(432,840)|(432,840)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (400,840;1+1.5)->(312,856)|(312,856)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (400,840;-1+1.5)->(256,856)|(256,856)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (376,840;-1+1)->(240,856)|(240,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (352,840;-1+1.5)->(240,856)|(240,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (328,840;-1+1.5)->(248,856)|(248,856)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (312,840;-1+1.5)->(408,856)|(408,856)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (312,840;1+1.5)->(416,856)|(416,856)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (304,848;-1+1)->(472,840)|(472,840)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (304,848;1+1)->(472,840)|(472,840)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (328,840;-1+1)->(472,840)|(472,840)!action_hop": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (320,848;1+1.5)->(472,840)|(472,840)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (336,848;1+0)->(456,848)|(456,848)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (272,344;1+0)->(360,256)|(360,256)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (296,344;1+1.5)->(360,296)|(360,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (320,344;1+1.5)->(352,296)|(352,296)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (336,344;1+1.5)->(352,296)|(352,296)!action_hop": [
+        0,
+        1
+    ],
+    "Mantanoid; 24.json: (336,352;1+1.5)->(320,288)|(320,288)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (336,352;-1+1.5)->(288,360)|(288,360)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (320,352;-1+1)->(240,360)|(240,360)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (296,352;-1+1.5)->(224,360)|(224,360)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (272,352;-1+1.5)->(208,360)|(208,360)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (256,352;-1+1.5)->(192,376)|(192,376)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (232,352;-1+1.5)->(168,384)|(168,384)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (216,352;-1+1.5)->(136,400)|(136,400)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (192,360;-1+1.5)->(96,424)|(96,424)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (176,368;-1+0)->(88,424)|(88,424)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (152,376;-1+1.5)->(96,424)|(96,424)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (136,392;-1+1.5)->(96,424)|(96,424)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (112,400;-1+1.5)->(72,432)|(72,432)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (80,416;-1+1.5)->(176,384)|(176,384)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (80,416;1+1.5)->(216,360)|(216,360)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (96,416;1+1)->(256,360)|(256,360)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (112,400;1+1.5)->(304,296)|(304,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (128,392;1+1.5)->(352,280)|(352,280)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (152,384;1+1.5)->(360,296)|(360,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (168,376;1+1.5)->(352,296)|(352,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (184,368;1+1.5)->(352,296)|(352,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (208,360;1+1.5)->(352,296)|(352,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (224,352;1+0)->(352,296)|(352,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (248,352;1+1.5)->(352,296)|(352,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (272,352;1+1.5)->(352,296)|(352,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (288,352;1+1.5)->(352,296)|(352,296)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 24.json: (312,352;1+1.5)->(352,296)|(352,296)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (336,352;1+1.5)->(352,296)|(352,296)!action_hop": [
+        0,
+        3
+    ],
+    "Mantanoid; 24.json: (336,352;1+1)->(352,296)|(352,296)!action_hop": [
+        0,
+        1
+    ],
+    "Mantanoid; 24.json: (336,352;1+1)->(360,296)|(360,296)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (336,352;1+1.5)->(360,296)|(360,296)!action_hop": [
+        0,
+        3
+    ],
+    "Mantanoid; 24.json: (336,352;1+1.5)->(360,296)|(360,296)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (336,352;1+1.5)->(352,296)|(352,296)!action_approach": [
+        0,
+        1
+    ],
+    "Mantanoid; 24.json: (336,352;1+0)->(352,296)|(352,296)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (560,784;1+1.5)->(768,768)|(768,768)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (544,800;1+0)->(768,768)|(768,768)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (584,776;1+1.5)->(768,776)|(768,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (600,768;1+1.5)->(768,776)|(768,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (640,768;1+1.5)->(752,776)|(752,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (624,768;1+1.5)->(752,776)|(752,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (664,768;1+1.5)->(752,776)|(752,776)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (664,768;-1+1)->(752,776)|(752,776)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (664,768;1+1)->(752,776)|(752,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (688,768;-1+1)->(768,736)|(768,736)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (688,768;1+1)->(776,776)|(776,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (712,768;1+1.5)->(776,776)|(776,776)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (704,768;-1+1)->(616,776)|(616,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (688,768;-1+1.5)->(584,784)|(584,784)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (664,768;-1+1.5)->(576,792)|(576,792)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (640,768;-1+0)->(576,792)|(576,792)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (464,840;1+1.5)->(688,776)|(688,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (440,840;1+0)->(688,776)|(688,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (480,824;1+1.5)->(640,776)|(640,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (496,816;1+1.5)->(632,776)|(632,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (520,808;1+1.5)->(632,776)|(632,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (536,800;1+1.5)->(632,776)|(632,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (552,792;1+1.5)->(672,776)|(672,776)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 23.json: (576,784;1+1)->(720,776)|(720,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (592,768;1+1.5)->(760,776)|(760,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (616,768;1+1.5)->(752,776)|(752,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (632,768;1+1.5)->(752,776)|(752,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (656,768;1+1.5)->(752,776)|(752,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (680,768;1+1.5)->(752,776)|(752,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (704,768;1+1.5)->(752,776)|(752,776)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (688,768;-1+1)->(584,784)|(584,784)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (728,768;1+1.5)->(584,784)|(584,784)!action_turn_left": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (688,768;-1+0)->(544,808)|(544,808)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (664,768;-1+1.5)->(504,824)|(504,824)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (640,768;-1+1.5)->(520,816)|(520,816)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (616,768;-1+1.5)->(520,816)|(520,816)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (600,768;-1+1.5)->(488,832)|(488,832)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (584,776;-1+1.5)->(448,856)|(448,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (544,792;-1+0)->(408,792)|(408,792)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (560,784;-1+1.5)->(408,792)|(408,792)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (520,800;-1+1.5)->(416,784)|(416,784)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (504,816;-1+1.5)->(424,856)|(424,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (480,824;-1+1.5)->(376,856)|(376,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (456,832;-1+1.5)->(328,856)|(328,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (440,840;-1+1.5)->(288,856)|(288,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (416,840;-1+1.5)->(264,856)|(264,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (392,840;-1+1.5)->(264,856)|(264,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (376,840;-1+0)->(264,856)|(264,856)!action_approach": [
+        1,
+        0
+    ],
+    "Mantanoid; 23.json: (352,840;-1+1.5)->(256,856)|(256,856)!action_approach": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (336,344;1+1)->(360,240)|(360,240)!action_hop": [
+        0,
+        1
+    ],
+    "Mantanoid; 24.json: (336,352;1+1.5)->(360,296)|(360,296)!action_jump": [
+        0,
+        0
+    ],
+    "Mantanoid; 24.json: (352,280;1+1.5)->(360,296)|(360,296)!action_hop": [
+        1,
+        0
+    ]
+}

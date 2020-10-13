@@ -6810,6 +6810,14 @@ mantanoid_slash_double_second_sprite = sge.gfx.Sprite.from_tileset(
     fname, 489, 551, 3, xsep=3, width=61, height=65,
     origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=10)
 
+fname = os.path.join(d, "awesomepossum.png")
+awesomepossum_stand_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 27, 123, 4, xsep=3, width=52, height=65, origin_x=20, origin_y=63,
+    fps=10)
+awesomepossum_walk_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 29, 205, 4, xsep=3, width=45, height=65, origin_x=22, origin_y=64)
+    
+
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,
                                        bbox_y=8, bbox_width=8, bbox_height=48)

@@ -6816,7 +6816,18 @@ awesomepossum_stand_sprite = sge.gfx.Sprite.from_tileset(
     fps=10)
 awesomepossum_walk_sprite = sge.gfx.Sprite.from_tileset(
     fname, 29, 205, 4, xsep=3, width=45, height=65, origin_x=22, origin_y=64)
-    
+awesomepossum_roll_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 88, 585, 3, xsep=3, width=56, height=65, origin_x=29, origin_y=59)
+awesomepossum_roll_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 278, 600, 4, xsep=3, width=51, height=51, origin_x=26, origin_y=45)
+awesomepossum_shoot_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 19, 749, 6, xsep=3, width=46, height=64, origin_x=20, origin_y=62,
+    fps=10)
+awesomepossum_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 379, 783, 4, xsep=3, width=20, height=15, origin_x=12, origin_y=8,
+    fps=10)
+awesomepossum_bullet_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 478, 783, 1, width=23, height=17, origin_x=14, origin_y=9)
 
 d = os.path.join(DATA, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,

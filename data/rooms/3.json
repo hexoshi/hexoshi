@@ -6,14 +6,14 @@
          "target":"."
         }
     },
- "height":28,
+ "height":30,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJztwTEBAAAAwqD1T20LL6AAAAAAAAAAAAAAgJcBK8AAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAOBvLuAAAQ==",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -38,7 +38,7 @@
                  "visible":true,
                  "width":16,
                  "x":720,
-                 "y":144
+                 "y":160
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -197,6 +197,42 @@
                  "width":8,
                  "x":0,
                  "y":216
+                }, 
+                {
+                 "gid":259,
+                 "height":16,
+                 "id":38,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":192,
+                 "y":192
+                }, 
+                {
+                 "gid":259,
+                 "height":16,
+                 "id":39,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":192,
+                 "y":176
+                }, 
+                {
+                 "gid":259,
+                 "height":16,
+                 "id":40,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":192,
+                 "y":208
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -206,9 +242,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwTEBAAAAwqD1T20LL6AAAAAAAAAAAAAAgJcBK8AAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAOBvLuAAAQ==",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -220,9 +256,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztmk2OnDAQRm1gQZvNnCKnyIUyUXL\/ZdoaP+lRNOredGuirpJKBoyNqc\/1C7WUsl25jrbzNNr5ypfRbuP4MvqXcZ3jNtpttHUw15rmW0e76djjOV\/HHBeNpb+Km545a5znrOHZzLEMXvU+s9YbZdN03vS+vn8r+3efJCfG8bw5rI13YF3uY22ey31N+LA25q\/jPnBDlk14g8fnlf+8OX+W475AzotkBu6z+tl7sOeowmcVhszL3vee\/VuSugzQD3BpatnH6AB9yNz7fdU4+pl7GvcuZa9HjJ9K4tGpy8C2A7mhJ7azyA7sbMds77lvVouOYJuib1lL4tGpywCfwZ7GT3nvIvvon\/E76JKPkbN94C1\/g51LPL5kwN5HluDhuMJ64Lgl2jnw49yxGPNb7\/AntSQenbBX7F\/0BLvl\/c512x3HZNYFxwJLOepM74vx1K8nv+v\/QB0P4qat7GMo2xX2NJhgmxxzW+bE9fbrjnuXkvpwi\/Af2B4YX4Ecbcucl0Xs0LUtzBdjgq0kHrcIe4WcbHeQs\/NSx1v4Aufo1hnnhtzj\/D7xOBL2ChzY8\/bXzg+jnXJ+AR5n4\/H9YJl4HKnLJNp416+inVl13fm4cxHnkluYexInHkfCXrmG5fqYcznkb3vlnMX1E2zcpPOMp+4T+YfrVc4PnQdOJ+wcBF1wzRG8Ux\/uU5eR6x\/e19h64+X8wb5i1VjjaZ+feNwn8LCPRhfs44lZXbu\/6B7HBMjfNar0348R9so5hGseYOXvLq5\/gANzEN\/a5zNH4nGfuoyQse0MMrbMYX\/TcO5o\/TDGzPfOePw+4UjYq07P\/vb17vHUx8mxifwj6fn04+TYRP6R9Hx6FI\/5BWtJSjy+GyUe34sexSP9+Wvo58mxyfHuWYyc\/DruNVfybuoc5Ofk2q65L2VfM\/F\/DlUt+Xn8\/8TfS1p4juvI8X8iagfkmKyBeplrZ1PZ12yoU8d\/L1w\/iPUh1uJv\/q7x+X9NP5\/xsVZEjc\/fxW\/V0XnXf1qser0=",
+         "data":"eJztmkuum0AQRZvPAMMkq8gqso0sIo6S\/Q\/jVvoohwKEBw8r1quSSg2GbkPdri\/VlVKWB3dtrNy3cXjwrY1LO76162P7neO5jUsbu8b8Nmu9qY2Ljj2f86mtcdNcrnfiWf85aJ7X7MJ\/s8bYeNL7DHreKJtZ57Pe1\/cvZf3uveTEPP5vCM\/GO\/BcvsazeS1fm4UPz8b6XbsP3JDlLLzB4\/7gX5+c72W7L5DzKJmB+6Dr7D3Ya3TCZxKGrMve9579XZKqDNAPcJk1so\/RAa4hc+\/3SfO4ztp9u3csaz1ifl8Sj0pVBrYdyA09sZ1FdmBnO2Z7z32DRnQE2xR9y1QSj0pVBvgM9jR+ynsX2Uf\/jN9Bl3yMnO0D9\/wNdi7x+CsD9j6yBA\/HFdYDxy3RzoEf547FWN96hz\/pSuJRCXvF\/kVPsFve7\/xuu+OYzLrgWGAsW52p12I89ePid30HqngQNy1lHUPZrrCnwQTb5JjbMieut1933DuW1Ic9wn9ge2B8BXK0LXNeFrFD15awXowJlpJ47BH2CjnZ7iBn56WOt\/AFztGtM84Nucf5feKxJewVOLDn7a+dH0Y75fwCPI7m4\/vBMvHYUpVJtPGuX0U7M+l35+PORZxLLmHtXpx4bAl75RqW62PO5ZC\/7ZVzFtdPsHG9zjOeOifyD9ernB86D+wP2DkIuuCaI3inPpxTlZHrH97X2Hrj5fzBvmLSXONpn594nBN42EejC\/bxxKyu3d90j2MC5O8aVfrv5wh75RzCNQ+w8ncX1z\/AgTWIb+3zWSPxOKcqI2RsO4OMLXPY3zScO1o\/jDHrJR7nhL2qdPW3r4ynzon8I+la+nnAkcg\/kq6nLwfHJuolSdfT14NjU+LxOko8\/i96Fo\/056+hZ\/Eg3j2KAT6Sv3\/Im70nPYsHeTd1jr1eUXgs65qJ+xw6jeTnsf\/kM2Py7eDY5P4r98+6B5Vz6lDuOY21eve8GVf3k7xCD9+V7+Vfzc\/fklwvGcu6RuV+N\/dUUz90H4R7jmOvtvvw4neW2G83l3UNZizr\/eLacl\/WNU3vJ\/cmub4W66c8i3tiXAP3u\/v\/mR9rqdTA3Tey950JvfgDSbl9iw==",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -247,7 +283,7 @@
                  "visible":true,
                  "width":48,
                  "x":704,
-                 "y":144
+                 "y":160
                 }, 
                 {
                  "height":16,
@@ -261,7 +297,7 @@
                  "y":0
                 }, 
                 {
-                 "height":192,
+                 "height":208,
                  "id":6,
                  "name":"",
                  "rotation":0,
@@ -283,13 +319,13 @@
                  "y":16
                 }, 
                 {
-                 "height":16,
+                 "height":32,
                  "id":8,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":800,
+                 "width":208,
                  "x":0,
                  "y":208
                 }, 
@@ -314,6 +350,17 @@
                  "width":208,
                  "x":0,
                  "y":112
+                }, 
+                {
+                 "height":16,
+                 "id":41,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":592,
+                 "x":208,
+                 "y":224
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -325,7 +372,18 @@
          "draworder":"topdown",
          "id":9,
          "name":"Collision Objects",
-         "objects":[],
+         "objects":[
+                {
+                 "height":16,
+                 "id":42,
+                 "name":"",
+                 "rotation":0,
+                 "type":"slope_topright",
+                 "visible":true,
+                 "width":16,
+                 "x":208,
+                 "y":208
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -333,7 +391,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":38,
+ "nextobjectid":43,
  "orientation":"orthogonal",
  "properties":[
         {

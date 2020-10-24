@@ -1,12 +1,19 @@
 { "compressionlevel":-1,
- "height":28,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
+ "height":30,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -31,7 +38,7 @@
                  "visible":true,
                  "width":16,
                  "x":320,
-                 "y":152
+                 "y":168
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -64,7 +71,7 @@
                  "visible":true,
                  "width":8,
                  "x":-8,
-                 "y":0
+                 "y":16
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -93,7 +100,7 @@
                  "visible":true,
                  "width":8,
                  "x":0,
-                 "y":216
+                 "y":232
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -103,9 +110,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -117,9 +124,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzlWO0KwjAMTD9+bO0fn8Kn8IWc6Pv\/tIEcDZOCMJhNPDioaxdzLGTZFSIKjaUxCVdhbYzCLNdwNso6q3uqcBFmOVeEq4pRZT+o64gFIkZRv3FukdirymVrfBrlJppY64vsgnNHLVjXgVq2roNryoMO7gEe6gp9zLoO7rmR7OvIQus6vLw\/WEMg+zowF3nQ4aGuPOnw0K8wx1vXwRq89CsP7\/Mk6\/svExngMeAemK9mxmWw1tDPY1ZcB2sNfA\/OjG91lBNyOYJ\/ex7xhFyO4DZYa+i6GvU4C2QfDj5kpe5bwpOEHxqoz2G8Dz+y0qd3GVSsvSeq\/c+k9iP1eRV+6v4scsB\/JnUPfNY3aHJCHw==",
+         "data":"eJzlWEkKwzAMlJeDY1\/6ir6iH2pK+\/9jLdAQ4WIoBNJIHRhQY0fV4DVTiSh01s4kXIStMwqzPEPfKHFW7zRhEWbpV4WLytGkPajnyAUiR1W\/0a9I7kXVsnY+jXIVTaz1RXbBtWMuWNfBGgLZ14F1ZF0Hj0Uh+zp4jXvQwXuyh3WOc8W6Dl4fkezryORjv\/JynrMGD+cg7qkedHiYV550eNiv8F1lXQdr8LJfeTjPk8T3XxYywWPCEbhfnRmXSayhx+OsuE5iDXyfnxnf6qgH1LIH\/zYe8YBa9uA2iTX0vJrtcRbIvih84UabjwyPGP50oO0exu3whxt9eslB5Ro9au1HJ9Ueabuvwt8e+6IG\/GdS78D3fgPM70Pl",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -147,7 +154,7 @@
                  "y":0
                 }, 
                 {
-                 "height":192,
+                 "height":208,
                  "id":11,
                  "name":"",
                  "rotation":0,
@@ -158,7 +165,7 @@
                  "y":16
                 }, 
                 {
-                 "height":144,
+                 "height":160,
                  "id":12,
                  "name":"",
                  "rotation":0,
@@ -177,7 +184,7 @@
                  "visible":true,
                  "width":400,
                  "x":0,
-                 "y":208
+                 "y":224
                 }, 
                 {
                  "height":8,
@@ -188,7 +195,7 @@
                  "visible":true,
                  "width":48,
                  "x":304,
-                 "y":152
+                 "y":168
                 }],
          "opacity":1,
          "type":"objectgroup",

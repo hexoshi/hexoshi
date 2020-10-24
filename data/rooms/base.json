@@ -1,12 +1,19 @@
 { "compressionlevel":-1,
- "height":28,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
+ "height":30,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -73,9 +80,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -87,9 +94,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -178,7 +185,7 @@
          "y":0
         }],
  "nextlayerid":15,
- "nextobjectid":8,
+ "nextobjectid":10,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -232,7 +239,7 @@
          "source":"..\/tilesets\/artifact.json"
         }, 
         {
-         "firstgid":285,
+         "firstgid":297,
          "source":"..\/tilesets\/macguffin.json"
         }],
  "tilewidth":8,

@@ -1,12 +1,19 @@
 { "compressionlevel":-1,
- "height":84,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
+ "height":90,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJzt2sEKgkAQxnHf\/yFq9VZdq7Nlj1Fg2SF6irZIWAZBjdkdw\/8PBkZY1++iyLBZhreVr3WiZ7lEz4ltYx0AGOEgro8mKYYpfOXBddhfxdpb\/DgAMDlV0Gt9z52vra+dqL3S\/l2aoNf6njulfaw56wBKnHUAJfz3A2k9rQMYWlgHAPCR9y9BIiln1gB+V\/Uv+QvtnKIwTYE5K4P+ZBVCQR30d6sQADBDTmkf6387p7RP078kqqXx8wEA8T2sA4ww5XOCY3BOEEPJs7LW5DtYdqzpmgXJs7IpyNno2dfl28t3sO64v50FMWMFAAAAAGAeXr89KyQ=",
+         "data":"eJzt2sEKgkAQxnHf\/yFq9VZdq7Nlj1Fg2SF6ipZIWAZJjdkdw\/8PBkZY1++iyLBZBgDfrXytEz3LJXpObBvrAMAIB3F9NEkxTOErD67D\/irW3uLHAYDJqYJe63vufG197UTtlfbv0gS91vfcKe1jzVkHUOKsAyjhvx9I62kdwNDCOgCAt7x\/CRJJObMG8Luqf8lfaOcUhWkKzFkZ9CerEArqoL9bhQCAGXJK+1j\/2zmlfZr+JVEtjZ8PAIjvYR1ghCmfExyDc4IYSp6VtSbfwbJjTdcsSJ6VTUHORs++Lp9evoN1x\/3tLIgZKwAAAAAAQHovLpkrJA==",
          "encoding":"base64",
-         "height":84,
+         "height":90,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -42,7 +49,7 @@
                  "visible":true,
                  "width":16,
                  "x":24,
-                 "y":296
+                 "y":328
                 }, 
                 {
                  "gid":253,
@@ -54,7 +61,7 @@
                  "visible":true,
                  "width":16,
                  "x":360,
-                 "y":456
+                 "y":488
                 }, 
                 {
                  "gid":252,
@@ -66,7 +73,7 @@
                  "visible":true,
                  "width":16,
                  "x":232,
-                 "y":112
+                 "y":144
                 }, 
                 {
                  "gid":254,
@@ -78,7 +85,7 @@
                  "visible":true,
                  "width":32,
                  "x":304,
-                 "y":120
+                 "y":152
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -100,7 +107,7 @@
                  "visible":true,
                  "width":8,
                  "x":-8,
-                 "y":8
+                 "y":40
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -129,7 +136,7 @@
                  "visible":true,
                  "width":8,
                  "x":0,
-                 "y":520
+                 "y":552
                 }, 
                 {
                  "gid":270,
@@ -147,7 +154,7 @@
                  "visible":true,
                  "width":8,
                  "x":0,
-                 "y":72
+                 "y":104
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -157,9 +164,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwYEAAAAAw6D5U9\/gBFUBAAAAAAAAAAAAAAAAAAAA8AxBoAAB",
+         "data":"eJztwQENAAAAwqD3T20PBxQAAAAAAAAAAAAAAAAAAAAAAA8GRlAAAQ==",
          "encoding":"base64",
-         "height":84,
+         "height":90,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -171,9 +178,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzdm9ty40QQQMcXspZUBd8CbzwvCwnehMs77AI\/yCfiLs8pH7WVrJM49oiumpJkjaTu6XtPeyilfNyNBx3vd2Nbzx\/q+bbe95wYw2509fyjjtuJuQ96B3PuH3l3Po85mwkc47dV2cO\/Zb7wQznQMWf4UPbyMHcIOtbXRuIM8L7Mnx\/flL2dWVwbkTPAj2VPy6nw3Vsh8koI\/ejr+U+7cbMb73bjK424Huq8vv4Wx9vduKvP3dVnueZdMefnOu70zG2dw\/3XQvCj0wgbvNB5HJdl72e6em9Z7y11Dz+Ff7L\/vC9jP8o5\/nJ7BjrwH33FBxzXdYA7dMCXle79dgY8XgthrwJfcA8cF2W83tCYaYVXv14c62NAP8ARPizqb\/AEXizr+aaOoY6vL414gpCrwDXwC3wsw8RzjgXNG65b4EfoedARuLUg50\/BUzY\/+BE0hBy1sK4ZQn+R4ZBn\/ILteJxje0JGfr8Kpk+D\/UEcsUXQ1uv+UI+\/XAXTpyFwDFxDf7FB8Aad5jf0vDX9iPgPP4BvDlzBvS9jWwutLeoHuuu1x\/Z3ul6Vgw9skY4cF8U5vg2dgCfwrTX9CLlCPxxjoOOs\/1AOPhleXdsvZ7gvx3WWoYzj0jh3bHGJvPD7L4yXAnktvJorRJyILZhznh78wCe2pufPgYgTW7a7pwJ5VPCkxfjqVAh+kLe+hI63sj\/PheBH0NFqvHsqkEe1mn+cAtQTidvnzA\/q1OFD5k4H9avW8o\/nAHW4ufvBsFfEwpkfrdakp4A4EV8YNYh39UjMFfWIv6+F4IkQcuW6c9hf8nnyE\/zLP1fC8RSgngjO0ON6tPPhVvkS9oo6ELyADvJ78yjm\/nUVTJ+G4Adyw5HaA\/JGXcU1+dAZ9mFuyrjOd1sOe0E3F6SDfNB1dujK+Ts8cb6\/1P2lnmHuWwN1LvDg251+Q3eQu1y7gEfwy7UM9houAegHNtZ1L3BhH4R6EfJnfsA75pmXl6jBWD\/gA3bKa73R77Zr4N7rWejmvZeAD4kO9+Hkfhv2JrfpPvWlfuLZc+xhngL4wVb2+V4KwQ94MXc60NVLxe1fyulfkt97f3Du\/MBnzzkfZJ9z7nmU+zLmLFf\/l7oodIRczVk\/gg7s7pz5QVwSMCc9\/6Ps8x961Ihb5wCfyqEXI+dFxNitwp\/lkHuSM4D3VL9bS\/C5HGpP7gtzbrfSYD+tBbkKmYk1D\/ydvxhHageuRfVlnNddAz6XscywvuA3lOO6B\/lc7kEkJnktfHvivVh3el691pYd9xKu0314Qd5JzsF5wE059OKyTvDZ\/bx82\/1cm3Ko9zCoCXX1OfecOqd3DdD1GvdZwSdwhsZcN3QfR+7VzTYOm9Gla9d7eI9572fcQ8G33WeF7Bg\/5iFnrlVRK9yUY1vmuig0u07V69q0un7nPjXLkWtmrnuty3jtWCd4Bb7ukVmV41qUa6K9rt3r5J5e1xnd05v77dwjtUrvgjfuEXP\/cz8xn29ZdlwXdW3HNR2vhdfdMu65xgn5XKe54IvsuB7uuhi8NC085zqU9Yi1NL9co+YeOPAN17N5l2Ut1+hWaX6vZ6z72Q+aR167LP\/Mc12zT98yb4y\/eWo9zXXHLn3f9su1P8s0cxeaZxytZ7YNyALnj\/kk2768H+S+1FyDtG3yM65\/5z0l+2\/rhe2GbUqmc6qv3fGB5ciy4PW37cz98o4t7MddJ\/d7jRcyYHnONt7PWqagyX7Hdhy5Md3LMtbRKd31e22n\/R8N20brEbLg\/YqNnnfsYr9g2bE8mfb8vPuF7Usdj9jmem2GNIdhWYBHWU+8Hn0Zy4HlM6+ZfYvf7f0E64P9DGtkfk35MvujKR3O+zjWL97pdfO+m9fY9jzT5fgo963aJ5rnvu8YyrHLSu81D+zXrC\/27xyz3UAGvGfldbc82d\/bXnDf9s4yl+2w96HAPe\/HWAayT7QMbzQv+8Ihzff+lmO6bENY67WeW6V54Nen3xy7TMXY2V56PWwfnYsaH8dy2efYNnitH9MhX9tO2Edt0nvg5ZCu7c\/tK63j2a849vFzyIZ9q+XE+FqWcu6R7XHOP\/Jv5pV10TmAcfJ3c3xkH2FZtM7Z5nZlrG+8p0vzc27vvM3+3\/Y2y6n1yn4T2i2Hec2mYiTe\/Zg9zvGBZclyxxzv09q\/eW1zrN7rW1kmreu2hea5+WU5hvb\/AMSXcWY=",
+         "data":"eJzdm9ty40QQhscHsrZUBc8Cd1zDQoJJYLkHFnhBHhF3RV\/58x8l6xzWluiqKcnWzKhn+tzTWrbWlvu22rfFvm32bT20uu+He67Vb6t+y+EZ45fD\/\/TphrYY+qzVes270fNeOHHfDXP2w3WhOcF7G3N0ws04GRevt4\/3bHRdD8+WsUb6ez19vDf3iT1hju3w3Pf060fe471h\/V387\/1cxPu6GLvQu42baQoNTRuP97Psv9H6mNv7YbyZw3u\/Gq7wk9ew1NzmHdbU652d5nhsLGPM9z\/v252ut\/u2G+7vhvvd8Nx9bjXn7fCM626k753moM\/tI3Pn\/W5YW+LI\/hX82+YL37fDOuYM79s9P8wdah3rSyPxBvBdmz89vmr3emZxaUTeAH5o92s5Fb75XIi8Eko+uuH+x3272rd3+\/aFWv3GPnXDf3W93rebYdzNMJbfzFV9fhrajcZcD314\/looemzVsPnc46\/gf+EvYNd5hp3CPtl+3rZjO8o99nL3BuvAfuADgCP+GbizDuiy0rMPb4DHa6H0Fb4ZPg3+rH2vTXu4Vmj169mxfgjIBzhCh\/RVoQV+Gn4gPtqX50Y8oPjK\/qx5GH\/OvmD6oHWdAj1KzomHpsDnT8FTOr\/oQYw3hX1NKPmFh4ufsQvW43WP7ike+e0imD4NtgfET\/C24zTHqb9cBNOngViSmB4ZQFc6P4GcT00+yv\/DDmCbnbPp2rGuZa1TlA9k13vv3IjzH9jAKa4j\/SJyEpZr58aqTU0+iq+QD\/sYyLhzbdhkaHVpu5xw2x7mWfp27JfWvX2Lc8SF336ivRSIa6HVXKH8RHTBnOP0ogc2cWpy\/hwoP3HKevdUII4qmkzRvzoVih7ErS9Zx+fSP8+FogfnBXOnB3HsXOWDfCJ++5zpQZ66bMjc10H+amrxx3OAPNzc7WDpK3zhpMdUc9JjgJ+ILawcxLvhis9V+Yi\/L4XgiVB85bxz6V+f6xNX1v0\/F8LxFCCf6LNv\/N9Ov4mHp0qX0lfkgaAF6yC+N42q718XwfRpKHrAN1zJPbhOw\/Fw\/S6Z4Rzmqh3n+a7b4Szo6ozrcN0OuQjWlfE7NHG873oJ12jQ93MDeS7w4N1b\/ec6nkV7mLtw3Y\/rSrBJzzl7fA0gH+hY573AxXU45j\/TwzVbroU619mI5QM6oKe81xv9b72WtVWuP2Lec8D7WIfrcLLehrPJXTwnv9SNjH2LM8xTADs4lXO+l0LRA1rMfR3I6rn89k\/F9C+J730+OHd6YLPnHA9yzjn3OMp1GXPmq\/9LXpR1FF\/NWT5qHejdOdMDv6RgTnL+e7uPf6hRw2+dA\/zZDrUYGRfhY08V\/miH2JOYAbzH6t2mBB\/bIffkujDHdis1ztOmwFfFM7Xnhb\/jF+NI7sC5qPxO4hLwsR3zDPvrb2gy70E8lzWI+CSvha9PfFb7Ts2r99q841rCdTyHFsSd\/t6G2POqHWpx2Sfo7Hpe3u16rk075Hto5IS2wzjXnDqmdw7Q+RrXWUGn\/EYo84au48ha3dRx\/h7Iv53vYR7T3mNcQ+HviqAHvGP86AefOVdFrnDTHuoy50VZs\/NUnX57rc7fuU7NfOScmfNe63a8d+yTv4lyna6\/t3IuyjnRTr9d6+SaXucZXdOb9XaukVrFXPl9U9Y\/dyP9\/d2fv78z7s6nWS8s9C7mNI+7r3Hy94TuC77wjvPhzotBS6+Fcc5DWY7YS9PLOWqegQPvcD7b3+D5ezbn6FbRv9MYy37aQdPIe5f8Tz\/nNbt4l2lj\/E1Ty2nmHbfxfusv5\/7M0\/T195vG0XJm3QAvcP+YTbLuy\/Mg16VmDtK6yWOc\/84zJdtvy4X1hnVKrnOsrt3+gfnIvOD9t+7Menn7FrbjzpN7XuMFD5ifU8d7rHnK33o6j531qV73sh3L6Jjsel7raX+jYd1oOfI3pvYB7Bu7VjPl2nOYZzYj410vbFtqf8Q613vTRx+aeQEapZx4P7p2zAfmz9wz2xbP7fMEy4PtDHtkeo3ZMtujMRnOcxzLF3N633zu5j22Ps912T\/KulXbRNPcz+1D2XdZaV7TwHbN8mL7zjX1BjzgMyvvu\/nJ9t76gufWd+a51MM+hwL3PI8xD6RNNA9v1C9tYR\/9fb5lny51CHu91rhV9AO\/Lv6z7zLmY6e+9H5YPzoWNT725dLmWDd4rx+TIf+2nrCN2sQ80LKP37bntpWW8bQr9n08Dt6wbTWfGF\/zUsYeqY8z\/sj\/TCvLomMA4+T3pn9kG2FetMxZ527bsbwxzzb6Z2zvuM323\/o2+dRyZbvJ2s2HuWdjPhJzP6aP0z8wL5nv6ONzWts372366p3elTxpWbcuNM1NL\/OxdV76dB5r+aJ\/xoUrzWn5yzm8H+YP089rtY7caE771xlTW1\/Zz0g9YbmzD5BxnX1Qx4nm07QBSct1O+YX8551So39D4oDeKE=",
          "encoding":"base64",
-         "height":84,
+         "height":90,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -198,10 +205,10 @@
                  "visible":true,
                  "width":88,
                  "x":216,
-                 "y":392
+                 "y":424
                 }, 
                 {
-                 "height":160,
+                 "height":176,
                  "id":9,
                  "name":"",
                  "rotation":0,
@@ -209,7 +216,7 @@
                  "visible":true,
                  "width":400,
                  "x":0,
-                 "y":512
+                 "y":544
                 }, 
                 {
                  "height":16,
@@ -220,7 +227,7 @@
                  "visible":true,
                  "width":256,
                  "x":0,
-                 "y":64
+                 "y":96
                 }, 
                 {
                  "height":32,
@@ -231,10 +238,10 @@
                  "visible":true,
                  "width":128,
                  "x":0,
-                 "y":80
+                 "y":112
                 }, 
                 {
-                 "height":8,
+                 "height":40,
                  "id":12,
                  "name":"",
                  "rotation":0,
@@ -253,7 +260,7 @@
                  "visible":true,
                  "width":16,
                  "x":384,
-                 "y":8
+                 "y":40
                 }, 
                 {
                  "height":8,
@@ -264,7 +271,7 @@
                  "visible":true,
                  "width":168,
                  "x":216,
-                 "y":504
+                 "y":536
                 }, 
                 {
                  "height":8,
@@ -275,7 +282,7 @@
                  "visible":true,
                  "width":144,
                  "x":240,
-                 "y":496
+                 "y":528
                 }, 
                 {
                  "height":8,
@@ -286,7 +293,7 @@
                  "visible":true,
                  "width":120,
                  "x":264,
-                 "y":488
+                 "y":520
                 }, 
                 {
                  "height":8,
@@ -297,7 +304,7 @@
                  "visible":true,
                  "width":96,
                  "x":288,
-                 "y":480
+                 "y":512
                 }, 
                 {
                  "height":8,
@@ -308,7 +315,7 @@
                  "visible":true,
                  "width":72,
                  "x":312,
-                 "y":472
+                 "y":504
                 }, 
                 {
                  "height":8,
@@ -319,7 +326,7 @@
                  "visible":true,
                  "width":48,
                  "x":336,
-                 "y":464
+                 "y":496
                 }, 
                 {
                  "height":8,
@@ -330,7 +337,7 @@
                  "visible":true,
                  "width":24,
                  "x":360,
-                 "y":456
+                 "y":488
                 }, 
                 {
                  "height":352,
@@ -341,7 +348,7 @@
                  "visible":true,
                  "width":16,
                  "x":0,
-                 "y":112
+                 "y":144
                 }, 
                 {
                  "height":8,
@@ -352,7 +359,7 @@
                  "visible":true,
                  "width":64,
                  "x":112,
-                 "y":232
+                 "y":264
                 }, 
                 {
                  "height":8,
@@ -363,7 +370,7 @@
                  "visible":true,
                  "width":64,
                  "x":208,
-                 "y":184
+                 "y":216
                 }, 
                 {
                  "height":64,
@@ -374,7 +381,7 @@
                  "visible":true,
                  "width":80,
                  "x":304,
-                 "y":120
+                 "y":152
                 }, 
                 {
                  "height":32,
@@ -385,7 +392,7 @@
                  "visible":true,
                  "width":48,
                  "x":16,
-                 "y":296
+                 "y":328
                 }, 
                 {
                  "height":48,
@@ -396,7 +403,7 @@
                  "visible":true,
                  "width":168,
                  "x":16,
-                 "y":328
+                 "y":360
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -418,7 +425,7 @@
                  "visible":true,
                  "width":32,
                  "x":64,
-                 "y":296
+                 "y":328
                 }, 
                 {
                  "height":8,
@@ -429,7 +436,7 @@
                  "visible":true,
                  "width":8,
                  "x":208,
-                 "y":504
+                 "y":536
                 }, 
                 {
                  "height":8,
@@ -440,7 +447,7 @@
                  "visible":true,
                  "width":8,
                  "x":232,
-                 "y":496
+                 "y":528
                 }, 
                 {
                  "height":8,
@@ -451,7 +458,7 @@
                  "visible":true,
                  "width":8,
                  "x":256,
-                 "y":488
+                 "y":520
                 }, 
                 {
                  "height":8,
@@ -462,7 +469,7 @@
                  "visible":true,
                  "width":8,
                  "x":280,
-                 "y":480
+                 "y":512
                 }, 
                 {
                  "height":8,
@@ -473,7 +480,7 @@
                  "visible":true,
                  "width":8,
                  "x":304,
-                 "y":472
+                 "y":504
                 }, 
                 {
                  "height":8,
@@ -484,7 +491,7 @@
                  "visible":true,
                  "width":8,
                  "x":328,
-                 "y":464
+                 "y":496
                 }, 
                 {
                  "height":8,
@@ -495,7 +502,7 @@
                  "visible":true,
                  "width":8,
                  "x":352,
-                 "y":456
+                 "y":488
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -518,7 +525,7 @@
                  "visible":true,
                  "width":32,
                  "x":304,
-                 "y":248
+                 "y":280
                 }],
          "opacity":1,
          "type":"objectgroup",

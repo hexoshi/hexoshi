@@ -1,12 +1,19 @@
 { "compressionlevel":-1,
- "height":56,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
+ "height":60,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJzt1TESgjAUBFDufwnSiq3aC9fQQmw4Bv8AVJL4ZXxvZqtMNtul6ziSU2TYcf8SuUZuG2flg75+x5ZWSvaASkr2gErO2QMAAAAAftQj8sweAQD4jwEObsweUMmcPQDgT90jU6PupVHvllfk\/cX3qGMFiwYPBw==",
+         "data":"eJzt1bsRwjAQBFD334SVYlIgx24DAkziMnwFOMISx+e9mY00Wm2mrgP4DYfIsOP+KXKOXDbOygt9\/Y4trZTsAZWU7AGVHLMHAAAAAHyoW+SePQIA8B8DfLkxe0Alc\/YAgD91jUyNupdGvVsekecb36OOFY4mDwc=",
          "encoding":"base64",
-         "height":56,
+         "height":60,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -52,7 +59,7 @@
                  "visible":true,
                  "width":8,
                  "x":-8,
-                 "y":8
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -81,7 +88,7 @@
                  "visible":true,
                  "width":8,
                  "x":0,
-                 "y":440
+                 "y":472
                 }, 
                 {
                  "gid":274,
@@ -93,7 +100,7 @@
                  "visible":true,
                  "width":48,
                  "x":64,
-                 "y":160
+                 "y":192
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -103,9 +110,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwTEBAAAAwqD1T20LL6AAAAAAAAAAAAAAgJcBK8AAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20MH6AAAAAAAAAAAAAAAOBvLuAAAQ==",
          "encoding":"base64",
-         "height":56,
+         "height":60,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -117,9 +124,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzVmmFy2jAQhQWhxeC0\/d9Oe4P+aK5ACyQlSduT9ojVm+gbPxTANgWMdmbHtiTbK6923+7KsxDCPPIo8jhyHfkm8iwdx6mvSuPEE2v3sZPUX6X+Ko2p0xjOqzS2smfMbdzE2io7ejsycM\/c3lll96n\/MfLPyJvIT+n6KV3TPkttT9k4Z9q4b57uq9P5xu7188pkeDS56zQXvvFsx3d5H17oNnSjruOc3u057\/Jsycha0VGy+5yeW555DfQhvOgFmSU\/axUd\/xlMun6kubCuXP5ROi9lHqJl2PYrbuslzoN1hf\/UXH4NKFdfWoQGL\/Dn+KmS9KF55HMAt9znXjsxjzq8xtLnAeXqS5qHvj2xhGPj7wHl6kuyc2xbR3yXjqXYufCDWA+dOJ6Upg\/8FTEXcyppHt9DE5cQX6GPkvyu5gGGg+keq5fid3+ExibIfcCOUuxcJL9LzD4Lja2rrST7kD4cw103uX18a3nWrv67\/xWwI8k+0IfngbnflY8m\/yRPqbNz9Pk28jTyKlxubS5Dk3N4Tivd5OuK3Evs+fQmNLkysf+lYxrwAyxEF23xrvSI3BC58xC5sOzD6zjYhtravqnkvpb8XfNgXZE\/ddHHtZHmkcclxCYl+V3ZB3rw2iHXpeA59noTGjwHS86ljzYc6jtOpHlIdnTAUTo6pX3IZwtT8HFgztSO4nXYru12XQ+L0OAZOS22fmoM0LvAH+q6sH\/HvmuZPIpvg16olV7SzpdJjmP9+CJs10fAwVOvqzY6prbtlNdLHEtKww\/sgxgRWykp\/wAHvU4Nl4SDWlfsXXkdrrS4RH7CY1y3lWP08Tnyx5NJ152YxyTjrvm553ufIn+N\/GVPfx987kv4KzDU90La4ivhj+d\/+d7oNPVPw\/EY15UUl3gtEV+lYx9\/peeA0Y\/peRs7njM\/BM9ZV16n7pJHOeU4zPVtdjwXUW9nXfkee0n7BtRLqL8RX+2q+1wzEbfDntuWhOe+r+a5R187H5oUl7B\/gy7Eso1z26YT2HKXXe8as4s83vXc6VL1HDBmZude7ydHVG3yUHzh+wbU1P6eR+RXRH1SmANm+X9H5EFg8yG\/43g+OZ\/IB0nz4T8n\/nnahOb\/Jf5zOhRfEF9R0x2a3CbztX3IXjUPj6tKJfkr5lAPLMuxpHWJLWEjpRL7BuxF5eT+vG1vaV\/\/Ib+\/r6\/rPhbj5K88dxLhr5VXkF\/gB+9T3zSd07dK\/dz7ELbrhw9p\/Dq1v0ltlT2HPaz79N519p7VjmeAMV5fd\/9NDJzvU5HL808pY4gHfPzc+vP\/IMf2Tv\/fiDzCa+WMI0cb2TuRY2LP19h\/f2xH2g==",
+         "data":"eJzVmtty0zAQQJXGkDgp8A4Df8AD\/YVCb6Tl8qV8It5BZ3qs5mKHJql2Zse2JK+0kvYqzVNKZx0uO5x32HTYdjjJz6hb5Cf1i1w\/zW2aXDfNOMnfC9U1uQ++l5km9NuC\/iJ\/t5lmo+ek6Ie6M9VDk3FDC9qMp1VbyuBvIpr0DR2ey4y0Z+6monWmfplnaMPfXPPRrukHeqzPoqC9zG38Pk39ccKL17RV26lo09dU9Bgf61c+mR\/WBXreK95jtDUvrdZtqm94aFN\/Dpn\/qcrhz316zunL7c17k57umYn+oS1z4v3O\/5S7LXubPs1Dq3fmaC4aC7VrVDbX0+WMwXvcsuD\/ov6+w+8drjp8yN8P+ZvyNpc9FO2MlPEfsoUsrPSv3+caw32x1si0ZcLz8jb9g\/M0DIa2M7zZ8D6ENnuRfRZjN08\/dtB8CfAu\/VsX61z2Kmv8+2SjGwfBi\/UV40cX1cJHwFXq6xXLeo18sK\/Qn8HLzxOOayxcpr7\/YLtc03oEHyUPtq1vN\/\/6ogA+8NFsS3+ccFxjIfiwv2bb+OuE4xoLIefINv4o\/kotch72o\/RZbU9qWw\/0FT4XPNXEx9f06JfgX7EeNend4MPxXemr16J3v6V+DOm4sxY5Dwi9i8\/uODTKapKPWA\/bcK9NKR9fdtBaV3\/xvwMcCCEfzv1g00u9Gzqa+NM5Cr+znq87nHV4nY63N69SP8\/m\/ES5r4i9Ah1Pr9JjrIzvf2yfBvuBLWQtdvm7sY6MGyB2PkUsHPJR5i3ZZ7vmNMb9UuL34IN9Rfw0ZD1eGgQfpV+Cb1KT3g35YB2cO+S7FnuOvJInxrc65HrsskNj2wUEH86hO7\/7nPIROjtsCjoOmzPTM\/Am9XO7Q\/fDZernvu0vPrcNiL6wP+R1Qc\/j2L1MHOXzA+fVjynnV3kc++rxy\/T07AGbfky9u09u21DmS2xLarMfPpvzOVZN8Qd20HlqsCY7GPuKsyvn4WrzS0JP2Me1rOyzHh87fP9soxsO8NEUODQ+d7z3ocPPHX7aUD\/GPo8F9JXPrG1TttmksD+O\/8qz0Vmun6X9bdxQCL\/EuUSfaY\/RV0EHG32f6a30PGR8iD33fQ34GRJHGUo7zPd58TwUkG9nX\/mMvaZzA\/Il5N9836MmvYvfDjq2rcme+1zNscdYOT81hF9S3rcKDNk4tGwasC0Xxfe6NuvA\/q5jp2Plc7Axrd6d7ydGjNzkNv\/C5wbk1P4cZshPgPxk2Bxslu8dEQdhm7fpHdvz5nBD3grBD\/ecuPO0So\/3l7jntM2\/wL8ip3tqsEyWe3ubvAYf9qtqhdBX8LA88Vj2hdiXyBIyUitwbsBZVAnW57vOljbVb9P7m+qGnmPRLvSVY6cA9HXEFcQX6MHbXDfL79Rd53r+vUv9\/OFdbn+Ty1\/lsrnocIZ1m\/u9Kfq5XkMDG+P8uvU3PnB5TkUsz51S2uAPuP1C9eU9yDP16ftGvr+LzPrOruXA42hEP9r+BSCxTNs=",
          "encoding":"base64",
-         "height":56,
+         "height":60,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -144,10 +151,10 @@
                  "visible":true,
                  "width":400,
                  "x":0,
-                 "y":432
+                 "y":464
                 }, 
                 {
-                 "height":432,
+                 "height":464,
                  "id":3,
                  "name":"",
                  "rotation":0,
@@ -166,7 +173,7 @@
                  "visible":true,
                  "width":96,
                  "x":224,
-                 "y":368
+                 "y":400
                 }, 
                 {
                  "height":8,
@@ -177,7 +184,7 @@
                  "visible":true,
                  "width":80,
                  "x":240,
-                 "y":384
+                 "y":416
                 }, 
                 {
                  "height":8,
@@ -188,7 +195,7 @@
                  "visible":true,
                  "width":96,
                  "x":96,
-                 "y":304
+                 "y":336
                 }, 
                 {
                  "height":8,
@@ -199,7 +206,7 @@
                  "visible":true,
                  "width":72,
                  "x":112,
-                 "y":312
+                 "y":344
                 }, 
                 {
                  "height":8,
@@ -210,7 +217,7 @@
                  "visible":true,
                  "width":80,
                  "x":184,
-                 "y":232
+                 "y":264
                 }, 
                 {
                  "height":8,
@@ -221,7 +228,7 @@
                  "visible":true,
                  "width":16,
                  "x":240,
-                 "y":240
+                 "y":272
                 }, 
                 {
                  "height":8,
@@ -232,7 +239,7 @@
                  "visible":true,
                  "width":104,
                  "x":184,
-                 "y":224
+                 "y":256
                 }, 
                 {
                  "height":8,
@@ -243,7 +250,7 @@
                  "visible":true,
                  "width":112,
                  "x":56,
-                 "y":160
+                 "y":192
                 }, 
                 {
                  "height":8,
@@ -254,7 +261,7 @@
                  "visible":true,
                  "width":88,
                  "x":64,
-                 "y":168
+                 "y":200
                 }, 
                 {
                  "height":8,
@@ -265,10 +272,10 @@
                  "visible":true,
                  "width":24,
                  "x":80,
-                 "y":176
+                 "y":208
                 }, 
                 {
-                 "height":360,
+                 "height":392,
                  "id":23,
                  "name":"",
                  "rotation":0,
@@ -287,7 +294,7 @@
                  "visible":true,
                  "width":24,
                  "x":0,
-                 "y":360
+                 "y":392
                 }, 
                 {
                  "height":8,
@@ -298,10 +305,10 @@
                  "visible":true,
                  "width":8,
                  "x":0,
-                 "y":368
+                 "y":400
                 }, 
                 {
-                 "height":16,
+                 "height":48,
                  "id":26,
                  "name":"",
                  "rotation":0,
@@ -320,7 +327,7 @@
                  "visible":true,
                  "width":8,
                  "x":360,
-                 "y":16
+                 "y":48
                 }, 
                 {
                  "height":8,
@@ -331,7 +338,7 @@
                  "visible":true,
                  "width":8,
                  "x":32,
-                 "y":16
+                 "y":48
                 }, 
                 {
                  "height":8,
@@ -342,7 +349,7 @@
                  "visible":true,
                  "width":16,
                  "x":128,
-                 "y":288
+                 "y":320
                 }, 
                 {
                  "height":8,
@@ -353,7 +360,7 @@
                  "visible":true,
                  "width":24,
                  "x":120,
-                 "y":296
+                 "y":328
                 }],
          "opacity":1,
          "type":"objectgroup",

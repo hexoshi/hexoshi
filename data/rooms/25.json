@@ -6,14 +6,14 @@
          "target":"."
         }
     },
- "height":28,
+ "height":30,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -110,9 +110,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -124,9 +124,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztmEGOwyAMRQ3pooTNnGJOMRdqRu39l4MlP+VPNXQ5qata+oIQQnBs4\/hXMzsNtIF14DzQ43oZKIEW92q0a2CRsS5jJcab9Lus0WXNFnvgPTXW0LUWmcv9Lq1jG7gmxSbf5mZ5xfeOjbLr4f7XLb8exEt2PYj17Hp4nBfLrwfnd3Y9PPe8gl+RV7Prwb9IZj0u0WaPcyR7Pkey+xWSPZ8jr2IPzyFvPf5f\/Jz9voPLX+fV\/Tydf7TwH+LxQL37qP74mPSPFt8rtT31ebV5\/vic9I8W6j\/4B+U7sukBb6LcSUY9\/PvDS+FTs\/+rZ9YDTg3Oy+0zs8fXpH+0qD285exyOJc1O2ufDZvt9d8qfeLFr+Ediv3mQ7s8hw2r7XY92e6n+G2TOQDuFI4TfqALirSrjJ\/lPeypCn4A739C7A==",
+         "data":"eJztmEFuxCAMRQ2ZRYBNT9FTzIWaqr3\/sljiKX\/SYZbNeFRLXxBCwMY2hJ\/N7NJROmrH2tHG89KRBsp4l0dZBxZpa9KWRnuRepMxmoxZhg7Mk8cYOtYifXnfpHRsHV9BscnafFtccd3xUXQ7PP6axbeDfIluB7ke3Q7P82Tx7WD\/jm6Hnz2vEFecq9Ht4F8ksh0fo4ye50j08xyJHldI9PMceRV\/+Bnyb8ffi++znwe43Nuvjv20\/9nCf4jnA\/fdR\/ePt0n9bHFdudtzP882Pz\/eJ\/Wzhfsf\/IPyHdHsgDdR7iSiHb7+8FLE1Oz\/6pntgFOD83L\/zPxxndTPFvWHl+xdDueyZnvts2Gz\/f5XpU6++DO8Q7JbPrTJd\/gw2+7Xi+1xStwW6QPgTuE44QeaIElZpX2VedApH6Dfqx7Mp3sCdfSH61VeGL2L9NNYRocifZSr1RxeZQ5t07Vmvar9XqcmPkMnrS8yL2vBOEmedUz105GPRlfWRnUsMq9y3xo7P1R0RTk=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -187,7 +187,7 @@
                  "y":16
                 }, 
                 {
-                 "height":16,
+                 "height":32,
                  "id":15,
                  "name":"",
                  "rotation":0,

@@ -1,12 +1,19 @@
 { "compressionlevel":-1,
- "height":28,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
+ "height":30,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -31,7 +38,7 @@
                  "visible":true,
                  "width":16,
                  "x":64,
-                 "y":120
+                 "y":136
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -64,7 +71,7 @@
                  "visible":true,
                  "width":8,
                  "x":-8,
-                 "y":0
+                 "y":16
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -103,9 +110,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwQENAAAAwqD3T20ON6AAAAAAAHg0FeAAAQ==",
+         "data":"eJztwTEBAAAAwqD1T20IX6AAAAAAAIDXABdwAAE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -117,9 +124,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzdmEtuxCAMhh3IIjibOcWcohfqVNP7LxtL\/MoXOsk6gGRBzMP+bfOI3czKRtNG60ZzpVy\/V\/QFpYbvtb3U71TnFtQTvr3WS+WtaM+QlSGD81IztmDca6N3p\/QC9l\/rt4Tu4Ztk\/eOImCvWP47YXyP4I+JqhP0xSlyFL9z6x6H7rnccukt7x5FsjPMqMIywP0bxh96UvePQu\/cTjp8Tulv5rvXVufs4ad+xXJ27z5P2HcsoOOJOHwHHKP64eu9+nbTvWJRnODtne6Ao4Y8FtXI7xfb8ituez1EuR28B5Xpm1N70ae0F8yTLMY\/5HP3jrbbnjKQDc1OL7fe55DjWdsiWLOWKMsas4EneBLnMP0mWQ1+R+KonO+omjHqjt\/NlF2KT3Zhnkw0pSzk5rTWDxNdbVPbLdrQ1eSKtp770YX3FCzFLN9mfdpP+jBH519HX5hCJm2sUjBOv9Wdp5FBf5iCFSfoLH+3KmM921IG2kTz5lrpPjcxk\/3FljOEeYrwl8B3rcT\/8AYMKQyc=",
+         "data":"eJzdmEluhDAQRcs2CzCbnCKnyDlyh3SU3H+ZRvJTHu7Q22AslaDLruGXJ\/qvEZHuUttzvcvSfiNFfVOTudOlpsN2an2z3pN8TYpbW39u+qXZrbJdNK5oXGp2S5Pc+qt0RT4ZUzv\/k8aRS5Z\/MJNLj9k1SYpHjZJ8F8UAv\/Na4rHe2Kzqw4f14CI29XAdkn4zv+BYY4+JWCX2c4hd7sYuGne7y9egchP27xi3bblvc5NjfBzsjdFxbPvrCvPB2Tk6jqusq20uaoyPg\/tudBzcpaPj4FvoCjiusD+uMB8f7Tn6\/UE7uj8+D+Ss7dm5+3Lwfsb27Nx9PXg\/Y7sKju1OvwKOEefjPR7Pnmffu28H7\/\/ZwAB\/tN3j8DO3OD5nzyhwKXBjcChz7Lkv81qTMJf45XL+4qlyNz51MWbZEavGnn+Dz+E\/HrwXnA8cHN\/qs3ARp8p3VWximQ8zD4iOeElxzT+ZFyRf829VT3Ob5rc8D7anLsZG3cyzUUPHgpPD1yRBz7co9Suxr7V1CP7oy3\/4Z70YM7lRf9eN\/L1GzKHOimkO0bjtw5yr+c\/e3nGcrzlIMJG\/OV9we82X2Ofg2hCPuXXuKR73Y4\/Le9Z7yOstS1\/lz\/vhB0NjRaE=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -136,7 +143,7 @@
          "name":"solid",
          "objects":[
                 {
-                 "height":16,
+                 "height":32,
                  "id":10,
                  "name":"",
                  "rotation":0,
@@ -147,7 +154,7 @@
                  "y":0
                 }, 
                 {
-                 "height":112,
+                 "height":96,
                  "id":11,
                  "name":"",
                  "rotation":0,
@@ -155,7 +162,7 @@
                  "visible":true,
                  "width":16,
                  "x":384,
-                 "y":16
+                 "y":32
                 }, 
                 {
                  "height":48,
@@ -166,7 +173,7 @@
                  "visible":true,
                  "width":400,
                  "x":0,
-                 "y":176
+                 "y":192
                 }, 
                 {
                  "height":160,
@@ -177,7 +184,7 @@
                  "visible":true,
                  "width":16,
                  "x":0,
-                 "y":16
+                 "y":32
                 }, 
                 {
                  "height":8,
@@ -188,7 +195,18 @@
                  "visible":true,
                  "width":48,
                  "x":48,
-                 "y":120
+                 "y":136
+                }, 
+                {
+                 "height":16,
+                 "id":15,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":368,
+                 "y":176
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -200,7 +218,18 @@
          "draworder":"topdown",
          "id":9,
          "name":"Collision Objects",
-         "objects":[],
+         "objects":[
+                {
+                 "height":16,
+                 "id":16,
+                 "name":"",
+                 "rotation":0,
+                 "type":"slope_topleft",
+                 "visible":true,
+                 "width":16,
+                 "x":352,
+                 "y":176
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -230,7 +259,7 @@
          "y":0
         }],
  "nextlayerid":12,
- "nextobjectid":15,
+ "nextobjectid":17,
  "orientation":"orthogonal",
  "properties":[
         {

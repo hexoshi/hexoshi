@@ -1,12 +1,19 @@
 { "compressionlevel":-1,
- "height":28,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
+ "height":30,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJzt2lFqwkAURuHsfxPe+tb2tfrYpnYbVqO+dBmdSxOQEPRKM\/nD5HwwoGYyHgQHElJVAFCWtzQ27dgG5lvWmpjr5mj3GGyENbr2\/zR7x3MaLyP0zIWpA4RMHdAydUAGpg4QMnVA61UdkIGpA4RMHVAwUwcImTogk091QFXubxuxUgdkcrp6vU5jn8b3xA028fdhGUwdgCKZOgBFKvEaFwAAzNuXOgBFugx89jN5BQAAAHBfrQ5AkZoH5\/u1eT1+Bhbmqffer82bwHm7wJw6eCyyluvuR72n8RE851bDI3MwjXNgThM8FlnLdfejDmkcg+cMNfT\/S0NzAPzx\/Ty697s5PPOK+ek\/o+r7eXTvd6f7UwAszC9t0TfF",
+         "data":"eJzt2lFqwkAURuHsfxO97Vvtq+2jjXYb2sb2xWV0Lk1AQtArzeQfxvPBgJrJeBAcSEjTAEBd1mm89uMtMN+y1sScN0e752AzrDG0\/6fZO57TWM3QUwpTBwiZOqBn6oAMTB0gZOqA3os6IANTBwiZOqBipg4QMnVAJlt1QFPvbxvxoA7I5Hj2+imNfRqHhRts4e\/DfTB1AKpk6gBUqcZrXAAAULYPdQCq9DPx2WnxCgAAAOC6Vh2AKnU3zvdr83b+DNyZx9F7vzbvAuftAnPa4LHIWm64H7VJ4z14zqWGW+ZgGd+BOV3wWGQtN9yP+kzjK3jOVMP4vzQ1B8Af38+je78r4ZlXlGf8jKrv59G93x2vTwEAACjSL+iMN8U=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -177,7 +184,7 @@
                  "visible":true,
                  "width":64,
                  "x":40,
-                 "y":224
+                 "y":240
                 }, 
                 {
                  "gid":271,
@@ -205,9 +212,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwYEAAAAAw6D5U9\/gBFUBAAAAAAAAAAAAAAAAAAAA8AxBoAAB",
+         "data":"eJztwQENAAAAwqD3T20PBxQAAAAAAAAAAAAAAAAAAAAAAA8GRlAAAQ==",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -219,9 +226,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztm9ty4zYMhmnZG8tWD8\/S3u11Dzl47W17306nfbU+aM1ZfJNPiJwmmzRxVsQMR+IJIinoJwSAfSmlP6ZNpNUxbY9pOXGtdYMS7RdRX8u6aL8JvkPULaPOz1qI7yb6dVHeq\/8QZdtIQ\/RZqryL\/CbqGUOXxrQNvtvoOyjP+BjPSveM3+vEHHmm57dVudt34tOJB2u00Jx4F6yH89099Svxdh3vkr4eK+Mc1M\/z6JRfJr70Y42GMh6f3\/2HY9pFqnWHY9pH+SHa7NTukNr0kR8iTzvzcP5D4rVXHn5uu1ee+4NSn\/rncefnw2OX+mW++Xm7Mp7PLtbZc6Ltvozn5\/nsUp9e\/PoyvUan8ozV39Ch3B0T\/D2XqTK\/z30Zr5XbMJZKYAG4UMfwSxnTV+UufT1RNkVTfT+HHvq8\/2r\/XOO5j57jGebx2Ln\/H\/TYMYBRxrXfnntQjWZH6AvoIFW2Pr7qiBp9CWT9F12t4VWjpxL\/IlwrZjW8avRU4l\/T\/7xNrho9lr5PeexE2FUqZr2WXL2PdM70uWM897n9dEzrY7pK6TLdryNh56r727vI1\/Kb4IeNwbaybGdo9OVTlSvsythasw0Ueykyg9240xWdinbYRptczZN+LLeyYpkyLtkfYrs6+pP9Gux\/9ks0\/Wpe9G25lR8wBzsB8jOo3P4uYxt2deSRevxgDa\/mRxWvwCIwy\/5d4xJ7Iv5i90Om8LuyZ7IXfvNSE2p0FoRcWU\/K91N+buOXcS37nrGNNpoX\/VxuZQM88j5oPLLtwHveIB45bgTcajQvqniF7GAXQC7QyZEryxA6fJZB+weNdY3eFr1\/YDpFVa4c8+b\/OJLju6x\/4avJtgn7nOHVaF5U90FwalvGdgXwyXGfp2IsN+Ljcvo3mhexDyIbYI9toJYlx8paH\/MeSZnjjhvNiype2ZYA1tg2imwgJ+hP1tcdZ22bF\/tho\/kQdlHsBafOCyAvS9VjW8DeYKwC\/5bi9RbtV9+99gDeMNV9EH3c5z8sI\/zX4QPM8uazF13qj7ydK\/1ZPvnWq+\/84piuyycfek19lF9HnX1b9fp3abJ3in4oYx0be4F9NKyl9zXrWujr2c9jmTtH+r3c4rR1yXyGrCtjG\/B24lpjO4j7qHJ6Hane\/\/WMY85xSS\/d\/6FU4xlsd2K\/cyyDz4CBWbYl2Dbh\/ZB38usLzeUxVGUqfy98T44fW+jK\/P3NgM\/+lvyN0q7K3UWky7hWTCQWqcrgOurAx3UZ23yQ4Ysylt3riX5rPcP5PsYCvyuNA2y+KXex+0Y8wG6+pSvVwwcbp8+K+ru17m5dDD3LOtki8SB\/bvEMf5Sx\/8k2Xf5r+X6MX7TDbjd1ztR6ZT6Tiozle59x3aTnmw\/P4B+Kco+dvG08PjMKb+OH\/cCOPbBsbFVmf4rl3vmF+E99a1lH97\/gIP62z3fqX+\/vi2f45566U\/QUnQaZYv1yvBhr73frPd\/6Z\/4G+YdhLVkHyrcp73PYPh\/td+OY7hyjZP0lx5OsVO5zyDkeINdZfhdl\/J2tylheu4nnWT\/INk3ufa7Gurr\/C902xwY+1MZQMRTMZS8Am8F2xvou7i9VfxN5kvE87xNeP\/Zqx05PxaL5nZFn3uz75sdYfT59qbY802fd7cc3Tlh2retZfjeprfEx+z6mZMP2b+sCGSeNiY7J8zoyj6yP2saZz\/f7jL190H43\/wL8AWQA",
+         "data":"eJztnNty2zYQhiFKsSgyh2dp73zdg2wrUpLet9NJXq0PWmGCb\/RxTTl2rNhyiJ3BiACBxYGLH4vFQm1Kqd2HVQmLfej2YT7ym9\/1CuSflfc5rSn5V4VvX97NyzvXNRPfVSnXlPRW5fuS1pXQlzJzpTclvirvaUMT2tQVvl0p2ytO+2jPQs+03+NEH6nT\/euU7vyN+DTiwRjN1Ce+BePheHPH+4V4+x3fkrJuK+3sVc79aBSfB76UY4z6NGyfv\/37fdiUkN\/t9mFb0nclz0b5diFPW+J9iZPPPBx\/H3htFYef824V53mn0Ibysd2xfnhsQrnIN9a3ScP+bMo4u0\/k3aZh\/9yfTSjTil+bxsfoWJy2eg7t0u02wd99GUvz99ym4Vg5D23JBBaAC7kNH9OQXqfb9GYkbYzGyn4P3be+b+U\/VXvuolPUYR4P7fuPoIe2AYwyrv116kZVmhyhL6CDZNn68KwtqvQzkPVfdLWKV5UeS+xF+M2YVfGq0mOJvab3vFWuKj2Ufg1x7ETYVTJmPZdcXZZwzvS9bTz3vv2xD8t9uAphHZ6XJWDnyuvbqxLP6TeFHzYG28qinaHSz09ZrrArY2uNNlDspcgMduNGv+hU5MM2WuVqmvR7OsiKZcq45PMQ29XRn3yuwfrnc4mqX02L3qWD\/IA52AmQn17pPu8ytmFXRx55zzlYxavpUcYrsAjM8vmucYk1kfNil0OmOHdlzWQtfPtUHap0FoRcWU+Kz2Pn3MYv41o8e8Y2Wmla9Gc6yAZ45HXQeGTbgde8Xjyi3wi4VWlalPEK2cEugFygkyNXliF0+CiDPh801lV6WXR5z3CMslzZ5837OIL9u6x\/cVYTbRM+c4ZXpWlRXgfBqS4N7Qrgk\/0+j\/lYrsTH6ZSvNC1iHUQ2wB7bQC1L9pW1PuY1kjT7HVeaFmW8si0BrLFtFNlATtCfrK\/bz9o2L9bDStMh7KLYC47dF0Be5nqPbQF7g7EK\/JuL10u0X\/3y3A14wZTXQfRx3\/+wjLCv4wwwypvvXjShPPJ2rvRv+nq2ns\/OL\/bhOn09Q8+hLenX5Z3PtvLvl1Rl7xj9loY6NvYCn9Ewll7XrGuhr8dzHsvcOdLf6YDT1iXjHbImDW3A3chv9u3A7yPL6XUJ+fnzCdsc\/ZKeuvx9Kfsz2O7EemdfBt8BA7NsS7Btwush3+TTE\/XlIZRlKs4X5pP9x2b6pf+eM+Cz55LnKPmy3F2UsC6\/GRPxRcoyuCzvwMdlGtp8kOGLNJTd65FyS9XheFvaAr8rtQNsvkm3sftGPMBu5tKV3sMHG6fvinreWne3LoaeZZ1sFngQPzd\/hn\/S8PzJNl32tcwf4xf5sNuN3TO1XhnvpCJj8dl3XFehfvOhDvZQpLvtxG3j8Z1ReBs\/fA5s3wPLRqc0n6dY7h2fif\/YXIs6uveCvfjbPt+ofH4+tT\/DY3QaZIrxi\/5ijL2\/rdd8659xDrKHYSwZB9K7EPc9bN+P9rexT3f0UbL+Ev1JFkr3PeToDxDfWX5naTjPFmkor81IfdYPok2TZ9+rsa7ufaHzRt9A2n7XOpj3pGA6WLpOB2wG22nrq\/K8DuXWCsbzuE54\/Fir7Ts95ovmb0acfrPumx9t9f30ufJSp++6+xzfOGHZta5n+V2FvMbHePYxJhu2f1sXiDhpTLRPnseRfkR91DbOeL\/fd+x9Bj02ly3rd62D\/6WDz6pllW\/icbOfWLS\/Un+8Y2Z7bcRqr2vIgtd6n0EYX6INJZ6Zeq3qld\/jbv0MXsas+B2O\/ReF2+Y9le2M9rs0TlC+T8N5ZHx2H40hsZ2WV\/se0Meob1iu41m06\/C35nsyft8iz904jtYF7J9jXwvr1Mwv6yxRt7D8xH2GbbwRP7w2+JsbB4xx9iuyPHocXSZii+ey8cu+JdbtPCbw9Jri9Nhm27cXqtMYEfU5r3PIkOvz2Pq7Gi+9XzIWGatyuf8BHvJrgA==",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -271,7 +278,7 @@
                  "y":128
                 }, 
                 {
-                 "height":208,
+                 "height":224,
                  "id":8,
                  "name":"",
                  "rotation":0,
@@ -293,7 +300,7 @@
                  "y":64
                 }, 
                 {
-                 "height":8,
+                 "height":24,
                  "id":10,
                  "name":"",
                  "rotation":0,

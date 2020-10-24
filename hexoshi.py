@@ -52,7 +52,7 @@ CONFIG = os.path.join(
 LOCAL = os.path.join(
     os.getenv("XDG_DATA_HOME", os.path.join(os.path.expanduser("~"), ".local",
                                             "share")), "hexoshi")
-SCREEN_SIZE = [400, 224]
+SCREEN_SIZE = [400, 240]
 TILE_SIZE = 16
 FPS = 60
 DELTA_MIN = FPS / 2
@@ -216,8 +216,8 @@ CAMERA_STOPPED_HSPEED_MAX = 2
 CAMERA_HSPEED_FACTOR = 1 / 8
 CAMERA_VSPEED_FACTOR = 1 / 20
 CAMERA_OFFSET_FACTOR = 10
-CAMERA_MARGIN_TOP = 3 * TILE_SIZE
-CAMERA_MARGIN_BOTTOM = 3 * TILE_SIZE
+CAMERA_MARGIN_TOP = 4 * TILE_SIZE
+CAMERA_MARGIN_BOTTOM = 4 * TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = SCREEN_SIZE[1] / 2
 
 LIFE_FORCE_CHANCE = 0.25
@@ -4203,7 +4203,7 @@ class Macguffin(InteractiveObject):
         play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
 
         msg1 = _("MACGUFFIN\n\nThis is the end of the demo! Thank you for playing Hexoshi version {}.".format(__version__))
-        msg2 = _("Don't worry; the full game will not end this way. This is just a placeholder until the game is completed. I hope you enjoyed what you have seen so far, and I hope you enjoy the final game when it is finished! :)")
+        msg2 = _("Don't worry; the full game will not end this way. This is just a placeholder until the game is completed. We hope you enjoyed what you have seen so far, and we hope you enjoy the final game when it is finished!")
         DialogBox(gui_handler, msg1, self.sprite).show()
         DialogBox(gui_handler, msg2, self.sprite).show()
 
@@ -5701,9 +5701,9 @@ class TeleportDialog(MapDialog):
         self.selection = selection
         w = sge.game.width
         h = sge.game.height
-        super().__init__(
-            gui_handler, 0, 0, w, h, background_color=sge.gfx.Color("black"),
-            border=False)
+        xsge_gui.Dialog.__init__(
+            self, gui_handler, 0, 0, w, h,
+            background_color=sge.gfx.Color("black"), border=False)
         self.map = xsge_gui.Widget(self, 0, 0, 0)
         self.map.sprite = draw_map()
         self.map.tab_focus = False

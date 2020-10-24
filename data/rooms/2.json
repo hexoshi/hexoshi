@@ -1,12 +1,19 @@
 { "compressionlevel":-1,
- "height":84,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
+ "height":90,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJzt2zsKwlAQheHsfxE62vnq1EoLcRtaiI2NKLgBr0UgijHXOMmJyf\/BgCRwPd19TZKkm2ahpqF6Oe\/noRaZWkaOax\/+651RqHHk2HUydQAnpg7gpK8OAES4qQMADdbU+R5AvI06wA+Gmd8HWQoAAFDkqg4ACJU9\/2zzfnvuPF7eXQiQWoVaq0M42IXaJ897YQBAs23VASKdCt4fa0mBLmvz\/qcJ0j6x2P4wJVMHcDJRB2ipizoAWmOkDuAsezZmqhDOTB3gRdF6OQ\/zAaD3+s3Et99O\/CNTB3Bi6gBOTB3ASZVz2uDNs8fav8t3If\/cz5lFPyc87\/E5PwSAeGlvSarMuspjLXaueHxU7w6NMzVh",
+         "data":"eJzt202KwkAQhuHc\/xBazs6\/nc5KF+I1dCFu3IiCF5geJBBFTasVv7bzPlAgBtpvYaArXSmKdhqHGoXq3Lk+CTWt1G\/kuvbgt27phxpErv1Jpg7gxNQBnHTVAQAAyMhJHQBIWKr9CYB4C3WAN\/xUPm9kKQAAQJ2jOgAg9Op5Tc799sR5vXtnt0BpFmquDuFgFWpdXPbCAIC0LdUBIu1qrm8\/kgJtlnP\/86xDA2uWc62x86xKpg7gZKgOUJzvq5xUe39ThXBm6gBOUvi\/56pujwYAqHf9jtez73p9I1MHcGLqAE5MHcBJk3u+3o3v\/nvjNp+FfPM8ZxXznPA8x+f5IZC2cpYBaXplX+WxF9s3vD6a9weWcDVh",
          "encoding":"base64",
-         "height":84,
+         "height":90,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -42,7 +49,7 @@
                  "visible":true,
                  "width":16,
                  "x":24,
-                 "y":208
+                 "y":256
                 }, 
                 {
                  "gid":252,
@@ -54,7 +61,7 @@
                  "visible":true,
                  "width":16,
                  "x":352,
-                 "y":40
+                 "y":48
                 }, 
                 {
                  "gid":253,
@@ -66,7 +73,7 @@
                  "visible":true,
                  "width":16,
                  "x":352,
-                 "y":656
+                 "y":704
                 }, 
                 {
                  "gid":252,
@@ -78,7 +85,7 @@
                  "visible":true,
                  "width":16,
                  "x":344,
-                 "y":584
+                 "y":632
                 }, 
                 {
                  "gid":252,
@@ -90,7 +97,7 @@
                  "visible":true,
                  "width":16,
                  "x":40,
-                 "y":448
+                 "y":496
                 }, 
                 {
                  "gid":254,
@@ -102,7 +109,7 @@
                  "visible":true,
                  "width":32,
                  "x":120,
-                 "y":368
+                 "y":416
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -124,7 +131,7 @@
                  "visible":true,
                  "width":8,
                  "x":-8,
-                 "y":8
+                 "y":56
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -171,7 +178,7 @@
                  "visible":true,
                  "width":8,
                  "x":392,
-                 "y":440
+                 "y":456
                 }, 
                 {
                  "gid":270,
@@ -189,7 +196,7 @@
                  "visible":true,
                  "width":8,
                  "x":0,
-                 "y":664
+                 "y":696
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -199,9 +206,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwYEAAAAAw6D5U9\/gBFUBAAAAAAAAAAAAAAAAAAAA8AxBoAAB",
+         "data":"eJztwQENAAAAwqD3T20PBxQAAAAAAAAAAAAAAAAAAAAAAA8GRlAAAQ==",
          "encoding":"base64",
-         "height":84,
+         "height":90,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -213,9 +220,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzVm9ly0zAUhtXNxSnLS8ADtFcsly3QlqQsb8AMr8Y9j0j+ib7xj\/CSOHEs\/TMab7J9jnV2yXUI4TQMY7VuV7E9i9unuP+UXFdbxGu0VexXx\/0v8VjbZTy\/iMcre14d29LuW8W+tb3nPO7\/7uGBay9arj3f4ht4n7ZnDD2r756P63YWNmNxtQUtuUJ8MP5qL+clZzTuwmYs1OqZaRmLV6HRobNQLh\/Cp7CRJ+xLqZB+iI+TUP54aBykH+cz07IPpOf4EOnIuz3bXNB44Gvx0fhEfIofM270xQ\/LJ38\/Mu0OjQc+H1pXdo6YAf+\/tHPfkmdt49Onwm1o\/CA2q8sXpnFBX5xwbDAe0g3x8mNeckZBftD1Qm2qb\/x63d5ssR0LbC7yP1V89X7dPmyxHQONB\/pduj93P1gCH9e2f2P74kMxydRydShIh0VrFbeX63YRGj3HX+QM4nPRjy\/GRjEOsrsl2FzyPqcdvdA5yVbqn3MCuiB\/p7HAxsIPMbvO58yH9Fi6ILnhu9eh8Xsua7nygX9Q87GAJ3JyHYu\/nPUDeTqJ2zr8a2evQjlyJTqpI5AvMT7kFychXz+IvYVO9AOdgC+vl+TqBzUeohFf5\/YJewV\/c+ZzoCtfJgZEF9L6Mfqh4xz4UJ5Jzdvr1Xxr5Ap5Yiw895hSz3epS5AfkwtJP8QPtNbx2GsFashdzvZK8Pwf3Yc\/5Ep8fh3x7DnrP86X6gzIVc5+cAjMf+Rir8YAGUNHcs8\/+iC58lgxVz84BPFBfCI9v+7vni3Qc2Jf8VPFRqxczUbd9lA8TByf5ur4ypzjLkDdR\/qBryRuLKX+IEiuyBHTOkQpfl6g3o5+kOsSO+aeXwmp\/yCm9HgS3nLXD\/lzcl14ggeP73MH84Neq2Z8SpoTIX9HntAPfAp2d9\/5z6njYuY5sVnIlOcopwmvXD+ze3gGNs5znnSuyK8fQu\/Q8xAaXYAf+PA6qutMWpP0Gga2T\/lo1\/zWVPNe0Md3JpanJqF82dd5ef3L6y7k1Oo7h42DFtENzU4bNPl3bFsXNufcs4Cst9E8N227QPKhfLAkmttQShw1BOnymHrJVBjri6TfufAhfyA743GS2\/M2n41fYH4tp3gQXWXNHvVR7cumui8jZyKWyhFttp5aqcZtYa3kuo\/4VNzO+rBc9GMMqJcco574NkwX95KfozNTAR6olZF\/Itf7wuP2fcdjyL773LHHxoewk7ehiRH38eee66uxjpEY2W08cdwh57vvQlNXOEQe3hafpbmGePb\/Qg5hX8jPjz3v3BX\/jwHrE8k1S\/5vAjnNZb52LHyOsFQ+kCvqIam9uvnvjnzhsaLG5TJuH+P2PmzW\/2E72f85B7E9oE7t6wO8ruvrT6g5sf9rBnq7wP9RxAfkLOgNtR2nn7VCksVc\/qnAD3qNBx\/l\/yIS6\/MfI77a16n4WLrf5v\/HqfnQu9yn7uKX0r5j\/5HcB8QH+PE\/E79vSiiPKvm\/KCC5ynU93y7QeJQw39QH9+elgzpD6WBeDQytL7m27U3LeUdbfMa5rvek59NndF3HDwqKpahjqSnWquL1z\/E6sRd9dP4hbOz3Q7znMjS+8TE+4yI0MQL975N3VPZej4uq2Jf338f3VvYc99\/EHdRRiat8DY3X7NI5dp9D8Xk31j37Ohaee259qT8Q83DPwvpzzef7OK8+fwEeRWQp",
+         "data":"eJzdm2lyEzEQhZXE2LHDcgk4QPKL5WcCBIgD4QYsV+Oe+JX11TyL8ZJZLImuUs1i2e4e9fa6NfMQwmnYT8vVuIjjPB7v4\/l98rnGIn7GWMZ583j+JV7reBfvL+L10n5vHsedfW8Z587tfyar8bAaf3bIwGfPWj57esAz8Dltv7Hvt3Z95\/1qnIX1Wnw9gJdSSXKw\/hrP87LTmW7Cei00HjLz0pVehMaGpFs169WHsNYnyVPreohkH5LjJNQth9ZDayG9+p6Zlz6E35WNfMvMS1fCzonNNa\/HdVjbh\/xu7XJIBuUlNcshO5cMtfsrrYfso+Z4LlJeQs4rv\/Wm58hF0iuwAX5LeobtXyTX2BJzwQ3CEDnXU+sBRoHXpd0D44BX7uxeGm8OwSBjEfZBjqWxLXdPccwuXHNsYj1kG5KlRt+reO52oTHWM365Gq8OOHYlfC76PxYefLsa7w44diGtB\/aNbdRK5O342NLp0s6v7FxyKCcZW6+GItmweJ3G42w1noTGzokXJRM4Q\/wTi\/FRrEMteJA6lfOOXeiedKtkPIgtKN5pLfCxyEONQfdLlkN2LFuQ3vDc56GJe65rpcpBfNDwtUCm09DYhuQr2T7Qp5N4nIdNP3sR6tEr8UltB7zE+oAvTkK5cRB\/C5\/YBzaBXOhWyXFQ6yEeiXXun\/BXyFcCPt+Gl8kBsYW034V96LoEOYQz6dF5f41njV6hT6yFY48x7fwxdQnwMVhI9iF54HUer71WQI265PgBOf7H9pEPvZKcXfo4Oes\/LpfqDOhVyXFwHyFHKf6qKynen4UmftRK4FrsvtQ4uI+kV+QksvPL3dOLJa+3EyuncZArT7NxdxilfbUUqxMrS867IOFd8AmxkryxlvqDiP4Hz7\/GOC8Cn2AfYF1yx9LxFUQfx\/G755PIVrJ9YOcifC+xBN9Ffl8Lea0a26ixJ4I+YR\/UU\/ABffufx8qLqWuhU45RTsMmFuPzs7Dps6lneEzCvtIYxfXQdoctIA9yeB3VbSatSXoNA98nPLqtvzVW3wv+eM7U5vDJwsu+L9XrX153AVNrbg4fBy\/iG56dN3jy59i2j3Wo3nNXW0PX23g+dl9c8UDP0eOA62ubT3K9f8jA8y6CF\/ZQUv\/RuXTGbdVzwlLzjzZdphakdVvYqHk\/teRU3k58qFUOEfUS+msl54O7CDnIpWqlHHWf12H4fAtceyw7RwZ6SOCeRc\/\/Z9\/rMeqJyABOY4B9+vy\/16\/GtA9kSOMzeRwYoSuBa4dYj335j\/eOPTf22kBXf3ltv9EnnnstTIN9jOTIngORx7EWXPfBnTeh0dchcHhbfpZiDcns77HxDlsfO6d+dey+c9d33tqI\/YlgzZrf80JPS+nXdiXvEdYqB3pFvpv6q6t\/vlEupVhqFo+f4\/E2rPf\/4Ts5\/5GD2R1EH8f3B3hd1\/efUHPi\/HcGfrcR73OCC8kZsBuwu\/PPXiHpYinvVBAHQ9isTfFOBO9Og4WJWcRq36fia+lxm1g3thxpfvaYeJTOHTK+HUrkB6XuH3sMCUdNcjMxAEmv\/pf1qKnf1EYez6Fa9zNQhxMpdlM30fiVi6kORN\/Ze87EQ13\/TOZf2vGq5b5TW37GvW3rnt5Pf2Pb58RBfx+BXhSyaHwM6\/Ui92LNdP9T\/K6OszjOba72pzwJTY7A\/Ns4dxrns6dlFjbzommcy\/\/fxv+d2u94\/CbvAPeTV\/keGvCK9xJ9f3OaEzB\/Eppa1bn97sTmUn8g5+E7C5vPZ97v477m\/AVC4Wxv",
          "encoding":"base64",
-         "height":84,
+         "height":90,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -243,7 +250,7 @@
                  "y":0
                 }, 
                 {
-                 "height":592,
+                 "height":640,
                  "id":5,
                  "name":"",
                  "rotation":0,
@@ -262,10 +269,10 @@
                  "visible":true,
                  "width":400,
                  "x":0,
-                 "y":656
+                 "y":704
                 }, 
                 {
-                 "height":376,
+                 "height":392,
                  "id":8,
                  "name":"",
                  "rotation":0,
@@ -284,7 +291,7 @@
                  "visible":true,
                  "width":128,
                  "x":16,
-                 "y":72
+                 "y":120
                 }, 
                 {
                  "height":8,
@@ -295,7 +302,7 @@
                  "visible":true,
                  "width":96,
                  "x":16,
-                 "y":88
+                 "y":136
                 }, 
                 {
                  "height":16,
@@ -306,7 +313,7 @@
                  "visible":true,
                  "width":8,
                  "x":16,
-                 "y":96
+                 "y":144
                 }, 
                 {
                  "height":16,
@@ -317,7 +324,7 @@
                  "visible":true,
                  "width":112,
                  "x":288,
-                 "y":432
+                 "y":448
                 }, 
                 {
                  "height":8,
@@ -328,7 +335,7 @@
                  "visible":true,
                  "width":88,
                  "x":312,
-                 "y":448
+                 "y":464
                 }, 
                 {
                  "height":8,
@@ -339,10 +346,10 @@
                  "visible":true,
                  "width":40,
                  "x":360,
-                 "y":456
+                 "y":472
                 }, 
                 {
-                 "height":192,
+                 "height":224,
                  "id":24,
                  "name":"",
                  "rotation":0,
@@ -350,7 +357,7 @@
                  "visible":true,
                  "width":16,
                  "x":384,
-                 "y":464
+                 "y":480
                 }, 
                 {
                  "height":104,
@@ -361,7 +368,7 @@
                  "visible":true,
                  "width":48,
                  "x":16,
-                 "y":304
+                 "y":352
                 }, 
                 {
                  "height":16,
@@ -372,7 +379,7 @@
                  "visible":true,
                  "width":176,
                  "x":64,
-                 "y":368
+                 "y":416
                 }, 
                 {
                  "height":8,
@@ -383,7 +390,7 @@
                  "visible":true,
                  "width":112,
                  "x":64,
-                 "y":384
+                 "y":432
                 }, 
                 {
                  "height":8,
@@ -394,7 +401,7 @@
                  "visible":true,
                  "width":104,
                  "x":64,
-                 "y":392
+                 "y":440
                 }, 
                 {
                  "height":8,
@@ -405,7 +412,7 @@
                  "visible":true,
                  "width":8,
                  "x":16,
-                 "y":408
+                 "y":456
                 }, 
                 {
                  "height":16,
@@ -416,7 +423,7 @@
                  "visible":true,
                  "width":80,
                  "x":192,
-                 "y":112
+                 "y":160
                 }, 
                 {
                  "height":32,
@@ -427,7 +434,7 @@
                  "visible":true,
                  "width":48,
                  "x":336,
-                 "y":144
+                 "y":192
                 }, 
                 {
                  "height":16,
@@ -438,7 +445,7 @@
                  "visible":true,
                  "width":48,
                  "x":272,
-                 "y":224
+                 "y":272
                 }, 
                 {
                  "height":8,
@@ -449,7 +456,7 @@
                  "visible":true,
                  "width":48,
                  "x":192,
-                 "y":240
+                 "y":288
                 }, 
                 {
                  "height":8,
@@ -460,7 +467,7 @@
                  "visible":true,
                  "width":48,
                  "x":112,
-                 "y":256
+                 "y":304
                 }, 
                 {
                  "height":72,
@@ -471,7 +478,7 @@
                  "visible":true,
                  "width":64,
                  "x":320,
-                 "y":176
+                 "y":224
                 }, 
                 {
                  "height":8,
@@ -482,18 +489,7 @@
                  "visible":true,
                  "width":24,
                  "x":360,
-                 "y":248
-                }, 
-                {
-                 "height":8,
-                 "id":52,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":0,
-                 "y":592
+                 "y":296
                 }, 
                 {
                  "height":16,
@@ -504,7 +500,7 @@
                  "visible":true,
                  "width":184,
                  "x":16,
-                 "y":576
+                 "y":624
                 }, 
                 {
                  "height":16,
@@ -515,18 +511,18 @@
                  "visible":true,
                  "width":80,
                  "x":16,
-                 "y":560
+                 "y":608
                 }, 
                 {
-                 "height":16,
+                 "height":56,
                  "id":58,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":48,
-                 "x":208,
-                 "y":480
+                 "x":224,
+                 "y":512
                 }, 
                 {
                  "height":16,
@@ -535,20 +531,20 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":120,
+                 "width":88,
                  "x":136,
-                 "y":496
+                 "y":544
                 }, 
                 {
-                 "height":8,
-                 "id":61,
+                 "height":16,
+                 "id":70,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
-                 "x":224,
-                 "y":512
+                 "width":40,
+                 "x":0,
+                 "y":688
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -570,18 +566,29 @@
                  "visible":true,
                  "width":16,
                  "x":96,
-                 "y":560
+                 "y":608
                 }, 
                 {
-                 "height":16,
+                 "height":32,
                  "id":63,
                  "name":"",
                  "rotation":0,
                  "type":"slope_topleft",
                  "visible":true,
-                 "width":16,
+                 "width":32,
                  "x":192,
-                 "y":480
+                 "y":512
+                }, 
+                {
+                 "height":16,
+                 "id":71,
+                 "name":"",
+                 "rotation":0,
+                 "type":"slope_topright",
+                 "visible":true,
+                 "width":16,
+                 "x":40,
+                 "y":688
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -590,7 +597,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":69,
+ "nextobjectid":72,
  "orientation":"orthogonal",
  "properties":[
         {

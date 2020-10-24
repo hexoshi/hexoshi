@@ -6,14 +6,14 @@
          "target":"."
         }
     },
- "height":28,
+ "height":30,
  "infinite":false,
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJzt3N1OwjAUAOC9\/0No9A6v1UtFfQ1\/EG\/0Rk18AUvCErKsOMcp2+D7khO2piunlCYLrK0qAOCQnPa45jLFVSau41KrZikuAtvrq62\/\/+1nqb60jd+Qn9u+33cs35EIfftyEp0IMGqzoRMAAAAAirlJcftHnXmKh5YyYBqeU7ysj38ydRYp3lrKNn3FpQQAAAAAAAQ4y5SfN84\/SicCAAAAMBF3Qyewo237rkTvvQJT0PYb6eves4DjYb8hVu6HTmDEStxrRrQ5D2iD6ajXge4yV5fr1+b\/zpS514xocxHQRlNu\/HPPKeTWLR6rrnOwz1yt14Gu5mpuPOBQdNkHIcJjiqeOdeu11suttarqvWM9ODbfjfPNfRC6+AzMBQCglF8knEJc",
+         "data":"eJzt3NFOwjAUAND9\/0do9A2fxUdF\/Q1FxBd9URN\/wJKwhCwrznHHNnZOcsPWdOWW0mSBtUUBAJyS8xbXXKeYZ+ImLrViluIqsL226vr733521Ze68evzczv2+w7lOxKhbV\/OohMBBm3WdwIAAAAAAEDWbYq7P+osUjzWlAHjsEzxsj3+ydRZpXirKdv1FZcSAAAAAAAQ4CJTflk5\/+g6EQAAAICRuO87gQPt20ctei81GIO630hfj54FTIf9A9l46DuBAeviXjOizUVAG4xHuQ70kLm63r5W\/3emm3vNiDZXAW1U5cY\/95xCbt3iVDWdg23markOdDNXc+MBp6LJPggRnlI8N6xbrrVe761VFO8N68HUfFfOd\/dBaOIzMBcAgK78AiOyQlw=",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":1,
          "name":"Decorations",
          "opacity":1,
@@ -27,7 +27,19 @@
          "draworder":"topdown",
          "id":2,
          "name":"Powerups",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":282,
+                 "height":16,
+                 "id":66,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":1896,
+                 "y":224
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -49,7 +61,7 @@
                  "visible":true,
                  "width":32,
                  "x":1704,
-                 "y":200
+                 "y":216
                 }, 
                 {
                  "gid":254,
@@ -61,7 +73,7 @@
                  "visible":true,
                  "width":32,
                  "x":472,
-                 "y":128
+                 "y":144
                 }, 
                 {
                  "gid":253,
@@ -73,7 +85,7 @@
                  "visible":true,
                  "width":16,
                  "x":1480,
-                 "y":208
+                 "y":224
                 }, 
                 {
                  "gid":252,
@@ -85,7 +97,7 @@
                  "visible":true,
                  "width":16,
                  "x":1488,
-                 "y":80
+                 "y":96
                 }, 
                 {
                  "gid":252,
@@ -97,7 +109,7 @@
                  "visible":true,
                  "width":16,
                  "x":1304,
-                 "y":64
+                 "y":80
                 }, 
                 {
                  "gid":255,
@@ -120,7 +132,7 @@
                  "visible":true,
                  "width":32,
                  "x":560,
-                 "y":192
+                 "y":208
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -142,7 +154,7 @@
                  "visible":true,
                  "width":8,
                  "x":-8,
-                 "y":8
+                 "y":24
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -171,7 +183,7 @@
                  "visible":true,
                  "width":8,
                  "x":0,
-                 "y":200
+                 "y":216
                 }, 
                 {
                  "gid":273,
@@ -182,13 +194,25 @@
                         {
                          "name":"dest",
                          "type":"string",
-                         "value":"39.json"
+                         "value":"9.json"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":64,
                  "x":1872,
+                 "y":240
+                }, 
+                {
+                 "gid":260,
+                 "height":16,
+                 "id":67,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":1896,
                  "y":224
                 }],
          "opacity":1,
@@ -199,9 +223,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwTEBAAAAwqD1T20ND6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+DG1gAAE=",
+         "data":"eJztwTEBAAAAwqD1T20JT6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4GdTAAAQ==",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":6,
          "name":"fake_tile",
          "opacity":1,
@@ -213,9 +237,9 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztnOly2zYQgKEjski2zbv0FRInlq+m\/dc27fScvl4fscIMv+rDmoppipYjRjuDEQmCILjYe5dap5Tm27bettm21e05fcu2n7Zsx+S2COfc22jssj1fqn+tVulZ63bOqh1XaU7PXWlu7plrrnjO3HO1qp1rofcAB8xZay3013oXxrAu3pP5\/X68C8+q1FhTrftYA8fMPdO4OuBpqd+Znu++rvdvdL4UTkwPrIE5eHajNdbpIf74rTVHfL+5nrcMfbzrXPOA6zp10xLvAZ6Zu0rlOsDXvGPf1uqrwxzx3aCHSE+zVNKB6Yv1e33Mw17QZ7pdp5K33IyfOlzzvLndb9vdtt3q131en\/eNviqVdHivdtvRbtq5b9SqVOK7SeXe3rTzVbrHc7Le+3B+E9qd+u\/a+b0e4+C2Y03QDOu9Tfvf8164pjV6Js+6D+vjvBa+utYO3u7CfcaZ95Nr7N1CDV7Jv5bLXLd8ME8t9GveY93xN74j6+tab6RLcHKvvlr3cr9pJNKD6c\/vZ3lgOWN+nmssemeRSp4Cl7NUyoZ5KumA9zNtmjbiWsFhE\/ABjd3p2LSa2\/epH3zdc9yh8NVIY54Cz\/1ucb1PWf\/Ya3udShlvG8o2jHmZcdGOiPIuH384YG1937UP\/vrO9TGVutfvTX\/kbcsEzhln+2cRGmPy9b97ru+p7\/Za78I6PzxyzxmmCXnPL9POVo52L7oc\/YNtaHqFD2wP5\/bNEd9jLPgxlTIr6m1sZ\/tO6Gf7p\/Z37AfF+f45wjtdah0\/HOF5Z\/g84W0qfTv8P\/QQ\/G3b1D4y15AJ+fy7o77BuJB5HdnGezrGYDveY6zjY9zCvjbnx+K5t2m3n9WRnnmGzw\/epTLGCE1bpzmGZH0P78Pf3HfqeiPjhPiX48fm10XoAy\/gCXvHvr3jrsfC0aXWeebzLxcyTTvWb\/scG5Rz7E542\/rKsaW+sZ7PFTJOHGtwrBF5aJ8FWYBfjgywXTDXHHnssWyeN1pXXusp+lNnOByQ97ZR1zqPtrzjbeix6N+fst2eIdu64MA8Ai6c+3VOzj66fZm55kN2HAtH+OfYaWf48oCYrGnZeWfo1rreNQ3W\/Y5BTYHPbXsTa4s1Gdb34GSh68QwXIdCTO5YOLJtckgO5AynDZmmXetjvzza67NwjG1vezVfP3V6Isdmv9w62T6Kc+6OVTonCU6t\/4+Bo9epzNk\/Jlvy+Ott22zbVds2bR\/HF2kXj1xt2\/v2Gsf5+qu0w991e+26bfnaWuOv9Yz8+8ehL32GTsj+m\/Np0LDr5GIdIrTrMdDTFOJwGX5KZY2ha+J8bvvGYxqNRc\/bPvoUn2eaf6\/fTXrIE9dh3D7AP8\/r7GNDdNV2OV7P+7g+1v6e47bgzvUHjX5dh+H7z7w+PsDnzhnZBoeW0Vuu8\/RY55FOPQ4HZF6PNUT2bxzHiPLOOQrH45EDn8LRx1TG8cEv9XyuKaT2bR9cpt2+DJG\/xoF9GNffeu+hFduCNPebdpjb8vL3AWs9Qzdg1znf4xiS6+LM95btyGfv0RT0OZDz6c4zgAPXm7tWzrWu4Mex+b41Bh9T+a3JUJy+STtfYmhM4Oe0kytRN\/vbBstE+y3272zTxPhv\/F7kz4HrPcNDIH8ea9SdH+Ia+sV1NF3ff5y6fx4h0zn86do4bCBwYh0OjRtnrk3ow7fECQ7JVboWYIx9yXLDtYAx17II1513cG1V1PXwveM\/+Z6zDT8OOK8Wc2bRbjddu34ufiuY+6eWp816Peoy1xXZd3XOouubtDymL9\/CV0P1+dtU1jsRU8PXHzIffGhfJPrltu\/XHeMsH+hfak7r\/afq9W8HvNfUIe8begf+tj3uvap1LebOvZennlfbB+j1GFOLuXFwaVkQvwvuiyP2ZwhO47cs8bu32wFzvksPeTL67a4JdJ9xsNQc+7619reTxByv0i6uv2rbRTuGGL7jKI3GbFKZE7jSnOQTpgrEY83Xlrng2vq765sM4qV5j6bkn0fIvA7vYnOCN9cYzUOzfHhKjQH6c6jdThwuw78D5zC8S2UtpGOPrn0GD7Zh4nf65mnb6\/bVTVfYjY4TuXbLssVyiH7HASyHbcdOzQ4F0Bfgw34UuLCudjx5kR7y+TFrt18KyLmZh2d7+pxDt93U11ceg8+XA+\/tAupuXOsX9XTX\/3HE\/yxxnB6b0HPEmKbn83dCdSp9gOgjIHO6bDDHBvrmHU8VqP0Cv1FnW1b6GP\/TNSTsyZTxBWR\/3f9Bwn9aRNqxruCc\/FgfuGznGorTyzTu9yvYf+y\/897wkmU+dOR4ruM\/5ttFKu157rdNYF1keWC9bzvAPD\/v6GNf2LOp6qjM594L203Gs+NNXTqe\/cp6auz\/\/5gCDMUJ\/vBQ+htTn2d\/3\/ZxrAGM\/ji61vkJ64mu\/+CwfV53HPu5zueh021LmdftZ\/r76vtU0vVUaj8Med\/ye1rnGA+Wr9bpls0xDzK1nNpLQ+bTvA+HxtvHAvxz18Bxbt52zaD9ePO3z6NN73gQ+t7xItccxvixc0DOe3i99oXAUe6fsi3KfwnZDuX\/yrBJ4\/\/rUYfl\/+Gj9YHf0g7nxEGpg960\/dRJ51jol1ofle3kQ+Rnvn8x3nL+jxegP13HGv04+pyHtD5xPs3fQNvft+6OOrzuuO4YqXVWV94+H1+naevyl4RfU1k\/Gu05+3iW7c\/N65mGyS9vjvC8PkAd09C8GvptLCB+7xiaedV1lea1mGuHjx039\/5bJ9t+97yLVNqa9jEtc5hjnUq73\/HmKevxl4Bf0g7flq2W194Xx0jy73PyHrVj0NiQGo2xgTqmQ+pe5+0x375gPyHTLtpzWr6ObH2l5r1iDx3\/inWsrrlyHtLxc8fkYqy30dyml+gX2DeI9XjIJPP5UnOY3i7SLs++aXGT39vf1jFmlXb2JnhlHPfaRr1IJc5XYcxGz\/ZzrtW3Cs\/2eld6FuNca3CVHn5XeBHu8\/43mmulZza6j3cCD57Pcto6wfviX\/tU7Mlf6XmA2jN0D\/TxXM\/ru6bHcpXZDgHXtmkz3qNP6lgZ450bsJ3LHsW8tONvrl333llnO1dmGVrpuvPtts0ZE\/Nqli8xzub6Hb+rbcS4Ttc0Rfx0xRSjn2B7NMb7wFXX87zWWFvuujTjrun4RXbGHEWjeZ1PZA9rPc\/1T8YF9y7TQ3rgOTFmav\/Mfp3jN6YRnuf15LU+R90zvqfjvuyn5SaykbUiJ\/Mx\/GbbBFnJt9t8gx316aq9fpV2shSc7PMdqXkDRzxzXy7bupg9Mv04TlZ1XHP+1Hqb65F+qzA2xuFMy+bxZXi+73W8DV5yHS7rM61bbltO8Azn46BN04JlnsdbrjrPYJkYedE+a+RD1gCuo63iPJjtGvu+Vehn\/kZzeix4dF1XrFs0PdSp5OcY+7BP5PHgzna6n1GF50RbPvdh47xPO5nlGkd4C35qUlkzeaU1OkYU87\/0ORZlGuP6LBybfhln+Rh5zjnf3P+pOJxpw\/d6f6xvoTHrbusZ62z7VtCL868xju0Yecy1QUOmrcjLXXVzrMv773lt08fYHWsxTzhWH21\/2\/ym5WWYd5ZKXq01n2nfccWZ5jAfMz7KHNsxtp9sq0S\/1\/VLplHm8RrXYa5obzSppJWof2P+owr3W15Ffe29cIzOdle0JXyfbQjrHePRuVpajAmzPtuZli2WA5bh0fY1\/XFuW6+Ljo1L9u0xsHw0r7KO\/wCoAM2H",
+         "data":"eJztnO1y40QWhtsfJJa8y9wLt8BkJskkAfbfwkCxC1v7h4vjEklX6cGP3siMYjserLirumS1Wq3u0+f7nPaqlDJ\/rKvHOnusbXdP27Jrpy67PrUu4p531+q77O6Xal+pNvrWqhuz6fo1GtNjNxqbd+YaK+8Ze67adGMttA5gwJit5kJ7q7XQh3mxTsb3+lgL32pUmVOr95gDvxl7pn5twGmp60zfd9vQ+te6XwomxgfmwBh8e605tuUp\/Li2GiPXN9f3ltHGWucaB1i3ZRiXWAdwZuym9OcBvOYD+7ZSWxtj5NrAh8SnWenjgfGL+Xt+jMNe0Ga8XZU+bbkaPm0887i1PjzW+8d6p6vbPD\/vG21N6ePhg+rdQP3Qjf1BtSl9eK9Lf28\/dOM1esdjMt+HuP8Q9V7t9934no9hcDcwJ3CG+d6V7et8EKypa32Tbz3E\/LhvBa+huQO3+3jPMPN+8oy9W6hCK\/Vqvsxz8wfT1EJX0x7zzmuukfkNzTfxEpg8qK3Vu7xvHEl8MP55feYH5jOm57n6IncWpU9TwHJW+rxhXvp4wPqMm8aNnCswXAc8wLF7\/Tau1vpdGVf+ObLfvuUfB+rznPLSa8v5Pmf+h57bm9Ln8dahrMOYlumXekTyu\/r72z3mNnatY+A3dqyPpS97vW7ak7bNE7inn\/WfRVT61Of\/Gzm\/567tjdbCPL\/9xDvnMs1S9\/yqbHTl1HuR5cgfdEPjK3RgfbjWL4+4jkOVf5c+z0q5je5s2wn5bPvU9o7toBzv\/0dY05Xm8a8jfO9c\/p7lbenbdth\/yCHo27qpbWSewRPq\/TdHXcFhS6V1eBvrtI\/Berz7WMan38K2NvfHorm3ZbM3Zzp\/vaXiAbSd\/jDsOl\/B1bb0fXK29cfagH\/XUmECHNBb4GXIa\/u6mvjN1T6lmcaobceCEWup39zHljqX0y5fl428sUyCZpFtQz6o9F2hw546PlWYOJ5jP4TjT8Birjb7arFx0AkcszmWzvOu9PnMubzOUvHA+IeOahvVMSHb78gu9HXeO3X9sMKEeJbjwda\/F9EGXICT9QDGcRz1WDC60jzPdP56S8Vpx+7tb0N2cY\/8grZtfzpWdOp6e4WJYweOHVrPMa8DBug49mHaJ0ffY8nzrzWvOtdT9I+ey\/4Ffm+f06r07XL75hw\/Q46lv\/6U\/XC14LNwjpBjCs7lco6Nfe72Tc41HrzjWDDC346edi6vrxBjNS47j8y+OOd1gP+W\/Y4pTYHOrXvjd8gcS8t7YLLQc\/wZzivFn3FM+5x9O3W\/ybnsXipOO3fXdnnq67P4jW5vfXUKfl1yZmyXWybbRrEf0rFH5xjZX4\/cPwaM3pR+Dt6neEvtf\/tYbx7rdVdvujZ+X5aNT\/Lisb7vnvG7Pv+ibOB32z277Wp9tlL\/W32jXv+776LPZbBU+835MeCw897zXAG46z7g0xT8cLV8X\/pnBpzj7nvrN+6zVl\/kvPWjv6LzivPvdb0pT2niNvptK9jndZ5jdIihXG3HEliPz7vY3rPfFtg5n3Ctq+MAfv9M64cv0LlzQKyDO2aW5zbc13khp+6Ho1Raz5xg2zf2YyS\/c4zC\/nj4wF\/B6GPp+\/GBL\/n5PiNALvu2clU2+7IL\/zUMbMP4PI33HlyxLkh1u3GHsc0v\/7PDXM9luKDXOd5jH5Lz3E335u3wZ+\/RFOQ5pebHOc4ADHx+zLnvPrvi\/CHj85icwY9lA9N94nDkAuzjE\/ihbPhKymbnCpgn2m6xfWedJv2\/ef7zlx3ney5PC\/HzPHPm+BDPkC\/Oix06z3nq9nmWiufQp3Pd0YGAiWU4OG6YOTdhDN3iJ9gnVulcgEPsS+Ubzu3PWMsinjvu4FzplPXQvf0\/9Z2zDn+Y4rhaxsxSbzdeOx8+z\/7X9qnFaatcT1nmvCLbro5ZGOd9nnws3UJXu8rzt6Wf74RPDVt\/l\/GgQ9siaZdbv18N9DN\/oH2pMS33nyvXv9phXVMvdd+c92pdKnXTVs8ydu69PPW42raCXE+fWsbGgaV5gfWh5+QYsD+7wDTPpuY59rsdxnxXntJk2u3OCXSbYbDUGNv+O8X\/hYDP8bps\/PoXXb3s+uDDtx9lrT43pR8TuNaYxBOmWvDHmq7Nc4G15ffQGUv8pXWPpmSfZ6m07rx1w805RvOo5g\/PyTFAfu6qt+OHq+X3HcdweVf6uZD2PTr32Wed0jb3GUDzRNs3\/l8O51w36pO5W+Yt5kO02w9gPmw9dmp6KAV5ATxsRwELy2r7k\/MMCzrtlOm8FmJupuHZljbH0K03jbWVD0Hnyx3fHSrk3TjXL+W05XHGI4GN\/fTohB4jfZoez+d+29K3AdJGgOcM6WD2DYyNO55qIfcL+KbMNq\/0b5+9ZO\/YkynDi1Ltdf+nGP9RlbhjWcE98bEx5arsd77tqhz2\/Ar6H\/vvuDe0ZJ4PHtmfa\/+P6XZR+vo871snsCwyP7Dctx5gmp8PtLEv7NlUZZTPJ9v3Bi9dqM1xz5Tx7FeVU4f+P68plF1hgj28K\/4dUp5Xe9\/6ceYApj2OrHV8wnLCuEa1ft4O\/PZ3Hc9DpluXMq3bzmS+9d2H0sfrqeR+uNR9q+u0zDEczF8t082bMw4ytZja5y6VTus+7OtvP1TBPncOHPembecM2o43ffs+dXr7g5D39hc55zD9x44BOe7h+doWAka1fcq6KP8NaD2U\/x9FJ83\/yyUPy\/+rSx1Tfi4bmOMHJQ\/6pmsnT7r6Ql9rflTVk\/fhn\/X9xeGm86e\/APnpPNa042hzHNLyxPE0n4G2vW\/ZnTK8HXhuH6ll1lDcvv6+LdOW5Z+z\/FT6+aOpz9nGM29\/aVqvOEx8+eYI3xtTyGPaNa6GfDtUwX9vH5pp1XmVprWMtUPH9pt7\/y2Trb973EXp65q2Mc1zGGNV+nq\/\/c1TluOfo\/xYNvA2bzW\/9r7YR1KvL0l75I6BY7vkaBy6kMe0T97rvPvN2Rf0J3jaZXdPrc\/hrV+oeq\/YQ\/u\/Mo\/VOVeOQ9p\/bp9c+nrXGtv4knaBbYPMx4Mnmc6XGsP4dlk2cfabDjZ13T5bR5+LstE3gSv9eNc66mXpw\/wi+tzo2\/7Ordou4tue74W+RT\/nGlyXp+cKL+M97\/9aY13om2u9x5qAg8czn7ZM8L74apuKPfm1vEwh9wzZA3681PfGzulTscqqhwBr67QV7mmT2ldGf8cGrOeyRxmXtv\/NueveO8tsx8rMQxs9d7zdujl9Mq5m\/pJ+NufveK3WEXOezmlK+Az5FNNOsD6a\/j5gNfQ9zzVzy52XZtitB67wzoxRrDWu44nsYavvOf\/JsODdZXmKD3wnfaa2z2zX2X9jHOF7nk+d60vkPWN72u\/LfppvwhuZK3yy\/oberJvAKzm7zRnslKcX3fPrsuGlwGSb7UjOGzDim9ti2ZbF7JHxx36yZuCZ46eW2zxP\/G2ib\/rhjMum8WV83+\/a3wYtOQ+X+RnXzbfNJ\/iG43HgpnHBPM\/9zVcdZzBPTFq0zZp0yByAdeoqjoNZr7Ht20Q74681pvsCR+d1Zd6i8aEtfXpO34dtIvcHdtbT\/Y0mvpO6fG1Dx3lfNjzLOY7QFvS0Lv2cyWvN0T6ijP\/SZl+UcYzns\/ht\/KWf+WPSnGO+tb364X7bUo0bftf7Y3kLjll2W85YZtu2Al8cf00\/tn3kGWsDh4xbSctDeXPMy\/vvca3Tp++OuZgm7KtP3d86v3F5GePOSp9WW41n3LdfcaYxTMf0T55jPcb6k3WVtHudv2QcZRzPcRVjpb6xLn1cSfmb8Y8m3je\/SnntvbCPznpX6hJ+zzqE5Y7h6FgtNX3CzM96pnmL+YB5eOq+xj\/uresN4bFhyb59qpg\/mlaZxx9eDdXP",
          "encoding":"base64",
-         "height":28,
+         "height":30,
          "id":7,
          "name":"Tile Layer 1",
          "opacity":1,
@@ -240,7 +264,7 @@
                  "visible":true,
                  "width":1360,
                  "x":0,
-                 "y":192
+                 "y":208
                 }, 
                 {
                  "height":32,
@@ -251,10 +275,10 @@
                  "visible":true,
                  "width":72,
                  "x":1928,
-                 "y":192
+                 "y":208
                 }, 
                 {
-                 "height":168,
+                 "height":184,
                  "id":12,
                  "name":"",
                  "rotation":0,
@@ -287,7 +311,7 @@
                  "y":16
                 }, 
                 {
-                 "height":128,
+                 "height":144,
                  "id":15,
                  "name":"",
                  "rotation":0,
@@ -306,7 +330,7 @@
                  "visible":true,
                  "width":168,
                  "x":1024,
-                 "y":152
+                 "y":168
                 }, 
                 {
                  "height":8,
@@ -317,7 +341,7 @@
                  "visible":true,
                  "width":144,
                  "x":1048,
-                 "y":168
+                 "y":184
                 }, 
                 {
                  "height":8,
@@ -331,7 +355,7 @@
                  "y":16
                 }, 
                 {
-                 "height":112,
+                 "height":128,
                  "id":19,
                  "name":"",
                  "rotation":0,
@@ -361,7 +385,7 @@
                  "visible":true,
                  "width":88,
                  "x":1272,
-                 "y":168
+                 "y":184
                 }, 
                 {
                  "height":16,
@@ -372,7 +396,7 @@
                  "visible":true,
                  "width":200,
                  "x":1360,
-                 "y":208
+                 "y":224
                 }, 
                 {
                  "height":48,
@@ -383,7 +407,7 @@
                  "visible":true,
                  "width":32,
                  "x":1560,
-                 "y":176
+                 "y":192
                 }, 
                 {
                  "height":24,
@@ -394,7 +418,7 @@
                  "visible":true,
                  "width":264,
                  "x":1592,
-                 "y":200
+                 "y":216
                 }, 
                 {
                  "height":144,
@@ -405,7 +429,7 @@
                  "visible":true,
                  "width":24,
                  "x":1856,
-                 "y":80
+                 "y":96
                 }, 
                 {
                  "height":8,
@@ -416,10 +440,10 @@
                  "visible":true,
                  "width":24,
                  "x":1832,
-                 "y":80
+                 "y":96
                 }, 
                 {
-                 "height":56,
+                 "height":72,
                  "id":35,
                  "name":"",
                  "rotation":0,
@@ -430,7 +454,7 @@
                  "y":16
                 }, 
                 {
-                 "height":136,
+                 "height":152,
                  "id":36,
                  "name":"",
                  "rotation":0,
@@ -449,7 +473,7 @@
                  "visible":true,
                  "width":224,
                  "x":336,
-                 "y":128
+                 "y":144
                 }, 
                 {
                  "height":16,
@@ -460,7 +484,7 @@
                  "visible":true,
                  "width":64,
                  "x":80,
-                 "y":80
+                 "y":96
                 }, 
                 {
                  "height":16,
@@ -471,7 +495,7 @@
                  "visible":true,
                  "width":16,
                  "x":128,
-                 "y":96
+                 "y":112
                 }, 
                 {
                  "height":112,
@@ -482,7 +506,7 @@
                  "visible":true,
                  "width":192,
                  "x":144,
-                 "y":80
+                 "y":96
                 }, 
                 {
                  "height":16,
@@ -493,7 +517,7 @@
                  "visible":true,
                  "width":32,
                  "x":16,
-                 "y":120
+                 "y":136
                 }, 
                 {
                  "height":16,
@@ -504,7 +528,7 @@
                  "visible":true,
                  "width":56,
                  "x":1880,
-                 "y":80
+                 "y":96
                 }, 
                 {
                  "height":16,
@@ -515,7 +539,18 @@
                  "visible":true,
                  "width":32,
                  "x":560,
-                 "y":128
+                 "y":144
+                }, 
+                {
+                 "height":8,
+                 "id":64,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":48,
+                 "x":1880,
+                 "y":224
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -537,7 +572,7 @@
                  "visible":true,
                  "width":16,
                  "x":112,
-                 "y":96
+                 "y":112
                 }, 
                 {
                  "height":48,
@@ -548,7 +583,7 @@
                  "visible":true,
                  "width":48,
                  "x":336,
-                 "y":80
+                 "y":96
                 }, 
                 {
                  "height":24,
@@ -559,7 +594,7 @@
                  "visible":true,
                  "width":24,
                  "x":1248,
-                 "y":168
+                 "y":184
                 }, 
                 {
                  "height":40,
@@ -570,7 +605,7 @@
                  "visible":true,
                  "width":40,
                  "x":1360,
-                 "y":168
+                 "y":184
                 }, 
                 {
                  "height":24,
@@ -592,7 +627,7 @@
                  "visible":true,
                  "width":80,
                  "x":1576,
-                 "y":72
+                 "y":88
                 }, 
                 {
                  "height":24,
@@ -603,7 +638,7 @@
                  "visible":true,
                  "width":24,
                  "x":1592,
-                 "y":176
+                 "y":192
                 }, 
                 {
                  "height":16,
@@ -625,7 +660,7 @@
                  "visible":true,
                  "width":24,
                  "x":1832,
-                 "y":88
+                 "y":104
                 }, 
                 {
                  "height":48,
@@ -636,7 +671,7 @@
                  "visible":true,
                  "width":16,
                  "x":576,
-                 "y":144
+                 "y":160
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -650,7 +685,7 @@
          "name":"Zones",
          "objects":[
                 {
-                 "height":224,
+                 "height":240,
                  "id":61,
                  "name":"",
                  "rotation":0,
@@ -661,7 +696,7 @@
                  "y":0
                 }, 
                 {
-                 "height":88,
+                 "height":104,
                  "id":63,
                  "name":"",
                  "rotation":0,
@@ -680,7 +715,7 @@
                  "visible":true,
                  "width":144,
                  "x":0,
-                 "y":88
+                 "y":104
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -703,7 +738,7 @@
                  "visible":true,
                  "width":32,
                  "x":920,
-                 "y":80
+                 "y":96
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -712,7 +747,7 @@
          "y":0
         }],
  "nextlayerid":12,
- "nextobjectid":64,
+ "nextobjectid":68,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -760,6 +795,10 @@
         {
          "firstgid":274,
          "source":"..\/tilesets\/objects.json"
+        }, 
+        {
+         "firstgid":275,
+         "source":"..\/tilesets\/macguffin.json"
         }],
  "tilewidth":8,
  "type":"map",

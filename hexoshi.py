@@ -75,19 +75,28 @@ parser.add_argument(
     help=_("Manually choose a different language to use."))
 parser.add_argument(
     "--nodelta",
-    help=_("Disable delta timing. Causes the game to slow down when it can't run at full speed instead of becoming choppier."),
+    help=_("Disable delta timing. Causes the game to slow down when it can't "
+           "run at full speed instead of becoming choppier."),
     action="store_true")
 parser.add_argument(
     "-d", "--datadir",
     help=_('Where to load the game data from (Default: "{}")').format(DATA))
 parser.add_argument(
     "--scale",
-    help=_('The scale factor to use by default in windowed mode (Default: "{}")').format(SCALE))
+    help=_('The scale factor to use by default in windowed mode (Default: '
+           '"{}")').format(SCALE))
 parser.add_argument(
     "--fsscale",
-    help=_("Specify a scale factor to use in fullscreen mode instead of using dynamic scaling. This will cause the screen resolution to change, which may improve performance. For best results, specify this as the target resolution width divided by {w}, or as the target resolution height divided by {h} (whichever is smaller). For example, to target a resolution of 640x480, use {ex}. A scale factor of 1 will always be fastest, but may result in windowboxing.").format(
-        w=SCREEN_SIZE[0], h=SCREEN_SIZE[1],
-        ex=min(640 / SCREEN_SIZE[0], 480 / SCREEN_SIZE[1])))
+    help=_("Specify a scale factor to use in fullscreen mode instead of using "
+           "dynamic scaling. This will cause the screen resolution to change, "
+           "which may improve performance. For best results, specify this as "
+           "the target resolution width divided by {w}, or as the target "
+           "resolution height divided by {h} (whichever is smaller). For "
+           "example, to target a resolution of 640x480, use {ex}. A scale "
+           "factor of 1 will always be fastest, but may result in "
+           "windowboxing.").format(
+               w=SCREEN_SIZE[0], h=SCREEN_SIZE[1],
+               ex=min(640 / SCREEN_SIZE[0], 480 / SCREEN_SIZE[1])))
 parser.add_argument(
     "--no-backgrounds",
     help=_("Only show solid colors for backgrounds (uses less RAM)."),
@@ -102,7 +111,8 @@ parser.add_argument(
     "-s", "--save-map", help=_('Save an image of the full map as "map.png".'),
     action="store_true")
 parser.add_argument(
-    "--dist-ai", help=_("Write the AI data to the game data directory instead of the user data directory (for distribution)."),
+    "--dist-ai", help=_("Write the AI data to the game data directory instead "
+                        "of the user data directory (for distribution)."),
     action="store_true")
 parser.add_argument(
     "-q", "--quit",
@@ -543,8 +553,9 @@ class Level(sge.dsp.Room):
                                 try:
                                     value = eval(value)
                                 except Exception as e:
-                                    m = _("An error occurred in a timeline 'setattr' command:\n\n{}").format(
-                                    traceback.format_exc())
+                                    m = _("An error occurred in a timeline "
+                                          "'setattr' command:\n\n{}").format(
+                                              traceback.format_exc())
                                     show_error(m)
                                 else:
                                     if obj in self.timeline_objects:
@@ -588,15 +599,17 @@ class Level(sge.dsp.Room):
                             try:
                                 exec(arg)
                             except Exception as e:
-                                m = _("An error occurred in a timeline 'exec' command:\n\n{}").format(
-                                    traceback.format_exc())
+                                m = _("An error occurred in a timeline 'exec' "
+                                      "command:\n\n{}").format(
+                                          traceback.format_exc())
                                 show_error(m)
                         elif command == "if":
                             try:
                                 r = eval(arg)
                             except Exception as e:
-                                m = _("An error occurred in a timeline 'if' statement:\n\n{}").format(
-                                    traceback.format_exc())
+                                m = _("An error occurred in a timeline 'if' "
+                                      "statement:\n\n{}").format(
+                                          traceback.format_exc())
                                 show_error(m)
                                 r = False
                             finally:
@@ -615,8 +628,9 @@ class Level(sge.dsp.Room):
                             try:
                                 r = eval(arg)
                             except Exception as e:
-                                m = _("An error occurred in a timeline 'while' statement:\n\n{}").format(
-                                    traceback.format_exc())
+                                m = _("An error occurred in a timeline "
+                                      "'while' statement:\n\n{}").format(
+                                          traceback.format_exc())
                                 show_error(m)
                                 r = False
                             finally:
@@ -694,8 +708,8 @@ class Level(sge.dsp.Room):
             r = xsge_tiled.load(os.path.join(DATA, "rooms", fname), cls=cls,
                                 types=TYPES)
         except Exception as e:
-            m = _("An error occurred when trying to load the level:\n\n{}").format(
-                traceback.format_exc())
+            m = _("An error occurred when trying to load the level:\n\n"
+                  "{}").format(traceback.format_exc())
             show_error(m)
             r = None
         else:
@@ -4202,8 +4216,13 @@ class Macguffin(InteractiveObject):
         sge.snd.Music.stop()
         play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
 
-        msg1 = _("MACGUFFIN\n\nThis is the end of the demo! Thank you for playing Hexoshi version {}.".format(__version__))
-        msg2 = _("Don't worry; the full game will not end this way. This is just a placeholder until the game is completed. We hope you enjoyed what you have seen so far, and we hope you enjoy the final game when it is finished!")
+        msg1 = _("MACGUFFIN\n\n"
+                 "This is the end of the demo! Thank you for playing Hexoshi "
+                 "version {}.".format(__version__))
+        msg2 = _("Don't worry; the full game will not end this way. This is "
+                 "just a placeholder until the game is completed. We hope you "
+                 "enjoyed what you have seen so far, and we hope you enjoy "
+                 "the final game when it is finished!")
         DialogBox(gui_handler, msg1, self.sprite).show()
         DialogBox(gui_handler, msg2, self.sprite).show()
 
@@ -4265,7 +4284,8 @@ class Artifact(Powerup):
 
 class Etank(Powerup):
 
-    message = _("E-TANK\n\nExtra energy capacity acquired")
+    message = _("E-TANK\n\n"
+                "Extra energy capacity acquired")
 
     def collect(self, other):
         global etanks
@@ -4275,7 +4295,8 @@ class Etank(Powerup):
 
 class LifeOrb(Powerup):
 
-    message = _("LIFE ORB\n\nAbsorb life force from defeated enemies")
+    message = _("LIFE ORB\n\n"
+                "Absorb life force from defeated enemies")
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = life_orb_sprite
@@ -4290,7 +4311,9 @@ class LifeOrb(Powerup):
 class Map(Powerup):
 
     message = _(
-        'HANDHELD MAP\n\nSee mini-map in HUD; see full map by pressing "map" button or from pause menu')
+        'HANDHELD MAP\n\n'
+        'See mini-map in HUD; see full map by pressing "map" button or from '
+        'pause menu')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = powerup_map_sprite
@@ -4304,7 +4327,8 @@ class Map(Powerup):
 
 class MapDisk(Powerup):
 
-    message = _("MAP DISK\n\nArea map data loaded")
+    message = _("MAP DISK\n\n"
+                "Area map data loaded")
 
     def __init__(self, x, y, rooms=None, **kwargs):
         if rooms:
@@ -4351,7 +4375,10 @@ class MapDisk(Powerup):
 
 class AtomicCompressor(Powerup):
 
-    message = _('ATOMIC COMPRESSOR\n\nTo compress: press "down" while crouching, or select with "mode" and then press "shoot"\n\nTo uncompress: press "up"')
+    message = _('ATOMIC COMPRESSOR\n\n'
+                'To compress: press "down" while crouching, or select with '
+                '"mode" and then press "shoot"\n\n'
+                'To uncompress: press "up"')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = atomic_compressor_sprite
@@ -4365,7 +4392,8 @@ class AtomicCompressor(Powerup):
 
 class MonkeyBoots(Powerup):
 
-    message = _('MONKEY BOOTS\n\nPress "jump" while touching a wall to wall-jump')
+    message = _('MONKEY BOOTS\n\n'
+                'Press "jump" while touching a wall to wall-jump')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = monkey_boots_sprite
@@ -4958,7 +4986,8 @@ class Menu(xsge_gui.MenuWindow):
 
 class MainMenu(Menu):
 
-    items = [_("New Game"), _("Load Game"), _("Options"), _("Credits"), _("Quit")]
+    items = [_("New Game"), _("Load Game"), _("Options"), _("Credits"),
+             _("Quit")]
 
     def event_choose(self):
         if self.choice == 0:
@@ -5212,7 +5241,8 @@ class KeyboardMenu(Menu):
             while len(key) > 2:
                 key.pop(0)
 
-        text = _("Press the key you wish to bind to this function, or the Escape key to cancel.")
+        text = _("Press the key you wish to bind to this function, or the "
+                 "Escape key to cancel.")
 
         if self.choice == 0:
             play_sound(select_sound)
@@ -5383,7 +5413,8 @@ class JoystickMenu(Menu):
             while len(js) > 2:
                 js.pop(0)
 
-        text = _("Press the joystick button, axis, or hat direction you wish to bind to this function, or the Escape key to cancel.")
+        text = _("Press the joystick button, axis, or hat direction you wish "
+                 "to bind to this function, or the Escape key to cancel.")
 
         if self.choice == 0:
             play_sound(select_sound)
@@ -5567,7 +5598,9 @@ class PauseMenu(ModalMenu):
                     slot.get("etanks") == etanks):
                 sge.game.start_room.start()
             else:
-                text = _("Some progress has not been saved. If you leave the game now, this unsaved progress will be lost. You can save the game by touching any warp pad.")
+                text = _("Some progress has not been saved. If you leave the "
+                         "game now, this unsaved progress will be lost. You "
+                         "can save the game by touching any warp pad.")
                 DialogBox(gui_handler, text).show()
                 play_sound(type_sound)
                 LoseProgressMenu.create(1)
@@ -5577,12 +5610,18 @@ class PauseMenu(ModalMenu):
             minutes = int((time_taken / 60) % 60)
             hours = int(time_taken / 3600)
             powerups_col = len(powerups) - artifacts
-            text = _("PLAYER STATISTICS\n\nTime spent: {hours}:{minutes:02}:{seconds:02}\nPowerups collected: {powerups} ({powerups_percent}%)\nArtifacts collected: {artifacts} ({artifacts_percent}%)").format(
-                hours=hours, minutes=minutes, seconds=seconds,
-                powerups=powerups_col,
-                powerups_percent=int(100 * powerups_col / max(num_powerups, 1)),
-                artifacts=artifacts,
-                artifacts_percent=int(100 * artifacts / max(num_artifacts, 1)))
+            text = _("PLAYER STATISTICS\n\n"
+                     "Time spent: {hours}:{minutes:02}:{seconds:02}\n"
+                     "Powerups collected: {powerups} ({powerups_percent}%)\n"
+                     "Artifacts collected: {artifacts} "
+                     "({artifacts_percent}%)").format(
+                         hours=hours, minutes=minutes, seconds=seconds,
+                         powerups=powerups_col,
+                         powerups_percent=int(100 * powerups_col
+                                              / max(num_powerups, 1)),
+                         artifacts=artifacts,
+                         artifacts_percent=int(100 * artifacts
+                                               / max(num_artifacts, 1)))
 
             DialogBox(gui_handler, text).show()
             PauseMenu.create(default=self.choice, player_x=self.player_x,
@@ -6050,8 +6089,8 @@ def play_music(music, force_restart=False, noloop=False):
             music_start_object = loaded_music.get(music_start)
             if music_start_object is None:
                 try:
-                    music_start_object = sge.snd.Music(os.path.join(DATA, "music",
-                                                                    music_start))
+                    music_start_object = sge.snd.Music(os.path.join(
+                        DATA, "music", music_start))
                 except OSError:
                     pass
                 else:
@@ -6917,7 +6956,7 @@ chars = [chr(i) for i in range(32, 127)] + [None]
 font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=14,
                                     hsep=2, vsep=2)
 
-chars = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
+chars = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
              "0123456789.,;:?!-_~#\"'&()[]|`\\/@^+=*$\xa3\u20ac<>  ") + [None]
 font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
                                       hsep=-1)

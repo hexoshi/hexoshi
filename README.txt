@@ -53,10 +53,3 @@ The -m option forces map generation, and the -q option causes the game
 to quit immediately after opening. Alternatively, simply running the
 game normally before distributing should work as long as no pre-existing
 map files already exist.
-
-
-SPECIAL CONTROLS
-
-You can exit the game by pressing the middle mouse button. This is a
-workaround for a rare bug in SDL 1.2 which can lock up the keyboard
-controls.

@@ -370,10 +370,6 @@ class Game(sge.dsp.Game):
                 else:
                     print(_("Invalid cheat code: {}").format(self.cheatcode))
 
-    def event_mouse_button_press(self, button):
-        if button == "middle":
-            self.event_close()
-
     def event_close(self):
         self.end()
 

@@ -6534,8 +6534,8 @@ def update_fullscreen():
         sge.game.scale = FSSCALE if FSSCALE else None
         sge.game.fullscreen = True
     else:
-        sge.game.scale = SCALE
         sge.game.fullscreen = False
+        sge.game.scale = SCALE
         sge.game.scale = None
 
 

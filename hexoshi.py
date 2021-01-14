@@ -381,13 +381,9 @@ class Level(sge.dsp.Room):
 
     """Handles levels."""
 
-    def __init__(self, objects=(), width=None, height=None, views=None,
-                 background=None, background_x=0, background_y=0,
-                 object_area_width=TILE_SIZE * 2,
-                 object_area_height=TILE_SIZE * 2,
-                 name=None, bgname=None, music=None, timeline=None,
-                 ambient_light=None, disable_lights=False,
-                 music_noloop=False):
+    def __init__(self, objects=(), *, name=None, bgname=None, music=None,
+                 timeline=None, ambient_light=None, disable_lights=False,
+                 music_noloop=False, background=None, **kwargs):
         self.fname = None
         self.name = name
         self.music = music
@@ -397,9 +393,13 @@ class Level(sge.dsp.Room):
         self.death_time = None
         self.status_text = None
         self.player_z = 0
+        kwargs.setdefault("object_area_width", TILE_SIZE * 2)
+        kwargs.setdefault("object_area_height", TILE_SIZE * 2)
 
         if bgname is not None:
             background = backgrounds.get(bgname, background)
+
+        kwargs["background"] = background
 
         self.load_timeline(timeline)
 
@@ -414,9 +414,7 @@ class Level(sge.dsp.Room):
 
         self.disable_lights = disable_lights or self.ambient_light is None
 
-        super().__init__(objects, width, height, views, background,
-                         background_x, background_y, object_area_width,
-                         object_area_height)
+        super().__init__(objects, **kwargs)
         self.add(gui_handler)
 
     def load_timeline(self, timeline):
@@ -691,7 +689,7 @@ class Level(sge.dsp.Room):
                 y = sge.game.height / 2
                 w = font.get_width(text) + 32
                 h = font.get_height(text) + 32
-                sge.game.project_rectangle(x - w / 2, y - h / 2, w, h,
+                sge.game.project_rectangle(x - w/2, y - h/2, w, h,
                                            fill=sge.gfx.Color("black"))
                 sge.game.project_text(font, text, x, y,
                                       color=sge.gfx.Color("white"),
@@ -6496,30 +6494,31 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
             for obj in map_objects[(ox, oy)]:
                 if (obj, ox, oy) in removed:
                     removed.remove((obj, ox, oy))
-                else:
-                    dx = (ox - x) * MAP_CELL_WIDTH
-                    dy = (oy - y) * MAP_CELL_HEIGHT
-                    if obj == "wall_left":
-                        map_sprite.draw_sprite(map_wall_left_sprite, 0, dx, dy)
-                    elif obj == "wall_right":
-                        map_sprite.draw_sprite(map_wall_right_sprite, 0, dx, dy)
-                    elif obj == "wall_top":
-                        map_sprite.draw_sprite(map_wall_top_sprite, 0, dx, dy)
-                    elif obj == "wall_bottom":
-                        map_sprite.draw_sprite(map_wall_bottom_sprite, 0, dx, dy)
-                    elif obj == "door_left":
-                        map_sprite.draw_sprite(map_door_left_sprite, 0, dx, dy)
-                    elif obj == "door_right":
-                        map_sprite.draw_sprite(map_door_right_sprite, 0, dx, dy)
-                    elif obj == "door_top":
-                        map_sprite.draw_sprite(map_door_top_sprite, 0, dx, dy)
-                    elif obj == "door_bottom":
-                        map_sprite.draw_sprite(map_door_bottom_sprite, 0, dx, dy)
-                    elif obj == "powerup":
-                        if "warp_pad" not in map_objects[(ox, oy)]:
-                            map_sprite.draw_sprite(map_powerup_sprite, 0, dx, dy)
-                    elif obj == "warp_pad":
-                        map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
+                    continue
+
+                dx = (ox-x) * MAP_CELL_WIDTH
+                dy = (oy-y) * MAP_CELL_HEIGHT
+                if obj == "wall_left":
+                    map_sprite.draw_sprite(map_wall_left_sprite, 0, dx, dy)
+                elif obj == "wall_right":
+                    map_sprite.draw_sprite(map_wall_right_sprite, 0, dx, dy)
+                elif obj == "wall_top":
+                    map_sprite.draw_sprite(map_wall_top_sprite, 0, dx, dy)
+                elif obj == "wall_bottom":
+                    map_sprite.draw_sprite(map_wall_bottom_sprite, 0, dx, dy)
+                elif obj == "door_left":
+                    map_sprite.draw_sprite(map_door_left_sprite, 0, dx, dy)
+                elif obj == "door_right":
+                    map_sprite.draw_sprite(map_door_right_sprite, 0, dx, dy)
+                elif obj == "door_top":
+                    map_sprite.draw_sprite(map_door_top_sprite, 0, dx, dy)
+                elif obj == "door_bottom":
+                    map_sprite.draw_sprite(map_door_bottom_sprite, 0, dx, dy)
+                elif obj == "powerup":
+                    if "warp_pad" not in map_objects[(ox, oy)]:
+                        map_sprite.draw_sprite(map_powerup_sprite, 0, dx, dy)
+                elif obj == "warp_pad":
+                    map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
 
     if player_x is not None and player_y is not None:
         dx = (player_x - x) * MAP_CELL_WIDTH
@@ -6581,8 +6580,8 @@ TYPES = {
 
 
 print(_("Initializing game system..."))
-Game(SCREEN_SIZE[0], SCREEN_SIZE[1], scale=SCALE, fps=FPS, delta=DELTA,
-     delta_min=DELTA_MIN, delta_max=DELTA_MAX,
+Game(width=SCREEN_SIZE[0], height=SCREEN_SIZE[1], scale=SCALE, fps=FPS,
+     delta=DELTA, delta_min=DELTA_MIN, delta_max=DELTA_MAX,
      window_text="Hexoshi DEMO {}".format(__version__))
      #window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
 sge.game.scale = None

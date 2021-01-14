@@ -381,9 +381,12 @@ class Level(sge.dsp.Room):
 
     """Handles levels."""
 
-    def __init__(self, objects=(), *, name=None, bgname=None, music=None,
-                 timeline=None, ambient_light=None, disable_lights=False,
-                 music_noloop=False, background=None, **kwargs):
+    def __init__(self, objects=(), *, background=None,
+                 object_area_width=TILE_SIZE * 2,
+                 object_area_height = TILE_SIZE * 2,
+                 name=None, bgname=None, music=None, timeline=None,
+                 ambient_light=None, disable_lights=False, music_noloop=False,
+                 **kwargs):
         self.fname = None
         self.name = name
         self.music = music
@@ -393,13 +396,9 @@ class Level(sge.dsp.Room):
         self.death_time = None
         self.status_text = None
         self.player_z = 0
-        kwargs.setdefault("object_area_width", TILE_SIZE * 2)
-        kwargs.setdefault("object_area_height", TILE_SIZE * 2)
 
         if bgname is not None:
             background = backgrounds.get(bgname, background)
-
-        kwargs["background"] = background
 
         self.load_timeline(timeline)
 
@@ -414,7 +413,9 @@ class Level(sge.dsp.Room):
 
         self.disable_lights = disable_lights or self.ambient_light is None
 
-        super().__init__(objects, **kwargs)
+        super().__init__(objects, background=background,
+                         object_area_width=object_area_width,
+                         object_area_height=object_area_height, **kwargs)
         self.add(gui_handler)
 
     def load_timeline(self, timeline):
@@ -6589,9 +6590,8 @@ TYPES = {
 
 
 print(_("Initializing game system..."))
-Game(width=SCREEN_SIZE[0], height=SCREEN_SIZE[1], scale=SCALE, fps=FPS,
-     delta=DELTA, delta_min=DELTA_MIN, delta_max=DELTA_MAX,
-     window_text="Hexoshi DEMO {}".format(__version__))
+Game(*SCREEN_SIZE, scale=SCALE, fps=FPS, delta=DELTA, delta_min=DELTA_MIN,
+     delta_max=DELTA_MAX, window_text="Hexoshi DEMO {}".format(__version__))
      #window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
 sge.game.scale = None
 

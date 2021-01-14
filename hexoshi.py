@@ -658,8 +658,8 @@ class Level(sge.dsp.Room):
         for view in self.views:
             for obj in self.get_objects_at(
                     view.x - LIGHT_RANGE, view.y - LIGHT_RANGE,
-                    view.width + LIGHT_RANGE * 2,
-                    view.height + LIGHT_RANGE * 2):
+                    view.width + LIGHT_RANGE*2,
+                    view.height + LIGHT_RANGE*2):
                 if isinstance(obj, InteractiveObject):
                     if not self.disable_lights:
                         obj.project_light()
@@ -755,7 +755,7 @@ class CreditsScreen(SpecialScreen):
                     font_big, section["title"], width=self.width,
                     color=sge.gfx.Color("white"), halign="center")
                 x = self.width / 2
-                y = self.sections[-1].bbox_bottom + font_big.size * 3
+                y = self.sections[-1].bbox_bottom + font_big.size*3
                 head_section = sge.dsp.Object.create(x, y, sprite=head_sprite,
                                                      tangible=False)
                 self.sections.append(head_section)
@@ -763,7 +763,7 @@ class CreditsScreen(SpecialScreen):
             if "lines" in section:
                 for line in section["lines"]:
                     list_sprite = sge.gfx.Sprite.from_text(
-                        font, line, width=self.width - 2 * TILE_SIZE,
+                        font, line, width=self.width - 2*TILE_SIZE,
                         color=sge.gfx.Color("white"), halign="center")
                     x = self.width / 2
                     y = self.sections[-1].bbox_bottom + font.size
@@ -796,9 +796,9 @@ class CreditsScreen(SpecialScreen):
             if "end" not in self.alarms:
                 for obj in self.sections:
                     obj.yvelocity += 0.1
-        elif (key in itertools.chain.from_iterable(jump_key) or
-                key in itertools.chain.from_iterable(shoot_key) or
-                key in itertools.chain.from_iterable(pause_key)):
+        elif (key in itertools.chain.from_iterable(jump_key)
+              or key in itertools.chain.from_iterable(shoot_key)
+              or key in itertools.chain.from_iterable(pause_key)):
             sge.game.start_room.start()
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
@@ -812,9 +812,9 @@ class CreditsScreen(SpecialScreen):
                 if "end" not in self.alarms:
                     for obj in self.sections:
                         obj.yvelocity += 0.1
-            elif (js in itertools.chain.from_iterable(jump_js) or
-                    js in itertools.chain.from_iterable(shoot_js) or
-                    js in itertools.chain.from_iterable(pause_js)):
+            elif (js in itertools.chain.from_iterable(jump_js)
+                  or js in itertools.chain.from_iterable(shoot_js)
+                  or js in itertools.chain.from_iterable(pause_js)):
                 sge.game.start_room.start()
 
 
@@ -914,7 +914,7 @@ class MovingPlatform(xsge_physics.SolidTop, xsge_physics.MobileWall):
         super().event_step(time_passed, delta_mult)
 
         if self.path and not self.following:
-            for other in self.collision(Player, y=(self.y - 1)):
+            for other in self.collision(Player, y=self.y - 1):
                 if self in other.get_bottom_touching_wall():
                     self.path.follow_start(self, self.path.path_speed,
                                            accel=self.path.path_accel,
@@ -1032,8 +1032,8 @@ class Player(xsge_physics.Collider):
         if guides:
             return guides[0].x
         else:
-            return (self.x - self.view.width / 2 +
-                    self.xvelocity * CAMERA_OFFSET_FACTOR)
+            return (self.x - self.view.width/2
+                    + self.xvelocity*CAMERA_OFFSET_FACTOR)
 
     @property
     def camera_target_y(self):
@@ -1043,7 +1043,7 @@ class Player(xsge_physics.Collider):
             return guides[0].y
         else:
             self.camera_guided_y = False
-            return self.y - self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
+            return self.y-self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
 
     @property
     def aim_lock(self):
@@ -1126,38 +1126,33 @@ class Player(xsge_physics.Collider):
         self.mode_reset_pressed = False
 
     def refresh_input(self):
-        if self.human and not self.input_lock:
-            key_controls = [left_key, right_key, up_key, down_key, aim_diag_key,
-                            jump_key, shoot_key, aim_up_key, aim_down_key,
-                            mode_key, mode_reset_key]
-            js_controls = [left_js, right_js, up_js, down_js, aim_diag_js,
-                           jump_js, shoot_js, aim_up_js, aim_down_js, mode_js,
-                           mode_reset_js]
-            states = [0 for i in key_controls]
+        if self.input_lock or not self.human:
+            return
 
-            for i in range(len(key_controls)):
-                for choice in key_controls[i][self.player]:
-                    value = sge.keyboard.get_pressed(choice)
+        key_controls = [left_key, right_key, up_key, down_key, aim_diag_key,
+                        jump_key, shoot_key, aim_up_key, aim_down_key,
+                        mode_key, mode_reset_key]
+        js_controls = [left_js, right_js, up_js, down_js, aim_diag_js,
+                       jump_js, shoot_js, aim_up_js, aim_down_js, mode_js,
+                       mode_reset_js]
+        states = [0 for i in key_controls]
+
+        for i in range(len(key_controls)):
+            for choice in key_controls[i][self.player]:
+                value = sge.keyboard.get_pressed(choice)
+                states[i] = max(states[i], value)
+
+        for i in range(len(js_controls)):
+            for choice in js_controls[i][self.player]:
+                j, t, c = choice
+                value = min(sge.joystick.get_value(j, t, c), 1)
+                if value >= joystick_threshold:
                     states[i] = max(states[i], value)
 
-            for i in range(len(js_controls)):
-                for choice in js_controls[i][self.player]:
-                    j, t, c = choice
-                    value = min(sge.joystick.get_value(j, t, c), 1)
-                    if value >= joystick_threshold:
-                        states[i] = max(states[i], value)
-
-            self.left_pressed = states[0]
-            self.right_pressed = states[1]
-            self.up_pressed = states[2]
-            self.down_pressed = states[3]
-            self.aim_diag_pressed = states[4]
-            self.jump_pressed = states[5]
-            self.shoot_pressed = states[6]
-            self.aim_up_pressed = states[7]
-            self.aim_down_pressed = states[8]
-            self.mode_pressed = states[9]
-            self.mode_reset_pressed = states[10]
+        (self.left_pressed, self.right_pressed, self.up_pressed,
+         self.down_pressed, self.aim_diag_pressed, self.jump_pressed,
+         self.shoot_pressed, self.aim_up_pressed, self.aim_down_pressed,
+         self.mode_pressed, self.mode_reset_pressed) = states
 
     def press_up(self):
         if not self.aim_diag_pressed:
@@ -1307,7 +1302,7 @@ class Player(xsge_physics.Collider):
                 map_s.draw_rectangle(0, 0, map_s.width, map_s.height, fill=c,
                                      blend_mode=sge.BLEND_RGBA_MULTIPLY)
 
-                x = SCREEN_SIZE[0] - start_x - w * MAP_CELL_WIDTH
+                x = SCREEN_SIZE[0] - start_x - w*MAP_CELL_WIDTH
                 y = start_y
                 self.hud_sprite.draw_sprite(map_s, 0, x, y)
                 self.hud_sprite.draw_rectangle(x, y, map_s.width, map_s.height,
@@ -1471,7 +1466,7 @@ class Player(xsge_physics.Collider):
         if self.view is not None and not self.view_frozen:
             view_target_x = self.camera_target_x
             if abs(view_target_x - self.view.x) > 0.5:
-                camera_xvel = ((view_target_x - self.view.x)
+                camera_xvel = ((view_target_x-self.view.x)
                                * CAMERA_HSPEED_FACTOR * delta_mult)
                 if abs(self.xvelocity) > CAMERA_STOPPED_THRESHOLD:
                     self.view.x += camera_xvel
@@ -1488,7 +1483,7 @@ class Player(xsge_physics.Collider):
             view_target_y = self.camera_target_y
             if (self.on_floor and self.was_on_floor) or self.camera_guided_y:
                 if abs(view_target_y - self.view.y) > 0.5:
-                    self.view.y += ((view_target_y - self.view.y)
+                    self.view.y += ((view_target_y-self.view.y)
                                     * CAMERA_VSPEED_FACTOR * delta_mult)
                 else:
                     self.view.y = view_target_y
@@ -1625,24 +1620,24 @@ class Player(xsge_physics.Collider):
 
         tmv = 0
         for i in range(CEILING_LAX):
-            if (not self.get_left_touching_wall() and
-                    not self.get_left_touching_slope()):
+            if (not self.get_left_touching_wall()
+                    and not self.get_left_touching_slope()):
                 self.x -= 1
                 tmv -= 1
-                if (not self.get_top_touching_wall() and
-                        not self.get_top_touching_slope()):
+                if (not self.get_top_touching_wall()
+                        and not self.get_top_touching_slope()):
                     self.move_y(-move_loss)
                     break
         else:
             self.x -= tmv
             tmv = 0
             for i in range(CEILING_LAX):
-                if (not self.get_left_touching_wall() and
-                        not self.get_left_touching_slope()):
+                if (not self.get_left_touching_wall()
+                        and not self.get_left_touching_slope()):
                     self.x += 1
                     tmv += 1
-                    if (not self.get_top_touching_wall() and
-                            not self.get_top_touching_slope()):
+                    if (not self.get_top_touching_wall()
+                            and not self.get_top_touching_slope()):
                         self.move_y(-move_loss)
                         break
             else:
@@ -2038,9 +2033,9 @@ class Anneroy(Player):
                     xdiff = guide.x - self.torso.x
                     ydiff = guide.y - self.torso.y
                     if abs(guide.x - target_x) >= 1:
-                        guide.y = self.torso.y + m * xdiff
+                        guide.y = self.torso.y + m*xdiff
                     elif abs(guide.y - target_y) >= 1:
-                        guide.x = self.torso.x + ydiff / m
+                        guide.x = self.torso.x + ydiff/m
 
                 bs = AnneroyBullet.create(
                     guide.x, guide.y, self.z + 0.2,
@@ -2215,7 +2210,8 @@ class Anneroy(Player):
                 self.torso.visible = False
                 if self.on_floor:
                     if xm:
-                        self.image_speed = self.speed * ANNEROY_BALL_FRAMES_PER_PIXEL
+                        self.image_speed = (self.speed
+                                            * ANNEROY_BALL_FRAMES_PER_PIXEL)
                         if xm != self.facing:
                             self.image_speed *= -1
                     else:
@@ -2230,7 +2226,8 @@ class Anneroy(Player):
                     else:
                         if xm:
                             self.sprite = anneroy_legs_run_sprite
-                            self.image_speed = self.speed * ANNEROY_RUN_FRAMES_PER_PIXEL
+                            self.image_speed = (self.speed
+                                                * ANNEROY_RUN_FRAMES_PER_PIXEL)
                             if xm != self.facing:
                                 self.image_speed *= -1
 
@@ -2250,7 +2247,8 @@ class Anneroy(Player):
                     xm = (real_xv > 0) - (real_xv < 0)
 
                 if xm:
-                    self.image_speed = self.speed * ANNEROY_BALL_FRAMES_PER_PIXEL
+                    self.image_speed = (self.speed
+                                        * ANNEROY_BALL_FRAMES_PER_PIXEL)
                     if xm != self.facing:
                         self.image_speed *= -1
                 else:
@@ -2289,8 +2287,8 @@ class Anneroy(Player):
         # Position torso
         x, y = anneroy_torso_offset.setdefault(
             (id(self.sprite), self.image_index % self.sprite.frames), (0, 0))
-        self.torso.x = self.x + x * self.image_xscale
-        self.torso.y = self.y + y * self.image_yscale
+        self.torso.x = self.x + x*self.image_xscale
+        self.torso.y = self.y + y*self.image_yscale
         self.torso.z = self.z + 0.1
         self.torso.image_xscale = abs(self.image_xscale)
         self.torso.image_yscale = self.image_yscale
@@ -2364,7 +2362,8 @@ class Anneroy(Player):
             self.alarms["warp_out"] = WARP_TIME
         elif self.fixed_sprite in {"compress", "decompress_fail"}:
             self.fixed_sprite = False
-            self.image_speed = abs(self.xvelocity) * ANNEROY_BALL_FRAMES_PER_PIXEL
+            self.image_speed = (abs(self.xvelocity)
+                                * ANNEROY_BALL_FRAMES_PER_PIXEL)
         elif self.fixed_sprite == "wall":
             self.reset_image()
             if self.wall_direction < 0:
@@ -2388,7 +2387,8 @@ class Anneroy(Player):
             for i in range(12):
                 shard = Shard.create(
                     self.x, self.y, self.z, sprite=anneroy_explode_fragments,
-                    image_index=random.randrange(anneroy_explode_fragments.frames),
+                    image_index=random.randrange(
+                        anneroy_explode_fragments.frames),
                     image_fps=0)
                 shard.speed = 5
                 shard.move_direction = random.randrange(360)
@@ -2608,8 +2608,8 @@ class FallingObject(InteractiveCollider):
                 if self.yvelocity > 0:
                     self.yvelocity = 0
             elif on_slope:
-                self.yvelocity = self.slide_speed * (on_slope[0].bbox_height /
-                                                     on_slope[0].bbox_width)
+                self.yvelocity = self.slide_speed * (on_slope[0].bbox_height
+                                                     / on_slope[0].bbox_width)
         else:
             if self.yvelocity < self.fall_speed:
                 self.yacceleration = self.gravity
@@ -2647,7 +2647,7 @@ class WalkingObject(FallingObject):
         on_slope = self.slopeisplatform and self.get_bottom_touching_slope()
         if (on_floor or on_slope) and self.stayonplatform:
             if self.xvelocity < 0:
-                my_left = self.bbox_left + (self.x - self.bbox_left) / 2
+                my_left = self.bbox_left + (self.x-self.bbox_left)/2
                 for tile in on_floor:
                     if tile.bbox_left < my_left:
                         break
@@ -2655,7 +2655,7 @@ class WalkingObject(FallingObject):
                     if not on_slope:
                         self.set_direction(1)
             else:
-                my_right = self.bbox_right - (self.bbox_right - self.x) / 2
+                my_right = self.bbox_right - (self.bbox_right-self.x)/2
                 for tile in on_floor:
                     if tile.bbox_right > my_right:
                         break
@@ -2698,8 +2698,7 @@ class CrowdObject(CrowdBlockingObject):
                 else:
                     self.set_direction(-1)
         else:
-            super().event_collision(other, xdirection,
-                                                     ydirection)
+            super().event_collision(other, xdirection, ydirection)
 
 
 class Shard(FallingObject):
@@ -2781,8 +2780,8 @@ class Enemy(InteractiveObject):
                      image_blend=self.image_blend,
                      image_blend_mode=self.image_blend_mode)
 
-        if ("life_orb" in progress_flags and
-                random.random() < LIFE_FORCE_CHANCE):
+        if ("life_orb" in progress_flags
+                and random.random() < LIFE_FORCE_CHANCE):
             LifeForce.create(self.image_xcenter, self.image_ycenter,
                              z=self.z - 0.1)
 
@@ -2878,7 +2877,7 @@ class Frog(Enemy, FallingObject, CrowdObject):
 
     slide_speed = 0
     jump_distance = 200
-    jump_height = 2 * TILE_SIZE + 1
+    jump_height = 2*TILE_SIZE + 1
     jump_speed = 3
     jump_interval = FPS / 2
 
@@ -3006,8 +3005,8 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
 
             if not self.anim_lock:
                 self.sprite = hedgehog_ball_sprite
-                self.image_speed = (abs(self.xvelocity) *
-                                    self.roll_frames_per_pixel)
+                self.image_speed = (abs(self.xvelocity)
+                                    * self.roll_frames_per_pixel)
 
             if abs(self.xvelocity) >= self.roll_max_speed:
                 self.xvelocity = math.copysign(self.roll_max_speed,
@@ -3038,8 +3037,8 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
             if not self.anim_lock:
                 if self.xvelocity:
                     self.sprite = hedgehog_walk_sprite
-                    self.image_speed = (abs(self.xvelocity) *
-                                        self.walk_frames_per_pixel)
+                    self.image_speed = (abs(self.xvelocity)
+                                        * self.walk_frames_per_pixel)
                 else:
                     self.sprite = hedgehog_stand_sprite
 
@@ -3071,16 +3070,20 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
     def event_step(self, time_passed, delta_mult):
         super().event_step(time_passed, delta_mult)
 
-        if not self.tangible and "extend_wait" not in self.alarms:
-            target = self.get_nearest_player()
-            if target is not None:
-                xvec = target.x - self.image_xcenter
-                yvec = target.y - self.image_ycenter
-                dist = math.hypot(xvec, yvec)
-                if dist <= self.extend_distance:
-                    self.tangible = True
-                    self.image_fps = None
-                    self.image_index = 0
+        if self.tangible or "extend_wait" in self.alarms:
+            return
+
+        target = self.get_nearest_player()
+        if target is None:
+            return
+
+        xvec = target.x - self.image_xcenter
+        yvec = target.y - self.image_ycenter
+        dist = math.hypot(xvec, yvec)
+        if dist <= self.extend_distance:
+            self.tangible = True
+            self.image_fps = None
+            self.image_index = 0
 
     def event_animation_end(self):
         self.tangible = False
@@ -3144,8 +3147,8 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
     def event_step(self, time_passed, delta_mult):
         super().event_step(time_passed, delta_mult)
 
-        if (self.speed == 0 and "charge_wait" not in self.alarms and
-                not self.returning):
+        if (self.speed == 0 and "charge_wait" not in self.alarms
+                and not self.returning):
             target = self.get_nearest_player()
             if target is not None:
                 self.attack(target)
@@ -3208,7 +3211,7 @@ class Jellyfish(Enemy, CrowdBlockingObject):
         super().event_alarm(alarm_id)
 
         if alarm_id == "swim":
-            choices = 3 * [1] + [-1]
+            choices = 3*[1] + [-1]
             xv = random.choice(choices)
             if self.x > self.xstart:
                 xv *= -1
@@ -3261,8 +3264,8 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
             super().move()
             if self.xvelocity:
                 self.sprite = scorpion_walk_sprite
-                self.image_speed = (abs(self.xvelocity) *
-                                    SCORPION_WALK_FRAMES_PER_PIXEL)
+                self.image_speed = (abs(self.xvelocity)
+                                    * SCORPION_WALK_FRAMES_PER_PIXEL)
             else:
                 self.sprite = scorpion_stand_sprite
 
@@ -3271,8 +3274,8 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
         if target is not None:
             xvec = target.x - self.image_xcenter
             yvec = target.y - self.image_ycenter
-            if (abs(xvec) <= self.sight_distance and
-                    abs(yvec) < self.sight_threshold):
+            if (abs(xvec) <= self.sight_distance
+                    and abs(yvec) < self.sight_threshold):
                 self.xvelocity = 0
                 self.action = "shoot_start"
                 self.sprite = scorpion_shoot_start_sprite
@@ -3379,7 +3382,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if not self.action and self.can_act:
             if self.target is not None:
                 if (not self.check_action(self.action_hop, self.target.x,
-                                         self.target.y, "stop_down")
+                                          self.target.y, "stop_down")
                         and not self.check_action(self.action_jump,
                                                   self.target.x, self.target.y,
                                                   "stop_down")):
@@ -3389,8 +3392,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
     def stop_up(self):
         self.yvelocity = 0
-        if (self.action_check_verify == "stop_down" and
-                self.get_bottom_touching_wall()):
+        if (self.action_check_verify == "stop_down"
+                and self.get_bottom_touching_wall()):
             self.verify_action()
 
     def stop_down(self):
@@ -3408,8 +3411,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.verify_action()
 
     def update_wander(self):
-        if (not self.hiding and self.was_on_floor and
-                "move_lock" not in self.alarms):
+        if (not self.hiding and self.was_on_floor
+                and "move_lock" not in self.alarms):
             choices = 3 * [1] + 7 * [0] + [-1]
             xv = random.choice(choices)
             if self.x > self.wander_x:
@@ -3625,12 +3628,12 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     def update_action(self):
         action = self.check_hazards()
         if not action:
-            if (self.target is not None and
-                    not self.target.collision(MantanoidNoGo)):
+            if (self.target is not None
+                    and not self.target.collision(MantanoidNoGo)):
                 xdist = abs(self.target.x - self.x)
                 ydist = abs(self.target.y - self.y)
-                if (xdist <= MANTANOID_SLASH_DISTANCE and
-                        ydist <= MANTANOID_LEVEL_DISTANCE):
+                if (xdist <= MANTANOID_SLASH_DISTANCE
+                        and ydist <= MANTANOID_LEVEL_DISTANCE):
                     action = self.action_slash
                 elif "action_lock" not in self.alarms:
                     if not self.hiding:
@@ -3669,11 +3672,11 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             if self.was_on_floor:
                 if self.xvelocity:
                     self.sprite = mantanoid_walk_sprite
-                    self.image_speed = abs(
-                        self.xvelocity * MANTANOID_WALK_FRAMES_PER_PIXEL)
+                    self.image_speed = abs(self.xvelocity
+                                           * MANTANOID_WALK_FRAMES_PER_PIXEL)
                 else:
                     self.sprite = mantanoid_stand_sprite
-                    if random.random() < 1 / (2 * FPS):
+                    if random.random() < 1 / (2*FPS):
                         self.sprite = mantanoid_idle_sprite
                         self.image_fps = None
                         self.image_index = 0
@@ -3778,8 +3781,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.action = None
             self.can_act = False
             self.set_image()
-            if self.was_on_floor and (self.get_bottom_touching_wall() or
-                                      self.get_bottom_touching_slope()):
+            if self.was_on_floor and (self.get_bottom_touching_wall()
+                                      or self.get_bottom_touching_slope()):
                 self.xvelocity = math.copysign(MANTANOID_APPROACH_SPEED,
                                                self.image_xscale)
                 self.yvelocity = get_jump_speed(MANTANOID_HOP_HEIGHT,
@@ -3788,8 +3791,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.action = None
             self.can_act = False
             self.set_image()
-            if self.was_on_floor and (self.get_bottom_touching_wall() or
-                                      self.get_bottom_touching_slope()):
+            if self.was_on_floor and (self.get_bottom_touching_wall()
+                                      or self.get_bottom_touching_slope()):
                 self.xvelocity = math.copysign(MANTANOID_APPROACH_SPEED,
                                                self.image_xscale)
                 self.yvelocity = get_jump_speed(MANTANOID_JUMP_HEIGHT,
@@ -3818,8 +3821,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             if self.target is not None and not hit_target:
                 xdist = abs(self.target.x - self.x)
                 ydist = abs(self.target.y - self.y)
-                if (ydist <= MANTANOID_LEVEL_DISTANCE and
-                        xdist <= MANTANOID_SLASH2_DISTANCE):
+                if (ydist <= MANTANOID_LEVEL_DISTANCE
+                        and xdist <= MANTANOID_SLASH2_DISTANCE):
                     double = True
 
             play_sound(mantanoid_slash_sound, self.x, self.y)
@@ -3943,8 +3946,8 @@ class Bullet(InteractiveObject):
 
     def event_step(self, time_passed, delta_mult):
         room = sge.game.current_room
-        if (self.bbox_right < 0 or self.bbox_left > room.width or
-                self.bbox_bottom < 0 or self.bbox_top > room.height):
+        if (self.bbox_right < 0 or self.bbox_left > room.width
+                or self.bbox_bottom < 0 or self.bbox_top > room.height):
             self.destroy()
 
     def event_collision(self, other, xdirection, ydirection):
@@ -3956,8 +3959,8 @@ class Bullet(InteractiveObject):
                 self.dissipate(xdirection, ydirection)
         elif isinstance(other, Bullet):
             if (self.attacks_bullet and
-                    ((self.attacks_player and other.attacks_enemy) or
-                     (self.attacks_enemy and other.attacks_player))):
+                    ((self.attacks_player and other.attacks_enemy)
+                     or (self.attacks_enemy and other.attacks_player))):
                 xd = math.copysign(1, other.xvelocity)
                 yd = math.copysign(1, other.yvelocity)
                 other.dissipate(xd, yd)
@@ -3968,13 +3971,13 @@ class Bullet(InteractiveObject):
         elif isinstance(other, xsge_physics.Wall) and self.attacks_wall:
             point_x = self.x
             point_y = self.y
-            if ((self.xvelocity > 0 and self.yvelocity > 0) or
-                    (self.xvelocity < 0 and self.yvelocity < 0)):
+            if ((self.xvelocity > 0 and self.yvelocity > 0)
+                    or (self.xvelocity < 0 and self.yvelocity < 0)):
                 collisions = sge.collision.line(
                     self.bbox_left, self.bbox_top, self.bbox_right,
                     self.bbox_bottom)
-            elif ((self.xvelocity > 0 and self.yvelocity < 0) or
-                  (self.xvelocity < 0 and self.yvelocity > 0)):
+            elif ((self.xvelocity > 0 and self.yvelocity < 0)
+                  or (self.xvelocity < 0 and self.yvelocity > 0)):
                 collisions = sge.collision.line(
                     self.bbox_left, self.bbox_bottom, self.bbox_right,
                     self.bbox_top)
@@ -4048,9 +4051,9 @@ class Bullet(InteractiveObject):
 
                             if collision_real:
                                 touching = True
-                                if (self.breaks_stone and
-                                        isinstance(obj, Stone) and
-                                        obj.shootable):
+                                if (self.breaks_stone
+                                        and isinstance(obj, Stone)
+                                        and obj.shootable):
                                     obj.destroy()
 
                 if touching:
@@ -4069,36 +4072,38 @@ class AnneroyBullet(Bullet):
     life = ANNEROY_BULLET_LIFE
 
     def dissipate(self, xdirection=0, ydirection=0):
-        if self in sge.game.current_room.objects:
-            image_rotation = 0
-            if abs(xdirection) > abs(ydirection):
-                if xdirection < 0:
-                    image_rotation = 180
-                else:
-                    image_rotation = 0
-            elif abs(ydirection) > abs(xdirection):
-                if ydirection < 0:
-                    image_rotation = 270
-                else:
-                    image_rotation = 90
-            elif abs(self.xvelocity) > abs(self.yvelocity):
-                if self.xvelocity < 0:
-                    image_rotation = 180
-                else:
-                    image_rotation = 0
-            else:
-                if self.yvelocity < 0:
-                    image_rotation = 270
-                else:
-                    image_rotation = 90
+        if self not in sge.game.current_room.objects:
+            return
 
-            play_sound(bullet_death_sound, self.x, self.y)
-            Smoke.create(
-                self.x, self.y, self.z, sprite=anneroy_bullet_dissipate_sprite,
-                regulate_origin=True, image_xscale=self.image_xscale,
-                image_yscale=self.image_yscale, image_rotation=image_rotation,
-                image_blend=self.image_blend)
-            self.destroy()
+        image_rotation = 0
+        if abs(xdirection) > abs(ydirection):
+            if xdirection < 0:
+                image_rotation = 180
+            else:
+                image_rotation = 0
+        elif abs(ydirection) > abs(xdirection):
+            if ydirection < 0:
+                image_rotation = 270
+            else:
+                image_rotation = 90
+        elif abs(self.xvelocity) > abs(self.yvelocity):
+            if self.xvelocity < 0:
+                image_rotation = 180
+            else:
+                image_rotation = 0
+        else:
+            if self.yvelocity < 0:
+                image_rotation = 270
+            else:
+                image_rotation = 90
+
+        play_sound(bullet_death_sound, self.x, self.y)
+        Smoke.create(
+            self.x, self.y, self.z, sprite=anneroy_bullet_dissipate_sprite,
+            regulate_origin=True, image_xscale=self.image_xscale,
+            image_yscale=self.image_yscale, image_rotation=image_rotation,
+            image_blend=self.image_blend)
+        self.destroy()
 
 
 class ScorpionBullet(Bullet):
@@ -4166,11 +4171,11 @@ class Stone(xsge_physics.Solid):
         for other in sge.game.current_room.get_objects_at(
                 self.image_left, self.image_top, self.image_width,
                 self.image_height):
-            if (isinstance(other, FakeTile) and
-                    self.image_left < other.image_right and
-                    self.image_right > other.image_left and
-                    self.image_top < other.image_bottom and
-                    self.image_bottom > other.image_top):
+            if (isinstance(other, FakeTile)
+                    and self.image_left < other.image_right
+                    and self.image_right > other.image_left
+                    and self.image_top < other.image_bottom
+                    and self.image_bottom > other.image_top):
                 self.fakes.append(other)
 
     def event_destroy(self):
@@ -4357,8 +4362,8 @@ class MapDisk(Powerup):
                 for y in range(rm_y, rm_y + rm_h):
                     for x in range(rm_x, rm_x + rm_w):
                         sge.game.pump_input()
-                        if ((x, y) not in ignore_regions and
-                                (x, y) not in map_revealed):
+                        if ((x, y) not in ignore_regions
+                                and (x, y) not in map_revealed):
                             map_revealed = map_revealed[:]
                             map_revealed.append((x, y))
 
@@ -4419,7 +4424,8 @@ class MonkeyBoots(Powerup):
 
 class HedgehogHormone(Powerup):
 
-    message = _('HEDGEHOG HORMONE\n\nPress "shoot" while in the form of a ball to grow spikes')
+    message = _('HEDGEHOG HORMONE\n\n'
+                'Press "shoot" while in the form of a ball to grow spikes')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = hedgehog_hormone_sprite
@@ -4802,8 +4808,8 @@ class MovingObjectPath(xsge_path.PathLink):
     def event_create(self):
         if self.parent is not None:
             for obj in sge.game.current_room.objects:
-                if (isinstance(obj, self.__class__) and
-                        obj.path_id == self.parent):
+                if (isinstance(obj, self.__class__)
+                        and obj.path_id == self.parent):
                     obj.next_path = self
                     obj.next_speed = self.path_speed
                     obj.next_accel = self.path_accel
@@ -5160,7 +5166,7 @@ class OptionsMenu(Menu):
             play_sound(select_sound)
             # This somewhat complicated method is to prevent rounding
             # irregularities.
-            threshold = ((int(joystick_threshold * 100) + 5) % 100) / 100
+            threshold = ((int(joystick_threshold*100) + 5) % 100) / 100
             if not threshold:
                 threshold = 0.0001
             joystick_threshold = threshold
@@ -5412,7 +5418,7 @@ class JoystickMenu(Menu):
 
         if self.choice == 0:
             play_sound(select_sound)
-            self.__class__.create_page(default=self.choice, page=(self.page + 1))
+            self.__class__.create_page(default=self.choice, page=self.page + 1)
         elif self.choice == 1:
             js = wait_js(text)
             if js is not None:
@@ -5601,7 +5607,7 @@ class PauseMenu(ModalMenu):
 
         if self.choice == 1:
             seconds = int(time_taken % 60)
-            minutes = int((time_taken / 60) % 60)
+            minutes = int((time_taken/60) % 60)
             hours = int(time_taken / 3600)
             powerups_col = len(powerups) - artifacts
             text = _("PLAYER STATISTICS\n\n"
@@ -5752,8 +5758,8 @@ class TeleportDialog(MapDialog):
 
         xcells = int(sge.game.width / MAP_CELL_WIDTH)
         ycells = int(sge.game.height / MAP_CELL_HEIGHT)
-        self.location_indicator.x = (xcells // 2) * MAP_CELL_WIDTH
-        self.location_indicator.y = (ycells // 2) * MAP_CELL_HEIGHT
+        self.location_indicator.x = (xcells//2) * MAP_CELL_WIDTH
+        self.location_indicator.y = (ycells//2) * MAP_CELL_HEIGHT
 
         self.update_selection()
 
@@ -5764,8 +5770,8 @@ class TeleportDialog(MapDialog):
             x, y = map_rooms[self.selection[0]]
             x += self.selection[2] - self.left
             y += self.selection[3] - self.top
-            self.map.x = (xcells // 2 - x) * MAP_CELL_WIDTH
-            self.map.y = (ycells // 2 - y) * MAP_CELL_HEIGHT
+            self.map.x = (xcells//2 - x) * MAP_CELL_WIDTH
+            self.map.y = (ycells//2 - y) * MAP_CELL_HEIGHT
 
     def event_press_left(self):
         play_sound(select_sound)
@@ -5775,7 +5781,7 @@ class TeleportDialog(MapDialog):
         else:
             i = 0
 
-        self.selection = warp_pads[(i - 1) % len(warp_pads)]
+        self.selection = warp_pads[(i-1) % len(warp_pads)]
         self.update_selection()
 
     def event_press_right(self):
@@ -5786,7 +5792,7 @@ class TeleportDialog(MapDialog):
         else:
             i = -1
 
-        self.selection = warp_pads[(i + 1) % len(warp_pads)]
+        self.selection = warp_pads[(i+1) % len(warp_pads)]
         self.update_selection()
 
     def event_press_up(self):
@@ -5806,7 +5812,7 @@ class TeleportDialog(MapDialog):
 class DialogLabel(xsge_gui.ProgressiveLabel):
 
     def event_add_character(self):
-        if self.text[-1] not in (' ', '\n', '\t'):
+        if not self.text[-1].isspace():
             play_sound(type_sound)
 
 
@@ -5830,8 +5836,8 @@ class DialogBox(xsge_gui.Dialog):
         label_w = max(1, width - portrait_w - x_padding)
         height = max(1, portrait_h + y_padding,
                      font.get_height(text, width=label_w) + y_padding)
-        x = sge.game.width / 2 - width / 2
-        y = sge.game.height / 2 - height / 2
+        x = sge.game.width/2 - width/2
+        y = sge.game.height/2 - height/2
         super().__init__(parent, x, y, width, height,
                          background_color=menu_color, border=False)
         label_h = max(1, height - y_padding)
@@ -5852,9 +5858,9 @@ class DialogBox(xsge_gui.Dialog):
     def event_press_escape(self):
         self.destroy()
         room = sge.game.current_room
-        if (isinstance(room, Level) and
-                room.timeline_skip_target is not None and
-                room.timeline_step < room.timeline_skip_target):
+        if (isinstance(room, Level)
+                and room.timeline_skip_target is not None
+                and room.timeline_step < room.timeline_skip_target):
             room.timeline_skipto(room.timeline_skip_target)
 
 
@@ -5981,8 +5987,8 @@ def wait_js(text):
                     return None
             elif isinstance(event, sge.input.JoystickEvent):
                 if (event.input_type not in {"axis0", "hat_center_x",
-                                             "hat_center_y"} and
-                        event.value >= joystick_threshold):
+                                             "hat_center_y"}
+                        and event.value >= joystick_threshold):
                     sge.game.pump_input()
                     sge.game.input_events = []
                     return (event.js_id, event.input_type, event.input_id)
@@ -6016,8 +6022,8 @@ def play_sound(sound, x=None, y=None, force=True):
             view_y = 0
             dist = 0
             for view in sge.game.current_room.views:
-                vx = view.x + view.width / 2
-                vy = view.y + view.height / 2
+                vx = view.x + view.width/2
+                vy = view.y + view.height/2
                 new_dist = math.hypot(vx - x, vy - y)
                 if current_view is None or new_dist < dist:
                     current_view = view
@@ -6041,7 +6047,7 @@ def play_sound(sound, x=None, y=None, force=True):
                 volume = 1
             elif dist < SOUND_ZERO_RADIUS:
                 rng = SOUND_ZERO_RADIUS - SOUND_MAX_RADIUS
-                reldist = rng - (dist - SOUND_MAX_RADIUS)
+                reldist = rng - (dist-SOUND_MAX_RADIUS)
                 volume = min(1, abs(reldist / rng))
             else:
                 # No point in continuing; it's too far away
@@ -6090,9 +6096,9 @@ def play_music(music, force_restart=False, noloop=False):
                 else:
                     loaded_music[music_start] = music_start_object
 
-            if (force_restart or (not music_object.playing and
-                                  (music_start_object is None or
-                                   not music_start_object.playing))):
+            if (force_restart or (not music_object.playing
+                                  and (music_start_object is None
+                                       or not music_start_object.playing))):
                 sge.snd.Music.clear_queue()
                 sge.snd.Music.stop()
                 if music_start_object is not None:
@@ -6215,8 +6221,8 @@ def load_game():
     global etanks
     global time_taken
 
-    if (current_save_slot is not None and
-            save_slots[current_save_slot] is not None):
+    if (current_save_slot is not None
+            and save_slots[current_save_slot] is not None):
         slot = save_slots[current_save_slot]
         save_format = slot.get("save_format", 0)
 
@@ -6329,15 +6335,17 @@ def generate_map():
                     files_remaining.add((level_f, dx, dy, fname, obj.spawn_id))
                     files_checked.add(level_f)
 
-                if (dx, dy) not in ignore_regions:
-                    if isinstance(obj, LeftDoor):
-                        map_objects.setdefault((dx, dy), []).append("door_left")
-                    elif isinstance(obj, RightDoor):
-                        map_objects.setdefault((dx, dy), []).append("door_right")
-                    elif isinstance(obj, UpDoor):
-                        map_objects.setdefault((dx, dy), []).append("door_top")
-                    elif isinstance(obj, DownDoor):
-                        map_objects.setdefault((dx, dy), []).append("door_bottom")
+                if (dx, dy) in ignore_regions:
+                    continue
+
+                if isinstance(obj, LeftDoor):
+                    map_objects.setdefault((dx, dy), []).append("door_left")
+                elif isinstance(obj, RightDoor):
+                    map_objects.setdefault((dx, dy), []).append("door_right")
+                elif isinstance(obj, UpDoor):
+                    map_objects.setdefault((dx, dy), []).append("door_top")
+                elif isinstance(obj, DownDoor):
+                    map_objects.setdefault((dx, dy), []).append("door_bottom")
             elif isinstance(obj, WarpPad):
                 wx = rm_x + get_xregion(obj.image_xcenter)
                 wy = rm_y + get_yregion(obj.image_ycenter)
@@ -6412,24 +6420,25 @@ def generate_map():
 
         for x in range(rm_x, rm_x + rm_w):
             y = rm_y
-            if ((x, y) not in ignore_regions and
-                    "door_top" not in map_objects.setdefault((x, y), [])):
+            if ((x, y) not in ignore_regions
+                    and "door_top" not in map_objects.setdefault((x, y), [])):
                 map_objects[(x, y)].append("wall_top")
 
             y = rm_y + rm_h - 1
-            if ((x, y) not in ignore_regions and
-                    "door_bottom" not in map_objects.setdefault((x, y), [])):
+            if ((x, y) not in ignore_regions
+                    and "door_bottom" not in map_objects.setdefault((x, y),
+                                                                    [])):
                 map_objects[(x, y)].append("wall_bottom")
 
         for y in range(rm_y, rm_y + rm_h):
             x = rm_x
-            if ((x, y) not in ignore_regions and
-                    "door_left" not in map_objects.setdefault((x, y), [])):
+            if ((x, y) not in ignore_regions
+                    and "door_left" not in map_objects.setdefault((x, y), [])):
                 map_objects[(x, y)].append("wall_left")
 
             x = rm_x + rm_w - 1
-            if ((x, y) not in ignore_regions and
-                    "door_right" not in map_objects.setdefault((x, y), [])):
+            if ((x, y) not in ignore_regions
+                    and "door_right" not in map_objects.setdefault((x, y), [])):
                 map_objects[(x, y)].append("wall_right")
 
     f_objects = {}

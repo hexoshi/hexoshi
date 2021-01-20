@@ -4218,7 +4218,7 @@ class Macguffin(InteractiveObject):
 
         msg1 = _("MACGUFFIN\n\n"
                  "This is the end of the demo! Thank you for playing Hexoshi "
-                 "version {}.".format(__version__))
+                 "version {}.").format(__version__)
         msg2 = _("Don't worry; the full game will not end this way. This is "
                  "just a placeholder until the game is completed. We hope you "
                  "enjoyed what you have seen so far, and we hope you enjoy "

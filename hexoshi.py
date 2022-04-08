@@ -2748,17 +2748,20 @@ class Enemy(InteractiveObject):
 
     def shoot(self, other):
         # TODO: Handle different kinds of bullets
-        self.hp -= 1
+        self.hurt(1)
+
+    def spike(self, other):
+        self.hurt(3)
+
+    def hurt(self, damage=1):
+        self.hp -= damage
         if self.hp <= 0:
             self.kill()
         else:
-            self.hurt()
-
-    def hurt(self):
-        self.image_blend = sge.gfx.Color("white")
-        self.image_blend_mode = sge.BLEND_RGB_SCREEN
-        self.alarms["hurt_flash"] = FPS / 10
-        play_sound(enemy_hurt_sound, self.image_xcenter, self.image_ycenter)
+            self.image_blend = sge.gfx.Color("white")
+            self.image_blend_mode = sge.BLEND_RGB_SCREEN
+            self.alarms["hurt_flash"] = FPS / 10
+            play_sound(enemy_hurt_sound, self.image_xcenter, self.image_ycenter)
 
     def kill(self):
         blend = sge.gfx.Color((255, 255, 255, 0))
@@ -3051,7 +3054,7 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
 
 class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
 
-    hp = 5
+    hp = 3
     touch_damage = 10
     extend_distance = 96
     repeat_delay = 90

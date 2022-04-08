@@ -3098,77 +3098,60 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
 
 class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 
-    charge_distance = 200
-    charge_speed = 3
-    return_speed = 2
-    return_delay = 15
-    repeat_delay = 60
+    max_distance = 50
+    move_time_min = FPS // 2
+    move_time_max = FPS * 2
+    scatter_time = FPS * 3 // 4
 
     def __init__(self, x, y, **kwargs):
-        self.returning = False
-        self.path = None
+        self.scattering = False
         kwargs["sprite"] = bat_sprite
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
-    def attack(self, target):
-        xvec = target.x - self.image_xcenter
-        yvec = target.y - self.image_ycenter
-        dist = math.hypot(xvec, yvec)
-        if dist <= self.charge_distance:
-            self.speed = self.charge_speed
-            self.move_direction = math.degrees(math.atan2(yvec, xvec))
-            self.image_speed = self.sprite.speed * 2
-
-    def stop(self):
-        if self.path is not None:
-            self.path.follow_stop(self)
-            self.path = None
-
-        self.speed = 0
-        self.image_speed = None
-        if self.returning:
-            self.returning = False
-            self.alarms["charge_wait"] = self.repeat_delay
-        else:
-            self.returning = True
-            self.alarms["return"] = self.return_delay
+    def touch(self, other):
+        self.alarms["move"] = self.scatter_time
+        self.image_speed = self.sprite.speed * 2
+        self.speed = 2
+        self.move_direction = random.uniform(0, 360)
+        self.scattering = True
 
     def stop_left(self):
-        self.stop()
+        self.xvelocity *= -1
 
     def stop_right(self):
-        self.stop()
+        self.xvelocity *= -1
 
     def stop_up(self):
-        self.stop()
+        self.yvelocity *= -1
 
     def stop_down(self):
-        self.stop()
+        self.yvelocity *= -1
 
     def event_create(self):
         self.image_xscale *= random.choice([1, -1])
+        self.event_alarm("move")
 
     def event_step(self, time_passed, delta_mult):
         super().event_step(time_passed, delta_mult)
-
-        if (self.speed == 0 and "charge_wait" not in self.alarms
-                and not self.returning):
-            target = self.get_nearest_player()
-            if target is not None:
-                self.attack(target)
 
         if self.xvelocity:
             self.image_xscale = math.copysign(self.image_xscale, self.xvelocity)
 
     def event_alarm(self, alarm_id):
-        if alarm_id == "return":
-            xvec = self.xstart - self.x
-            yvec = self.ystart - self.y
-            self.path = xsge_path.Path.create(self.x, self.y,
-                                              points=[(xvec, yvec)])
-            def evt_follow_end(obj, self=self.path): obj.stop()
-            self.path.event_follow_end = evt_follow_end
-            self.path.follow_start(self, self.return_speed)
+        if alarm_id == "move":
+            self.scattering = False
+            self.image_speed = None
+            self.speed = random.uniform(0, 1)
+            if self.speed < 0.25:
+                self.speed = 0
+            xdiff = self.xstart - self.x
+            ydiff = self.ystart - self.y
+            if math.hypot(xdiff, ydiff) < self.max_distance:
+                self.move_direction = random.uniform(0, 360)
+            else:
+                self.move_direction = math.degrees(math.atan2(ydiff, xdiff))
+            self.alarms["move"] = random.randrange(self.move_time_min,
+                                                   self.move_time_max)
 
 
 class Jellyfish(Enemy, CrowdBlockingObject):

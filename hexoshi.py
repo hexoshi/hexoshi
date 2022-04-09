@@ -6936,6 +6936,8 @@ life_force_sprite = sge.gfx.Sprite(
 d = os.path.join(DATA, "images", "backgrounds")
 layers = []
 
+backgrounds["kawamora"] = sge.gfx.Background(layers, sge.gfx.Color((0, 0, 0)))
+
 if not NO_BACKGROUNDS:
     layers = [
         sge.gfx.BackgroundLayer(
@@ -6943,8 +6945,7 @@ if not NO_BACKGROUNDS:
             yscroll_rate=0.7, repeat_left=True, repeat_right=True,
             repeat_up=True, repeat_down=True)]
 
-backgrounds["iridia"] = sge.gfx.Background(layers,
-                                           sge.gfx.Color((21, 17, 22)))
+backgrounds["iridia"] = sge.gfx.Background(layers, sge.gfx.Color((21, 17, 22)))
 
 # Load fonts
 chars = ([chr(i) for i in range(32, 127)] + [None, ETANK_CHAR] + [' ']*11

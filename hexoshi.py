@@ -3113,6 +3113,9 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def touch(self, other):
+        if self.scattering:
+            return
+
         self.alarms["move"] = self.scatter_time
         self.image_speed = self.sprite.speed * 2
         self.speed = 2

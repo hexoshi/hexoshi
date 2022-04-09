@@ -1900,163 +1900,168 @@ class Anneroy(Player):
         self.max_speed = self.__class__.max_speed
 
     def shoot_default(self):
-        if "shoot_lock" not in self.alarms:
-            if self.ball:
-                if ("hedgehog_hormone" in progress_flags and
-                        not self.hedgehog and
-                        "hedgehog_lock" not in self.alarms):
-                    self.hedgehog = True
-                    self.sprite = anneroy_hedgehog_start_sprite
+        if "shoot_lock" in self.alarms:
+            return
 
-                    if self.fixed_sprite:
-                        self.image_speed = (abs(self.xvelocity) *
-                                            ANNEROY_BALL_FRAMES_PER_PIXEL)
+        if "life_orb" not in progress_flags:
+            if self.aim_direction is None:
+                self.aim_direction = 0
+            self.alarms["shooting"] = 30
+            self.alarms["shoot_lock"] = 60
+            self.last_aim_direction = self.aim_direction
 
-                    self.fixed_sprite = "hedgehog"
-                    self.alarms["hedgehog_extend"] = ANNEROY_HEDGEHOG_FRAME_TIME
-                    play_sound(hedgehog_spikes_sound, self.image_xcenter,
-                               self.image_ycenter)
-                    self.rolling = False
+            play_sound(cancel_sound, self.image_xcenter, self.image_ycenter)
 
-                    if "sloth_ball" in progress_flags:
-                        self.hedgehog_autocancel = False
-                        self.max_speed = ANNEROY_SLOTH_MAX_SPEED
-                    else:
-                        self.hedgehog_autocancel = True
-                        self.max_speed = 0
+            return
+
+        if self.ball:
+            if ("hedgehog_hormone" in progress_flags and not self.hedgehog
+                    and "hedgehog_lock" not in self.alarms):
+                self.hedgehog = True
+                self.sprite = anneroy_hedgehog_start_sprite
+
+                if self.fixed_sprite:
+                    self.image_speed = (abs(self.xvelocity) *
+                                        ANNEROY_BALL_FRAMES_PER_PIXEL)
+
+                self.fixed_sprite = "hedgehog"
+                self.alarms["hedgehog_extend"] = ANNEROY_HEDGEHOG_FRAME_TIME
+                play_sound(hedgehog_spikes_sound, self.image_xcenter,
+                           self.image_ycenter)
+                self.rolling = False
+
+                if "sloth_ball" in progress_flags:
+                    self.hedgehog_autocancel = False
+                    self.max_speed = ANNEROY_SLOTH_MAX_SPEED
+                else:
+                    self.hedgehog_autocancel = True
+                    self.max_speed = 0
+        else:
+            if self.aim_direction is None:
+                self.aim_direction = 0
+            self.alarms["shooting"] = 30
+            self.alarms["shoot_lock"] = 15
+            self.last_aim_direction = self.aim_direction
+
+            x = 0
+            y = 0
+            xv = 0
+            yv = 0
+            image_rotation = 0
+
+            if self.facing > 0:
+                if self.aim_direction == 0:
+                    x = 25
+                    y = -3
+                    xv = ANNEROY_BULLET_SPEED
+                    image_rotation = 0
+                elif self.aim_direction == 1:
+                    x = 22
+                    y = -27
+                    xv = ANNEROY_BULLET_DSPEED
+                    yv = -ANNEROY_BULLET_DSPEED
+                    image_rotation = 315
+                elif self.aim_direction == 2:
+                    x = 6
+                    y = -31
+                    yv = -ANNEROY_BULLET_SPEED
+                    image_rotation = 270
+                elif self.aim_direction == -1:
+                    x = 19
+                    y = 9
+                    xv = ANNEROY_BULLET_DSPEED
+                    yv = ANNEROY_BULLET_DSPEED
+                    image_rotation = 45
+                elif self.aim_direction == -2:
+                    x = 9
+                    y = 21
+                    yv = ANNEROY_BULLET_SPEED
+                    image_rotation = 90
             else:
-                if self.aim_direction is None:
-                    self.aim_direction = 0
-                self.alarms["shooting"] = 30
-                self.alarms["shoot_lock"] = 15
+                if self.aim_direction == 0:
+                    x = -25
+                    y = -3
+                    xv = -ANNEROY_BULLET_SPEED
+                    image_rotation = 180
+                elif self.aim_direction == 1:
+                    x = -22
+                    y = -27
+                    xv = -ANNEROY_BULLET_DSPEED
+                    yv = -ANNEROY_BULLET_DSPEED
+                    image_rotation = 225
+                elif self.aim_direction == 2:
+                    x = -6
+                    y = -31
+                    yv = -ANNEROY_BULLET_SPEED
+                    image_rotation = 270
+                elif self.aim_direction == -1:
+                    x = -19
+                    y = 9
+                    xv = -ANNEROY_BULLET_DSPEED
+                    yv = ANNEROY_BULLET_DSPEED
+                    image_rotation = 135
+                elif self.aim_direction == -2:
+                    x = -9
+                    y = 21
+                    yv = ANNEROY_BULLET_SPEED
+                    image_rotation = 90
 
-                if self.aim_direction is not None:
-                    self.last_aim_direction = self.aim_direction
-                else:
-                    self.last_aim_direction = 0
+            if x:
+                m = y / x
+            else:
+                m = None
 
-                x = 0
-                y = 0
-                xv = 0
-                yv = 0
-                image_rotation = 0
+            xdest = self.torso.x + x
+            ydest = self.torso.y + y
+            guide = xsge_physics.Collider.create(
+                self.torso.x, self.torso.y, sprite=anneroy_bullet_sprite)
+            if self.facing > 0:
+                guide.bbox_right = self.bbox_right
+            else:
+                guide.bbox_left = self.bbox_left
+            if self.aim_direction < 0:
+                guide.bbox_bottom = self.bbox_bottom
+            else:
+                guide.bbox_top = self.bbox_top
+            x += self.torso.x - guide.x
+            y += self.torso.y - guide.y
+            xsteps = int(abs(x) / guide.bbox_width)
+            ysteps = int(abs(y) / guide.bbox_height)
+            xfinal = math.copysign(abs(x) - xsteps * guide.bbox_width, x)
+            yfinal = math.copysign(abs(y) - ysteps * guide.bbox_height, y)
+            for i in range(xsteps):
+                guide.move_x(math.copysign(guide.bbox_width, x))
+            for i in range(ysteps):
+                guide.move_y(math.copysign(guide.bbox_height, y))
+            guide.move_x(xfinal)
+            guide.move_y(yfinal)
 
-                if self.facing > 0:
-                    if self.aim_direction == 0:
-                        x = 25
-                        y = -3
-                        xv = ANNEROY_BULLET_SPEED
-                        image_rotation = 0
-                    elif self.aim_direction == 1:
-                        x = 22
-                        y = -27
-                        xv = ANNEROY_BULLET_DSPEED
-                        yv = -ANNEROY_BULLET_DSPEED
-                        image_rotation = 315
-                    elif self.aim_direction == 2:
-                        x = 6
-                        y = -31
-                        yv = -ANNEROY_BULLET_SPEED
-                        image_rotation = 270
-                    elif self.aim_direction == -1:
-                        x = 19
-                        y = 9
-                        xv = ANNEROY_BULLET_DSPEED
-                        yv = ANNEROY_BULLET_DSPEED
-                        image_rotation = 45
-                    elif self.aim_direction == -2:
-                        x = 9
-                        y = 21
-                        yv = ANNEROY_BULLET_SPEED
-                        image_rotation = 90
-                else:
-                    if self.aim_direction == 0:
-                        x = -25
-                        y = -3
-                        xv = -ANNEROY_BULLET_SPEED
-                        image_rotation = 180
-                    elif self.aim_direction == 1:
-                        x = -22
-                        y = -27
-                        xv = -ANNEROY_BULLET_DSPEED
-                        yv = -ANNEROY_BULLET_DSPEED
-                        image_rotation = 225
-                    elif self.aim_direction == 2:
-                        x = -6
-                        y = -31
-                        yv = -ANNEROY_BULLET_SPEED
-                        image_rotation = 270
-                    elif self.aim_direction == -1:
-                        x = -19
-                        y = 9
-                        xv = -ANNEROY_BULLET_DSPEED
-                        yv = ANNEROY_BULLET_DSPEED
-                        image_rotation = 135
-                    elif self.aim_direction == -2:
-                        x = -9
-                        y = 21
-                        yv = ANNEROY_BULLET_SPEED
-                        image_rotation = 90
+            if abs(self.aim_direction) == 1 and m:
+                target_x = self.torso.x + x
+                target_y = self.torso.y + y
+                xdiff = guide.x - self.torso.x
+                ydiff = guide.y - self.torso.y
+                if abs(guide.x - target_x) >= 1:
+                    guide.y = self.torso.y + m*xdiff
+                elif abs(guide.y - target_y) >= 1:
+                    guide.x = self.torso.x + ydiff/m
 
-                if x:
-                    m = y / x
-                else:
-                    m = None
+            bs = AnneroyBullet.create(
+                guide.x, guide.y, self.z + 0.2, sprite=anneroy_bullet_sprite,
+                xvelocity=xv, yvelocity=yv, regulate_origin=True,
+                image_xscale=abs(self.image_xscale),
+                image_yscale=self.image_yscale, image_rotation=image_rotation,
+                image_blend=self.image_blend)
 
-                xdest = self.torso.x + x
-                ydest = self.torso.y + y
-                guide = xsge_physics.Collider.create(
-                    self.torso.x, self.torso.y, sprite=anneroy_bullet_sprite)
-                if self.facing > 0:
-                    guide.bbox_right = self.bbox_right
-                else:
-                    guide.bbox_left = self.bbox_left
-                if self.aim_direction < 0:
-                    guide.bbox_bottom = self.bbox_bottom
-                else:
-                    guide.bbox_top = self.bbox_top
-                x += self.torso.x - guide.x
-                y += self.torso.y - guide.y
-                xsteps = int(abs(x) / guide.bbox_width)
-                ysteps = int(abs(y) / guide.bbox_height)
-                xfinal = math.copysign(abs(x) - xsteps * guide.bbox_width, x)
-                yfinal = math.copysign(abs(y) - ysteps * guide.bbox_height, y)
-                for i in range(xsteps):
-                    guide.move_x(math.copysign(guide.bbox_width, x))
-                for i in range(ysteps):
-                    guide.move_y(math.copysign(guide.bbox_height, y))
-                guide.move_x(xfinal)
-                guide.move_y(yfinal)
+            guide.destroy()
 
-                if abs(self.aim_direction) == 1 and m:
-                    target_x = self.torso.x + x
-                    target_y = self.torso.y + y
-                    xdiff = guide.x - self.torso.x
-                    ydiff = guide.y - self.torso.y
-                    if abs(guide.x - target_x) >= 1:
-                        guide.y = self.torso.y + m*xdiff
-                    elif abs(guide.y - target_y) >= 1:
-                        guide.x = self.torso.x + ydiff/m
-
-                bs = AnneroyBullet.create(
-                    guide.x, guide.y, self.z + 0.2,
-                    sprite=anneroy_bullet_sprite, xvelocity=xv,
-                    yvelocity=yv, regulate_origin=True,
-                    image_xscale=abs(self.image_xscale),
-                    image_yscale=self.image_yscale,
-                    image_rotation=image_rotation, image_blend=self.image_blend)
-
-                guide.destroy()
-
-                Smoke.create(
-                    xdest, ydest, self.torso.z,
-                    sprite=anneroy_bullet_dust_sprite,
-                    xvelocity=self.xvelocity, yvelocity=self.yvelocity,
-                    regulate_origin=True, image_xscale=abs(self.image_xscale),
-                    image_yscale=self.image_yscale,
-                    image_rotation=image_rotation,
-                    image_blend=self.image_blend)
-                play_sound(shoot_sound, xdest, ydest)
+            Smoke.create(
+                xdest, ydest, self.torso.z, sprite=anneroy_bullet_dust_sprite,
+                xvelocity=self.xvelocity, yvelocity=self.yvelocity,
+                regulate_origin=True, image_xscale=abs(self.image_xscale),
+                image_yscale=self.image_yscale, image_rotation=image_rotation,
+                image_blend=self.image_blend)
+            play_sound(shoot_sound, xdest, ydest)
 
     def shoot(self):
         if self.current_mode == "compress":
@@ -2784,8 +2789,7 @@ class Enemy(InteractiveObject):
                      image_blend=self.image_blend,
                      image_blend_mode=self.image_blend_mode)
 
-        if ("life_orb" in progress_flags
-                and random.random() < LIFE_FORCE_CHANCE):
+        if random.random() < LIFE_FORCE_CHANCE:
             LifeForce.create(self.image_xcenter, self.image_ycenter,
                              z=self.z - 0.1)
 
@@ -4281,8 +4285,9 @@ class Etank(Powerup):
 
 class LifeOrb(Powerup):
 
-    message = _("LIFE ORB\n\n"
-                "Absorb life force from defeated enemies")
+    message = _('HEX ORB\n\n'
+                'Shoot bullets by pressing "shoot"\n\n'
+                'Collect Hexoshi Artifacts for faster fire rate')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = life_orb_sprite

@@ -616,7 +616,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/tilesets\/main_blue.json"
+         "source":"..\/tilesets\/main.json"
         }, 
         {
          "firstgid":111,

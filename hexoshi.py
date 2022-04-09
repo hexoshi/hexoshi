@@ -6936,6 +6936,13 @@ life_force_sprite = sge.gfx.Sprite(
 d = os.path.join(DATA, "images", "backgrounds")
 layers = []
 
+if not NO_BACKGROUNDS:
+    layers = [
+        sge.gfx.BackgroundLayer(
+            sge.gfx.Sprite("kawamora", d), 0, 0, -100000, xscroll_rate=0.1,
+            yscroll_rate=0.1, repeat_left=True, repeat_right=True,
+            repeat_up=True, repeat_down=True)]
+
 backgrounds["kawamora"] = sge.gfx.Background(layers, sge.gfx.Color((0, 0, 0)))
 
 if not NO_BACKGROUNDS:

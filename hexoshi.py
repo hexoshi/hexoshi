@@ -41,26 +41,15 @@ import xsge_path
 import xsge_physics
 import xsge_tiled
 
+import hlib
+
 
 if getattr(sys, "frozen", False):
     __file__ = sys.executable
 
-DATA = os.path.join(os.path.dirname(__file__), "data")
-CONFIG = os.path.join(
-    os.getenv("XDG_CONFIG_HOME", os.path.join(os.path.expanduser("~"),
-                                              ".config")), "hexoshi")
-LOCAL = os.path.join(
-    os.getenv("XDG_DATA_HOME", os.path.join(os.path.expanduser("~"), ".local",
-                                            "share")), "hexoshi")
-SCREEN_SIZE = [400, 240]
-TILE_SIZE = 16
-FPS = 60
-DELTA_MIN = FPS / 2
-DELTA_MAX = FPS * 4
-SCALE = 2
-FSSCALE = None
+hlib.datadir = os.path.join(os.path.dirname(__file__), "data")
 
-gettext.install("hexoshi", os.path.abspath(os.path.join(DATA, "locale")))
+gettext.install("hexoshi", os.path.abspath(os.path.join(hlib.datadir, "locale")))
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -80,11 +69,11 @@ parser.add_argument(
     action="store_true")
 parser.add_argument(
     "-d", "--datadir",
-    help=_('Where to load the game data from (Default: "{}")').format(DATA))
+    help=_('Where to load the game data from (Default: "{}")').format(hlib.datadir))
 parser.add_argument(
     "--scale",
     help=_('The scale factor to use by default in windowed mode (Default: '
-           '"{}")').format(SCALE))
+           '"{}")').format(hlib.scale))
 parser.add_argument(
     "--fsscale",
     help=_("Specify a scale factor to use in fullscreen mode instead of using "
@@ -95,8 +84,8 @@ parser.add_argument(
            "example, to target a resolution of 640x480, use {ex}. A scale "
            "factor of 1 will always be fastest, but may result in "
            "windowboxing.").format(
-               w=SCREEN_SIZE[0], h=SCREEN_SIZE[1],
-               ex=min(640 / SCREEN_SIZE[0], 480 / SCREEN_SIZE[1])))
+               w=hlib.SCREEN_SIZE[0], h=hlib.SCREEN_SIZE[1],
+               ex=min(640 / hlib.SCREEN_SIZE[0], 480 / hlib.SCREEN_SIZE[1])))
 parser.add_argument(
     "--no-backgrounds",
     help=_("Only show solid colors for backgrounds (uses less RAM)."),
@@ -124,13 +113,13 @@ args = parser.parse_args()
 PRINT_ERRORS = args.print_errors
 DELTA = not args.nodelta
 if args.datadir:
-    DATA = args.datadir
+    hlib.datadir = args.datadir
 if args.scale:
-    SCALE = eval(args.scale)
+    hlib.scale = eval(args.scale)
 if args.fsscale:
-    FSSCALE = eval(args.fsscale)
+    hlib.fsscale = eval(args.fsscale)
 NO_BACKGROUNDS = args.no_backgrounds
-NO_HUD = args.no_hud
+hlib.no_hud = args.no_hud
 GEN_MAP = args.gen_map
 SAVE_MAP = args.save_map
 DIST_AI = args.dist_ai
@@ -139,7 +128,7 @@ GOD = (args.god and args.god.lower() == "inbailey")
 
 if args.lang:
     lang = gettext.translation("hexoshi",
-                               os.path.abspath(os.path.join(DATA, "locale")),
+                               os.path.abspath(os.path.join(hlib.datadir, "locale")),
                                [args.lang])
     lang.install()
 
@@ -154,22 +143,22 @@ PLAYER_AIR_ACCELERATION = 0.15
 PLAYER_FRICTION = 0.75
 PLAYER_ROLL_FRICTION = 0.02
 PLAYER_AIR_FRICTION = 0.02
-PLAYER_JUMP_HEIGHT = 5 * TILE_SIZE + 2
+PLAYER_JUMP_HEIGHT = 5 * hlib.TILE_SIZE + 2
 PLAYER_FALL_SPEED = 7
 PLAYER_SLIDE_SPEED = 0.25
 PLAYER_ROLL_SLIDE_SPEED = 0
 PLAYER_ROLL_SLOPE_ACCELERATION = 0.25
-PLAYER_HITSTUN = FPS
-PLAYER_AIM_LOCK_TIME = FPS / 2
-WARP_TIME = FPS / 10
-DEATH_TIME = 3 * FPS
-DOUBLETAP_TIME = FPS / 3
+PLAYER_HITSTUN = hlib.FPS
+PLAYER_AIM_LOCK_TIME = hlib.FPS / 2
+WARP_TIME = hlib.FPS / 10
+DEATH_TIME = 3 * hlib.FPS
+DOUBLETAP_TIME = hlib.FPS / 3
 
 ANNEROY_BALL_BOUNCE_HEIGHT = 2
 ANNEROY_BALL_FORCE_BOUNCE_SPEED = 4
-ANNEROY_WALLJUMP_HEIGHT = 3 * TILE_SIZE
+ANNEROY_WALLJUMP_HEIGHT = 3 * hlib.TILE_SIZE
 ANNEROY_WALLJUMP_SPEED = PLAYER_MAX_SPEED
-ANNEROY_WALLJUMP_FRAME_TIME = FPS / 4
+ANNEROY_WALLJUMP_FRAME_TIME = hlib.FPS / 4
 ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
 ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 4
 ANNEROY_BBOX_X = -7
@@ -190,15 +179,15 @@ ANNEROY_SLOTH_MAX_SPEED = 0.5
 ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_BULLET_LIFE = 45
-ANNEROY_EXPLODE_TIME = 0.6 * FPS
+ANNEROY_EXPLODE_TIME = 0.6 * hlib.FPS
 ANNEROY_DECOMPRESS_LAX = 4
 
 MANTANOID_WANDER_SPEED = 1
-MANTANOID_WANDER_INTERVAL = FPS * 2
+MANTANOID_WANDER_INTERVAL = hlib.FPS * 2
 MANTANOID_APPROACH_SPEED = 1.5
-MANTANOID_APPROACH_INTERVAL = FPS / 4
-MANTANOID_HOP_HEIGHT = 2 * TILE_SIZE
-MANTANOID_JUMP_HEIGHT = 4 * TILE_SIZE
+MANTANOID_APPROACH_INTERVAL = hlib.FPS / 4
+MANTANOID_HOP_HEIGHT = 2 * hlib.TILE_SIZE
+MANTANOID_JUMP_HEIGHT = 4 * hlib.TILE_SIZE
 MANTANOID_WALK_FRAMES_PER_PIXEL = 1 / 6
 MANTANOID_LEVEL_DISTANCE = 48
 MANTANOID_SLASH_DISTANCE = 30
@@ -226,9 +215,9 @@ CAMERA_STOPPED_HSPEED_MAX = 2
 CAMERA_HSPEED_FACTOR = 1 / 8
 CAMERA_VSPEED_FACTOR = 1 / 20
 CAMERA_OFFSET_FACTOR = 10
-CAMERA_MARGIN_TOP = 4 * TILE_SIZE
-CAMERA_MARGIN_BOTTOM = 4 * TILE_SIZE
-CAMERA_TARGET_MARGIN_BOTTOM = SCREEN_SIZE[1] / 2
+CAMERA_MARGIN_TOP = 4 * hlib.TILE_SIZE
+CAMERA_MARGIN_BOTTOM = 4 * hlib.TILE_SIZE
+CAMERA_TARGET_MARGIN_BOTTOM = hlib.SCREEN_SIZE[1] / 2
 
 LIFE_FORCE_CHANCE = 0.25
 LIFE_FORCE_SPEED = 1
@@ -236,7 +225,7 @@ LIFE_FORCE_HEAL = 5
 
 LIGHT_RANGE = 300
 
-SHAKE_FRAME_TIME = FPS / DELTA_MIN
+SHAKE_FRAME_TIME = hlib.FPS / hlib.DELTA_MIN
 SHAKE_AMOUNT = 3
 
 MAP_CELL_WIDTH = 8
@@ -294,7 +283,7 @@ pause_js = [[(0, "button", 9)]]
 map_js = [[]]
 save_slots = [None for i in range(SAVE_NSLOTS)]
 
-with open(os.path.join(DATA, "ai_data.json"), 'r') as f:
+with open(os.path.join(hlib.datadir, "ai_data.json"), 'r') as f:
     ai_data = json.load(f)
 
 abort = False
@@ -322,7 +311,7 @@ player = None
 
 class Game(sge.dsp.Game):
 
-    fps_real = FPS
+    fps_real = hlib.FPS
     fps_time = 0
     fps_frames = 0
     fps_text = ""
@@ -382,8 +371,8 @@ class Level(sge.dsp.Room):
     """Handles levels."""
 
     def __init__(self, objects=(), *, background=None,
-                 object_area_width=TILE_SIZE * 2,
-                 object_area_height = TILE_SIZE * 2,
+                 object_area_width=hlib.TILE_SIZE * 2,
+                 object_area_height = hlib.TILE_SIZE * 2,
                  name=None, bgname=None, music=None, timeline=None,
                  ambient_light=None, disable_lights=False, music_noloop=False,
                  **kwargs):
@@ -425,7 +414,7 @@ class Level(sge.dsp.Room):
         self.timeline_skip_target = None
         if timeline:
             self.timeline_name = timeline
-            fname = os.path.join(DATA, "timelines", timeline)
+            fname = os.path.join(hlib.datadir, "timelines", timeline)
             with open(fname, 'r') as f:
                 jt = json.load(f)
 
@@ -447,11 +436,11 @@ class Level(sge.dsp.Room):
         # Show darkness
         if self.ambient_light:
             xsge_lighting.project_darkness(ambient_light=self.ambient_light,
-                                           buffer=TILE_SIZE * 2)
+                                           buffer=hlib.TILE_SIZE * 2)
         else:
             xsge_lighting.clear_lights()
 
-        if not NO_HUD:
+        if not hlib.no_hud:
             # TODO: Add HUD showing health, ammo, etc.
 
             if self.status_text:
@@ -700,7 +689,7 @@ class Level(sge.dsp.Room):
                 print(_("Loading \"{}\"...").format(fname))
 
         try:
-            r = xsge_tiled.load(os.path.join(DATA, "rooms", fname), cls=cls,
+            r = xsge_tiled.load(os.path.join(hlib.datadir, "rooms", fname), cls=cls,
                                 types=TYPES)
         except Exception as e:
             m = _("An error occurred when trying to load the level:\n\n"
@@ -743,7 +732,7 @@ class CreditsScreen(SpecialScreen):
     def event_room_start(self):
         super().event_room_start()
 
-        with open(os.path.join(DATA, "credits.json"), 'r') as f:
+        with open(os.path.join(hlib.datadir, "credits.json"), 'r') as f:
             sections = json.load(f)
 
         logo_section = sge.dsp.Object.create(self.width / 2, self.height,
@@ -764,7 +753,7 @@ class CreditsScreen(SpecialScreen):
             if "lines" in section:
                 for line in section["lines"]:
                     list_sprite = sge.gfx.Sprite.from_text(
-                        font, line, width=self.width - 2*TILE_SIZE,
+                        font, line, width=self.width - 2*hlib.TILE_SIZE,
                         color=sge.gfx.Color("white"), halign="center")
                     x = self.width / 2
                     y = self.sections[-1].bbox_bottom + font.size
@@ -782,7 +771,7 @@ class CreditsScreen(SpecialScreen):
 
         if self.sections[-1].bbox_bottom < 0 and "end" not in self.alarms:
             sge.snd.Music.stop(fade_time=3000)
-            self.alarms["end"] = 3.5 * FPS
+            self.alarms["end"] = 3.5 * hlib.FPS
 
     def event_alarm(self, alarm_id):
         if alarm_id == "end":
@@ -1075,8 +1064,8 @@ class Player(xsge_physics.Collider):
         self.input_lock = False
         self.warp_dest = None
 
-        self.hud_sprite = sge.gfx.Sprite(width=SCREEN_SIZE[0],
-                                         height=SCREEN_SIZE[1])
+        self.hud_sprite = sge.gfx.Sprite(width=hlib.SCREEN_SIZE[0],
+                                         height=hlib.SCREEN_SIZE[1])
 
         self.reset_input()
         self.etanks_used = 0
@@ -1252,7 +1241,7 @@ class Player(xsge_physics.Collider):
 
     def update_hud(self):
         self.hud_sprite.draw_clear()
-        if not NO_HUD:
+        if not hlib.no_hud:
             start_x = 8
             start_y = 8
             x = start_x
@@ -1303,7 +1292,7 @@ class Player(xsge_physics.Collider):
                 map_s.draw_rectangle(0, 0, map_s.width, map_s.height, fill=c,
                                      blend_mode=sge.BLEND_RGBA_MULTIPLY)
 
-                x = SCREEN_SIZE[0] - start_x - w*MAP_CELL_WIDTH
+                x = hlib.SCREEN_SIZE[0] - start_x - w*MAP_CELL_WIDTH
                 y = start_y
                 self.hud_sprite.draw_sprite(map_s, 0, x, y)
                 self.hud_sprite.draw_rectangle(x, y, map_s.width, map_s.height,
@@ -1311,7 +1300,7 @@ class Player(xsge_physics.Collider):
                 
 
     def show_hud(self):
-        if not NO_HUD:
+        if not hlib.no_hud:
             sge.game.project_sprite(self.hud_sprite, 0, 0, 0)
 
             if not self.human:
@@ -2765,7 +2754,7 @@ class Enemy(InteractiveObject):
         else:
             self.image_blend = sge.gfx.Color("white")
             self.image_blend_mode = sge.BLEND_RGB_SCREEN
-            self.alarms["hurt_flash"] = FPS / 10
+            self.alarms["hurt_flash"] = hlib.FPS / 10
             play_sound(enemy_hurt_sound, self.image_xcenter, self.image_ycenter)
 
     def kill(self):
@@ -2777,7 +2766,7 @@ class Enemy(InteractiveObject):
         base_sprite.draw_sprite(self.sprite, self.image_index,
                                 self.sprite.origin_x, self.sprite.origin_y)
         spr = sge.gfx.Sprite.from_tween(
-            base_sprite, int(FPS / 4), fps=FPS, blend=blend,
+            base_sprite, int(hlib.FPS / 4), fps=hlib.FPS, blend=blend,
             blend_mode=sge.BLEND_RGBA_MULTIPLY)
         Smoke.create(self.x, self.y, z=self.z, sprite=spr, tangible=False,
                      image_origin_x=self.image_origin_x,
@@ -2885,9 +2874,9 @@ class Frog(Enemy, FallingObject, CrowdObject):
 
     slide_speed = 0
     jump_distance = 200
-    jump_height = 2*TILE_SIZE + 1
+    jump_height = 2*hlib.TILE_SIZE + 1
     jump_speed = 3
-    jump_interval = FPS / 2
+    jump_interval = hlib.FPS / 2
 
     def stop_left(self):
         if self.yvelocity >= 0:
@@ -3103,9 +3092,9 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
 class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 
     max_distance = 50
-    move_time_min = FPS // 2
-    move_time_max = FPS * 2
-    scatter_time = FPS * 3 // 4
+    move_time_min = hlib.FPS // 2
+    move_time_max = hlib.FPS * 2
+    scatter_time = hlib.FPS * 3 // 4
 
     def __init__(self, x, y, **kwargs):
         self.scattering = False
@@ -3167,7 +3156,7 @@ class Jellyfish(Enemy, CrowdBlockingObject):
     touch_damage = 7
     swim_speed = 2
     friction = 0.025
-    swim_interval = FPS
+    swim_interval = hlib.FPS
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = jellyfish_idle_sprite
@@ -3239,8 +3228,8 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
     slopeisplatform = False
     sight_distance = 1000
     sight_threshold = 64
-    shoot_interval = FPS
-    shoot_recheck_interval = FPS / 10
+    shoot_interval = hlib.FPS
+    shoot_recheck_interval = hlib.FPS / 10
     bullet_speed = 3
 
     def __init__(self, x, y, **kwargs):
@@ -3670,7 +3659,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                                            * MANTANOID_WALK_FRAMES_PER_PIXEL)
                 else:
                     self.sprite = mantanoid_stand_sprite
-                    if random.random() < 1 / (2*FPS):
+                    if random.random() < 1 / (2*hlib.FPS):
                         self.sprite = mantanoid_idle_sprite
                         self.image_fps = None
                         self.image_index = 0
@@ -3894,7 +3883,7 @@ class LifeForce(InteractiveObject):
 
     def move(self):
         if "set_direction" not in self.alarms:
-            self.alarms["set_direction"] = FPS / 4
+            self.alarms["set_direction"] = hlib.FPS / 4
             target = self.get_nearest_player()
             if target is not None:
                 xvec = target.x - self.image_xcenter
@@ -4114,7 +4103,7 @@ class ScorpionBullet(Bullet):
                    self.image_ycenter)
 
         for i in range(self.shard_num):
-            life = random.uniform(FPS / 8, FPS / 2)
+            life = random.uniform(hlib.FPS / 8, hlib.FPS / 2)
             image_index = random.randrange(
                 0, scorpion_projectile_shard_sprite.frames)
             shard = xsge_particle.TimedParticle.create(
@@ -4128,7 +4117,7 @@ class ScorpionBullet(Bullet):
 
 class HedgehogSpikes(InteractiveObject):
 
-    spike_hitstun = FPS / 4
+    spike_hitstun = hlib.FPS / 4
 
     def event_collision(self, other, xdirection, ydirection):
         super().event_collision(other, xdirection, ydirection)
@@ -4178,7 +4167,7 @@ class Stone(xsge_physics.Solid):
         for other in self.fakes:
             other.destroy()
 
-        if sge.game.fps_real >= FPS:
+        if sge.game.fps_real >= hlib.FPS:
             shard_num = random.randint(self.shard_num_min, self.shard_num_max)
         else:
             shard_num = self.shard_num_min
@@ -4224,7 +4213,9 @@ class Macguffin(InteractiveObject):
 
 class Powerup(InteractiveObject):
 
-    message = _("USELESS ITEM\n\nIt doesn't seem to do anything")
+    @property
+    def message(self):
+        return _("USELESS OBJECT\n\nIt doesn't seem to do anything")
 
     def collect(self, other):
         pass
@@ -4264,9 +4255,13 @@ class Artifact(Powerup):
 
     message = ""
 
-    def __init__(self, x, y, message="It doesn't seem to to anything", **kwargs):
-        super().__init__(x, y, **kwargs)
-        self.message = _("HEXOSHI ARTIFACT\n\n{}").format(_(message))
+    @property
+    def message(self):
+        return _("HEXOSHI ARTIFACT\n\n"
+                 "{amt}/{total} ({pct}%)\n\n"
+                 "Fire rate increased").format(
+                     amt=artifacts, total=num_artifacts,
+                     pct=int(100 * artifacts / max(num_artifacts, 1)))
 
     def collect(self, other):
         global artifacts
@@ -4277,8 +4272,9 @@ class Artifact(Powerup):
 
 class Etank(Powerup):
 
-    message = _("E-TANK\n\n"
-                "Extra energy capacity acquired")
+    @property
+    def message(self):
+        return _("E-TANK\n\nExtra energy capacity acquired")
 
     def collect(self, other):
         global etanks
@@ -4288,9 +4284,11 @@ class Etank(Powerup):
 
 class LifeOrb(Powerup):
 
-    message = _('HEX ORB\n\n'
-                'Shoot bullets by pressing "shoot"\n\n'
-                'Collect Hexoshi Artifacts for faster fire rate')
+    @property
+    def message(self):
+        return _('HEX ORB\n\n'
+                 'Shoot bullets by pressing "shoot"\n\n'
+                 'Collect Hexoshi Artifacts for faster fire rate')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = life_orb_sprite
@@ -4304,10 +4302,11 @@ class LifeOrb(Powerup):
 
 class Map(Powerup):
 
-    message = _(
-        'HANDHELD MAP\n\n'
-        'See mini-map in HUD; see full map by pressing "map" button or from '
-        'pause menu')
+    @property
+    def message(self):
+        return _('HANDHELD MAP\n\n'
+                 'See mini-map in HUD\n\n'
+                 'See full map by pressing "map" or via pause menu')
 
     def __init__(self, x, y, **kwargs):
         kwargs["sprite"] = powerup_map_sprite
@@ -4321,8 +4320,9 @@ class Map(Powerup):
 
 class MapDisk(Powerup):
 
-    message = _("MAP DISK\n\n"
-                "Area map data loaded")
+    @property
+    def message(self):
+        return _("MAP DISK\n\nArea map data loaded")
 
     def __init__(self, x, y, rooms=None, **kwargs):
         if rooms:
@@ -4339,8 +4339,8 @@ class MapDisk(Powerup):
             if fname in map_rooms:
                 room = Level.load(fname, True)
                 rm_x, rm_y = map_rooms[fname]
-                rm_w = int(math.ceil(room.width / SCREEN_SIZE[0]))
-                rm_h = int(math.ceil(room.height / SCREEN_SIZE[1]))
+                rm_w = int(math.ceil(room.width / hlib.SCREEN_SIZE[0]))
+                rm_h = int(math.ceil(room.height / hlib.SCREEN_SIZE[1]))
 
                 ignore_regions = set()
                 for obj in room.objects:
@@ -4396,7 +4396,7 @@ class MonkeyBoots(Powerup):
 
     def event_create(self):
         self.emitter = xsge_particle.Emitter.create(
-            self.bbox_left, self.bbox_top, self.z + 0.5, interval=(FPS * 2),
+            self.bbox_left, self.bbox_top, self.z + 0.5, interval=(hlib.FPS * 2),
             particle_cls=xsge_particle.AnimationParticle,
             particle_args=[self.x, self.y, self.z + 0.5],
             particle_kwargs={"sprite": monkey_boots_gleam_sprite},
@@ -4489,7 +4489,7 @@ class SpawnPoint(sge.dsp.Object):
             other.bbox_right = self.bbox_left
         elif self.spawn_direction == 270:
             other.bbox_bottom = self.bbox_top
-            other.yvelocity = get_jump_speed(TILE_SIZE / 2, other.gravity)
+            other.yvelocity = get_jump_speed(hlib.TILE_SIZE / 2, other.gravity)
 
         other.init_position()
 
@@ -4698,9 +4698,9 @@ class LeftDoor(Door):
 
     def event_create(self):
         frame = DoorFrameX.create(self.x, self.y, z=self.z)
-        Tunnel.create(frame.barrier.bbox_left - TILE_SIZE,
+        Tunnel.create(frame.barrier.bbox_left - hlib.TILE_SIZE,
                       frame.barrier.bbox_top, dest=self.dest,
-                      bbox_width=TILE_SIZE,
+                      bbox_width=hlib.TILE_SIZE,
                       bbox_height=frame.barrier.bbox_height)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
                           spawn_id=self.spawn_id, spawn_direction=0,
@@ -4715,7 +4715,7 @@ class RightDoor(Door):
     def event_create(self):
         frame = DoorFrameX.create(self.x, self.y, z=self.z)
         Tunnel.create(frame.barrier.bbox_right, frame.barrier.bbox_top,
-                      dest=self.dest, bbox_width=TILE_SIZE,
+                      dest=self.dest, bbox_width=hlib.TILE_SIZE,
                       bbox_height=frame.barrier.bbox_height)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
                           spawn_id=self.spawn_id, spawn_direction=180,
@@ -4730,9 +4730,9 @@ class UpDoor(Door):
     def event_create(self):
         frame = DoorFrameY.create(self.x, self.y, z=self.z)
         Tunnel.create(frame.barrier.bbox_left,
-                      frame.barrier.bbox_top - TILE_SIZE, dest=self.dest,
+                      frame.barrier.bbox_top - hlib.TILE_SIZE, dest=self.dest,
                       bbox_width=frame.barrier.bbox_width,
-                      bbox_height=TILE_SIZE)
+                      bbox_height=hlib.TILE_SIZE)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
                           spawn_id=self.spawn_id, spawn_direction=90,
                           barrier=frame.barrier,
@@ -4747,7 +4747,7 @@ class DownDoor(Door):
         frame = DoorFrameY.create(self.x, self.y, z=self.z)
         Tunnel.create(frame.barrier.bbox_left, frame.barrier.bbox_bottom,
                       dest=self.dest, bbox_width=frame.barrier.bbox_width,
-                      bbox_height=TILE_SIZE)
+                      bbox_height=hlib.TILE_SIZE)
         SpawnPoint.create(frame.barrier.bbox_left, frame.barrier.bbox_top,
                           spawn_id=self.spawn_id, spawn_direction=270,
                           barrier=frame.barrier,
@@ -4859,8 +4859,8 @@ class CircoflamePath(xsge_path.Path):
 
     def __init__(self, x, y, z=0, points=(), rvelocity=2):
         self.rvelocity = rvelocity
-        x += TILE_SIZE / 2
-        y += TILE_SIZE / 2
+        x += hlib.TILE_SIZE / 2
+        y += hlib.TILE_SIZE / 2
         super().__init__(x, y, z=z, points=points)
 
     def event_create(self):
@@ -5885,11 +5885,11 @@ def get_jump_speed(height, gravity=GRAVITY):
 
 
 def get_xregion(x):
-    return int(x / SCREEN_SIZE[0])
+    return int(x / hlib.SCREEN_SIZE[0])
 
 
 def get_yregion(y):
-    return int(y / SCREEN_SIZE[1])
+    return int(y / hlib.SCREEN_SIZE[1])
 
 
 def warp(dest):
@@ -6070,7 +6070,7 @@ def play_music(music, force_restart=False, noloop=False):
             music_object = loaded_music.get(music)
             if music_object is None:
                 try:
-                    music_object = sge.snd.Music(os.path.join(DATA, "music",
+                    music_object = sge.snd.Music(os.path.join(hlib.datadir, "music",
                                                               music))
                 except OSError:
                     sge.snd.Music.clear_queue()
@@ -6085,7 +6085,7 @@ def play_music(music, force_restart=False, noloop=False):
             if music_start_object is None:
                 try:
                     music_start_object = sge.snd.Music(os.path.join(
-                        DATA, "music", music_start))
+                        hlib.datadir, "music", music_start))
                 except OSError:
                     pass
                 else:
@@ -6159,23 +6159,23 @@ def write_to_disk():
            "joystick_threshold": joystick_threshold, "keys": keys_cfg,
            "joystick": js_cfg}
 
-    with open(os.path.join(CONFIG, "config.json"), 'w') as f:
+    with open(os.path.join(hlib.configdir, "config.json"), 'w') as f:
         json.dump(cfg, f, indent=4)
 
     if DIST_AI:
-        # Save to DATA instead.
-        with open(os.path.join(DATA, "ai_data.json"), 'w') as f:
+        # Save to hlib.datadir instead.
+        with open(os.path.join(hlib.datadir, "ai_data.json"), 'w') as f:
             json.dump(ai_data, f, indent=4)
 
         # Remove the local file since it's now redundant.
-        fd = os.path.join(LOCAL, "ai_data.json")
+        fd = os.path.join(hlib.localdir, "ai_data.json")
         if os.path.exists(fd):
             os.remove(fd)
     else:
-        with open(os.path.join(LOCAL, "ai_data.json"), 'w') as f:
+        with open(os.path.join(hlib.localdir, "ai_data.json"), 'w') as f:
             json.dump(ai_data, f)
 
-    with open(os.path.join(LOCAL, "save_slots.json"), 'w') as f:
+    with open(os.path.join(hlib.localdir, "save_slots.json"), 'w') as f:
         json.dump(save_slots, f, indent=4)
 
 
@@ -6275,8 +6275,8 @@ def generate_map():
         fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
         files_checked.add(fname)
         room = Level.load(fname, True)
-        rm_w = int(math.ceil(room.width / SCREEN_SIZE[0]))
-        rm_h = int(math.ceil(room.height / SCREEN_SIZE[1]))
+        rm_w = int(math.ceil(room.width / hlib.SCREEN_SIZE[0]))
+        rm_h = int(math.ceil(room.height / hlib.SCREEN_SIZE[1]))
 
         for obj in room.objects:
             if isinstance(obj, Door):
@@ -6444,13 +6444,13 @@ def generate_map():
     info = {"powerups": num_powerups, "artifacts": num_artifacts}
 
     try:
-        with open(os.path.join(DATA, "map", "rooms.json"), 'w') as f:
+        with open(os.path.join(hlib.datadir, "map", "rooms.json"), 'w') as f:
             json.dump(map_rooms, f, indent=4, sort_keys=True)
 
-        with open(os.path.join(DATA, "map", "objects.json"), 'w') as f:
+        with open(os.path.join(hlib.datadir, "map", "objects.json"), 'w') as f:
             json.dump(f_objects, f, indent=4, sort_keys=True)
 
-        with open(os.path.join(DATA, "map", "info.json"), 'w') as f:
+        with open(os.path.join(hlib.datadir, "map", "info.json"), 'w') as f:
             json.dump(info, f, indent=4, sort_keys=True)
     except PermissionError as e:
         warnings.warn(f"Could not save generated map files - {e}")
@@ -6534,11 +6534,11 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
 
 def update_fullscreen():
     if fullscreen:
-        sge.game.scale = FSSCALE if FSSCALE else None
+        sge.game.scale = hlib.fsscale or None
         sge.game.fullscreen = True
     else:
         sge.game.fullscreen = False
-        sge.game.scale = SCALE
+        sge.game.scale = hlib.scale
         sge.game.scale = None
 
 
@@ -6584,9 +6584,10 @@ TYPES = {
 
 
 print(_("Initializing game system..."))
-Game(*SCREEN_SIZE, scale=SCALE, fps=FPS, delta=DELTA, delta_min=DELTA_MIN,
-     delta_max=DELTA_MAX, window_text="Hexoshi DEMO {}".format(__version__))
-     #window_icon=os.path.join(DATA, "images", "misc", "icon.png"))
+Game(*hlib.SCREEN_SIZE, scale=hlib.scale, fps=hlib.FPS, delta=DELTA,
+     delta_min=hlib.DELTA_MIN, delta_max=hlib.DELTA_MAX,
+     window_text="Hexoshi DEMO {}".format(__version__))
+     #window_icon=os.path.join(hlib.datadir, "images", "misc", "icon.png"))
 sge.game.scale = None
 
 print(_("Initializing GUI system..."))
@@ -6601,15 +6602,15 @@ menu_text_selected_color = sge.gfx.Color("white")
 
 print(_("Loading resources..."))
 
-if not os.path.exists(CONFIG):
-    os.makedirs(CONFIG)
+if not os.path.exists(hlib.configdir):
+    os.makedirs(hlib.configdir)
 
-if not os.path.exists(LOCAL):
-    os.makedirs(LOCAL)
+if not os.path.exists(hlib.localdir):
+    os.makedirs(hlib.localdir)
 
 # Save error messages to a text file (so they aren't lost).
 if not PRINT_ERRORS:
-    stderr = os.path.join(LOCAL, "stderr.txt")
+    stderr = os.path.join(hlib.localdir, "stderr.txt")
     if not os.path.isfile(stderr) or os.path.getsize(stderr) > 1000000:
         sys.stderr = open(stderr, 'w')
     else:
@@ -6620,7 +6621,7 @@ if not PRINT_ERRORS:
     del dt
 
 # Load sprites
-d = os.path.join(DATA, "images", "objects", "anneroy")
+d = os.path.join(hlib.datadir, "images", "objects", "anneroy")
 anneroy_torso_offset = {}
 
 fname = os.path.join(d, "anneroy_sheet.png")
@@ -6762,7 +6763,7 @@ n = id(anneroy_legs_crouch_sprite)
 anneroy_torso_offset[(n, 0)] = (0, 3)
 anneroy_torso_offset[(n, 1)] = (0, 9)
 
-d = os.path.join(DATA, "images", "objects", "enemies")
+d = os.path.join(hlib.datadir, "images", "objects", "enemies")
 frog_stand_sprite = sge.gfx.Sprite("frog_stand", d)
 frog_jump_sprite = sge.gfx.Sprite("frog_jump", d)
 frog_fall_sprite = sge.gfx.Sprite("frog_fall", d)
@@ -6866,7 +6867,7 @@ awesomepossum_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
 awesomepossum_bullet_sprite = sge.gfx.Sprite.from_tileset(
     fname, 478, 783, 1, width=23, height=17, origin_x=14, origin_y=9)
 
-d = os.path.join(DATA, "images", "objects", "doors")
+d = os.path.join(hlib.datadir, "images", "objects", "doors")
 door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,
                                        bbox_y=8, bbox_width=8, bbox_height=48)
 door_barrier_y_sprite = sge.gfx.Sprite("barrier_y", d, origin_x=-8, fps=30,
@@ -6876,10 +6877,10 @@ doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)
 doorframe_regular_y_closed_sprite = sge.gfx.Sprite("regular_y_closed", d)
 doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
 
-d = os.path.join(DATA, "images", "objects", "stones")
+d = os.path.join(hlib.datadir, "images", "objects", "stones")
 stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 
-d = os.path.join(DATA, "images", "objects", "powerups")
+d = os.path.join(hlib.datadir, "images", "objects", "powerups")
 life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
 powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
 atomic_compressor_sprite = sge.gfx.Sprite(
@@ -6892,11 +6893,11 @@ hedgehog_hormone_sprite = sge.gfx.Sprite("hedgehog_hormone", d)
 hedgehog_hormone_bubble_sprite = sge.gfx.Sprite("hedgehog_hormone_bubble", d,
                                                 fps=5)
 
-d = os.path.join(DATA, "images", "objects", "misc")
+d = os.path.join(hlib.datadir, "images", "objects", "misc")
 warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)
 warp_pad_inactive_sprite = sge.gfx.Sprite("warp_pad_inactive", d)
 
-d = os.path.join(DATA, "images", "map")
+d = os.path.join(hlib.datadir, "images", "map")
 map_wall_left_sprite = sge.gfx.Sprite("wall_left", d)
 map_wall_right_sprite = sge.gfx.Sprite("wall_right", d)
 map_wall_top_sprite = sge.gfx.Sprite("wall_top", d)
@@ -6909,7 +6910,7 @@ map_powerup_sprite = sge.gfx.Sprite("powerup", d)
 map_warp_pad_sprite = sge.gfx.Sprite("warp_pad", d)
 map_player_sprite = sge.gfx.Sprite("player", d)
 
-d = os.path.join(DATA, "images", "misc")
+d = os.path.join(hlib.datadir, "images", "misc")
 logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)
 font_sprite = sge.gfx.Sprite.from_tileset(
     os.path.join(d, "font.png"), columns=18, rows=19, width=7, height=9)
@@ -6933,7 +6934,7 @@ life_force_sprite = sge.gfx.Sprite(
     "life_force", d, origin_x=7, origin_y=7, fps=10)
 
 # Load backgrounds
-d = os.path.join(DATA, "images", "backgrounds")
+d = os.path.join(hlib.datadir, "images", "backgrounds")
 layers = []
 
 if not NO_BACKGROUNDS:
@@ -6968,43 +6969,43 @@ font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
                                       hsep=-1)
 
 # Load sounds
-shoot_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "shoot.wav"))
+shoot_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "shoot.wav"))
 bullet_death_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "bullet_death.ogg"), volume=0.2)
-land_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "land.ogg"), volume=0.5)
-ball_land_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "ball_land.ogg"))
+    os.path.join(hlib.datadir, "sounds", "bullet_death.ogg"), volume=0.2)
+land_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "land.ogg"), volume=0.5)
+ball_land_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "ball_land.ogg"))
 hedgehog_spikes_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "hedgehog_spikes.wav"), volume=0.5)
-hurt_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "hurt.wav"))
-death_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "death.wav"))
+    os.path.join(hlib.datadir, "sounds", "hedgehog_spikes.wav"), volume=0.5)
+hurt_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "hurt.wav"))
+death_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "death.wav"))
 stone_break_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "stone_break.ogg"), volume=0.5)
-powerup_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "powerup.wav"))
-heal_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "heal.wav"))
-warp_pad_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "warp_pad.ogg"))
-teleport_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "teleport.wav"))
+    os.path.join(hlib.datadir, "sounds", "stone_break.ogg"), volume=0.5)
+powerup_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "powerup.wav"))
+heal_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "heal.wav"))
+warp_pad_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "warp_pad.ogg"))
+teleport_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "teleport.wav"))
 door_open_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "door_open.ogg"), volume=0.5)
+    os.path.join(hlib.datadir, "sounds", "door_open.ogg"), volume=0.5)
 door_close_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "door_close.ogg"), volume=0.5)
+    os.path.join(hlib.datadir, "sounds", "door_close.ogg"), volume=0.5)
 enemy_hurt_sound = stone_break_sound
 enemy_death_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "enemy_death.wav"))
-frog_jump_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "frog_jump.wav"))
+    os.path.join(hlib.datadir, "sounds", "enemy_death.wav"))
+frog_jump_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "frog_jump.wav"))
 scorpion_shoot_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "scorpion_shoot.wav"))
+    os.path.join(hlib.datadir, "sounds", "scorpion_shoot.wav"))
 scorpion_projectile_break_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "scorpion_projectile_break.ogg"), volume=0.5)
+    os.path.join(hlib.datadir, "sounds", "scorpion_projectile_break.ogg"), volume=0.5)
 mantanoid_approach_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "mantanoid_approach.wav"))
+    os.path.join(hlib.datadir, "sounds", "mantanoid_approach.wav"))
 mantanoid_slash_sound = sge.snd.Sound(
-    os.path.join(DATA, "sounds", "mantanoid_slash.wav"))
-select_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "select.ogg"))
+    os.path.join(hlib.datadir, "sounds", "mantanoid_slash.wav"))
+select_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "select.ogg"))
 pause_sound = select_sound
-confirm_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "confirm.wav"))
-cancel_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "cancel.wav"))
+confirm_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "confirm.wav"))
+cancel_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "cancel.wav"))
 error_sound = cancel_sound
-type_sound = sge.snd.Sound(os.path.join(DATA, "sounds", "type.wav"))
+type_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "type.wav"))
 
 # Create objects
 ##lava_animation = sge.dsp.Object(0, 0, sprite=lava_body_sprite, visible=False,
@@ -7021,7 +7022,7 @@ map_rooms = {}
 map_objects = {}
 if not GEN_MAP:
     try:
-        with open(os.path.join(DATA, "map", "rooms.json")) as f:
+        with open(os.path.join(hlib.datadir, "map", "rooms.json")) as f:
             d = json.load(f)
     except (OSError, ValueError):
         generate_map()
@@ -7030,7 +7031,7 @@ if not GEN_MAP:
             map_rooms[i] = tuple(d[i])
 
     try:
-        with open(os.path.join(DATA, "map", "objects.json")) as f:
+        with open(os.path.join(hlib.datadir, "map", "objects.json")) as f:
             d = json.load(f)
     except (OSError, ValueError):
         generate_map()
@@ -7041,7 +7042,7 @@ if not GEN_MAP:
             map_objects[j] = d[i]
 
     try:
-        with open(os.path.join(DATA, "map", "info.json")) as f:
+        with open(os.path.join(hlib.datadir, "map", "info.json")) as f:
             d = json.load(f)
     except (OSError, ValueError):
         generate_map()
@@ -7059,7 +7060,7 @@ if SAVE_MAP:
     map_explored = []
 
 try:
-    with open(os.path.join(CONFIG, "config.json")) as f:
+    with open(os.path.join(hlib.configdir, "config.json")) as f:
         cfg = json.load(f)
 except (OSError, ValueError):
     cfg = {}
@@ -7115,7 +7116,7 @@ finally:
     set_gui_controls()
 
 try:
-    with open(os.path.join(LOCAL, "ai_data.json")) as f:
+    with open(os.path.join(hlib.localdir, "ai_data.json")) as f:
         d = json.load(f)
 except (OSError, ValueError):
     pass
@@ -7123,7 +7124,7 @@ else:
     ai_data.update(d)
 
 try:
-    with open(os.path.join(LOCAL, "save_slots.json")) as f:
+    with open(os.path.join(hlib.localdir, "save_slots.json")) as f:
         loaded_slots = json.load(f)
 except (OSError, ValueError):
     pass

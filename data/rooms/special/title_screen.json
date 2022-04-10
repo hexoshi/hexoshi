@@ -4,21 +4,30 @@
  "infinite":false,
  "layers":[
         {
-         "compression":"zlib",
-         "data":"eJztzjENAAAIA7Dh3zTHRBCSVkETgJrrAAAAAAA8tirQAAI=",
-         "encoding":"base64",
-         "height":30,
-         "id":1,
-         "name":"Tile Layer 1",
+         "draworder":"topdown",
+         "id":2,
+         "name":"Object Layer 1",
+         "objects":[
+                {
+                 "gid":1,
+                 "height":34,
+                 "id":1,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":250,
+                 "x":76,
+                 "y":48
+                }],
          "opacity":1,
-         "type":"tilelayer",
+         "type":"objectgroup",
          "visible":true,
-         "width":50,
          "x":0,
          "y":0
         }],
- "nextlayerid":2,
- "nextobjectid":1,
+ "nextlayerid":3,
+ "nextobjectid":2,
  "orientation":"orthogonal",
  "properties":[
         {

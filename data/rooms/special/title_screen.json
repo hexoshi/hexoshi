@@ -1,12 +1,72 @@
-{ "backgroundcolor":"#000000",
- "compressionlevel":-1,
+{ "compressionlevel":-1,
  "height":30,
  "infinite":false,
  "layers":[
         {
+         "compression":"zlib",
+         "data":"eJzdV8sOgjAQ7Of4T4JfxFkF0fi8abz5fXZiJ2w25SCpWdZJJsXAYdbZV0Pwi3tkFbm0FlIAj8jaWkQhtNYCCmFrLaAQ1tYCCuFf4thE7hKbyC49vyxFTQDqA\/13lVglXi1FTQD8YBw40YcxU86WokbQJzYZQjM9qMXvOcZxiDxFHsNHq9atvcB5sRD6BZ7ho7kJg3bEQR94eqgP7Fb873N+eIkDgC91GPyQOYbnm520r4GeyzjYs+bcr8aAHZFzg\/XPWvHkB2ZHrj5AL\/UBIA56QR8Yy9z7rgR2RD0HmV\/e8krvVvTGUxzwQ853zkFveYW+S90yt3B6igN+sL5Z78wrT\/2Kc1D6IXcVL3epsTuU9MdDLJwflaKe7bi7zDkezg\/mld4V9T0R9\/Y+nXt18l0vvunS+1+jDcMM13crWTPy3SrkfZMzlN\/x21\/3DLmXMB4Zh36WlDuy7nd6Jk2JYzHCHNiv3jNseBE=",
+         "encoding":"base64",
+         "height":30,
+         "id":3,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":50,
+         "x":0,
+         "y":0
+        }, 
+        {
          "draworder":"topdown",
          "id":2,
          "name":"Object Layer 1",
+         "objects":[
+                {
+                 "gid":81,
+                 "height":40,
+                 "id":4,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":304,
+                 "y":232
+                }, 
+                {
+                 "gid":82,
+                 "height":48,
+                 "id":5,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":16,
+                 "y":56
+                }, 
+                {
+                 "gid":83,
+                 "height":48,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":352,
+                 "y":72
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":5,
+         "name":"Object Layer 2",
          "objects":[
                 {
                  "gid":1,
@@ -26,8 +86,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":3,
- "nextobjectid":2,
+ "nextlayerid":6,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -60,6 +120,18 @@
                  "imagewidth":250
                 }],
          "tilewidth":250
+        }, 
+        {
+         "firstgid":4,
+         "source":"..\/..\/tilesets\/extras.json"
+        }, 
+        {
+         "firstgid":81,
+         "source":"..\/..\/tilesets\/title_objects.json"
+        }, 
+        {
+         "firstgid":84,
+         "source":"..\/..\/tilesets\/main.json"
         }],
  "tilewidth":8,
  "type":"map",

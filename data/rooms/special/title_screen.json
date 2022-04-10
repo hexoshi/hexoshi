@@ -4,7 +4,7 @@
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJzdV8sOgjAQ7Of4T4JfxFkF0fi8abz5fXZiJ2w25SCpWdZJJsXAYdbZV0Pwi3tkFbm0FlIAj8jaWkQhtNYCCmFrLaAQ1tYCCuFf4thE7hKbyC49vyxFTQDqA\/13lVglXi1FTQD8YBw40YcxU86WokbQJzYZQjM9qMXvOcZxiDxFHsNHq9atvcB5sRD6BZ7ho7kJg3bEQR94eqgP7Fb873N+eIkDgC91GPyQOYbnm520r4GeyzjYs+bcr8aAHZFzg\/XPWvHkB2ZHrj5AL\/UBIA56QR8Yy9z7rgR2RD0HmV\/e8krvVvTGUxzwQ853zkFveYW+S90yt3B6igN+sL5Z78wrT\/2Kc1D6IXcVL3epsTuU9MdDLJwflaKe7bi7zDkezg\/mld4V9T0R9\/Y+nXt18l0vvunS+1+jDcMM13crWTPy3SrkfZMzlN\/x21\/3DLmXMB4Zh36WlDuy7nd6Jk2JYzHCHNiv3jNseBE=",
+         "data":"eJzdV0kOwkAMm+fwJ1qexQ5ivYG48T7GolatqD20GpQGS1FalUOMs6YUF49sVba5dyAF8MxWewdRCBvvAAph7R1AISy9AyiEf+GxyrYT2zb+7RnUCKA+0H8XjVWN3TyDGgHoQR7w6MOYKRfPoHqwF9Mcwjtipga1vE+RxzHbOdspfWO1cVst4K8egQ7AK7Ux04MHdaCPUB\/Yrfjfd+kRhQcAXerU6qE5hue7X2iDgZ5LHuxZU+5XfcCOyLnBemGtRNIDs6OrPmBR6gMAD2pBHchl6n1XgR3RzkHmV7S8srsVtYnEA3rofOccjJZX6LuMW3MLPhIP6MH6Zr0zryL1K85B1UN3lSi3VN8NpfpE4ML5URmzsx13ypT5cH4wr+yuaO9E3l7wB+P5Te+1bfP919ikdobb20prRr8tUrduOkP5O\/721z1D9xLyUR72WU13ZNvv7Ewaw2PWY11gv\/oAYXV4Pg==",
          "encoding":"base64",
          "height":30,
          "id":3,
@@ -93,7 +93,7 @@
         {
          "name":"bgname",
          "type":"string",
-         "value":"kawamora"
+         "value":"iridia"
         }, 
         {
          "name":"music",

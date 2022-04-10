@@ -1929,7 +1929,8 @@ class Anneroy(Player):
             if self.aim_direction is None:
                 self.aim_direction = 0
             self.alarms["shooting"] = 30
-            self.alarms["shoot_lock"] = 15
+            apct = min(1, artifacts / max(1, num_artifacts))
+            self.alarms["shoot_lock"] = 30 - 25*apct
             self.last_aim_direction = self.aim_direction
 
             x = 0

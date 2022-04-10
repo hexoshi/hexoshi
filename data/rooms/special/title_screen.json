@@ -1,12 +1,5 @@
 { "backgroundcolor":"#000000",
  "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "target":"."
-        }
-    },
  "height":30,
  "infinite":false,
  "layers":[
@@ -31,7 +24,7 @@
         {
          "name":"bgname",
          "type":"string",
-         "value":"iridia"
+         "value":"kawamora"
         }, 
         {
          "name":"music",
@@ -39,7 +32,7 @@
          "value":"dark_city.ogg"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.3.4",
+ "tiledversion":"1.7.2",
  "tileheight":8,
  "tilesets":[
         {
@@ -61,6 +54,6 @@
         }],
  "tilewidth":8,
  "type":"map",
- "version":1.2,
+ "version":"1.6",
  "width":50
 }

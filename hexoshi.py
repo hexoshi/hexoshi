@@ -179,6 +179,8 @@ ANNEROY_SLOTH_MAX_SPEED = 0.5
 ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_BULLET_LIFE = 45
+ANNEROY_RECOIL = 1.75
+ANNEROY_RECOIL_MAX = 4
 ANNEROY_EXPLODE_TIME = 0.6 * hlib.FPS
 ANNEROY_DECOMPRESS_LAX = 4
 
@@ -1888,6 +1890,29 @@ class Anneroy(Player):
         self.rolling = True
         self.max_speed = self.__class__.max_speed
 
+    def recoil(self, direction):
+        direction = math.radians((direction+180) % 360)
+
+        diff = ANNEROY_RECOIL * math.cos(direction)
+        if diff > 0 and self.xvelocity < ANNEROY_RECOIL_MAX:
+            self.xvelocity += diff
+            if self.xvelocity > ANNEROY_RECOIL_MAX:
+                self.xvelocity = ANNEROY_RECOIL_MAX
+        elif diff < 0 and self.xvelocity > -ANNEROY_RECOIL_MAX:
+            self.xvelocity += diff
+            if self.xvelocity < -ANNEROY_RECOIL_MAX:
+                self.xvelocity = -ANNEROY_RECOIL_MAX
+
+        diff = ANNEROY_RECOIL * math.sin(direction)
+        if diff > 0 and self.yvelocity < ANNEROY_RECOIL_MAX:
+            self.yvelocity += diff
+            if self.yvelocity > ANNEROY_RECOIL_MAX:
+                self.yvelocity = ANNEROY_RECOIL_MAX
+        elif diff < 0 and self.yvelocity > -ANNEROY_RECOIL_MAX:
+            self.yvelocity += diff
+            if self.yvelocity < -ANNEROY_RECOIL_MAX:
+                self.yvelocity = -ANNEROY_RECOIL_MAX
+
     def shoot_default(self):
         if "shoot_lock" in self.alarms:
             return
@@ -1930,7 +1955,7 @@ class Anneroy(Player):
                 self.aim_direction = 0
             self.alarms["shooting"] = 30
             apct = min(1, artifacts / max(1, num_artifacts))
-            self.alarms["shoot_lock"] = 30 - 25*apct
+            self.alarms["shoot_lock"] = 30 - 26*apct
             self.last_aim_direction = self.aim_direction
 
             x = 0
@@ -1995,6 +2020,8 @@ class Anneroy(Player):
                     y = 21
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
+
+            self.recoil(image_rotation)
 
             if x:
                 m = y / x
@@ -2220,7 +2247,7 @@ class Anneroy(Player):
                     if self.crouching:
                         self.sprite = anneroy_legs_crouched_sprite
                     else:
-                        if xm:
+                        if xm == self.facing:
                             self.sprite = anneroy_legs_run_sprite
                             self.image_speed = (self.speed
                                                 * ANNEROY_RUN_FRAMES_PER_PIXEL)

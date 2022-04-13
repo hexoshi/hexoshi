@@ -3353,6 +3353,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     touch_damage = 10
     slash_damage = 20
     sight_distance = 300
+    shard_num_min = 8
+    shard_num_max = 16
 
     def __init__(self, x, y, hiding=False, wander_x=None, **kwargs):
         x += mantanoid_stand_sprite.origin_x

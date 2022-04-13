@@ -2730,7 +2730,7 @@ class Shard(FallingObject):
 
     fall_speed = 99
     bounce = 0.5
-    friction = 0.95
+    friction = 0.99
     life = 45
 
     def stop_left(self):
@@ -2754,6 +2754,27 @@ class Shard(FallingObject):
 
     def event_alarm(self, alarm_id):
         if alarm_id == "die":
+            blend = sge.gfx.Color((255, 255, 255, 0))
+            base_sprite = sge.gfx.Sprite(width=self.sprite.width,
+                                         height=self.sprite.height,
+                                         origin_x=self.sprite.origin_x,
+                                         origin_y=self.sprite.origin_y)
+            base_sprite.draw_sprite(self.sprite, self.image_index,
+                                    self.sprite.origin_x, self.sprite.origin_y)
+            spr = sge.gfx.Sprite.from_tween(
+                base_sprite, int(hlib.FPS / 4), fps=hlib.FPS, blend=blend,
+                blend_mode=sge.BLEND_RGBA_MULTIPLY)
+            Smoke.create(self.x, self.y, z=self.z, sprite=spr, tangible=False,
+                         xvelocity=self.xvelocity, yvelocity=self.yvelocity,
+                         image_origin_x=self.image_origin_x,
+                         image_origin_y=self.image_origin_y,
+                         image_xscale=self.image_xscale,
+                         image_yscale=self.image_yscale,
+                         image_rotation=self.image_rotation,
+                         image_alpha=self.image_alpha,
+                         image_blend=self.image_blend,
+                         image_blend_mode=self.image_blend_mode)
+
             self.destroy()
 
 
@@ -2764,6 +2785,10 @@ class Enemy(InteractiveObject):
     spikeable = True
     touch_damage = 5
     hp = 1
+    shard_num_min = 4
+    shard_num_max = 8
+    shard_speed_min = 1
+    shard_speed_max = 3
 
     def touch(self, other):
         other.hurt(self.touch_damage, True)
@@ -2786,25 +2811,17 @@ class Enemy(InteractiveObject):
             play_sound(enemy_hurt_sound, self.image_xcenter, self.image_ycenter)
 
     def kill(self):
-        blend = sge.gfx.Color((255, 255, 255, 0))
-        base_sprite = sge.gfx.Sprite(width=self.sprite.width,
-                                     height=self.sprite.height,
-                                     origin_x=self.sprite.origin_x,
-                                     origin_y=self.sprite.origin_y)
-        base_sprite.draw_sprite(self.sprite, self.image_index,
-                                self.sprite.origin_x, self.sprite.origin_y)
-        spr = sge.gfx.Sprite.from_tween(
-            base_sprite, int(hlib.FPS / 4), fps=hlib.FPS, blend=blend,
-            blend_mode=sge.BLEND_RGBA_MULTIPLY)
-        Smoke.create(self.x, self.y, z=self.z, sprite=spr, tangible=False,
-                     image_origin_x=self.image_origin_x,
-                     image_origin_y=self.image_origin_y,
-                     image_xscale=self.image_xscale,
-                     image_yscale=self.image_yscale,
-                     image_rotation=self.image_rotation,
-                     image_alpha=self.image_alpha,
-                     image_blend=self.image_blend,
-                     image_blend_mode=self.image_blend_mode)
+        if sge.game.fps_real >= hlib.FPS:
+            shard_num = random.randint(self.shard_num_min, self.shard_num_max)
+        else:
+            shard_num = self.shard_num_min
+
+        for i in range(shard_num):
+            shard = Shard.create(self.x, self.y, self.z,
+                                 sprite=enemy_fragment_sprite)
+            shard.speed = random.randint(self.shard_speed_min,
+                                         self.shard_speed_max)
+            shard.move_direction = random.randrange(360)
 
         if random.random() < LIFE_FORCE_CHANCE:
             LifeForce.create(self.image_xcenter, self.image_ycenter,
@@ -4169,8 +4186,8 @@ class Stone(xsge_physics.Solid):
 
     shard_num_min = 1
     shard_num_max = 4
-    shard_speed_min = 2
-    shard_speed_max = 5
+    shard_speed_min = 1
+    shard_speed_max = 3
     shootable = False
     spikeable = False
 
@@ -6790,6 +6807,9 @@ anneroy_torso_offset[(n, 0)] = (0, 11)
 n = id(anneroy_legs_crouch_sprite)
 anneroy_torso_offset[(n, 0)] = (0, 3)
 anneroy_torso_offset[(n, 1)] = (0, 9)
+
+enemy_fragment_sprite = sge.gfx.Sprite(width=1, height=1)
+enemy_fragment_sprite.draw_rectangle(0, 0, 1, 1, fill=sge.gfx.Color("white"))
 
 d = os.path.join(hlib.datadir, "images", "objects", "enemies")
 frog_stand_sprite = sge.gfx.Sprite("frog_stand", d)

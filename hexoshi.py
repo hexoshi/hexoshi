@@ -1969,7 +1969,7 @@ class Anneroy(Player):
             if self.facing > 0:
                 if self.aim_direction == 0:
                     x = 25
-                    y = -3
+                    y = -4
                     xv = ANNEROY_BULLET_SPEED
                     image_rotation = 0
                 elif self.aim_direction == 1:
@@ -1984,30 +1984,30 @@ class Anneroy(Player):
                     yv = -ANNEROY_BULLET_SPEED
                     image_rotation = 270
                 elif self.aim_direction == -1:
-                    x = 19
+                    x = 20
                     y = 9
                     xv = ANNEROY_BULLET_DSPEED
                     yv = ANNEROY_BULLET_DSPEED
                     image_rotation = 45
                 elif self.aim_direction == -2:
-                    x = 9
+                    x = 10
                     y = 21
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
             else:
                 if self.aim_direction == 0:
                     x = -25
-                    y = -3
+                    y = -4
                     xv = -ANNEROY_BULLET_SPEED
                     image_rotation = 180
                 elif self.aim_direction == 1:
                     x = -22
-                    y = -27
+                    y = -28
                     xv = -ANNEROY_BULLET_DSPEED
                     yv = -ANNEROY_BULLET_DSPEED
                     image_rotation = 225
                 elif self.aim_direction == 2:
-                    x = -6
+                    x = -5
                     y = -31
                     yv = -ANNEROY_BULLET_SPEED
                     image_rotation = 270
@@ -2018,7 +2018,7 @@ class Anneroy(Player):
                     yv = ANNEROY_BULLET_DSPEED
                     image_rotation = 135
                 elif self.aim_direction == -2:
-                    x = -9
+                    x = -8
                     y = 21
                     yv = ANNEROY_BULLET_SPEED
                     image_rotation = 90
@@ -2066,7 +2066,7 @@ class Anneroy(Player):
                     guide.x = self.torso.x + ydiff/m
 
             bs = AnneroyBullet.create(
-                guide.x, guide.y, self.z + 0.2, sprite=anneroy_bullet_sprite,
+                guide.x, guide.y, self.z - 0.2, sprite=anneroy_bullet_sprite,
                 xvelocity=xv, yvelocity=yv, regulate_origin=True,
                 image_xscale=abs(self.image_xscale),
                 image_yscale=self.image_yscale, image_rotation=image_rotation,
@@ -2076,7 +2076,7 @@ class Anneroy(Player):
 
             Smoke.create(
                 xdest, ydest, self.torso.z, sprite=anneroy_bullet_dust_sprite,
-                xvelocity=self.xvelocity, yvelocity=self.yvelocity,
+                #xvelocity=self.xvelocity, yvelocity=self.yvelocity,
                 regulate_origin=True, image_xscale=abs(self.image_xscale),
                 image_yscale=self.image_yscale, image_rotation=image_rotation,
                 image_blend=self.image_blend)

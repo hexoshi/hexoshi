@@ -179,8 +179,10 @@ ANNEROY_SLOTH_MAX_SPEED = 0.5
 ANNEROY_BULLET_SPEED = 8
 ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
 ANNEROY_BULLET_LIFE = 45
-ANNEROY_RECOIL = 1.75
-ANNEROY_RECOIL_MAX = 4
+ANNEROY_XRECOIL = 0.5
+ANNEROY_XRECOIL_MAX = 2
+ANNEROY_YRECOIL = 1.75
+ANNEROY_YRECOIL_MAX = 4
 ANNEROY_EXPLODE_TIME = 0.6 * hlib.FPS
 ANNEROY_DECOMPRESS_LAX = 4
 
@@ -1893,25 +1895,25 @@ class Anneroy(Player):
     def recoil(self, direction):
         direction = math.radians((direction+180) % 360)
 
-        diff = ANNEROY_RECOIL * math.cos(direction)
-        if diff > 0 and self.xvelocity < ANNEROY_RECOIL_MAX:
+        diff = ANNEROY_XRECOIL * math.cos(direction)
+        if diff > 0 and self.xvelocity < ANNEROY_XRECOIL_MAX:
             self.xvelocity += diff
-            if self.xvelocity > ANNEROY_RECOIL_MAX:
-                self.xvelocity = ANNEROY_RECOIL_MAX
-        elif diff < 0 and self.xvelocity > -ANNEROY_RECOIL_MAX:
+            if self.xvelocity > ANNEROY_XRECOIL_MAX:
+                self.xvelocity = ANNEROY_XRECOIL_MAX
+        elif diff < 0 and self.xvelocity > -ANNEROY_XRECOIL_MAX:
             self.xvelocity += diff
-            if self.xvelocity < -ANNEROY_RECOIL_MAX:
-                self.xvelocity = -ANNEROY_RECOIL_MAX
+            if self.xvelocity < -ANNEROY_XRECOIL_MAX:
+                self.xvelocity = -ANNEROY_XRECOIL_MAX
 
-        diff = ANNEROY_RECOIL * math.sin(direction)
-        if diff > 0 and self.yvelocity < ANNEROY_RECOIL_MAX:
+        diff = ANNEROY_YRECOIL * math.sin(direction)
+        if diff > 0 and self.yvelocity < ANNEROY_YRECOIL_MAX:
             self.yvelocity += diff
-            if self.yvelocity > ANNEROY_RECOIL_MAX:
-                self.yvelocity = ANNEROY_RECOIL_MAX
-        elif diff < 0 and self.yvelocity > -ANNEROY_RECOIL_MAX:
+            if self.yvelocity > ANNEROY_YRECOIL_MAX:
+                self.yvelocity = ANNEROY_YRECOIL_MAX
+        elif diff < 0 and self.yvelocity > -ANNEROY_YRECOIL_MAX:
             self.yvelocity += diff
-            if self.yvelocity < -ANNEROY_RECOIL_MAX:
-                self.yvelocity = -ANNEROY_RECOIL_MAX
+            if self.yvelocity < -ANNEROY_YRECOIL_MAX:
+                self.yvelocity = -ANNEROY_YRECOIL_MAX
 
     def shoot_default(self):
         if "shoot_lock" in self.alarms:

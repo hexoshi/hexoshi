@@ -7050,7 +7050,8 @@ font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
                                       hsep=-1)
 
 # Load sounds
-shoot_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "shoot.wav"))
+shoot_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "shoot.wav"),
+                            volume=0.5)
 bullet_death_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "bullet_death.ogg"), volume=0.2)
 land_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "land.ogg"), volume=0.5)

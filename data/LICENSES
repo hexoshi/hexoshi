@@ -422,12 +422,19 @@ sounds/confirm.wav
 sounds/enemy_death.wav
 sounds/heal.wav
 sounds/mantanoid_slash.wav
-sounds/shoot.wav
 sounds/teleport.wav
 sounds/type.wav
 
 Author: The Diligent Circle <https://onpon4.github.io>
 License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+
+------------------------------------------------------------------------
+
+sounds/shoot.wav
+
+Author: hoot_avi <https://freesound.org/people/hoot_avi/>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: https://freesound.org/people/hoot_avi/sounds/100465/
 
 ------------------------------------------------------------------------
 

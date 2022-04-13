@@ -6842,6 +6842,37 @@ jellyfish_swim_start_sprite = sge.gfx.Sprite.from_tileset(
 jellyfish_swim_sprite = sge.gfx.Sprite.from_tileset(
     fname, 192, 64, 6, width=32, height=32, origin_x=24, origin_y=24, fps=50)
 
+fname = os.path.join(d, "wolf_sheet.png")
+wolf_right_sleep_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 0, 4, width=64, height=32, origin_x=32, fps=8)
+wolf_right_asleep_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 512, 0, width=64, height=32, origin_x=32)
+wolf_right_howl_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 54, 4, width=64, height=42, origin_x=32, origin_y=10, fps=16)
+wolf_right_stand_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 96, width=64, height=32, origin_x=32)
+wolf_right_walk_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 384, 96, 4, width=64, height=32, origin_x=32, fps=8)
+wolf_right_run_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 128, 5, width=64, height=32, origin_x=32, fps=10)
+wolf_right_attack_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 160, 5, width=64, height=32, origin_x=32, fps=10)
+
+wolf_left_sleep_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 192, 4, width=64, height=32, origin_x=32, fps=8)
+wolf_left_asleep_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 512, 192, width=64, height=32, origin_x=32)
+wolf_left_howl_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 246, 4, width=64, height=42, origin_x=32, origin_y=10, fps=16)
+wolf_left_stand_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 288, width=64, height=32, origin_x=32)
+wolf_left_walk_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 384, 288, 4, width=64, height=32, origin_x=32, fps=8)
+wolf_left_run_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 320, 5, width=64, height=32, origin_x=32, fps=10)
+wolf_left_attack_sprite = sge.gfx.Sprite.from_tileset(
+    fname, 320, 352, 5, width=64, height=32, origin_x=32, fps=10)
+
 fname = os.path.join(d, "scorpion_sheet.png")
 scorpion_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 0, width=60, height=36, origin_x=30, origin_y=9)

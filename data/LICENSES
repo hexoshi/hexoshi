@@ -438,6 +438,14 @@ Source: https://freesound.org/people/hoot_avi/sounds/100465/
 
 ------------------------------------------------------------------------
 
+sounds/howl.wav
+
+Author: Gerent <https://freesound.org/people/Gerent/>
+License: CC0 <https://creativecommons.org/publicdomain/zero/1.0/>
+Source: https://freesound.org/people/Gerent/sounds/558726/
+
+------------------------------------------------------------------------
+
 locale/build.py
 locale/hexoshi.pot
 

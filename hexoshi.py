@@ -6767,6 +6767,57 @@ anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=12, origin_y=23,
     fps=10)
 
+if GOD:
+    asprites = [
+        anneroy_turn_sprite,
+        anneroy_teleport_sprite,
+        anneroy_wall_right_sprite,
+        anneroy_wall_left_sprite,
+        anneroy_walljump_left_sprite,
+        anneroy_walljump_right_sprite,
+        anneroy_compress_sprite,
+        anneroy_ball_sprite,
+        anneroy_decompress_fail_sprite,
+        anneroy_hedgehog_start_sprite,
+        anneroy_hedgehog_extend_sprite,
+        anneroy_hedgehog_sprite,
+        anneroy_death_right_sprite,
+        anneroy_death_left_sprite,
+        anneroy_explode_sprite,
+        anneroy_explode_fragments,
+        anneroy_torso_right_idle_sprite,
+        anneroy_torso_right_aim_right_sprite,
+        anneroy_torso_right_aim_up_sprite,
+        anneroy_torso_right_aim_down_sprite,
+        anneroy_torso_right_aim_upright_sprite,
+        anneroy_torso_right_aim_downright_sprite,
+        anneroy_torso_left_idle_sprite,
+        anneroy_torso_left_aim_left_sprite,
+        anneroy_torso_left_aim_up_sprite,
+        anneroy_torso_left_aim_down_sprite,
+        anneroy_torso_left_aim_upleft_sprite,
+        anneroy_torso_left_aim_downleft_sprite,
+        anneroy_legs_stand_sprite,
+        anneroy_legs_run_sprite,
+        anneroy_legs_jump_sprite,
+        anneroy_legs_fall_sprite,
+        anneroy_legs_land_sprite,
+        anneroy_legs_crouched_sprite,
+        anneroy_legs_crouch_sprite,
+    ]
+
+    def varia_shader(x, y, red, green, blue, alpha):
+        if red == 255 and green == 89 and blue == 45:
+            return (255, 189, 0, alpha)
+        elif red == 246 and green == 19 and green == 19:
+            return (247, 107, 0, alpha)
+        elif red == 143 and green == 14 and blue == 47:
+            return (115, 33, 0, alpha)
+        return (red, green, blue, alpha)
+
+    for s in asprites:
+        s.draw_shader(0, 0, s.width, s.height, varia_shader)
+
 n = id(anneroy_compress_sprite)
 anneroy_torso_offset[(n, 0)] = (0, 11)
 anneroy_torso_offset[(n, 1)] = (0, 11)
@@ -7090,57 +7141,6 @@ type_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "type.wav"))
 # Create objects
 ##lava_animation = sge.dsp.Object(0, 0, sprite=lava_body_sprite, visible=False,
 ##                                tangible=False)
-
-if GOD:
-    asprites = [
-        anneroy_turn_sprite,
-        anneroy_teleport_sprite,
-        anneroy_wall_right_sprite,
-        anneroy_wall_left_sprite,
-        anneroy_walljump_left_sprite,
-        anneroy_walljump_right_sprite,
-        anneroy_compress_sprite,
-        anneroy_ball_sprite,
-        anneroy_decompress_fail_sprite,
-        anneroy_hedgehog_start_sprite,
-        anneroy_hedgehog_extend_sprite,
-        anneroy_hedgehog_sprite,
-        anneroy_death_right_sprite,
-        anneroy_death_left_sprite,
-        anneroy_explode_sprite,
-        anneroy_explode_fragments,
-        anneroy_torso_right_idle_sprite,
-        anneroy_torso_right_aim_right_sprite,
-        anneroy_torso_right_aim_up_sprite,
-        anneroy_torso_right_aim_down_sprite,
-        anneroy_torso_right_aim_upright_sprite,
-        anneroy_torso_right_aim_downright_sprite,
-        anneroy_torso_left_idle_sprite,
-        anneroy_torso_left_aim_left_sprite,
-        anneroy_torso_left_aim_up_sprite,
-        anneroy_torso_left_aim_down_sprite,
-        anneroy_torso_left_aim_upleft_sprite,
-        anneroy_torso_left_aim_downleft_sprite,
-        anneroy_legs_stand_sprite,
-        anneroy_legs_run_sprite,
-        anneroy_legs_jump_sprite,
-        anneroy_legs_fall_sprite,
-        anneroy_legs_land_sprite,
-        anneroy_legs_crouched_sprite,
-        anneroy_legs_crouch_sprite,
-    ]
-    nsprites = len(asprites)
-    print(_("Equipping Varia Suit…"))
-    print(f"0/{nsprites}", end="")
-    for i, s in enumerate(asprites):
-        s.swap_color(sge.gfx.Color((255, 89, 45)),
-                     sge.gfx.Color((255, 189, 0)))
-        s.swap_color(sge.gfx.Color((246, 19, 19)),
-                     sge.gfx.Color((247, 107, 0)))
-        s.swap_color(sge.gfx.Color((143, 14, 47)),
-                     sge.gfx.Color((115, 33, 0)))
-        print(f"\r{i+1}/{nsprites}", end="")
-    print("\n" + _("Varia Suit equipped successfully."))
 
 # Create rooms
 sge.game.start_room = TitleScreen.load(

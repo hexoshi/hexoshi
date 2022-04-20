@@ -1088,9 +1088,6 @@ class Player(xsge_physics.Collider):
         self.last_yr = None
         self.camera_guided_y = False
 
-        if GOD:
-            image_blend = sge.gfx.Color("olive")
-
         super().__init__(
             x, y, z=z, sprite=sprite, visible=visible, active=active,
             checks_collisions=checks_collisions, tangible=tangible,
@@ -6760,6 +6757,52 @@ anneroy_legs_crouched_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_legs_crouch_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 189, 2, xsep=7, width=21, height=21, origin_x=8, origin_y=-3,
     fps=10)
+
+if GOD:
+    asprites = [
+        anneroy_turn_sprite,
+        anneroy_teleport_sprite,
+        anneroy_wall_right_sprite,
+        anneroy_wall_left_sprite,
+        anneroy_walljump_left_sprite,
+        anneroy_walljump_right_sprite,
+        anneroy_compress_sprite,
+        anneroy_ball_sprite,
+        anneroy_decompress_fail_sprite,
+        anneroy_hedgehog_start_sprite,
+        anneroy_hedgehog_extend_sprite,
+        anneroy_hedgehog_sprite,
+        anneroy_death_right_sprite,
+        anneroy_death_left_sprite,
+        anneroy_explode_sprite,
+        anneroy_explode_fragments,
+        anneroy_torso_right_idle_sprite,
+        anneroy_torso_right_aim_right_sprite,
+        anneroy_torso_right_aim_up_sprite,
+        anneroy_torso_right_aim_down_sprite,
+        anneroy_torso_right_aim_upright_sprite,
+        anneroy_torso_right_aim_downright_sprite,
+        anneroy_torso_left_idle_sprite,
+        anneroy_torso_left_aim_left_sprite,
+        anneroy_torso_left_aim_up_sprite,
+        anneroy_torso_left_aim_down_sprite,
+        anneroy_torso_left_aim_upleft_sprite,
+        anneroy_torso_left_aim_downleft_sprite,
+        anneroy_legs_stand_sprite,
+        anneroy_legs_run_sprite,
+        anneroy_legs_jump_sprite,
+        anneroy_legs_fall_sprite,
+        anneroy_legs_land_sprite,
+        anneroy_legs_crouched_sprite,
+        anneroy_legs_crouch_sprite,
+    ]
+    for s in asprites:
+        s.swap_color(sge.gfx.Color((255, 89, 45)),
+                     sge.gfx.Color((255, 189, 0)))
+        s.swap_color(sge.gfx.Color((246, 19, 19)),
+                     sge.gfx.Color((247, 107, 0)))
+        s.swap_color(sge.gfx.Color((143, 14, 47)),
+                     sge.gfx.Color((115, 33, 0)))
 
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
     fname, 249, 119, width=26, height=16, origin_x=2, origin_y=7, fps=10)

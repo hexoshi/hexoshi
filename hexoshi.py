@@ -6539,7 +6539,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
         dx = (ex - x) * MAP_CELL_WIDTH
         dy = (ey - y) * MAP_CELL_HEIGHT
         map_sprite.draw_rectangle(dx, dy, MAP_CELL_WIDTH, MAP_CELL_HEIGHT,
-                                  fill=sge.gfx.Color("teal"))
+                                  fill=sge.gfx.Color((170, 68, 153)))
 
     for ox, oy in set(map_objects) & set(map_revealed + map_explored):
         if x <= ox < x + w and y <= oy < y + h:

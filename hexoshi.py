@@ -690,7 +690,7 @@ class Level(sge.dsp.Room):
                                       halign="center", valign="middle")
                 sge.game.refresh()
             else:
-                print(_("Loading \"{}\"...").format(fname))
+                print(_("Loading \"{}\"…").format(fname))
 
         try:
             r = xsge_tiled.load(os.path.join(hlib.datadir, "rooms", fname), cls=cls,
@@ -6628,14 +6628,14 @@ TYPES = {
     }
 
 
-print(_("Initializing game system..."))
+print(_("Initializing game system…"))
 Game(*hlib.SCREEN_SIZE, scale=hlib.scale, fps=hlib.FPS, delta=DELTA,
      delta_min=hlib.DELTA_MIN, delta_max=hlib.DELTA_MAX,
      window_text="Hexoshi DEMO {}".format(__version__))
      #window_icon=os.path.join(hlib.datadir, "images", "misc", "icon.png"))
 sge.game.scale = None
 
-print(_("Initializing GUI system..."))
+print(_("Initializing GUI system…"))
 xsge_gui.init()
 gui_handler = xsge_gui.Handler()
 xsge_gui.default_font.size = 8
@@ -6645,7 +6645,7 @@ menu_color = sge.gfx.Color("black")
 menu_text_color = sge.gfx.Color((64, 0, 255))
 menu_text_selected_color = sge.gfx.Color("white")
 
-print(_("Loading resources..."))
+print(_("Loading resources…"))
 
 if not os.path.exists(hlib.configdir):
     os.makedirs(hlib.configdir)
@@ -6757,52 +6757,6 @@ anneroy_legs_crouched_sprite = sge.gfx.Sprite.from_tileset(
 anneroy_legs_crouch_sprite = sge.gfx.Sprite.from_tileset(
     fname, 9, 189, 2, xsep=7, width=21, height=21, origin_x=8, origin_y=-3,
     fps=10)
-
-if GOD:
-    asprites = [
-        anneroy_turn_sprite,
-        anneroy_teleport_sprite,
-        anneroy_wall_right_sprite,
-        anneroy_wall_left_sprite,
-        anneroy_walljump_left_sprite,
-        anneroy_walljump_right_sprite,
-        anneroy_compress_sprite,
-        anneroy_ball_sprite,
-        anneroy_decompress_fail_sprite,
-        anneroy_hedgehog_start_sprite,
-        anneroy_hedgehog_extend_sprite,
-        anneroy_hedgehog_sprite,
-        anneroy_death_right_sprite,
-        anneroy_death_left_sprite,
-        anneroy_explode_sprite,
-        anneroy_explode_fragments,
-        anneroy_torso_right_idle_sprite,
-        anneroy_torso_right_aim_right_sprite,
-        anneroy_torso_right_aim_up_sprite,
-        anneroy_torso_right_aim_down_sprite,
-        anneroy_torso_right_aim_upright_sprite,
-        anneroy_torso_right_aim_downright_sprite,
-        anneroy_torso_left_idle_sprite,
-        anneroy_torso_left_aim_left_sprite,
-        anneroy_torso_left_aim_up_sprite,
-        anneroy_torso_left_aim_down_sprite,
-        anneroy_torso_left_aim_upleft_sprite,
-        anneroy_torso_left_aim_downleft_sprite,
-        anneroy_legs_stand_sprite,
-        anneroy_legs_run_sprite,
-        anneroy_legs_jump_sprite,
-        anneroy_legs_fall_sprite,
-        anneroy_legs_land_sprite,
-        anneroy_legs_crouched_sprite,
-        anneroy_legs_crouch_sprite,
-    ]
-    for s in asprites:
-        s.swap_color(sge.gfx.Color((255, 89, 45)),
-                     sge.gfx.Color((255, 189, 0)))
-        s.swap_color(sge.gfx.Color((246, 19, 19)),
-                     sge.gfx.Color((247, 107, 0)))
-        s.swap_color(sge.gfx.Color((143, 14, 47)),
-                     sge.gfx.Color((115, 33, 0)))
 
 anneroy_bullet_dust_sprite = sge.gfx.Sprite.from_tileset(
     fname, 249, 119, width=26, height=16, origin_x=2, origin_y=7, fps=10)
@@ -7137,6 +7091,57 @@ type_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "type.wav"))
 ##lava_animation = sge.dsp.Object(0, 0, sprite=lava_body_sprite, visible=False,
 ##                                tangible=False)
 
+if GOD:
+    asprites = [
+        anneroy_turn_sprite,
+        anneroy_teleport_sprite,
+        anneroy_wall_right_sprite,
+        anneroy_wall_left_sprite,
+        anneroy_walljump_left_sprite,
+        anneroy_walljump_right_sprite,
+        anneroy_compress_sprite,
+        anneroy_ball_sprite,
+        anneroy_decompress_fail_sprite,
+        anneroy_hedgehog_start_sprite,
+        anneroy_hedgehog_extend_sprite,
+        anneroy_hedgehog_sprite,
+        anneroy_death_right_sprite,
+        anneroy_death_left_sprite,
+        anneroy_explode_sprite,
+        anneroy_explode_fragments,
+        anneroy_torso_right_idle_sprite,
+        anneroy_torso_right_aim_right_sprite,
+        anneroy_torso_right_aim_up_sprite,
+        anneroy_torso_right_aim_down_sprite,
+        anneroy_torso_right_aim_upright_sprite,
+        anneroy_torso_right_aim_downright_sprite,
+        anneroy_torso_left_idle_sprite,
+        anneroy_torso_left_aim_left_sprite,
+        anneroy_torso_left_aim_up_sprite,
+        anneroy_torso_left_aim_down_sprite,
+        anneroy_torso_left_aim_upleft_sprite,
+        anneroy_torso_left_aim_downleft_sprite,
+        anneroy_legs_stand_sprite,
+        anneroy_legs_run_sprite,
+        anneroy_legs_jump_sprite,
+        anneroy_legs_fall_sprite,
+        anneroy_legs_land_sprite,
+        anneroy_legs_crouched_sprite,
+        anneroy_legs_crouch_sprite,
+    ]
+    nsprites = len(asprites)
+    print(_("Equipping Varia Suit…"))
+    print(f"0/{nsprites}", end="")
+    for i, s in enumerate(asprites):
+        s.swap_color(sge.gfx.Color((255, 89, 45)),
+                     sge.gfx.Color((255, 189, 0)))
+        s.swap_color(sge.gfx.Color((246, 19, 19)),
+                     sge.gfx.Color((247, 107, 0)))
+        s.swap_color(sge.gfx.Color((143, 14, 47)),
+                     sge.gfx.Color((115, 33, 0)))
+        print(f"\r{i+1}/{nsprites}", end="")
+    print("\n" + _("Varia Suit equipped successfully."))
+
 # Create rooms
 sge.game.start_room = TitleScreen.load(
     os.path.join("special", "title_screen.json"), True)
@@ -7263,7 +7268,7 @@ else:
             save_slots[i] = None
 
 
-print(_("Starting game..."))
+print(_("Starting game…"))
 
 try:
     if not QUIT:

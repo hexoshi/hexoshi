@@ -1523,36 +1523,14 @@
                  "y":480
                 }, 
                 {
-                 "height":104,
+                 "height":120,
                  "id":152,
                  "name":"",
                  "rotation":0,
                  "type":"camera_y_guide",
                  "visible":true,
-                 "width":128,
-                 "x":520,
-                 "y":240
-                }, 
-                {
-                 "height":128,
-                 "id":153,
-                 "name":"",
-                 "rotation":0,
-                 "type":"camera_y_guide",
-                 "visible":true,
-                 "width":392,
-                 "x":648,
-                 "y":240
-                }, 
-                {
-                 "height":80,
-                 "id":154,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":144,
-                 "x":1040,
+                 "width":752,
+                 "x":448,
                  "y":240
                 }, 
                 {
@@ -1584,15 +1562,26 @@
                  "y":144
                 }, 
                 {
-                 "height":224,
+                 "height":232,
                  "id":161,
                  "name":"",
                  "rotation":0,
                  "type":"camera_x_guide",
                  "visible":true,
-                 "width":192,
+                 "width":208,
                  "x":400,
                  "y":240
+                }, 
+                {
+                 "height":136,
+                 "id":200,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":72,
+                 "x":1128,
+                 "y":480
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1733,7 +1722,7 @@
          "y":0
         }],
  "nextlayerid":15,
- "nextobjectid":199,
+ "nextobjectid":201,
  "orientation":"orthogonal",
  "properties":[
         {

@@ -217,10 +217,10 @@ CEILING_LAX = 2
 CAMERA_STOPPED_THRESHOLD = 1
 CAMERA_STOPPED_HSPEED_MAX = 2
 CAMERA_HSPEED_FACTOR = 1 / 8
-CAMERA_VSPEED_FACTOR = 1 / 20
+CAMERA_VSPEED_FACTOR = 1 / 16
 CAMERA_OFFSET_FACTOR = 10
-CAMERA_MARGIN_TOP = 4 * hlib.TILE_SIZE
-CAMERA_MARGIN_BOTTOM = 4 * hlib.TILE_SIZE
+CAMERA_MARGIN_TOP = 6 * hlib.TILE_SIZE
+CAMERA_MARGIN_BOTTOM = 6 * hlib.TILE_SIZE
 CAMERA_TARGET_MARGIN_BOTTOM = hlib.SCREEN_SIZE[1] / 2
 
 LIFE_FORCE_CHANCE = 0.25
@@ -1022,7 +1022,7 @@ class Player(xsge_physics.Collider):
 
     @property
     def camera_target_x(self):
-        guides = self.collision(CameraXGuide)
+        guides = sge.collision.rectangle(self.x, self.y, 1, 1, CameraXGuide)
         if guides:
             return guides[0].x
         else:
@@ -1031,7 +1031,7 @@ class Player(xsge_physics.Collider):
 
     @property
     def camera_target_y(self):
-        guides = self.collision(CameraYGuide)
+        guides = sge.collision.rectangle(self.x, self.y, 1, 1, CameraYGuide)
         if guides:
             self.camera_guided_y = True
             return guides[0].y
@@ -1475,12 +1475,11 @@ class Player(xsge_physics.Collider):
             view_max_y = self.y - CAMERA_MARGIN_TOP
 
             view_target_y = self.camera_target_y
-            if (self.on_floor and self.was_on_floor) or self.camera_guided_y:
-                if abs(view_target_y - self.view.y) > 0.5:
-                    self.view.y += ((view_target_y-self.view.y)
-                                    * CAMERA_VSPEED_FACTOR * delta_mult)
-                else:
-                    self.view.y = view_target_y
+            if abs(view_target_y - self.view.y) > 0.5:
+                self.view.y += ((view_target_y-self.view.y)
+                                * CAMERA_VSPEED_FACTOR * delta_mult)
+            else:
+                self.view.y = view_target_y
 
             if not self.camera_guided_y:
                 if self.view.y < view_min_y:

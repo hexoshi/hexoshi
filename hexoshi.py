@@ -132,32 +132,10 @@ if args.lang:
                                [args.lang])
     lang.install()
 
-GRAVITY = 0.4
-
-PLAYER_MAX_HP = 50
-PLAYER_MAX_SPEED = 3
-PLAYER_ROLL_MAX_SPEED = 8
-PLAYER_ACCELERATION = 0.5
-PLAYER_ROLL_ACCELERATION = 0.25
-PLAYER_AIR_ACCELERATION = 0.15
-PLAYER_FRICTION = 0.75
-PLAYER_ROLL_FRICTION = 0.02
-PLAYER_AIR_FRICTION = 0.02
-PLAYER_JUMP_HEIGHT = 5 * hlib.TILE_SIZE + 2
-PLAYER_FALL_SPEED = 7
-PLAYER_SLIDE_SPEED = 0.25
-PLAYER_ROLL_SLIDE_SPEED = 0
-PLAYER_ROLL_SLOPE_ACCELERATION = 0.25
-PLAYER_HITSTUN = hlib.FPS
-PLAYER_AIM_LOCK_TIME = hlib.FPS / 2
-WARP_TIME = hlib.FPS / 10
-DEATH_TIME = 3 * hlib.FPS
-DOUBLETAP_TIME = hlib.FPS / 3
-
 ANNEROY_BALL_BOUNCE_HEIGHT = 2
 ANNEROY_BALL_FORCE_BOUNCE_SPEED = 4
 ANNEROY_WALLJUMP_HEIGHT = 3 * hlib.TILE_SIZE
-ANNEROY_WALLJUMP_SPEED = PLAYER_MAX_SPEED
+ANNEROY_WALLJUMP_SPEED = hlib.PLAYER_MAX_SPEED
 ANNEROY_WALLJUMP_FRAME_TIME = hlib.FPS / 4
 ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
 ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 4
@@ -965,22 +943,22 @@ class Death(sge.dsp.Object):
 class Player(xsge_physics.Collider):
 
     name = "Ian C."
-    max_hp = PLAYER_MAX_HP
-    max_speed = PLAYER_MAX_SPEED
-    roll_max_speed = PLAYER_ROLL_MAX_SPEED
-    acceleration = PLAYER_ACCELERATION
-    roll_acceleration = PLAYER_ROLL_ACCELERATION
-    air_acceleration = PLAYER_AIR_ACCELERATION
-    friction = PLAYER_FRICTION
-    roll_friction = PLAYER_ROLL_FRICTION
-    air_friction = PLAYER_AIR_FRICTION
-    jump_height = PLAYER_JUMP_HEIGHT
-    gravity = GRAVITY
-    fall_speed = PLAYER_FALL_SPEED
-    slide_speed = PLAYER_SLIDE_SPEED
-    roll_slide_speed = PLAYER_ROLL_SLIDE_SPEED
-    roll_slope_acceleration = PLAYER_ROLL_SLOPE_ACCELERATION
-    hitstun_time = PLAYER_HITSTUN
+    max_hp = hlib.PLAYER_MAX_HP
+    max_speed = hlib.PLAYER_MAX_SPEED
+    roll_max_speed = hlib.PLAYER_ROLL_MAX_SPEED
+    acceleration = hlib.PLAYER_ACCELERATION
+    roll_acceleration = hlib.PLAYER_ROLL_ACCELERATION
+    air_acceleration = hlib.PLAYER_AIR_ACCELERATION
+    friction = hlib.PLAYER_FRICTION
+    roll_friction = hlib.PLAYER_ROLL_FRICTION
+    air_friction = hlib.PLAYER_AIR_FRICTION
+    jump_height = hlib.PLAYER_JUMP_HEIGHT
+    gravity = hlib.GRAVITY
+    fall_speed = hlib.PLAYER_FALL_SPEED
+    slide_speed = hlib.PLAYER_SLIDE_SPEED
+    roll_slide_speed = hlib.PLAYER_ROLL_SLIDE_SPEED
+    roll_slope_acceleration = hlib.PLAYER_ROLL_SLOPE_ACCELERATION
+    hitstun_time = hlib.PLAYER_HITSTUN
     can_move = True
 
     @property
@@ -1043,7 +1021,7 @@ class Player(xsge_physics.Collider):
     @aim_lock.setter
     def aim_lock(self, value):
         if value:
-            self.alarms["aim_lock"] = PLAYER_AIM_LOCK_TIME
+            self.alarms["aim_lock"] = hlib.PLAYER_AIM_LOCK_TIME
         elif "aim_lock" in self.alarms:
             del self.alarms["aim_lock"]
 
@@ -1213,7 +1191,7 @@ class Player(xsge_physics.Collider):
         if self.lose_on_death:
             sge.snd.Music.clear_queue()
             sge.snd.Music.stop()
-            sge.game.current_room.alarms["death"] = DEATH_TIME
+            sge.game.current_room.alarms["death"] = hlib.DEATH_TIME
 
         play_sound(death_sound, self.x, self.y)
         self.destroy()
@@ -1225,14 +1203,14 @@ class Player(xsge_physics.Collider):
 
     def warp_in(self):
         self.input_lock = True
-        self.alarms["input_lock"] = WARP_TIME
+        self.alarms["input_lock"] = hlib.WARP_TIME
         self.reset_input()
         self.xvelocity = 0
         self.yvelocity = 0
 
     def warp_out(self):
         self.input_lock = True
-        self.alarms["warp_out"] = WARP_TIME
+        self.alarms["warp_out"] = hlib.WARP_TIME
         self.reset_input()
         self.xvelocity = 0
         self.yvelocity = 0
@@ -1798,39 +1776,40 @@ class Anneroy(Player):
             super().press_up()
 
     def press_down(self):
-        if not self.aim_diag_pressed:
-            h_control = bool(self.right_pressed) - bool(self.left_pressed)
-            if self.on_floor and self.was_on_floor:
-                if self.ball:
-                    # Do nothing
-                    pass
-                elif self.crouching:
-                    self.compress()
-                else:
-                    if not h_control:
-                        if self.fixed_sprite != "crouch":
-                            self.reset_image()
-                            self.sprite = anneroy_legs_crouch_sprite
-                            self.image_index = 0
-                        self.image_speed = anneroy_legs_crouch_sprite.speed
-                        self.fixed_sprite = "crouch"
-                        self.crouching = True
-                        self.bbox_y = ANNEROY_CROUCH_BBOX_Y
-                        self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
-                        self.aim_lock = True
-                    else:
-                        if "compress_pressed" in self.alarms:
-                            self.compress()
-                            del self.alarms["compress_pressed"]
-                        else:
-                            self.alarms["compress_pressed"] = DOUBLETAP_TIME
+        if self.aim_diag_pressed:
+            return
+
+        h_control = bool(self.right_pressed) - bool(self.left_pressed)
+        if self.on_floor and self.was_on_floor:
+            if self.ball:
+                # Do nothing
+                pass
+            elif self.crouching:
+                self.compress()
             else:
-                if not self.ball:
+                if not h_control:
+                    if self.fixed_sprite != "crouch":
+                        self.reset_image()
+                        self.sprite = anneroy_legs_crouch_sprite
+                        self.image_index = 0
+                    self.image_speed = anneroy_legs_crouch_sprite.speed
+                    self.fixed_sprite = "crouch"
+                    self.crouching = True
+                    self.bbox_y = ANNEROY_CROUCH_BBOX_Y
+                    self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
+                    self.aim_lock = True
+                else:
                     if "compress_pressed" in self.alarms:
                         self.compress()
                         del self.alarms["compress_pressed"]
                     else:
-                        self.alarms["compress_pressed"] = DOUBLETAP_TIME
+                        self.alarms["compress_pressed"] = hlib.DOUBLETAP_TIME
+        elif not self.ball:
+            if "compress_pressed" in self.alarms:
+                self.compress()
+                del self.alarms["compress_pressed"]
+            else:
+                self.alarms["compress_pressed"] = hlib.DOUBLETAP_TIME
 
     def jump(self):
         if self.crouching:
@@ -2128,7 +2107,7 @@ class Anneroy(Player):
         if self.lose_on_death:
             sge.snd.Music.clear_queue()
             sge.snd.Music.stop()
-            sge.game.current_room.alarms["death"] = DEATH_TIME
+            sge.game.current_room.alarms["death"] = hlib.DEATH_TIME
 
         play_sound(death_sound, self.x, self.y)
         self.ball = False
@@ -2382,12 +2361,12 @@ class Anneroy(Player):
         elif self.fixed_sprite == "warp_in":
             self.image_index = self.sprite.frames - 1
             self.image_speed = 0
-            self.alarms["fixed_sprite"] = WARP_TIME
-            self.alarms["input_lock"] = WARP_TIME
+            self.alarms["fixed_sprite"] = hlib.WARP_TIME
+            self.alarms["input_lock"] = hlib.WARP_TIME
         elif self.fixed_sprite == "warp_out":
             self.visible = False
             self.image_speed = 0
-            self.alarms["warp_out"] = WARP_TIME
+            self.alarms["warp_out"] = hlib.WARP_TIME
         elif self.fixed_sprite in {"compress", "decompress_fail"}:
             self.fixed_sprite = False
             self.image_speed = (abs(self.xvelocity)
@@ -2466,8 +2445,8 @@ class DeadMan(sge.dsp.Object):
 
     """Object which falls off the screen, then gets destroyed."""
 
-    gravity = GRAVITY
-    fall_speed = PLAYER_FALL_SPEED
+    gravity = hlib.GRAVITY
+    fall_speed = hlib.PLAYER_FALL_SPEED
 
     def event_begin_step(self, time_passed, delta_mult):
         if self.yvelocity < self.fall_speed:
@@ -2485,8 +2464,8 @@ class Corpse(xsge_physics.Collider):
 
     """Like DeadMan, but just falls to the floor, not off-screen."""
 
-    gravity = GRAVITY
-    fall_speed = PLAYER_FALL_SPEED
+    gravity = hlib.GRAVITY
+    fall_speed = hlib.PLAYER_FALL_SPEED
 
     def event_create(self):
         self.alarms["die"] = 90
@@ -2621,9 +2600,9 @@ class FallingObject(InteractiveCollider):
     based on the steepness of the slope.
     """
 
-    gravity = GRAVITY
-    fall_speed = PLAYER_FALL_SPEED
-    slide_speed = PLAYER_SLIDE_SPEED
+    gravity = hlib.GRAVITY
+    fall_speed = hlib.PLAYER_FALL_SPEED
+    slide_speed = hlib.PLAYER_SLIDE_SPEED
 
     was_on_floor = False
 
@@ -2657,7 +2636,7 @@ class WalkingObject(FallingObject):
     ledges.
     """
 
-    walk_speed = PLAYER_MAX_SPEED
+    walk_speed = hlib.PLAYER_MAX_SPEED
     stayonplatform = False
     slopeisplatform = True
 
@@ -3000,7 +2979,7 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
     max_speed = 4
     roll_slope_acceleration = 0.2
     roll_max_speed = 8
-    friction = PLAYER_FRICTION
+    friction = hlib.PLAYER_FRICTION
     roll_friction = 0.05
     walk_frames_per_pixel = 1 / 4
     roll_frames_per_pixel = 1 / 5
@@ -4848,7 +4827,7 @@ class TimelineSwitcher(InteractiveObject):
 class MovingObjectPath(xsge_path.PathLink):
 
     cls = None
-    default_speed = PLAYER_MAX_SPEED
+    default_speed = hlib.PLAYER_MAX_SPEED
     default_accel = None
     default_decel = None
     default_loop = None
@@ -5953,7 +5932,7 @@ def get_scaled_copy(obj):
     return s
 
 
-def get_jump_speed(height, gravity=GRAVITY):
+def get_jump_speed(height, gravity=hlib.GRAVITY):
     # Get the speed to achieve a given height using a kinematic
     # equation: v[f]^2 = v[i]^2 + 2ad
     return -math.sqrt(2 * gravity * height)

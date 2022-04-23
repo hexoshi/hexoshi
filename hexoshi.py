@@ -302,6 +302,7 @@ map_explored = []
 map_removed = []
 warp_pads = []
 powerups = []
+rooms_killed = set()
 progress_flags = []
 artifacts = 0
 etanks = 0
@@ -2828,6 +2829,10 @@ class Enemy(InteractiveObject):
         play_sound(enemy_death_sound, self.image_xcenter, self.image_ycenter)
         self.destroy()
 
+    def event_create(self):
+        if sge.game.current_room.fname in rooms_killed:
+            self.destroy()
+
     def event_alarm(self, alarm_id):
         if alarm_id == "hurt_flash":
             self.image_blend = None
@@ -2934,6 +2939,7 @@ class Frog(Enemy, FallingObject, CrowdObject):
         self.yvelocity = 0
 
     def event_create(self):
+        super().event_create()
         self.bbox_x = 2
         self.bbox_y = 5
         self.bbox_width = 12
@@ -3007,6 +3013,7 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
         self.xvelocity = 0
 
     def event_create(self):
+        super().event_create()
         self.bbox_x = 4
         self.bbox_y = 6
         self.bbox_width = 12
@@ -3103,6 +3110,7 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def event_create(self):
+        super().event_create()
         sge.dsp.Object.create(
             self.x, self.y, self.z + 0.1, sprite=worm_base_sprite,
             tangible=False)
@@ -3167,6 +3175,7 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
         self.yvelocity *= -1
 
     def event_create(self):
+        super().event_create()
         self.image_xscale *= random.choice([1, -1])
         self.event_alarm("move")
 
@@ -3223,6 +3232,7 @@ class Jellyfish(Enemy, CrowdBlockingObject):
         self.yvelocity = 0
 
     def event_create(self):
+        super().event_create()
         self.x += self.image_origin_x
         self.y += self.image_origin_y
         self.bbox_x = -9
@@ -4262,12 +4272,20 @@ class Powerup(InteractiveObject):
     def message(self):
         return _("USELESS OBJECT\n\nIt doesn't seem to do anything")
 
+    def __init__(self, x, y, kill_rooms=None, **kwargs):
+        if kill_rooms:
+            self.kill_rooms = kill_rooms.split(",")
+        else:
+            self.kill_rooms = []
+        super().__init__(x, y, **kwargs)
+
     def collect(self, other):
         pass
 
     def touch(self, other):
         global powerups
         global map_removed
+        global rooms_killed
 
         play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
         i = (self.__class__.__name__, sge.game.current_room.fname,
@@ -4287,9 +4305,16 @@ class Powerup(InteractiveObject):
                 obj.update_hud()
 
         DialogBox(gui_handler, self.message, self.sprite).show()
+
+        rooms_killed.update(self.kill_rooms)
+        for obj in sge.game.current_room.objects[:]:
+            if isinstance(obj, Enemy):
+                obj.kill()
+
         self.destroy()
 
     def event_create(self):
+        self.kill_rooms.append(sge.game.current_room.fname)
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
         if i in powerups:
@@ -6164,6 +6189,7 @@ def set_new_game():
     global map_explored
     global map_removed
     global powerups
+    global rooms_killed
     global progress_flags
     global artifacts
     global etanks
@@ -6178,6 +6204,7 @@ def set_new_game():
     map_removed = []
     warp_pads = []
     powerups = []
+    rooms_killed = set()
     progress_flags = []
     artifacts = 0
     etanks = 0
@@ -6229,7 +6256,7 @@ def save_game():
 
     if current_save_slot is not None:
         save_slots[current_save_slot] = {
-            "save_format": 1,
+            "save_format": 2,
             "player_name": player_name,
             "watched_timelines": watched_timelines[:],
             "current_level": current_level,
@@ -6239,6 +6266,7 @@ def save_game():
             "map_removed": map_removed[:],
             "warp_pads": warp_pads[:],
             "powerups": powerups[:],
+            "rooms_killed": sorted(rooms_killed),
             "progress_flags": progress_flags[:],
             "artifacts": artifacts,
             "etanks": etanks,
@@ -6257,6 +6285,7 @@ def load_game():
     global map_removed
     global warp_pads
     global powerups
+    global rooms_killed
     global progress_flags
     global etanks
     global time_taken
@@ -6266,7 +6295,7 @@ def load_game():
         slot = save_slots[current_save_slot]
         save_format = slot.get("save_format", 0)
 
-        if save_format == 1:
+        if save_format == 2:
             player_name = slot.get("player_name", "Anneroy")
             watched_timelines = slot.get("watched_timelines", [])
             current_level = slot.get("current_level")
@@ -6276,10 +6305,13 @@ def load_game():
             map_removed = [tuple(i) for i in slot.get("map_removed", [])]
             warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
             powerups = [tuple(i) for i in slot.get("powerups", [])]
+            rooms_killed = set(slot.get("rooms_killed"))
             progress_flags = slot.get("progress_flags", [])
             artifacts = slot.get("artifacts", 0)
             etanks = slot.get("etanks", 0)
             time_taken = slot.get("time_taken", 0)
+        elif save_format == 1:
+            set_new_game()
     else:
         set_new_game()
 

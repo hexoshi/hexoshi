@@ -33,3 +33,8 @@ localdir = os.path.join(
 scale = 2
 fsscale = None
 no_hud = False
+
+backgrounds = {}
+loaded_music = {}
+
+fullscreen = False

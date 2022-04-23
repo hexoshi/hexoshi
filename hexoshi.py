@@ -248,10 +248,6 @@ SOUND_TILT_LIMIT = 0.75
 
 ETANK_CHAR = '\x80'
 
-backgrounds = {}
-loaded_music = {}
-
-fullscreen = False
 scale_method = None
 sound_enabled = True
 music_enabled = True
@@ -392,7 +388,7 @@ class Level(sge.dsp.Room):
         self.player_z = 0
 
         if bgname is not None:
-            background = backgrounds.get(bgname, background)
+            background = hlib.backgrounds.get(bgname, background)
 
         self.load_timeline(timeline)
 
@@ -5176,7 +5172,7 @@ class OptionsMenu(Menu):
     def create_page(cls, default=0):
         smt = scale_method if scale_method else "fastest"
         cls.items = [
-            _("Fullscreen: {}").format(_("On") if fullscreen else _("Off")),
+            _("Fullscreen: {}").format(_("On") if hlib.fullscreen else _("Off")),
             _("Scale Method: {}").format(smt),
             _("Sound: {}").format(_("On") if sound_enabled else _("Off")),
             _("Music: {}").format(_("On") if music_enabled else _("Off")),
@@ -5189,7 +5185,6 @@ class OptionsMenu(Menu):
         return cls.create(default)
 
     def event_choose(self):
-        global fullscreen
         global scale_method
         global sound_enabled
         global music_enabled
@@ -5200,7 +5195,7 @@ class OptionsMenu(Menu):
 
         if self.choice == 0:
             play_sound(select_sound)
-            fullscreen = not fullscreen
+            hlib.fullscreen = not hlib.fullscreen
             update_fullscreen()
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 1:
@@ -6147,7 +6142,7 @@ def play_music(music, force_restart=False, noloop=False):
     if music_enabled:
         loops = 1 if noloop else None
         if music:
-            music_object = loaded_music.get(music)
+            music_object = hlib.loaded_music.get(music)
             if music_object is None:
                 try:
                     music_object = sge.snd.Music(os.path.join(hlib.datadir, "music",
@@ -6157,11 +6152,11 @@ def play_music(music, force_restart=False, noloop=False):
                     sge.snd.Music.stop()
                     return
                 else:
-                    loaded_music[music] = music_object
+                    hlib.loaded_music[music] = music_object
 
             name, ext = os.path.splitext(music)
             music_start = ''.join([name, "-start", ext])
-            music_start_object = loaded_music.get(music_start)
+            music_start_object = hlib.loaded_music.get(music_start)
             if music_start_object is None:
                 try:
                     music_start_object = sge.snd.Music(os.path.join(
@@ -6169,7 +6164,7 @@ def play_music(music, force_restart=False, noloop=False):
                 except OSError:
                     pass
                 else:
-                    loaded_music[music_start] = music_start_object
+                    hlib.loaded_music[music_start] = music_start_object
 
             if (force_restart or (not music_object.playing
                                   and (music_start_object is None
@@ -6234,7 +6229,7 @@ def write_to_disk():
               "mode_reset": mode_reset_js, "mode": mode_js, "pause": pause_js,
               "map": map_js}
 
-    cfg = {"version": 1, "fullscreen": fullscreen,
+    cfg = {"version": 1, "fullscreen": hlib.fullscreen,
            "scale_method": scale_method, "sound_enabled": sound_enabled,
            "music_enabled": music_enabled, "stereo_enabled": stereo_enabled,
            "fps_enabled": fps_enabled, "metroid_controls": metroid_controls,
@@ -6621,7 +6616,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
 
 
 def update_fullscreen():
-    if fullscreen:
+    if hlib.fullscreen:
         sge.game.scale = hlib.fsscale or None
         sge.game.fullscreen = True
     else:
@@ -7117,7 +7112,8 @@ if not NO_BACKGROUNDS:
             yscroll_rate=0.1, repeat_left=True, repeat_right=True,
             repeat_up=True, repeat_down=True)]
 
-backgrounds["kawamora"] = sge.gfx.Background(layers, sge.gfx.Color((0, 0, 0)))
+hlib.backgrounds["kawamora"] = sge.gfx.Background(layers,
+                                                  sge.gfx.Color((0, 0, 0)))
 
 if not NO_BACKGROUNDS:
     layers = [
@@ -7126,7 +7122,8 @@ if not NO_BACKGROUNDS:
             yscroll_rate=0.7, repeat_left=True, repeat_right=True,
             repeat_up=True, repeat_down=True)]
 
-backgrounds["iridia"] = sge.gfx.Background(layers, sge.gfx.Color((21, 17, 22)))
+hlib.backgrounds["iridia"] = sge.gfx.Background(layers,
+                                                sge.gfx.Color((21, 17, 22)))
 
 # Load fonts
 chars = ([chr(i) for i in range(32, 127)] + [None, ETANK_CHAR] + [' ']*11
@@ -7241,7 +7238,7 @@ except (OSError, ValueError):
 finally:
     cfg_version = cfg.get("version", 0)
 
-    fullscreen = cfg.get("fullscreen", fullscreen)
+    hlib.fullscreen = cfg.get("fullscreen", hlib.fullscreen)
     update_fullscreen()
     scale_method = cfg.get("scale_method", scale_method)
     sge.game.scale_method = scale_method

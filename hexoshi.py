@@ -3095,7 +3095,10 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def event_create(self):
-        super().event_create()
+        if sge.game.current_room.fname in rooms_killed:
+            self.destroy()
+            return
+
         sge.dsp.Object.create(
             self.x, self.y, self.z + 0.1, sprite=worm_base_sprite,
             tangible=False)

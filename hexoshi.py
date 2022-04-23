@@ -1966,7 +1966,12 @@ class Anneroy(Player):
             if self.facing > 0:
                 if self.aim_direction == 0:
                     x = 25
-                    y = -4
+                    # An offset of -3 is exactly low enough to cause the
+                    # crouching bullet to hit the bottom tile relative
+                    # to Anneroy, rather than the second tile up, so we
+                    # check for crouching and use that offset instead of
+                    # the visually better offset.
+                    y = -3 if self.crouching else -4
                     xv = ANNEROY_BULLET_SPEED
                     image_rotation = 0
                 elif self.aim_direction == 1:
@@ -1994,7 +1999,12 @@ class Anneroy(Player):
             else:
                 if self.aim_direction == 0:
                     x = -25
-                    y = -4
+                    # An offset of -3 is exactly low enough to cause the
+                    # crouching bullet to hit the bottom tile relative
+                    # to Anneroy, rather than the second tile up, so we
+                    # check for crouching and use that offset instead of
+                    # the visually better offset.
+                    y = -3 if self.crouching else -4
                     xv = -ANNEROY_BULLET_SPEED
                     image_rotation = 180
                 elif self.aim_direction == 1:

@@ -6297,6 +6297,7 @@ def load_game():
     global powerups
     global rooms_killed
     global progress_flags
+    global artifacts
     global etanks
     global time_taken
 

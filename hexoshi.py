@@ -132,38 +132,6 @@ if args.lang:
                                [args.lang])
     lang.install()
 
-ANNEROY_BALL_BOUNCE_HEIGHT = 2
-ANNEROY_BALL_FORCE_BOUNCE_SPEED = 4
-ANNEROY_WALLJUMP_HEIGHT = 3 * hlib.TILE_SIZE
-ANNEROY_WALLJUMP_SPEED = hlib.PLAYER_MAX_SPEED
-ANNEROY_WALLJUMP_FRAME_TIME = hlib.FPS / 4
-ANNEROY_RUN_FRAMES_PER_PIXEL = 1 / 10
-ANNEROY_BALL_FRAMES_PER_PIXEL = 1 / 4
-ANNEROY_BBOX_X = -7
-ANNEROY_BBOX_WIDTH = 14
-ANNEROY_STAND_BBOX_Y = -16
-ANNEROY_STAND_BBOX_HEIGHT = 40
-ANNEROY_CROUCH_BBOX_Y = -5
-ANNEROY_CROUCH_BBOX_HEIGHT = 29
-ANNEROY_BALL_BBOX_Y = 10
-ANNEROY_BALL_BBOX_HEIGHT = 14
-ANNEROY_HEDGEHOG_TIME = 15
-ANNEROY_HEDGEHOG_FRAME_TIME = 4
-ANNEROY_HEDGEHOG_BBOX_X = -14
-ANNEROY_HEDGEHOG_BBOX_Y = 3
-ANNEROY_HEDGEHOG_BBOX_WIDTH = 28
-ANNEROY_HEDGEHOG_BBOX_HEIGHT = 28
-ANNEROY_SLOTH_MAX_SPEED = 0.5
-ANNEROY_BULLET_SPEED = 8
-ANNEROY_BULLET_DSPEED = ANNEROY_BULLET_SPEED * math.sin(math.radians(45))
-ANNEROY_BULLET_LIFE = 45
-ANNEROY_XRECOIL = 0.5
-ANNEROY_XRECOIL_MAX = 2
-ANNEROY_YRECOIL = 1.75
-ANNEROY_YRECOIL_MAX = 4
-ANNEROY_EXPLODE_TIME = 0.6 * hlib.FPS
-ANNEROY_DECOMPRESS_LAX = 4
-
 MANTANOID_WANDER_SPEED = 1
 MANTANOID_WANDER_INTERVAL = hlib.FPS * 2
 MANTANOID_APPROACH_SPEED = 1.5
@@ -1650,10 +1618,10 @@ class Anneroy(Player):
         return not self.crouching
 
     def __init__(self, *args, **kwargs):
-        kwargs["bbox_x"] = ANNEROY_BBOX_X
-        kwargs["bbox_width"] = ANNEROY_BBOX_WIDTH
-        kwargs["bbox_y"] = ANNEROY_STAND_BBOX_Y
-        kwargs["bbox_height"] = ANNEROY_STAND_BBOX_HEIGHT
+        kwargs["bbox_x"] = hlib.ANNEROY_BBOX_X
+        kwargs["bbox_width"] = hlib.ANNEROY_BBOX_WIDTH
+        kwargs["bbox_y"] = hlib.ANNEROY_STAND_BBOX_Y
+        kwargs["bbox_height"] = hlib.ANNEROY_STAND_BBOX_HEIGHT
         super().__init__(*args, **kwargs)
 
         self.torso = None
@@ -1709,9 +1677,9 @@ class Anneroy(Player):
     def press_up(self):
         if self.ball:
             if self.get_up_obstructed(
-                    ANNEROY_BBOX_X, ANNEROY_CROUCH_BBOX_Y,
-                    ANNEROY_BBOX_WIDTH, ANNEROY_CROUCH_BBOX_HEIGHT,
-                    ANNEROY_DECOMPRESS_LAX):
+                    hlib.ANNEROY_BBOX_X, hlib.ANNEROY_CROUCH_BBOX_Y,
+                    hlib.ANNEROY_BBOX_WIDTH, hlib.ANNEROY_CROUCH_BBOX_HEIGHT,
+                    hlib.ANNEROY_DECOMPRESS_LAX):
                 self.reset_image()
                 self.sprite = anneroy_decompress_fail_sprite
                 self.image_index = 0
@@ -1744,16 +1712,18 @@ class Anneroy(Player):
                 self.max_speed = self.__class__.max_speed
                 if self.on_floor:
                     self.crouching = True
-                    self.bbox_y = ANNEROY_CROUCH_BBOX_Y
-                    self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
+                    self.bbox_y = hlib.ANNEROY_CROUCH_BBOX_Y
+                    self.bbox_height = hlib.ANNEROY_CROUCH_BBOX_HEIGHT
                 else:
-                    self.bbox_y = ANNEROY_STAND_BBOX_Y
-                    self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
+                    self.bbox_y = hlib.ANNEROY_STAND_BBOX_Y
+                    self.bbox_height = hlib.ANNEROY_STAND_BBOX_HEIGHT
         elif self.crouching:
             if not self.aim_diag_pressed:
                 for other in sge.collision.rectangle(
-                        self.x + ANNEROY_BBOX_X, self.y + ANNEROY_STAND_BBOX_Y,
-                        ANNEROY_BBOX_WIDTH, ANNEROY_STAND_BBOX_HEIGHT):
+                        self.x + hlib.ANNEROY_BBOX_X, self.y
+                            + hlib.ANNEROY_STAND_BBOX_Y,
+                        hlib.ANNEROY_BBOX_WIDTH,
+                        hlib.ANNEROY_STAND_BBOX_HEIGHT):
                     if isinstance(other, (xsge_physics.SolidBottom,
                                           xsge_physics.SlopeBottomLeft,
                                           xsge_physics.SlopeBottomRight)):
@@ -1769,8 +1739,8 @@ class Anneroy(Player):
                         self.fixed_sprite = "crouch"
 
                     self.crouching = False
-                    self.bbox_y = ANNEROY_STAND_BBOX_Y
-                    self.bbox_height = ANNEROY_STAND_BBOX_HEIGHT
+                    self.bbox_y = hlib.ANNEROY_STAND_BBOX_Y
+                    self.bbox_height = hlib.ANNEROY_STAND_BBOX_HEIGHT
                     self.aim_lock = True
         else:
             super().press_up()
@@ -1795,8 +1765,8 @@ class Anneroy(Player):
                     self.image_speed = anneroy_legs_crouch_sprite.speed
                     self.fixed_sprite = "crouch"
                     self.crouching = True
-                    self.bbox_y = ANNEROY_CROUCH_BBOX_Y
-                    self.bbox_height = ANNEROY_CROUCH_BBOX_HEIGHT
+                    self.bbox_y = hlib.ANNEROY_CROUCH_BBOX_Y
+                    self.bbox_height = hlib.ANNEROY_CROUCH_BBOX_HEIGHT
                     self.aim_lock = True
                 else:
                     if "compress_pressed" in self.alarms:
@@ -1859,33 +1829,33 @@ class Anneroy(Player):
         self.hedgehog = False
         self.sprite = anneroy_hedgehog_start_sprite
         self.fixed_sprite = "hedgehog"
-        self.alarms["fixed_sprite"] = ANNEROY_HEDGEHOG_FRAME_TIME
-        self.alarms["hedgehog_lock"] = ANNEROY_HEDGEHOG_FRAME_TIME
+        self.alarms["fixed_sprite"] = hlib.ANNEROY_HEDGEHOG_FRAME_TIME
+        self.alarms["hedgehog_lock"] = hlib.ANNEROY_HEDGEHOG_FRAME_TIME
         self.rolling = True
         self.max_speed = self.__class__.max_speed
 
     def recoil(self, direction):
         direction = math.radians((direction+180) % 360)
 
-        diff = ANNEROY_XRECOIL * math.cos(direction)
-        if diff > 0 and self.xvelocity < ANNEROY_XRECOIL_MAX:
+        diff = hlib.ANNEROY_XRECOIL * math.cos(direction)
+        if diff > 0 and self.xvelocity < hlib.ANNEROY_XRECOIL_MAX:
             self.xvelocity += diff
-            if self.xvelocity > ANNEROY_XRECOIL_MAX:
-                self.xvelocity = ANNEROY_XRECOIL_MAX
-        elif diff < 0 and self.xvelocity > -ANNEROY_XRECOIL_MAX:
+            if self.xvelocity > hlib.ANNEROY_XRECOIL_MAX:
+                self.xvelocity = hlib.ANNEROY_XRECOIL_MAX
+        elif diff < 0 and self.xvelocity > -hlib.ANNEROY_XRECOIL_MAX:
             self.xvelocity += diff
-            if self.xvelocity < -ANNEROY_XRECOIL_MAX:
-                self.xvelocity = -ANNEROY_XRECOIL_MAX
+            if self.xvelocity < -hlib.ANNEROY_XRECOIL_MAX:
+                self.xvelocity = -hlib.ANNEROY_XRECOIL_MAX
 
-        diff = ANNEROY_YRECOIL * math.sin(direction)
-        if diff > 0 and self.yvelocity < ANNEROY_YRECOIL_MAX:
+        diff = hlib.ANNEROY_YRECOIL * math.sin(direction)
+        if diff > 0 and self.yvelocity < hlib.ANNEROY_YRECOIL_MAX:
             self.yvelocity += diff
-            if self.yvelocity > ANNEROY_YRECOIL_MAX:
-                self.yvelocity = ANNEROY_YRECOIL_MAX
-        elif diff < 0 and self.yvelocity > -ANNEROY_YRECOIL_MAX:
+            if self.yvelocity > hlib.ANNEROY_YRECOIL_MAX:
+                self.yvelocity = hlib.ANNEROY_YRECOIL_MAX
+        elif diff < 0 and self.yvelocity > -hlib.ANNEROY_YRECOIL_MAX:
             self.yvelocity += diff
-            if self.yvelocity < -ANNEROY_YRECOIL_MAX:
-                self.yvelocity = -ANNEROY_YRECOIL_MAX
+            if self.yvelocity < -hlib.ANNEROY_YRECOIL_MAX:
+                self.yvelocity = -hlib.ANNEROY_YRECOIL_MAX
 
     def shoot_default(self):
         if "shoot_lock" in self.alarms:
@@ -1909,18 +1879,18 @@ class Anneroy(Player):
                 self.sprite = anneroy_hedgehog_start_sprite
 
                 if self.fixed_sprite:
-                    self.image_speed = (abs(self.xvelocity) *
-                                        ANNEROY_BALL_FRAMES_PER_PIXEL)
+                    self.image_speed = (abs(self.xvelocity)
+                                        * hlib.ANNEROY_BALL_FRAMES_PER_PIXEL)
 
                 self.fixed_sprite = "hedgehog"
-                self.alarms["hedgehog_extend"] = ANNEROY_HEDGEHOG_FRAME_TIME
+                self.alarms["hedgehog_extend"] = hlib.ANNEROY_HEDGEHOG_FRAME_TIME
                 play_sound(hedgehog_spikes_sound, self.image_xcenter,
                            self.image_ycenter)
                 self.rolling = False
 
                 if "sloth_ball" in progress_flags:
                     self.hedgehog_autocancel = False
-                    self.max_speed = ANNEROY_SLOTH_MAX_SPEED
+                    self.max_speed = hlib.ANNEROY_SLOTH_MAX_SPEED
                 else:
                     self.hedgehog_autocancel = True
                     self.max_speed = 0
@@ -1947,29 +1917,29 @@ class Anneroy(Player):
                     # check for crouching and use that offset instead of
                     # the visually better offset.
                     y = -3 if self.crouching else -4
-                    xv = ANNEROY_BULLET_SPEED
+                    xv = hlib.ANNEROY_BULLET_SPEED
                     image_rotation = 0
                 elif self.aim_direction == 1:
                     x = 22
                     y = -27
-                    xv = ANNEROY_BULLET_DSPEED
-                    yv = -ANNEROY_BULLET_DSPEED
+                    xv = hlib.ANNEROY_BULLET_DSPEED
+                    yv = -hlib.ANNEROY_BULLET_DSPEED
                     image_rotation = 315
                 elif self.aim_direction == 2:
                     x = 6
                     y = -31
-                    yv = -ANNEROY_BULLET_SPEED
+                    yv = -hlib.ANNEROY_BULLET_SPEED
                     image_rotation = 270
                 elif self.aim_direction == -1:
                     x = 20
                     y = 9
-                    xv = ANNEROY_BULLET_DSPEED
-                    yv = ANNEROY_BULLET_DSPEED
+                    xv = hlib.ANNEROY_BULLET_DSPEED
+                    yv = hlib.ANNEROY_BULLET_DSPEED
                     image_rotation = 45
                 elif self.aim_direction == -2:
                     x = 10
                     y = 21
-                    yv = ANNEROY_BULLET_SPEED
+                    yv = hlib.ANNEROY_BULLET_SPEED
                     image_rotation = 90
             else:
                 if self.aim_direction == 0:
@@ -1980,29 +1950,29 @@ class Anneroy(Player):
                     # check for crouching and use that offset instead of
                     # the visually better offset.
                     y = -3 if self.crouching else -4
-                    xv = -ANNEROY_BULLET_SPEED
+                    xv = -hlib.ANNEROY_BULLET_SPEED
                     image_rotation = 180
                 elif self.aim_direction == 1:
                     x = -22
                     y = -28
-                    xv = -ANNEROY_BULLET_DSPEED
-                    yv = -ANNEROY_BULLET_DSPEED
+                    xv = -hlib.ANNEROY_BULLET_DSPEED
+                    yv = -hlib.ANNEROY_BULLET_DSPEED
                     image_rotation = 225
                 elif self.aim_direction == 2:
                     x = -5
                     y = -31
-                    yv = -ANNEROY_BULLET_SPEED
+                    yv = -hlib.ANNEROY_BULLET_SPEED
                     image_rotation = 270
                 elif self.aim_direction == -1:
                     x = -19
                     y = 9
-                    xv = -ANNEROY_BULLET_DSPEED
-                    yv = ANNEROY_BULLET_DSPEED
+                    xv = -hlib.ANNEROY_BULLET_DSPEED
+                    yv = hlib.ANNEROY_BULLET_DSPEED
                     image_rotation = 135
                 elif self.aim_direction == -2:
                     x = -8
                     y = 21
-                    yv = ANNEROY_BULLET_SPEED
+                    yv = hlib.ANNEROY_BULLET_SPEED
                     image_rotation = 90
 
             self.recoil(image_rotation)
@@ -2096,8 +2066,8 @@ class Anneroy(Player):
             self.bouncing = False
             self.hedgehog = False
             self.max_speed = self.__class__.max_speed
-            self.bbox_y = ANNEROY_BALL_BBOX_Y
-            self.bbox_height = ANNEROY_BALL_BBOX_HEIGHT
+            self.bbox_y = hlib.ANNEROY_BALL_BBOX_Y
+            self.bbox_height = hlib.ANNEROY_BALL_BBOX_HEIGHT
 
     def hurt(self, damage=1, touching=False):
         if (not touching) or (not self.hedgehog):
@@ -2217,8 +2187,8 @@ class Anneroy(Player):
                 self.torso.visible = False
                 if self.on_floor:
                     if xm:
-                        self.image_speed = (self.speed
-                                            * ANNEROY_BALL_FRAMES_PER_PIXEL)
+                        self.image_speed = (
+                            self.speed * hlib.ANNEROY_BALL_FRAMES_PER_PIXEL)
                         if xm != self.facing:
                             self.image_speed *= -1
                     else:
@@ -2233,8 +2203,8 @@ class Anneroy(Player):
                     else:
                         if xm == self.facing:
                             self.sprite = anneroy_legs_run_sprite
-                            self.image_speed = (self.speed
-                                                * ANNEROY_RUN_FRAMES_PER_PIXEL)
+                            self.image_speed = (
+                                self.speed * hlib.ANNEROY_RUN_FRAMES_PER_PIXEL)
                             if xm != self.facing:
                                 self.image_speed *= -1
 
@@ -2255,7 +2225,7 @@ class Anneroy(Player):
 
                 if xm:
                     self.image_speed = (self.speed
-                                        * ANNEROY_BALL_FRAMES_PER_PIXEL)
+                                        * hlib.ANNEROY_BALL_FRAMES_PER_PIXEL)
                     if xm != self.facing:
                         self.image_speed *= -1
                 else:
@@ -2307,10 +2277,10 @@ class Anneroy(Player):
             if self.hedgehog_spikes is None:
                 self.hedgehog_spikes = HedgehogSpikes.create(
                     self.x, self.y, visible=False,
-                    bbox_x=ANNEROY_HEDGEHOG_BBOX_X,
-                    bbox_y=ANNEROY_HEDGEHOG_BBOX_Y,
-                    bbox_width=ANNEROY_HEDGEHOG_BBOX_WIDTH,
-                    bbox_height=ANNEROY_HEDGEHOG_BBOX_HEIGHT,
+                    bbox_x=hlib.ANNEROY_HEDGEHOG_BBOX_X,
+                    bbox_y=hlib.ANNEROY_HEDGEHOG_BBOX_Y,
+                    bbox_width=hlib.ANNEROY_HEDGEHOG_BBOX_WIDTH,
+                    bbox_height=hlib.ANNEROY_HEDGEHOG_BBOX_HEIGHT,
                     regulate_origin=True)
             else:
                 self.hedgehog_spikes.x = self.x
@@ -2324,10 +2294,10 @@ class Anneroy(Player):
         self.torso = sge.dsp.Object.create(self.x, self.y, self.z + 0.1,
                                            regulate_origin=True)
         self.hedgehog_spikes = HedgehogSpikes.create(
-            self.x, self.y, visible=False, bbox_x=ANNEROY_HEDGEHOG_BBOX_X,
-            bbox_y=ANNEROY_HEDGEHOG_BBOX_Y,
-            bbox_width=ANNEROY_HEDGEHOG_BBOX_WIDTH,
-            bbox_height=ANNEROY_HEDGEHOG_BBOX_HEIGHT, regulate_origin=True)
+            self.x, self.y, visible=False, bbox_x=hlib.ANNEROY_HEDGEHOG_BBOX_X,
+            bbox_y=hlib.ANNEROY_HEDGEHOG_BBOX_Y,
+            bbox_width=hlib.ANNEROY_HEDGEHOG_BBOX_WIDTH,
+            bbox_height=hlib.ANNEROY_HEDGEHOG_BBOX_HEIGHT, regulate_origin=True)
         super().event_create()
 
     def event_begin_step(self, time_passed, delta_mult):
@@ -2343,12 +2313,12 @@ class Anneroy(Player):
             self.fixed_sprite = False
         elif alarm_id == "hedgehog_extend":
             self.sprite = anneroy_hedgehog_extend_sprite
-            self.alarms["hedgehog_extend2"] = ANNEROY_HEDGEHOG_FRAME_TIME
+            self.alarms["hedgehog_extend2"] = hlib.ANNEROY_HEDGEHOG_FRAME_TIME
         elif alarm_id == "hedgehog_extend2":
             self.fixed_sprite = False
             if self.hedgehog_autocancel:
-                self.alarms["hedgehog_retract"] = ANNEROY_HEDGEHOG_TIME
-                self.alarms["hedgehog_lock"] = ANNEROY_HEDGEHOG_TIME
+                self.alarms["hedgehog_retract"] = hlib.ANNEROY_HEDGEHOG_TIME
+                self.alarms["hedgehog_lock"] = hlib.ANNEROY_HEDGEHOG_TIME
         elif alarm_id == "hedgehog_retract":
             self.retract_spikes()
         elif alarm_id == "shoot_lock":
@@ -2370,7 +2340,7 @@ class Anneroy(Player):
         elif self.fixed_sprite in {"compress", "decompress_fail"}:
             self.fixed_sprite = False
             self.image_speed = (abs(self.xvelocity)
-                                * ANNEROY_BALL_FRAMES_PER_PIXEL)
+                                * hlib.ANNEROY_BALL_FRAMES_PER_PIXEL)
         elif self.fixed_sprite == "wall":
             self.reset_image()
             if self.wall_direction < 0:
@@ -2380,13 +2350,13 @@ class Anneroy(Player):
             self.image_xscale = abs(self.image_xscale)
             self.torso.visible = False
             self.fixed_sprite = "walljump"
-            self.alarms["fixed_sprite"] = ANNEROY_WALLJUMP_FRAME_TIME
+            self.alarms["fixed_sprite"] = hlib.ANNEROY_WALLJUMP_FRAME_TIME
             self.walljumping = False
             self.input_lock = False
             self.facing = -self.wall_direction
             self.gravity = self.__class__.gravity
-            self.xvelocity = ANNEROY_WALLJUMP_SPEED * self.facing
-            self.yvelocity = get_jump_speed(ANNEROY_WALLJUMP_HEIGHT,
+            self.xvelocity = hlib.ANNEROY_WALLJUMP_SPEED * self.facing
+            self.yvelocity = get_jump_speed(hlib.ANNEROY_WALLJUMP_HEIGHT,
                                             self.gravity)
         elif self.fixed_sprite == "death":
             Smoke.create(self.x, self.y, z=(self.z + 0.1),
@@ -2409,24 +2379,27 @@ class Anneroy(Player):
         yv = self.yvelocity
         super().event_physics_collision_bottom(other, move_loss)
 
-        if not self.was_on_floor:
-            if self.hedgehog:
-                play_sound(ball_land_sound, self.x, self.y)
-            elif self.ball:
-                if not self.bouncing or yv >= ANNEROY_BALL_FORCE_BOUNCE_SPEED:
-                    self.bouncing = True
-                    self.yvelocity = get_jump_speed(ANNEROY_BALL_BOUNCE_HEIGHT,
-                                                    self.gravity)
-                else:
-                    self.bouncing = False
-                play_sound(ball_land_sound, self.x, self.y)
+        if self.was_on_floor:
+            return
+
+        if self.hedgehog:
+            play_sound(ball_land_sound, self.x, self.y)
+        elif self.ball:
+            if (not self.bouncing
+                    or yv >= hlib.ANNEROY_BALL_FORCE_BOUNCE_SPEED):
+                self.bouncing = True
+                self.yvelocity = get_jump_speed(
+                    hlib.ANNEROY_BALL_BOUNCE_HEIGHT, self.gravity)
             else:
-                self.reset_image()
-                self.sprite = anneroy_legs_land_sprite
-                self.image_speed = None
-                self.image_index = 0
-                self.fixed_sprite = "anim"
-                play_sound(land_sound, self.x, self.y)
+                self.bouncing = False
+            play_sound(ball_land_sound, self.x, self.y)
+        else:
+            self.reset_image()
+            self.sprite = anneroy_legs_land_sprite
+            self.image_speed = None
+            self.image_index = 0
+            self.fixed_sprite = "anim"
+            play_sound(land_sound, self.x, self.y)
 
     def event_jump(self):
         if not self.ball:
@@ -4095,7 +4068,7 @@ class AnneroyBullet(Bullet):
     attacks_enemy = True
     attacks_bullet = False
     breaks_stone = True
-    life = ANNEROY_BULLET_LIFE
+    life = hlib.ANNEROY_BULLET_LIFE
 
     def dissipate(self, xdirection=0, ydirection=0):
         if self not in sge.game.current_room.objects:

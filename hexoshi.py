@@ -132,30 +132,6 @@ if args.lang:
                                [args.lang])
     lang.install()
 
-MANTANOID_WANDER_SPEED = 1
-MANTANOID_WANDER_INTERVAL = hlib.FPS * 2
-MANTANOID_APPROACH_SPEED = 1.5
-MANTANOID_APPROACH_INTERVAL = hlib.FPS / 4
-MANTANOID_HOP_HEIGHT = 2 * hlib.TILE_SIZE
-MANTANOID_JUMP_HEIGHT = 4 * hlib.TILE_SIZE
-MANTANOID_WALK_FRAMES_PER_PIXEL = 1 / 6
-MANTANOID_LEVEL_DISTANCE = 48
-MANTANOID_SLASH_DISTANCE = 30
-MANTANOID_SLASH2_DISTANCE = 44
-MANTANOID_BBOX_X = -12
-MANTANOID_BBOX_Y = -16
-MANTANOID_BBOX_WIDTH = 24
-MANTANOID_BBOX_HEIGHT = 48
-MANTANOID_SLASH_BBOX_X = -12
-MANTANOID_SLASH_BBOX_Y = -27
-MANTANOID_SLASH_BBOX_WIDTH = 38
-MANTANOID_SLASH_BBOX_HEIGHT = 59
-MANTANOID_DOUBLESLASH_OFFSET = 18
-MANTANOID_SLASH2_BBOX_X = 0
-MANTANOID_SLASH2_BBOX_Y = -20
-MANTANOID_SLASH2_BBOX_WIDTH = 24
-MANTANOID_SLASH2_BBOX_HEIGHT = 32
-
 SCORPION_WALK_FRAMES_PER_PIXEL = 1 / 6
 
 CEILING_LAX = 2
@@ -3329,10 +3305,10 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         x += mantanoid_stand_sprite.origin_x
         y += mantanoid_stand_sprite.origin_y
         kwargs["sprite"] = mantanoid_stand_sprite
-        kwargs["bbox_x"] = MANTANOID_BBOX_X
-        kwargs["bbox_y"] = MANTANOID_BBOX_Y
-        kwargs["bbox_width"] = MANTANOID_BBOX_WIDTH
-        kwargs["bbox_height"] = MANTANOID_BBOX_HEIGHT
+        kwargs["bbox_x"] = hlib.MANTANOID_BBOX_X
+        kwargs["bbox_y"] = hlib.MANTANOID_BBOX_Y
+        kwargs["bbox_width"] = hlib.MANTANOID_BBOX_WIDTH
+        kwargs["bbox_height"] = hlib.MANTANOID_BBOX_HEIGHT
         kwargs["regulate_origin"] = True
         super().__init__(x, y, **kwargs)
         self.hiding = hiding
@@ -3418,8 +3394,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 xv *= -1
 
             self.set_direction(xv)
-            self.movement_speed = MANTANOID_WANDER_SPEED * abs(xv)
-            self.alarms["move_lock"] = MANTANOID_WANDER_INTERVAL
+            self.movement_speed = hlib.MANTANOID_WANDER_SPEED * abs(xv)
+            self.alarms["move_lock"] = hlib.MANTANOID_WANDER_INTERVAL
 
     def log_action_result(self, action, success):
         ai_data.setdefault(action, [0, 0])
@@ -3592,13 +3568,13 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     def action_approach(self):
         self.hiding = False
         if self.target is not None:
-            if self.movement_speed != MANTANOID_APPROACH_SPEED:
-                self.movement_speed = MANTANOID_APPROACH_SPEED
+            if self.movement_speed != hlib.MANTANOID_APPROACH_SPEED:
+                self.movement_speed = hlib.MANTANOID_APPROACH_SPEED
                 if not self.has_approached:
                     self.has_approached = True
                     play_sound(mantanoid_approach_sound, self.x, self.y)
 
-            self.alarms["action_lock"] = MANTANOID_APPROACH_INTERVAL
+            self.alarms["action_lock"] = hlib.MANTANOID_APPROACH_INTERVAL
 
     def action_slash(self):
         self.hiding = False
@@ -3631,8 +3607,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                     and not self.target.collision(MantanoidNoGo)):
                 xdist = abs(self.target.x - self.x)
                 ydist = abs(self.target.y - self.y)
-                if (xdist <= MANTANOID_SLASH_DISTANCE
-                        and ydist <= MANTANOID_LEVEL_DISTANCE):
+                if (xdist <= hlib.MANTANOID_SLASH_DISTANCE
+                        and ydist <= hlib.MANTANOID_LEVEL_DISTANCE):
                     action = self.action_slash
                 elif "action_lock" not in self.alarms:
                     if not self.hiding:
@@ -3658,7 +3634,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         else:
                             # Try a random action
                             action = self.get_spitball_action()
-                    elif ydist <= MANTANOID_LEVEL_DISTANCE:
+                    elif ydist <= hlib.MANTANOID_LEVEL_DISTANCE:
                         action = self.action_approach
 
         if action:
@@ -3671,8 +3647,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             if self.was_on_floor:
                 if self.xvelocity:
                     self.sprite = mantanoid_walk_sprite
-                    self.image_speed = abs(self.xvelocity
-                                           * MANTANOID_WALK_FRAMES_PER_PIXEL)
+                    self.image_speed = abs(
+                        self.xvelocity * hlib.MANTANOID_WALK_FRAMES_PER_PIXEL)
                 else:
                     self.sprite = mantanoid_stand_sprite
                     if random.random() < 1 / (2*hlib.FPS):
@@ -3782,9 +3758,9 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.set_image()
             if self.was_on_floor and (self.get_bottom_touching_wall()
                                       or self.get_bottom_touching_slope()):
-                self.xvelocity = math.copysign(MANTANOID_APPROACH_SPEED,
+                self.xvelocity = math.copysign(hlib.MANTANOID_APPROACH_SPEED,
                                                self.image_xscale)
-                self.yvelocity = get_jump_speed(MANTANOID_HOP_HEIGHT,
+                self.yvelocity = get_jump_speed(hlib.MANTANOID_HOP_HEIGHT,
                                                 self.gravity)
         if self.action == "jump":
             self.action = None
@@ -3792,21 +3768,21 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             self.set_image()
             if self.was_on_floor and (self.get_bottom_touching_wall()
                                       or self.get_bottom_touching_slope()):
-                self.xvelocity = math.copysign(MANTANOID_APPROACH_SPEED,
+                self.xvelocity = math.copysign(hlib.MANTANOID_APPROACH_SPEED,
                                                self.image_xscale)
-                self.yvelocity = get_jump_speed(MANTANOID_JUMP_HEIGHT,
+                self.yvelocity = get_jump_speed(hlib.MANTANOID_JUMP_HEIGHT,
                                                 self.gravity)
         elif self.action == "slash":
             hit_target = False
 
-            w = MANTANOID_SLASH_BBOX_WIDTH
-            h = MANTANOID_SLASH_BBOX_HEIGHT
+            w = hlib.MANTANOID_SLASH_BBOX_WIDTH
+            h = hlib.MANTANOID_SLASH_BBOX_HEIGHT
             if self.image_xscale > 0:
-                x = self.x + MANTANOID_SLASH_BBOX_X
-                y = self.y + MANTANOID_SLASH_BBOX_Y
+                x = self.x + hlib.MANTANOID_SLASH_BBOX_X
+                y = self.y + hlib.MANTANOID_SLASH_BBOX_Y
             else:
-                x = self.x - MANTANOID_SLASH_BBOX_X - w
-                y = self.y - MANTANOID_SLASH_BBOX_Y - h
+                x = self.x - hlib.MANTANOID_SLASH_BBOX_X - w
+                y = self.y - hlib.MANTANOID_SLASH_BBOX_Y - h
 
             for other in sge.collision.rectangle(x, y, w, h):
                 if isinstance(other, Player):
@@ -3820,8 +3796,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
             if self.target is not None and not hit_target:
                 xdist = abs(self.target.x - self.x)
                 ydist = abs(self.target.y - self.y)
-                if (ydist <= MANTANOID_LEVEL_DISTANCE
-                        and xdist <= MANTANOID_SLASH2_DISTANCE):
+                if (ydist <= hlib.MANTANOID_LEVEL_DISTANCE
+                        and xdist <= hlib.MANTANOID_SLASH2_DISTANCE):
                     double = True
 
             play_sound(mantanoid_slash_sound, self.x, self.y)
@@ -3834,16 +3810,16 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.sprite = mantanoid_slash_single_sprite
                 self.action = "animation"
         elif self.action == "doubleslash":
-            self.move_x(MANTANOID_DOUBLESLASH_OFFSET * self.image_xscale)
+            self.move_x(hlib.MANTANOID_DOUBLESLASH_OFFSET * self.image_xscale)
 
-            w = MANTANOID_SLASH2_BBOX_WIDTH
-            h = MANTANOID_SLASH2_BBOX_HEIGHT
+            w = hlib.MANTANOID_SLASH2_BBOX_WIDTH
+            h = hlib.MANTANOID_SLASH2_BBOX_HEIGHT
             if self.image_xscale > 0:
-                x = self.x + MANTANOID_SLASH2_BBOX_X
-                y = self.y + MANTANOID_SLASH2_BBOX_Y
+                x = self.x + hlib.MANTANOID_SLASH2_BBOX_X
+                y = self.y + hlib.MANTANOID_SLASH2_BBOX_Y
             else:
-                x = self.x - MANTANOID_SLASH2_BBOX_X - w
-                y = self.y - MANTANOID_SLASH2_BBOX_Y - h
+                x = self.x - hlib.MANTANOID_SLASH2_BBOX_X - w
+                y = self.y - hlib.MANTANOID_SLASH2_BBOX_Y - h
 
             for other in sge.collision.rectangle(x, y, w, h):
                 if isinstance(other, Player):
@@ -6969,7 +6945,7 @@ mantanoid_slash_double_first_sprite = sge.gfx.Sprite.from_tileset(
     fps=10)
 mantanoid_slash_double_second_sprite = sge.gfx.Sprite.from_tileset(
     fname, 489, 551, 3, xsep=3, width=61, height=65,
-    origin_x=(15 + MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=10)
+    origin_x=(15 + hlib.MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=10)
 
 fname = os.path.join(d, "awesomepossum.png")
 awesomepossum_stand_sprite = sge.gfx.Sprite.from_tileset(

@@ -226,7 +226,8 @@ class Game(sge.dsp.Game):
             self.project_text(font_small, self.fps_text, self.width - 8,
                               self.height - 8, z=1000000,
                               color=sge.gfx.Color("yellow"), halign="right",
-                              valign="bottom")
+                              valign="bottom", outline=sge.gfx.Color("black"),
+                              outline_thickness=1)
 
     def event_key_press(self, key, char):
         if key == "f7":
@@ -343,7 +344,9 @@ class Level(sge.dsp.Room):
                 sge.game.project_text(font, self.status_text,
                                       sge.game.width / 2, sge.game.height - 16,
                                       color=sge.gfx.Color("white"),
-                                      halign="center", valign="middle")
+                                      halign="center", valign="middle",
+                                      outline=sge.gfx.Color("black"),
+                                      outline_thickness=1)
                 self.status_text = None
 
     def shake(self, num=1):
@@ -573,13 +576,15 @@ class Level(sge.dsp.Room):
             if sge.game.current_room is not None:
                 x = sge.game.width / 2
                 y = sge.game.height / 2
-                w = font.get_width(text) + 32
-                h = font.get_height(text) + 32
+                w = font.get_width(text, outline_thickness=1) + 32
+                h = font.get_height(text, outline_thickness=1) + 32
                 sge.game.project_rectangle(x - w/2, y - h/2, w, h,
                                            fill=sge.gfx.Color("black"))
                 sge.game.project_text(font, text, x, y,
                                       color=sge.gfx.Color("white"),
-                                      halign="center", valign="middle")
+                                      halign="center", valign="middle",
+                                      outline=sge.gfx.Color("black"),
+                                      outline_thickness=1)
                 sge.game.refresh()
             else:
                 print(_("Loading \"{}\"…").format(fname))
@@ -639,7 +644,8 @@ class CreditsScreen(SpecialScreen):
             if "title" in section:
                 head_sprite = sge.gfx.Sprite.from_text(
                     font_big, section["title"], width=self.width,
-                    color=sge.gfx.Color("white"), halign="center")
+                    color=sge.gfx.Color("white"), halign="center",
+                    outline=sge.gfx.Color("black"), outline_thickness=1)
                 x = self.width / 2
                 y = self.sections[-1].bbox_bottom + font_big.size*3
                 head_section = sge.dsp.Object.create(x, y, sprite=head_sprite,
@@ -650,7 +656,8 @@ class CreditsScreen(SpecialScreen):
                 for line in section["lines"]:
                     list_sprite = sge.gfx.Sprite.from_text(
                         font, line, width=self.width - 2*hlib.TILE_SIZE,
-                        color=sge.gfx.Color("white"), halign="center")
+                        color=sge.gfx.Color("white"), halign="center",
+                        outline=sge.gfx.Color("black"), outline_thickness=1)
                     x = self.width / 2
                     y = self.sections[-1].bbox_bottom + font.size
                     list_section = sge.dsp.Object.create(
@@ -4949,7 +4956,10 @@ class Menu(xsge_gui.MenuWindow):
                 color_normal=menu_text_color,
                 color_selected=menu_text_selected_color,
                 background_color=menu_color, margin=4, halign="center",
-                valign="middle")
+                valign="middle", outline_normal=sge.gfx.Color("black"),
+                outline_selected=sge.gfx.Color("black"),
+                outline_thickness_normal=1, outline_thickness_selected=1,
+                selection_prefix="«", selection_suffix="»")
             default %= len(self.widgets)
             self.keyboard_focused_widget = self.widgets[default]
             self.show()
@@ -5515,7 +5525,10 @@ class ModalMenu(xsge_gui.MenuDialog):
                 color_normal=menu_text_color,
                 color_selected=menu_text_selected_color,
                 background_color=menu_color, margin=9, halign="center",
-                valign="middle")
+                valign="middle", outline_normal=sge.gfx.Color("black"),
+                outline_selected=sge.gfx.Color("black"),
+                outline_thickness_normal=1, outline_thickness_selected=1,
+                selection_prefix="«", selection_suffix="»")
             default %= len(self.widgets)
             self.keyboard_focused_widget = self.widgets[default]
             sge.game.refresh()
@@ -5543,7 +5556,10 @@ class PauseMenu(ModalMenu):
             items, font_normal=font, color_normal=menu_text_color,
             color_selected=menu_text_selected_color,
             background_color=menu_color, margin=9, halign="center",
-            valign="middle")
+            valign="middle", outline_normal=sge.gfx.Color("black"),
+            outline_selected=sge.gfx.Color("black"),
+            outline_thickness_normal=1, outline_thickness_selected=1,
+            selection_prefix="«", selection_suffix="»")
         default %= len(self.widgets)
         self.keyboard_focused_widget = self.widgets[default]
         self.player_x = player_x
@@ -5809,7 +5825,8 @@ class DialogBox(xsge_gui.Dialog):
             portrait_h = 0
         label_w = max(1, width - portrait_w - x_padding)
         height = max(1, portrait_h + y_padding,
-                     font.get_height(text, width=label_w) + y_padding)
+                     font.get_height(text, width=label_w, outline_thickness=1)
+                         + y_padding)
         x = sge.game.width/2 - width/2
         y = sge.game.height/2 - height/2
         super().__init__(parent, x, y, width, height,
@@ -5938,7 +5955,9 @@ def wait_key(text):
                               sge.game.height / 2, width=sge.game.width,
                               height=sge.game.height,
                               color=sge.gfx.Color("white"),
-                              halign="center", valign="middle")
+                              halign="center", valign="middle",
+                              outline=sge.gfx.Color("black"),
+                              outline_thickness=1)
 
         # Refresh
         sge.game.refresh()
@@ -5975,7 +5994,9 @@ def wait_js(text):
                               sge.game.height / 2, width=sge.game.width,
                               height=sge.game.height,
                               color=sge.gfx.Color("white"),
-                              halign="center", valign="middle")
+                              halign="center", valign="middle",
+                              outline=sge.gfx.Color("black"),
+                              outline_thickness=1)
 
         # Refresh
         sge.game.refresh()
@@ -6585,7 +6606,7 @@ xsge_gui.default_font.size = 8
 xsge_gui.textbox_font.size = 8
 
 menu_color = sge.gfx.Color("black")
-menu_text_color = sge.gfx.Color((64, 0, 255))
+menu_text_color = sge.gfx.Color((128, 128, 255))
 menu_text_selected_color = sge.gfx.Color("white")
 
 print(_("Loading resources…"))
@@ -7031,17 +7052,14 @@ hlib.backgrounds["iridia"] = sge.gfx.Background(layers,
                                                 sge.gfx.Color((21, 17, 22)))
 
 # Load fonts
-chars = ([chr(i) for i in range(32, 127)] + [None, ETANK_CHAR] + [' ']*11
-         + [chr(i) for i in range(161, 384)])
-font = sge.gfx.Font.from_sprite(font_sprite, chars, size=9, hsep=-1)
-chars = [chr(i) for i in range(32, 127)] + [None]
-font_big = sge.gfx.Font.from_sprite(font_big_sprite, chars, size=14,
-                                    hsep=2, vsep=2)
-
-chars = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-             "0123456789.,;:?!-_~#\"'&()[]|`\\/@^+=*$\xa3\u20ac<>  ") + [None]
-font_small = sge.gfx.Font.from_sprite(font_small_sprite, chars, size=7,
-                                      hsep=-1)
+fname = os.path.join(hlib.datadir, "fonts",
+                     #/ File name under data/fonts for the font file to
+                     #/ use. Please change this if and only if the target
+                     #/ language cannot use the default font.
+                     gettext.pgettext("font_file", "Cabin-Bold.ttf"))
+font = sge.gfx.Font(fname, size=11)
+font_small = sge.gfx.Font(fname, size=9)
+font_big = sge.gfx.Font(fname, size=16)
 
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "shoot.wav"),

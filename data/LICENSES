@@ -446,6 +446,16 @@ Source: https://freesound.org/people/Gerent/sounds/558726/
 
 ------------------------------------------------------------------------
 
+fonts/Cabin-Bold.ttf
+
+Source: https://fonts.google.com/specimen/Cabin
+
+Copyright 2018 The Cabin Project Authors (https://github.com/impallari/Cabin.git)
+
+License: SIL OFL 1.1 (Full text found under fonts/Cabin-OFL.txt)
+
+------------------------------------------------------------------------
+
 locale/build.py
 locale/hexoshi.pot
 

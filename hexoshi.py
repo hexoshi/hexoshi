@@ -124,40 +124,13 @@ GEN_MAP = args.gen_map
 SAVE_MAP = args.save_map
 DIST_AI = args.dist_ai
 QUIT = args.quit
-GOD = (args.god and args.god.lower() == "inbailey")
+hlib.god = (args.god and args.god.lower() == "inbailey")
 
 if args.lang:
     lang = gettext.translation("hexoshi",
                                os.path.abspath(os.path.join(hlib.datadir, "locale")),
                                [args.lang])
     lang.install()
-
-SCORPION_WALK_FRAMES_PER_PIXEL = 1 / 6
-
-CEILING_LAX = 2
-
-CAMERA_STOPPED_THRESHOLD = 1
-CAMERA_STOPPED_HSPEED_MAX = 2
-CAMERA_HSPEED_FACTOR = 1 / 8
-CAMERA_VSPEED_FACTOR = 1 / 16
-CAMERA_OFFSET_FACTOR = 10
-CAMERA_MARGIN_TOP = 6 * hlib.TILE_SIZE
-CAMERA_MARGIN_BOTTOM = 6 * hlib.TILE_SIZE
-CAMERA_TARGET_MARGIN_BOTTOM = hlib.SCREEN_SIZE[1] / 2
-
-LIFE_FORCE_CHANCE = 0.25
-LIFE_FORCE_SPEED = 1
-LIFE_FORCE_HEAL = 5
-
-LIGHT_RANGE = 300
-
-SHAKE_FRAME_TIME = hlib.FPS / hlib.DELTA_MIN
-SHAKE_AMOUNT = 3
-
-MAP_CELL_WIDTH = 8
-MAP_CELL_HEIGHT = 8
-
-TEXT_SPEED = 1000
 
 SAVE_NSLOTS = 10
 MENU_MAX_ITEMS = 14
@@ -420,9 +393,9 @@ class Level(sge.dsp.Room):
 
         for view in self.views:
             for obj in self.get_objects_at(
-                    view.x - LIGHT_RANGE, view.y - LIGHT_RANGE,
-                    view.width + LIGHT_RANGE * 2,
-                    view.height + LIGHT_RANGE * 2):
+                    view.x - hlib.LIGHT_RANGE, view.y - hlib.LIGHT_RANGE,
+                    view.width + hlib.LIGHT_RANGE * 2,
+                    view.height + hlib.LIGHT_RANGE * 2):
                 if isinstance(obj, InteractiveObject):
                     if not self.disable_lights:
                         obj.project_light()
@@ -570,9 +543,9 @@ class Level(sge.dsp.Room):
         # Handle lighting
         for view in self.views:
             for obj in self.get_objects_at(
-                    view.x - LIGHT_RANGE, view.y - LIGHT_RANGE,
-                    view.width + LIGHT_RANGE*2,
-                    view.height + LIGHT_RANGE*2):
+                    view.x - hlib.LIGHT_RANGE, view.y - hlib.LIGHT_RANGE,
+                    view.width + hlib.LIGHT_RANGE*2,
+                    view.height + hlib.LIGHT_RANGE*2):
                 if isinstance(obj, InteractiveObject):
                     if not self.disable_lights:
                         obj.project_light()
@@ -583,13 +556,13 @@ class Level(sge.dsp.Room):
         if alarm_id == "shake_down":
             self.shake_queue -= 1
             for view in self.views:
-                view.yport += SHAKE_AMOUNT
-            self.alarms["shake_up"] = SHAKE_FRAME_TIME
+                view.yport += hlib.SHAKE_AMOUNT
+            self.alarms["shake_up"] = hlib.SHAKE_FRAME_TIME
         elif alarm_id == "shake_up":
             for view in self.views:
-                view.yport -= SHAKE_AMOUNT
+                view.yport -= hlib.SHAKE_AMOUNT
             if self.shake_queue:
-                self.alarms["shake_down"] = SHAKE_FRAME_TIME
+                self.alarms["shake_down"] = hlib.SHAKE_FRAME_TIME
         elif alarm_id == "death":
             self.die()
 
@@ -946,7 +919,7 @@ class Player(xsge_physics.Collider):
             return guides[0].x
         else:
             return (self.x - self.view.width/2
-                    + self.xvelocity*CAMERA_OFFSET_FACTOR)
+                    + self.xvelocity*hlib.CAMERA_OFFSET_FACTOR)
 
     @property
     def camera_target_y(self):
@@ -956,7 +929,7 @@ class Player(xsge_physics.Collider):
             return guides[0].y
         else:
             self.camera_guided_y = False
-            return self.y-self.view.height + CAMERA_TARGET_MARGIN_BOTTOM
+            return self.y-self.view.height + hlib.CAMERA_TARGET_MARGIN_BOTTOM
 
     @property
     def aim_lock(self):
@@ -1121,7 +1094,7 @@ class Player(xsge_physics.Collider):
     def hurt(self, damage=1, touching=False):
         if not self.hitstun and not self.invincible:
             play_sound(hurt_sound, self.x, self.y)
-            if not GOD:
+            if not hlib.god:
                 self.hp -= damage
 
             if self.hp <= 0:
@@ -1212,7 +1185,7 @@ class Player(xsge_physics.Collider):
                 map_s.draw_rectangle(0, 0, map_s.width, map_s.height, fill=c,
                                      blend_mode=sge.BLEND_RGBA_MULTIPLY)
 
-                x = hlib.SCREEN_SIZE[0] - start_x - w*MAP_CELL_WIDTH
+                x = hlib.SCREEN_SIZE[0] - start_x - w*hlib.MAP_CELL_WIDTH
                 y = start_y
                 self.hud_sprite.draw_sprite(map_s, 0, x, y)
                 self.hud_sprite.draw_rectangle(x, y, map_s.width, map_s.height,
@@ -1377,23 +1350,23 @@ class Player(xsge_physics.Collider):
             view_target_x = self.camera_target_x
             if abs(view_target_x - self.view.x) > 0.5:
                 camera_xvel = ((view_target_x-self.view.x)
-                               * CAMERA_HSPEED_FACTOR * delta_mult)
-                if abs(self.xvelocity) > CAMERA_STOPPED_THRESHOLD:
+                               * hlib.CAMERA_HSPEED_FACTOR * delta_mult)
+                if abs(self.xvelocity) > hlib.CAMERA_STOPPED_THRESHOLD:
                     self.view.x += camera_xvel
                 else:
-                    xvel_max = CAMERA_STOPPED_HSPEED_MAX * delta_mult
+                    xvel_max = hlib.CAMERA_STOPPED_HSPEED_MAX * delta_mult
                     self.view.x += max(-xvel_max, min(camera_xvel, xvel_max))
                         
             else:
                 self.view.x = view_target_x
 
-            view_min_y = self.y - self.view.height + CAMERA_MARGIN_BOTTOM
-            view_max_y = self.y - CAMERA_MARGIN_TOP
+            view_min_y = self.y - self.view.height + hlib.CAMERA_MARGIN_BOTTOM
+            view_max_y = self.y - hlib.CAMERA_MARGIN_TOP
 
             view_target_y = self.camera_target_y
             if abs(view_target_y - self.view.y) > 0.5:
                 self.view.y += ((view_target_y-self.view.y)
-                                * CAMERA_VSPEED_FACTOR * delta_mult)
+                                * hlib.CAMERA_VSPEED_FACTOR * delta_mult)
             else:
                 self.view.y = view_target_y
 
@@ -1528,7 +1501,7 @@ class Player(xsge_physics.Collider):
         top_touching = self.get_top_touching_wall()
 
         tmv = 0
-        for i in range(CEILING_LAX):
+        for i in range(hlib.CEILING_LAX):
             if (not self.get_left_touching_wall()
                     and not self.get_left_touching_slope()):
                 self.x -= 1
@@ -1540,7 +1513,7 @@ class Player(xsge_physics.Collider):
         else:
             self.x -= tmv
             tmv = 0
-            for i in range(CEILING_LAX):
+            for i in range(hlib.CEILING_LAX):
                 if (not self.get_left_touching_wall()
                         and not self.get_left_touching_slope()):
                     self.x += 1
@@ -2756,7 +2729,7 @@ class Enemy(InteractiveObject):
                                          self.shard_speed_max)
             shard.move_direction = random.randrange(360)
 
-        if random.random() < LIFE_FORCE_CHANCE:
+        if random.random() < hlib.LIFE_FORCE_CHANCE:
             LifeForce.create(self.image_xcenter, self.image_ycenter,
                              z=self.z - 0.1)
 
@@ -3238,7 +3211,7 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
             if self.xvelocity:
                 self.sprite = scorpion_walk_sprite
                 self.image_speed = (abs(self.xvelocity)
-                                    * SCORPION_WALK_FRAMES_PER_PIXEL)
+                                    * hlib.SCORPION_WALK_FRAMES_PER_PIXEL)
             else:
                 self.sprite = scorpion_stand_sprite
 
@@ -3880,13 +3853,13 @@ class LifeForce(InteractiveObject):
             if target is not None:
                 xvec = target.x - self.image_xcenter
                 yvec = max(target.y, target.bbox_top) - self.image_ycenter
-                self.speed = LIFE_FORCE_SPEED
+                self.speed = hlib.LIFE_FORCE_SPEED
                 self.move_direction = math.degrees(math.atan2(yvec, xvec))
             else:
                 self.speed = 0
 
     def touch(self, other):
-        other.hp += LIFE_FORCE_HEAL
+        other.hp += hlib.LIFE_FORCE_HEAL
         play_sound(heal_sound, other.x, other.y)
         self.destroy()
 
@@ -5690,8 +5663,8 @@ class MapDialog(xsge_gui.Dialog):
         if player_y is None:
             player_y = 0
 
-        xcells = int(sge.game.width / MAP_CELL_WIDTH)
-        ycells = int(sge.game.height / MAP_CELL_HEIGHT)
+        xcells = int(sge.game.width / hlib.MAP_CELL_WIDTH)
+        ycells = int(sge.game.height / hlib.MAP_CELL_HEIGHT)
         w = sge.game.width
         h = sge.game.height
         super().__init__(
@@ -5707,24 +5680,24 @@ class MapDialog(xsge_gui.Dialog):
             self.top = min(self.top, ry)
         player_x -= self.left
         player_y -= self.top
-        self.map.x = (xcells // 2 - player_x) * MAP_CELL_WIDTH
-        self.map.y = (ycells // 2 - player_y) * MAP_CELL_HEIGHT
+        self.map.x = (xcells // 2 - player_x) * hlib.MAP_CELL_WIDTH
+        self.map.y = (ycells // 2 - player_y) * hilb.MAP_CELL_HEIGHT
 
     def event_press_left(self):
         play_sound(select_sound)
-        self.map.x += MAP_CELL_WIDTH
+        self.map.x += hlib.MAP_CELL_WIDTH
 
     def event_press_right(self):
         play_sound(select_sound)
-        self.map.x -= MAP_CELL_WIDTH
+        self.map.x -= hlib.MAP_CELL_WIDTH
 
     def event_press_up(self):
         play_sound(select_sound)
-        self.map.y += MAP_CELL_HEIGHT
+        self.map.y += hlib.MAP_CELL_HEIGHT
 
     def event_press_down(self):
         play_sound(select_sound)
-        self.map.y -= MAP_CELL_HEIGHT
+        self.map.y -= hlib.MAP_CELL_HEIGHT
 
     def event_press_enter(self):
         play_sound(select_sound)
@@ -5757,22 +5730,22 @@ class TeleportDialog(MapDialog):
             self.left = min(self.left, rx)
             self.top = min(self.top, ry)
 
-        xcells = int(sge.game.width / MAP_CELL_WIDTH)
-        ycells = int(sge.game.height / MAP_CELL_HEIGHT)
-        self.location_indicator.x = (xcells//2) * MAP_CELL_WIDTH
-        self.location_indicator.y = (ycells//2) * MAP_CELL_HEIGHT
+        xcells = int(sge.game.width / hlib.MAP_CELL_WIDTH)
+        ycells = int(sge.game.height / hlib.MAP_CELL_HEIGHT)
+        self.location_indicator.x = (xcells//2) * hlib.MAP_CELL_WIDTH
+        self.location_indicator.y = (ycells//2) * hlib.MAP_CELL_HEIGHT
 
         self.update_selection()
 
     def update_selection(self):
         if self.selection[0] in map_rooms:
-            xcells = int(sge.game.width / MAP_CELL_WIDTH)
-            ycells = int(sge.game.height / MAP_CELL_HEIGHT)
+            xcells = int(sge.game.width / hlib.MAP_CELL_WIDTH)
+            ycells = int(sge.game.height / hlib.MAP_CELL_HEIGHT)
             x, y = map_rooms[self.selection[0]]
             x += self.selection[2] - self.left
             y += self.selection[3] - self.top
-            self.map.x = (xcells//2 - x) * MAP_CELL_WIDTH
-            self.map.y = (ycells//2 - y) * MAP_CELL_HEIGHT
+            self.map.x = (xcells//2 - x) * hlib.MAP_CELL_WIDTH
+            self.map.y = (ycells//2 - y) * hlib.MAP_CELL_HEIGHT
 
     def event_press_left(self):
         play_sound(select_sound)
@@ -5819,7 +5792,7 @@ class DialogLabel(xsge_gui.ProgressiveLabel):
 
 class DialogBox(xsge_gui.Dialog):
 
-    def __init__(self, parent, text, portrait=None, rate=TEXT_SPEED):
+    def __init__(self, parent, text, portrait=None, rate=hlib.TEXT_SPEED):
         width = sge.game.width / 2
         x_padding = 16
         y_padding = 16
@@ -6496,16 +6469,17 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
         if fname in map_rooms:
             rm_x, rm_y = map_rooms[fname]
             removed.append((obj, rm_x + ox, rm_y + oy))
-    s_w = w * MAP_CELL_WIDTH
-    s_h = h * MAP_CELL_HEIGHT
+    s_w = w * hlib.MAP_CELL_WIDTH
+    s_h = h * hlib.MAP_CELL_HEIGHT
     map_sprite = sge.gfx.Sprite(width=s_w, height=s_h)
     map_sprite.draw_rectangle(0, 0, s_w, s_h, fill=sge.gfx.Color("black"))
 
     for ex, ey in map_explored:
-        dx = (ex - x) * MAP_CELL_WIDTH
-        dy = (ey - y) * MAP_CELL_HEIGHT
-        map_sprite.draw_rectangle(dx, dy, MAP_CELL_WIDTH, MAP_CELL_HEIGHT,
-                                  fill=sge.gfx.Color((170, 68, 153)))
+        dx = (ex - x) * hlib.MAP_CELL_WIDTH
+        dy = (ey - y) * hlib.MAP_CELL_HEIGHT
+        map_sprite.draw_rectangle(
+            dx, dy, hlib.MAP_CELL_WIDTH, hlib.MAP_CELL_HEIGHT,
+            fill=sge.gfx.Color((170, 68, 153)))
 
     for ox, oy in set(map_objects) & set(map_revealed + map_explored):
         if x <= ox < x + w and y <= oy < y + h:
@@ -6514,8 +6488,8 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
                     removed.remove((obj, ox, oy))
                     continue
 
-                dx = (ox-x) * MAP_CELL_WIDTH
-                dy = (oy-y) * MAP_CELL_HEIGHT
+                dx = (ox-x) * hlib.MAP_CELL_WIDTH
+                dy = (oy-y) * hlib.MAP_CELL_HEIGHT
                 if obj == "wall_left":
                     map_sprite.draw_sprite(map_wall_left_sprite, 0, dx, dy)
                 elif obj == "wall_right":
@@ -6539,8 +6513,8 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
                     map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
 
     if player_x is not None and player_y is not None:
-        dx = (player_x - x) * MAP_CELL_WIDTH
-        dy = (player_y - y) * MAP_CELL_HEIGHT
+        dx = (player_x - x) * hlib.MAP_CELL_WIDTH
+        dy = (player_y - y) * hlib.MAP_CELL_HEIGHT
         map_sprite.draw_sprite(map_player_sprite, 0, dx, dy)
 
     return map_sprite
@@ -6736,7 +6710,7 @@ anneroy_bullet_dissipate_sprite = sge.gfx.Sprite.from_tileset(
     fname, 317, 102, 2, xsep=12, width=21, height=52, origin_x=12, origin_y=23,
     fps=10)
 
-if GOD:
+if hlib.god:
     asprites = [
         anneroy_turn_sprite,
         anneroy_teleport_sprite,

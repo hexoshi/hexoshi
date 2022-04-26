@@ -141,7 +141,7 @@ SOUND_CENTERED_RADIUS = 75
 SOUND_TILTED_RADIUS = 500
 SOUND_TILT_LIMIT = 0.75
 
-ETANK_CHAR = '\x80'
+ETANK_CHAR = '[]'
 
 scale_method = None
 sound_enabled = True

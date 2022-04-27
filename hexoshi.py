@@ -635,33 +635,31 @@ class CreditsScreen(SpecialScreen):
             sge.game.start_room.start()
 
     def event_key_press(self, key, char):
-        if key in itertools.chain.from_iterable(hlib.down_key):
+        if key in hlib.down_key:
             if "end" not in self.alarms:
                 for obj in self.sections:
                     obj.yvelocity -= 0.1
-        elif key in itertools.chain.from_iterable(hlib.up_key):
+        elif key in hlib.up_key:
             if "end" not in self.alarms:
                 for obj in self.sections:
                     obj.yvelocity += 0.1
-        elif (key in itertools.chain.from_iterable(hlib.jump_key)
-              or key in itertools.chain.from_iterable(hlib.shoot_key)
-              or key in itertools.chain.from_iterable(hlib.pause_key)):
+        elif (key in hlib.jump_key or key in hlib.shoot_key
+              or key in hlib.secondary_key or key in hlib.pause_key):
             sge.game.start_room.start()
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
         js = (js_id, input_type, input_id)
         if value >= hlib.joystick_threshold:
-            if js in itertools.chain.from_iterable(hlib.down_js):
+            if js in hlib.down_js:
                 if "end" not in self.alarms:
                     for obj in self.sections:
                         obj.yvelocity -= 0.1
-            elif js in itertools.chain.from_iterable(hlib.up_js):
+            elif js in hlib.up_js:
                 if "end" not in self.alarms:
                     for obj in self.sections:
                         obj.yvelocity += 0.1
-            elif (js in itertools.chain.from_iterable(hlib.jump_js)
-                  or js in itertools.chain.from_iterable(hlib.shoot_js)
-                  or js in itertools.chain.from_iterable(hlib.pause_js)):
+            elif (js in hlib.jump_js or js in hlib.shoot_js
+                  or js in hlib.secondary_js or js in hlib.pause_js):
                 sge.game.start_room.start()
 
 
@@ -930,7 +928,6 @@ class Player(xsge_physics.Collider):
         self.invincible = False
         self.facing = 1
         self.has_jumped = False
-        self.current_mode = None
         self.rolling = False
         self.aim_direction = None
         self.aim_direction_time = 0
@@ -963,11 +960,10 @@ class Player(xsge_physics.Collider):
         self.down_pressed = False
         self.jump_pressed = False
         self.shoot_pressed = False
+        self.secondary_pressed = False
         self.aim_diag_pressed = False
         self.aim_up_pressed = False
         self.aim_down_pressed = False
-        self.mode_pressed = False
-        self.mode_reset_pressed = False
 
     def refresh_input(self):
         if self.input_lock or not self.human:
@@ -975,21 +971,20 @@ class Player(xsge_physics.Collider):
 
         key_controls = [hlib.left_key, hlib.right_key, hlib.up_key,
                         hlib.down_key, hlib.aim_diag_key, hlib.jump_key,
-                        hlib.shoot_key, hlib.aim_up_key, hlib.aim_down_key,
-                        hlib.mode_key, hlib.mode_reset_key]
+                        hlib.shoot_key, hlib.secondary_key, hlib.aim_up_key,
+                        hlib.aim_down_key]
         js_controls = [hlib.left_js, hlib.right_js, hlib.up_js, hlib.down_js,
                        hlib.aim_diag_js, hlib.jump_js, hlib.shoot_js,
-                       hlib.aim_up_js, hlib.aim_down_js, hlib.mode_js,
-                       hlib.mode_reset_js]
+                       hlib.secondary_js, hlib.aim_up_js, hlib.aim_down_js]
         states = [0 for i in key_controls]
 
-        for i in range(len(key_controls)):
-            for choice in key_controls[i][self.player]:
+        for i, control in enumerate(key_controls):
+            for choice in control:
                 value = sge.keyboard.get_pressed(choice)
                 states[i] = max(states[i], value)
 
-        for i in range(len(js_controls)):
-            for choice in js_controls[i][self.player]:
+        for i, control in enumerate(js_controls):
+            for choice in control:
                 j, t, c = choice
                 value = min(sge.joystick.get_value(j, t, c), 1)
                 if value >= hlib.joystick_threshold:
@@ -997,8 +992,8 @@ class Player(xsge_physics.Collider):
 
         (self.left_pressed, self.right_pressed, self.up_pressed,
          self.down_pressed, self.aim_diag_pressed, self.jump_pressed,
-         self.shoot_pressed, self.aim_up_pressed, self.aim_down_pressed,
-         self.mode_pressed, self.mode_reset_pressed) = states
+         self.shoot_pressed, self.secondary_pressed, self.aim_up_pressed,
+         self.aim_down_pressed) = states
 
     def press_up(self):
         if not self.aim_diag_pressed:
@@ -1029,30 +1024,11 @@ class Player(xsge_physics.Collider):
     def shoot_release(self):
         pass
 
-    def mode(self):
-        all_modes = [None, "compress"]
-        if self.current_mode in all_modes:
-            i = all_modes.index(self.current_mode)
-            while True:
-                i += 1
+    def secondary(self):
+        pass
 
-                if i >= len(all_modes):
-                    self.current_mode = None
-                    break
-                elif (all_modes[i] == "compress" and
-                        "atomic_compressor" in progress_flags):
-                    self.current_mode = all_modes[i]
-                    break
-        else:
-            self.current_mode = None
-
-        self.update_hud()
-        play_sound(type_sound)
-
-    def mode_reset(self):
-        self.current_mode = None
-        self.update_hud()
-        play_sound(cancel_sound)
+    def secondary_release(self):
+        pass
 
     def hurt(self, damage=1, touching=False):
         if not self.hitstun and not self.invincible:
@@ -1121,12 +1097,6 @@ class Player(xsge_physics.Collider):
 
                 x += w
 
-            # Mode image
-            x = start_x
-            y += 12
-            if self.current_mode == "compress":
-                self.hud_sprite.draw_sprite(atomic_compressor_sprite, 0, x, y)
-
             if "map" in progress_flags:
                 w = 7
                 h = 5
@@ -1163,7 +1133,7 @@ class Player(xsge_physics.Collider):
                 room = sge.game.current_room
                 if (room.timeline_skip_target is not None and
                         room.timeline_step < room.timeline_skip_target):
-                    room.status_text = _("Press the Menu button to skip...")
+                    room.status_text = _("Press the Menu button to skip…")
                 else:
                     room.status_text = _("Cinematic mode enabled")
 
@@ -1377,69 +1347,66 @@ class Player(xsge_physics.Collider):
 
     def event_key_press(self, key, char):
         if self.human and not self.input_lock:
-            if key in hlib.up_key[self.player] and not self.up_pressed:
+            if key in hlib.up_key and not self.up_pressed:
                 self.press_up()
-            if key in hlib.down_key[self.player] and not self.down_pressed:
+            if key in hlib.down_key and not self.down_pressed:
                 self.press_down()
-            if key in hlib.jump_key[self.player] and not self.jump_pressed:
+            if key in hlib.jump_key and not self.jump_pressed:
                 self.jump()
-            if key in hlib.shoot_key[self.player] and not self.shoot_pressed:
+            if key in hlib.shoot_key and not self.shoot_pressed:
                 self.shoot()
-            if key in hlib.mode_key[self.player] and not self.mode_pressed:
-                self.mode()
-            if (key in hlib.mode_reset_key[self.player] and
-                    not self.mode_reset_pressed):
-                self.mode_reset()
-            if key in hlib.map_key[self.player]:
+            if (key in hlib.secondary_key and not self.secondary_pressed):
+                self.secondary()
+            if key in hlib.map_key:
                 if "map" in progress_flags:
                     play_sound(select_sound)
                     MapDialog(self.last_xr, self.last_yr).show()
 
         if not isinstance(sge.game.current_room, SpecialScreen):
-            if key == "escape" or key in hlib.pause_key[self.player]:
+            if key == "escape" or key in hlib.pause_key:
                 sge.game.current_room.pause(player_x=self.last_xr,
                                             player_y=self.last_yr)
 
     def event_key_release(self, key):
         if self.human and not self.input_lock:
-            if key in hlib.jump_key[self.player]:
+            if key in hlib.jump_key:
                 self.jump_release()
-            if key in hlib.shoot_key[self.player]:
+            if key in hlib.shoot_key:
                 self.shoot_release()
-            elif (key in hlib.up_key[self.player]
-                  or key in hlib.down_key[self.player]):
+            if key in hlib.secondary_key:
+                self.secondary_release()
+            if (key in hlib.up_key or key in hlib.down_key):
                 self.aim_lock = False
 
     def event_joystick(self, js_name, js_id, input_type, input_id, value):
         js = (js_id, input_type, input_id)
         if self.human and not self.input_lock:
             if value >= hlib.joystick_threshold:
-                if js in hlib.up_js[self.player] and not self.up_pressed:
+                if js in hlib.up_js and not self.up_pressed:
                     self.press_up()
-                if js in hlib.down_js[self.player] and not self.down_pressed:
+                if js in hlib.down_js and not self.down_pressed:
                     self.press_down()
-                if js in hlib.jump_js[self.player] and not self.jump_pressed:
+                if js in hlib.jump_js and not self.jump_pressed:
                     self.jump()
-                if js in hlib.shoot_js[self.player] and not self.shoot_pressed:
+                if js in hlib.shoot_js and not self.shoot_pressed:
                     self.shoot()
-                if js in hlib.mode_js[self.player] and not self.mode_pressed:
-                    self.mode()
-                if (js in hlib.mode_reset_js[self.player] and
-                        not self.mode_reset_pressed):
-                    self.mode_reset()
-                if js in hlib.map_js[self.player]:
+                if js in hlib.secondary_js and not self.secondary_pressed:
+                    self.secondary()
+                if js in hlib.map_js:
                     if "map" in progress_flags:
                         play_sound(select_sound)
                         MapDialog(self.last_xr, self.last_yr).show()
             else:
-                if js in hlib.jump_js[self.player]:
+                if js in hlib.jump_js:
                     self.jump_release()
-                if js in hlib.shoot_js[self.player]:
+                if js in hlib.shoot_js:
                     self.shoot_release()
+                if js in hlib.secondary_js:
+                    self.secondary_release()
 
         if not isinstance(sge.game.current_room, SpecialScreen):
             if (value >= hlib.joystick_threshold
-                    and js in hlib.pause_js[self.player]):
+                    and js in hlib.pause_js):
                 sge.game.current_room.pause(player_x=self.last_xr,
                                             player_y=self.last_yr)
 
@@ -1950,14 +1917,7 @@ class Anneroy(Player):
             play_sound(shoot_sound, xdest, ydest)
 
     def shoot(self):
-        if self.current_mode == "compress":
-            if not self.shoot_pressed:
-                if self.ball:
-                    self.shoot_default()
-                else:
-                    self.compress()
-        else:
-            self.shoot_default()
+        self.shoot_default()
 
     def shoot_release(self):
         if self.hedgehog and not self.hedgehog_autocancel:
@@ -1965,6 +1925,10 @@ class Anneroy(Player):
                 self.hedgehog_autocancel = True
             elif "hedgehog_lock" not in self.alarms:
                 self.retract_spikes()
+
+    def secondary(self):
+        # Secondary weapons not implemented yet.
+        play_sound(cancel_sound)
 
     def compress(self):
         if "atomic_compressor" in progress_flags and not self.shoot_pressed:
@@ -5131,55 +5095,38 @@ class OptionsMenu(Menu):
 
 class KeyboardMenu(Menu):
 
-    page = 0
-
     @classmethod
-    def create_page(cls, default=0, page=0):
-        page %= min(len(hlib.left_key), len(hlib.right_key), len(hlib.up_key),
-                    len(hlib.down_key), len(hlib.jump_key), len(hlib.shoot_key),
-                    len(hlib.aim_diag_key), len(hlib.aim_up_key),
-                    len(hlib.aim_down_key), len(hlib.mode_reset_key),
-                    len(hlib.mode_key), len(hlib.pause_key), len(hlib.map_key))
-
+    def create_page(cls, default=0):
         def format_key(key):
             if key:
                 return " ".join(key)
             else:
                 return None
 
-        cls.items = [_("Player {}").format(page + 1),
-                     _("Left: {}").format(format_key(hlib.left_key[page])),
-                     _("Right: {}").format(format_key(hlib.right_key[page])),
-                     _("Up: {}").format(format_key(hlib.up_key[page])),
-                     _("Down: {}").format(format_key(hlib.down_key[page])),
-                     _("Jump: {}").format(format_key(hlib.jump_key[page])),
-                     _("Shoot: {}").format(format_key(hlib.shoot_key[page])),
-                     _("Aim Diagonal: {}").format(
-                         format_key(hlib.aim_diag_key[page])),
-                     _("Aim Up: {}").format(format_key(hlib.aim_up_key[page])),
-                     _("Aim Down: {}").format(
-                         format_key(hlib.aim_down_key[page])),
-                     _("Reset Mode: {}").format(
-                         format_key(hlib.mode_reset_key[page])),
-                     _("Mode: {}").format(format_key(hlib.mode_key[page])),
-                     _("Pause: {}").format(format_key(hlib.pause_key[page])),
-                     _("Map: {}").format(format_key(hlib.map_key[page])),
-                     _("Back")]
+        cls.items = [
+            _("Left: {}").format(format_key(hlib.left_key)),
+            _("Right: {}").format(format_key(hlib.right_key)),
+            _("Up: {}").format(format_key(hlib.up_key)),
+            _("Down: {}").format(format_key(hlib.down_key)),
+            _("Jump: {}").format(format_key(hlib.jump_key)),
+            _("Shoot: {}").format(format_key(hlib.shoot_key)),
+            _("Secondary: {}").format(format_key(hlib.secondary_key)),
+            _("Aim Diagonal: {}").format(format_key(hlib.aim_diag_key)),
+            _("Aim Up: {}").format(format_key(hlib.aim_up_key)),
+            _("Aim Down: {}").format(format_key(hlib.aim_down_key)),
+            _("Pause: {}").format(format_key(hlib.pause_key)),
+            _("Map: {}").format(format_key(hlib.map_key)),
+            _("Back")]
         self = cls.create(default)
-        self.page = page
         return self
 
     def event_choose(self):
         def bind_key(key, new_key, self=self):
             for other_key in [
-                    hlib.left_key[self.page], hlib.right_key[self.page],
-                    hlib.up_key[self.page], hlib.down_key[self.page],
-                    hlib.jump_key[self.page], hlib.shoot_key[self.page],
-                    hlib.aim_diag_key[self.page], hlib.aim_up_key[self.page],
-                    hlib.aim_down_key[self.page],
-                    hlib.mode_reset_key[self.page],
-                    hlib.mode_key[self.page], hlib.pause_key[self.page],
-                    hlib.map_key[self.page]]:
+                    hlib.left_key, hlib.right_key, hlib.up_key, hlib.down_key,
+                    hlib.jump_key, hlib.shoot_key, hlib.secondary_key,
+                    hlib.aim_diag_key, hlib.aim_up_key, hlib.aim_down_key,
+                    hlib.pause_key, hlib.map_key]:
                 if new_key in other_key:
                     other_key.remove(new_key)
 
@@ -5191,112 +5138,101 @@ class KeyboardMenu(Menu):
                  "Escape key to cancel.")
 
         if self.choice == 0:
-            play_sound(select_sound)
-            self.__class__.create_page(default=self.choice, page=(self.page + 1))
+            k = wait_key(text)
+            if k is not None:
+                bind_key(hlib.left_key, k)
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 1:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.left_key[self.page], k)
+                bind_key(hlib.right_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 2:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.right_key[self.page], k)
+                bind_key(hlib.up_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 3:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.up_key[self.page], k)
+                bind_key(hlib.down_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 4:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.down_key[self.page], k)
+                bind_key(hlib.jump_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 5:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.jump_key[self.page], k)
+                bind_key(hlib.shoot_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 6:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.shoot_key[self.page], k)
+                bind_key(hlib.secondary_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 7:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.aim_diag_key[self.page], k)
+                bind_key(hlib.aim_diag_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 8:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.aim_up_key[self.page], k)
+                bind_key(hlib.aim_up_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 9:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.aim_down_key[self.page], k)
+                bind_key(hlib.aim_down_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 10:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.mode_reset_key[self.page], k)
+                bind_key(hlib.pause_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 11:
             k = wait_key(text)
             if k is not None:
-                bind_key(hlib.mode_key[self.page], k)
+                bind_key(hlib.map_key, k)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 12:
-            k = wait_key(text)
-            if k is not None:
-                bind_key(hlib.pause_key[self.page], k)
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 13:
-            k = wait_key(text)
-            if k is not None:
-                bind_key(hlib.map_key[self.page], k)
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         else:
             play_sound(cancel_sound)
             OptionsMenu.create_page(default=5)
@@ -5304,16 +5240,8 @@ class KeyboardMenu(Menu):
 
 class JoystickMenu(Menu):
 
-    page = 0
-
     @classmethod
-    def create_page(cls, default=0, page=0):
-        page %= min(len(hlib.left_js), len(hlib.right_js), len(hlib.up_js),
-                    len(hlib.down_js), len(hlib.jump_js), len(hlib.shoot_js),
-                    len(hlib.aim_diag_js), len(hlib.aim_up_js),
-                    len(hlib.aim_down_js), len(hlib.mode_reset_js),
-                    len(hlib.mode_js), len(hlib.pause_js), len(hlib.map_js))
-
+    def create_page(cls, default=0):
         def format_js(js):
             js_template = "{},{},{}"
             sL = []
@@ -5324,38 +5252,30 @@ class JoystickMenu(Menu):
             else:
                 return _("None")
 
-        cls.items = [_("Player {}").format(page + 1),
-                     _("Left: {}").format(format_js(hlib.left_js[page])),
-                     _("Right: {}").format(format_js(hlib.right_js[page])),
-                     _("Up: {}").format(format_js(hlib.up_js[page])),
-                     _("Down: {}").format(format_js(hlib.down_js[page])),
-                     _("Jump: {}").format(format_js(hlib.jump_js[page])),
-                     _("Shoot: {}").format(format_js(hlib.shoot_js[page])),
-                     _("Aim Diagonal: {}").format(
-                         format_js(hlib.aim_diag_js[page])),
-                     _("Aim Up: {}").format(format_js(hlib.aim_up_js[page])),
-                     _("Aim Down: {}").format(
-                         format_js(hlib.aim_down_js[page])),
-                     _("Reset Mode: {}").format(
-                         format_js(hlib.mode_reset_js[page])),
-                     _("Mode: {}").format(format_js(hlib.mode_js[page])),
-                     _("Pause: {}").format(format_js(hlib.pause_js[page])),
-                     _("Map: {}").format(format_js(hlib.map_js[page])),
-                     _("Back")]
+        cls.items = [
+            _("Left: {}").format(format_js(hlib.left_js)),
+            _("Right: {}").format(format_js(hlib.right_js)),
+            _("Up: {}").format(format_js(hlib.up_js)),
+            _("Down: {}").format(format_js(hlib.down_js)),
+            _("Jump: {}").format(format_js(hlib.jump_js)),
+            _("Shoot: {}").format(format_js(hlib.shoot_js)),
+            _("Secondary: {}").format(format_js(hlib.secondary_js)),
+            _("Aim Diagonal: {}").format(format_js(hlib.aim_diag_js)),
+            _("Aim Up: {}").format(format_js(hlib.aim_up_js)),
+            _("Aim Down: {}").format(format_js(hlib.aim_down_js)),
+            _("Pause: {}").format(format_js(hlib.pause_js)),
+            _("Map: {}").format(format_js(hlib.map_js)),
+            _("Back")]
         self = cls.create(default)
-        self.page = page
         return self
 
     def event_choose(self):
         def bind_js(js, new_js, self=self):
             for other_js in [
-                    hlib.left_js[self.page], hlib.right_js[self.page],
-                    hlib.up_js[self.page], hlib.down_js[self.page],
-                    hlib.jump_js[self.page], hlib.shoot_js[self.page],
-                    hlib.aim_diag_js[self.page], hlib.aim_up_js[self.page],
-                    hlib.aim_down_js[self.page], hlib.mode_reset_js[self.page],
-                    hlib.mode_js[self.page], hlib.pause_js[self.page],
-                    hlib.map_js[self.page]]:
+                    hlib.left_js, hlib.right_js, hlib.up_js, hlib.down_js,
+                    hlib.jump_js, hlib.shoot_js, hlib.secondary_js,
+                    hlib.aim_diag_js, hlib.aim_up_js, hlib.aim_down_js,
+                    hlib.pause_js, hlib.map_js]:
                 if new_js in other_js:
                     other_js.remove(new_js)
 
@@ -5367,112 +5287,101 @@ class JoystickMenu(Menu):
                  "to bind to this function, or the Escape key to cancel.")
 
         if self.choice == 0:
-            play_sound(select_sound)
-            self.__class__.create_page(default=self.choice, page=self.page + 1)
+            js = wait_js(text)
+            if js is not None:
+                bind_js(hlib.left_js, js)
+                play_sound(confirm_sound)
+            else:
+                play_sound(cancel_sound)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 1:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.left_js[self.page], js)
+                bind_js(hlib.right_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 2:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.right_js[self.page], js)
+                bind_js(hlib.up_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 3:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.up_js[self.page], js)
+                bind_js(hlib.down_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 4:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.down_js[self.page], js)
+                bind_js(hlib.jump_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 5:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.jump_js[self.page], js)
+                bind_js(hlib.shoot_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 6:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.shoot_js[self.page], js)
+                bind_js(hlib.secondary_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 7:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.aim_diag_js[self.page], js)
+                bind_js(hlib.aim_diag_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 8:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.aim_up_js[self.page], js)
+                bind_js(hlib.aim_up_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 9:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.aim_down_js[self.page], js)
+                bind_js(hlib.aim_down_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 10:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.mode_reset_js[self.page], js)
+                bind_js(hlib.pause_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         elif self.choice == 11:
             js = wait_js(text)
             if js is not None:
-                bind_js(hlib.mode_js[self.page], js)
+                bind_js(hlib.map_js, js)
                 play_sound(confirm_sound)
             else:
                 play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 12:
-            js = wait_js(text)
-            if js is not None:
-                bind_js(hlib.pause_js[self.page], js)
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
-        elif self.choice == 13:
-            js = wait_js(text)
-            if js is not None:
-                bind_js(hlib.map_js[self.page], js)
-                play_sound(confirm_sound)
-            else:
-                play_sound(cancel_sound)
-            self.__class__.create_page(default=self.choice, page=self.page)
+            self.__class__.create_page(default=self.choice)
         else:
             play_sound(cancel_sound)
             OptionsMenu.create_page(default=6)
@@ -5668,7 +5577,7 @@ class MapDialog(xsge_gui.Dialog):
         player_x -= self.left
         player_y -= self.top
         self.map.x = (xcells // 2 - player_x) * hlib.MAP_CELL_WIDTH
-        self.map.y = (ycells // 2 - player_y) * hilb.MAP_CELL_HEIGHT
+        self.map.y = (ycells // 2 - player_y) * hlib.MAP_CELL_HEIGHT
 
     def event_press_left(self):
         play_sound(select_sound)
@@ -6117,19 +6026,17 @@ def write_to_disk():
     keys_cfg = {"left": hlib.left_key, "right": hlib.right_key,
                 "up": hlib.up_key, "down": hlib.down_key,
                 "aim_diag": hlib.aim_diag_key, "jump": hlib.jump_key,
-                "shoot": hlib.shoot_key, "aim_up": hlib.aim_up_key,
-                "aim_down": hlib.aim_down_key,
-                "mode_reset": hlib.mode_reset_key,
-                "mode": hlib.mode_key, "pause": hlib.pause_key,
-                "map": hlib.map_key}
+                "shoot": hlib.shoot_key, "secondary": hlib.secondary_key,
+                "aim_up": hlib.aim_up_key, "aim_down": hlib.aim_down_key,
+                "pause": hlib.pause_key, "map": hlib.map_key}
     js_cfg = {"left": hlib.left_js, "right": hlib.right_js, "up": hlib.up_js,
               "down": hlib.down_js, "aim_diag": hlib.aim_diag_js,
               "jump": hlib.jump_js, "shoot": hlib.shoot_js,
-              "aim_up": hlib.aim_up_js, "aim_down": hlib.aim_down_js,
-              "mode_reset": hlib.mode_reset_js, "mode": hlib.mode_js,
-              "pause": hlib.pause_js, "map": hlib.map_js}
+              "secondary": hlib.secondary_js, "aim_up": hlib.aim_up_js,
+              "aim_down": hlib.aim_down_js, "pause": hlib.pause_js,
+              "map": hlib.map_js}
 
-    cfg = {"version": 1, "fullscreen": hlib.fullscreen,
+    cfg = {"version": 2, "fullscreen": hlib.fullscreen,
            "scale_method": hlib.scale_method,
            "sound_enabled": hlib.sound_enabled,
            "music_enabled": hlib.music_enabled,
@@ -7150,49 +7057,38 @@ finally:
                                       hlib.joystick_threshold)
     xsge_gui.joystick_threshold = hlib.joystick_threshold
 
-    keys_cfg = cfg.get("keys", {})
-    hlib.left_key = keys_cfg.get("left", hlib.left_key)
-    hlib.right_key = keys_cfg.get("right", hlib.right_key)
-    hlib.up_key = keys_cfg.get("up", hlib.up_key)
-    hlib.aim_diag_key = keys_cfg.get("aim_diag", hlib.aim_diag_key)
-    hlib.down_key = keys_cfg.get("down", hlib.down_key)
-    hlib.jump_key = keys_cfg.get("jump", hlib.jump_key)
-    hlib.shoot_key = keys_cfg.get("shoot", hlib.shoot_key)
-    hlib.aim_up_key = keys_cfg.get("aim_up", hlib.aim_up_key)
-    hlib.aim_down_key = keys_cfg.get("aim_down", hlib.aim_down_key)
-    hlib.mode_reset_key = keys_cfg.get("mode_reset", hlib.mode_reset_key)
-    hlib.mode_key = keys_cfg.get("mode", hlib.mode_key)
-    hlib.pause_key = keys_cfg.get("pause", hlib.pause_key)
-    hlib.map_key = keys_cfg.get("map", hlib.map_key)
+    if cfg_version >= 2:
+        keys_cfg = cfg.get("keys", {})
+        hlib.left_key = keys_cfg.get("left", hlib.left_key)
+        hlib.right_key = keys_cfg.get("right", hlib.right_key)
+        hlib.up_key = keys_cfg.get("up", hlib.up_key)
+        hlib.aim_diag_key = keys_cfg.get("aim_diag", hlib.aim_diag_key)
+        hlib.down_key = keys_cfg.get("down", hlib.down_key)
+        hlib.jump_key = keys_cfg.get("jump", hlib.jump_key)
+        hlib.shoot_key = keys_cfg.get("shoot", hlib.shoot_key)
+        hlib.secondary_key = keys_cfg.get("secondary", hlib.secondary_key)
+        hlib.aim_up_key = keys_cfg.get("aim_up", hlib.aim_up_key)
+        hlib.aim_down_key = keys_cfg.get("aim_down", hlib.aim_down_key)
+        hlib.pause_key = keys_cfg.get("pause", hlib.pause_key)
+        hlib.map_key = keys_cfg.get("map", hlib.map_key)
 
-    js_cfg = cfg.get("joystick", {})
-    hlib.left_js = [[tuple(j) for j in js]
-                    for js in js_cfg.get("left", hlib.left_js)]
-    hlib.right_js = [[tuple(j) for j in js]
-                     for js in js_cfg.get("right", hlib.right_js)]
-    hlib.up_js = [[tuple(j) for j in js]
-                  for js in js_cfg.get("up", hlib.up_js)]
-    hlib.down_js = [[tuple(j) for j in js]
-                    for js in js_cfg.get("down", hlib.down_js)]
-    hlib.aim_diag_js = [[tuple(j) for j in js]
-                        for js in js_cfg.get("aim_diag", hlib.aim_diag_js)]
-    hlib.jump_js = [[tuple(j) for j in js]
-                    for js in js_cfg.get("jump", hlib.jump_js)]
-    hlib.shoot_js = [[tuple(j) for j in js]
-                     for js in js_cfg.get("shoot", hlib.shoot_js)]
-    hlib.aim_up_js = [[tuple(j) for j in js]
-                      for js in js_cfg.get("aim_up", hlib.aim_up_js)]
-    hlib.aim_down_js = [[tuple(j) for j in js]
-                        for js in js_cfg.get("aim_down", hlib.aim_down_js)]
-    hlib.mode_reset_js = [[tuple(j) for j in js]
-                          for js in js_cfg.get("mode_reset",
-                                               hlib.mode_reset_js)]
-    hlib.mode_js = [[tuple(j) for j in js]
-                    for js in js_cfg.get("mode", hlib.mode_js)]
-    hlib.pause_js = [[tuple(j) for j in js]
-                     for js in js_cfg.get("pause", hlib.pause_js)]
-    hlib.map_js = [[tuple(j)
-                    for j in js] for js in js_cfg.get("map", hlib.map_js)]
+        js_cfg = cfg.get("joystick", {})
+        hlib.left_js = [tuple(js) for js in js_cfg.get("left", hlib.left_js)]
+        hlib.right_js = [tuple(js) for js in js_cfg.get("right", hlib.right_js)]
+        hlib.up_js = [tuple(js) for js in js_cfg.get("up", hlib.up_js)]
+        hlib.down_js = [tuple(js) for js in js_cfg.get("down", hlib.down_js)]
+        hlib.aim_diag_js = [
+            tuple(js) for js in js_cfg.get("aim_diag", hlib.aim_diag_js)]
+        hlib.jump_js = [tuple(js) for js in js_cfg.get("jump", hlib.jump_js)]
+        hlib.shoot_js = [tuple(js) for js in js_cfg.get("shoot", hlib.shoot_js)]
+        hlib.secondary_js = [
+            tuple(js) for js in js_cfg.get("secondary", hlib.secondary_js)]
+        hlib.aim_up_js = [
+            tuple(js) for js in js_cfg.get("aim_up", hlib.aim_up_js)]
+        hlib.aim_down_js = [
+            tuple(js) for js in js_cfg.get("aim_down", hlib.aim_down_js)]
+        hlib.pause_js = [tuple(js) for js in js_cfg.get("pause", hlib.pause_js)]
+        hlib.map_js = [tuple(js) for js in js_cfg.get("map", hlib.map_js)]
 
     set_gui_controls()
 

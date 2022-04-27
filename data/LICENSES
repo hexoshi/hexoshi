@@ -446,13 +446,15 @@ Source: https://freesound.org/people/Gerent/sounds/558726/
 
 ------------------------------------------------------------------------
 
-fonts/Cabin-Bold.ttf
+fonts/DejaVuSans-Bold.ttf
 
-Source: https://fonts.google.com/specimen/Cabin
+Source: https://fontlibrary.org/en/font/dejavu-sans
 
-Copyright 2018 The Cabin Project Authors (https://github.com/impallari/Cabin.git)
+Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream Vera is
+a trademark of Bitstream, Inc.
+Copyright (c) 2006 by Tavmjong Bah. All Rights Reserved.
 
-License: SIL OFL 1.1 (Full text found under fonts/Cabin-OFL.txt)
+License: Bitstream Vera License (Full text found under fonts/DejaVu-license.txt)
 
 ------------------------------------------------------------------------
 

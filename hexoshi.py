@@ -7056,10 +7056,10 @@ fname = os.path.join(hlib.datadir, "fonts",
                      #/ File name under data/fonts for the font file to
                      #/ use. Please change this if and only if the target
                      #/ language cannot use the default font.
-                     gettext.pgettext("font_file", "Cabin-Bold.ttf"))
-font = sge.gfx.Font(fname, size=11)
-font_small = sge.gfx.Font(fname, size=9)
+                     gettext.pgettext("font_file", "DejaVuSans-Bold.ttf"))
+font = sge.gfx.Font(fname, size=9)
 font_big = sge.gfx.Font(fname, size=16)
+font_small = sge.gfx.Font(fname, size=7)
 
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "shoot.wav"),

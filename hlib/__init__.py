@@ -128,6 +128,15 @@ MAP_CELL_HEIGHT = 8
 
 TEXT_SPEED = 1000
 
+SAVE_NSLOTS = 10
+MENU_MAX_ITEMS = 14
+
+SOUND_MAX_RADIUS = 200
+SOUND_ZERO_RADIUS = 600
+SOUND_CENTERED_RADIUS = 75
+SOUND_TILTED_RADIUS = 500
+SOUND_TILT_LIMIT = 0.75
+
 datadir = "data"
 configdir = os.path.join(
     os.getenv("XDG_CONFIG_HOME", os.path.join(os.path.expanduser("~"),
@@ -144,3 +153,37 @@ backgrounds = {}
 loaded_music = {}
 
 fullscreen = False
+scale_method = None
+sound_enabled = True
+music_enabled = True
+stereo_enabled = True
+fps_enabled = False
+metroid_controls = False
+joystick_threshold = 0.1
+left_key = [["left", "a"]]
+right_key = [["right", "d"]]
+up_key = [["up", "w"]]
+down_key = [["down", "s"]]
+aim_diag_key = [["alt_left", "alt_right"]]
+jump_key = [["space"]]
+shoot_key = [["ctrl_left", "ctrl_right"]]
+aim_up_key = [["x"]]
+aim_down_key = [["z"]]
+mode_reset_key = [["shift_left", "shift_right"]]
+mode_key = [["tab"]]
+pause_key = [["enter", "p"]]
+map_key = [["m"]]
+left_js = [[(0, "axis-", 0), (0, "hat_left", 0)]]
+right_js = [[(0, "axis+", 0), (0, "hat_right", 0)]]
+up_js = [[(0, "axis-", 1), (0, "hat_up", 0)]]
+down_js = [[(0, "axis+", 1), (0, "hat_down", 0)]]
+aim_diag_js = [[(0, "button", 10), (0, "button", 11)]]
+jump_js = [[(0, "button", 1), (0, "button", 3)]]
+shoot_js = [[(0, "button", 0)]]
+aim_up_js = [[(0, "button", 5), (0, "button", 7)]]
+aim_down_js = [[(0, "button", 4), (0, "button", 6)]]
+mode_reset_js = [[(0, "button", 2)]]
+mode_js = [[(0, "button", 8)]]
+pause_js = [[(0, "button", 9)]]
+map_js = [[]]
+save_slots = [None for i in range(SAVE_NSLOTS)]

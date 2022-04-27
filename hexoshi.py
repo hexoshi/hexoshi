@@ -5017,8 +5017,8 @@ class OptionsMenu(Menu):
         cls.items = [
             _("Fullscreen: {}").format(_("On") if hlib.fullscreen else _("Off")),
             _("Scale Method: {}").format(smt),
-            _("Sound: {}").format(_("On") if hlib.sound_enabled else _("Off")),
-            _("Music: {}").format(_("On") if hlib.music_enabled else _("Off")),
+            _("Sound Volume: {}%").format(int(hlib.sound_volume * 100)),
+            _("Music Volume: {}%").format(int(hlib.music_volume * 100)),
             _("Stereo: {}").format(_("On") if hlib.stereo_enabled else _("Off")),
             _("Show FPS: {}").format(_("On") if hlib.fps_enabled else _("Off")),
             _("Metroid-Style Aiming: {}").format(_("On") if hlib.metroid_controls else _("Off")),
@@ -5027,7 +5027,22 @@ class OptionsMenu(Menu):
             _("Detect joysticks"), _("Back")]
         return cls.create(default)
 
-    def event_choose(self):
+    def event_press_left(self):
+        # Variant of event_press_enter which passes True to the custom
+        # ``left`` parameter.
+        try:
+            self.choice = self.widgets.index(self.keyboard_focused_widget)
+        except ValueError:
+            pass
+
+        self.destroy()
+        sge.game.refresh()
+        self.event_choose(True)
+
+    def event_press_right(self):
+        self.event_press_enter()
+
+    def event_choose(self, left=False):
         if self.choice == 0:
             play_sound(select_sound)
             hlib.fullscreen = not hlib.fullscreen
@@ -5041,17 +5056,37 @@ class OptionsMenu(Menu):
                 i = 0
 
             play_sound(select_sound)
-            i += 1
+            i += -1 if left else 1
             i %= len(choices)
             hlib.scale_method = choices[i]
             sge.game.scale_method = hlib.scale_method
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 2:
-            hlib.sound_enabled = not hlib.sound_enabled
-            play_sound(teleport_sound)
+            # This somewhat complicated method is to prevent rounding
+            # irregularities.
+            if left:
+                v = int(hlib.sound_volume*100) - 5
+                if v < 0:
+                    v = 100
+            else:
+                v = int(hlib.sound_volume*100) + 5
+                if v > 100:
+                    v = 0
+            hlib.sound_volume = v / 100
+            play_sound(select_sound)
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 3:
-            hlib.music_enabled = not hlib.music_enabled
+            # This somewhat complicated method is to prevent rounding
+            # irregularities.
+            if left:
+                v = int(hlib.music_volume*100) - 5
+                if v < 0:
+                    v = 100
+            else:
+                v = int(hlib.music_volume*100) + 5
+                if v > 100:
+                    v = 0
+            hlib.music_volume = v / 100
             play_music(sge.game.current_room.music,
                        noloop=sge.game.current_room.music_noloop)
             OptionsMenu.create_page(default=self.choice)
@@ -5071,7 +5106,10 @@ class OptionsMenu(Menu):
             play_sound(select_sound)
             # This somewhat complicated method is to prevent rounding
             # irregularities.
-            threshold = ((int(hlib.joystick_threshold*100) + 5) % 100) / 100
+            if left:
+                threshold = ((int(hlib.joystick_threshold*100) - 5) % 100) / 100
+            else:
+                threshold = ((int(hlib.joystick_threshold*100) + 5) % 100) / 100
             if not threshold:
                 threshold = 0.0001
             hlib.joystick_threshold = threshold
@@ -5888,63 +5926,65 @@ def show_error(message):
 
 
 def play_sound(sound, x=None, y=None, force=True):
-    if hlib.sound_enabled and sound:
-        if x is None or y is None:
-            sound.play(force=force)
-        else:
-            current_view = None
-            view_x = 0
-            view_y = 0
-            dist = 0
-            for view in sge.game.current_room.views:
-                vx = view.x + view.width/2
-                vy = view.y + view.height/2
-                new_dist = math.hypot(vx - x, vy - y)
-                if current_view is None or new_dist < dist:
-                    current_view = view
-                    view_x = vx
-                    view_y = vy
+    if not hlib.sound_volume or not sound:
+        return
+
+    if x is None or y is None:
+        sound.play(volume=hlib.sound_volume, force=force)
+    else:
+        current_view = None
+        view_x = 0
+        view_y = 0
+        dist = 0
+        for view in sge.game.current_room.views:
+            vx = view.x + view.width/2
+            vy = view.y + view.height/2
+            new_dist = math.hypot(vx - x, vy - y)
+            if current_view is None or new_dist < dist:
+                current_view = view
+                view_x = vx
+                view_y = vy
+                dist = new_dist
+
+        bl = min(x, view_x)
+        bw = abs(x - view_x)
+        bt = min(y, view_y)
+        bh = abs(y - view_y)
+        for obj in sge.game.current_room.get_objects_at(bl, bt, bw, bh):
+            if isinstance(obj, Player):
+                new_dist = math.hypot(obj.x - x, obj.y - y)
+                if new_dist < dist:
+                    view_x = obj.x
+                    view_y = obj.y
                     dist = new_dist
 
-            bl = min(x, view_x)
-            bw = abs(x - view_x)
-            bt = min(y, view_y)
-            bh = abs(y - view_y)
-            for obj in sge.game.current_room.get_objects_at(bl, bt, bw, bh):
-                if isinstance(obj, Player):
-                    new_dist = math.hypot(obj.x - x, obj.y - y)
-                    if new_dist < dist:
-                        view_x = obj.x
-                        view_y = obj.y
-                        dist = new_dist
+        if dist <= hlib.SOUND_MAX_RADIUS:
+            volume = 1
+        elif dist < hlib.SOUND_ZERO_RADIUS:
+            rng = hlib.SOUND_ZERO_RADIUS - hlib.SOUND_MAX_RADIUS
+            reldist = rng - (dist-hlib.SOUND_MAX_RADIUS)
+            volume = min(1, abs(reldist / rng))
+        else:
+            # No point in continuing; it's too far away
+            return
 
-            if dist <= hlib.SOUND_MAX_RADIUS:
-                volume = 1
-            elif dist < hlib.SOUND_ZERO_RADIUS:
-                rng = hlib.SOUND_ZERO_RADIUS - hlib.SOUND_MAX_RADIUS
-                reldist = rng - (dist-hlib.SOUND_MAX_RADIUS)
-                volume = min(1, abs(reldist / rng))
-            else:
-                # No point in continuing; it's too far away
-                return
-
-            if hlib.stereo_enabled:
-                hdist = x - view_x
-                if abs(hdist) < hlib.SOUND_CENTERED_RADIUS:
-                    balance = 0
-                else:
-                    rng = hlib.SOUND_TILTED_RADIUS - hlib.SOUND_CENTERED_RADIUS
-                    balance = max(-hlib.SOUND_TILT_LIMIT,
-                                  min(hdist / rng, hlib.SOUND_TILT_LIMIT))
-            else:
+        if hlib.stereo_enabled:
+            hdist = x - view_x
+            if abs(hdist) < hlib.SOUND_CENTERED_RADIUS:
                 balance = 0
+            else:
+                rng = hlib.SOUND_TILTED_RADIUS - hlib.SOUND_CENTERED_RADIUS
+                balance = max(-hlib.SOUND_TILT_LIMIT,
+                              min(hdist / rng, hlib.SOUND_TILT_LIMIT))
+        else:
+            balance = 0
 
-            sound.play(volume=volume, balance=balance, force=force)
+        sound.play(volume=(volume * sound_volume), balance=balance, force=force)
 
 
 def play_music(music, force_restart=False, noloop=False):
     """Play the given music file, starting with its start piece."""
-    if hlib.music_enabled:
+    if hlib.music_volume:
         loops = 1 if noloop else None
         if music:
             music_object = hlib.loaded_music.get(music)
@@ -5958,6 +5998,9 @@ def play_music(music, force_restart=False, noloop=False):
                     return
                 else:
                     hlib.loaded_music[music] = music_object
+
+            assert music_object is not None
+            music_object.volume = hlib.music_volume
 
             name, ext = os.path.splitext(music)
             music_start = ''.join([name, "-start", ext])
@@ -6038,8 +6081,8 @@ def write_to_disk():
 
     cfg = {"version": 2, "fullscreen": hlib.fullscreen,
            "scale_method": hlib.scale_method,
-           "sound_enabled": hlib.sound_enabled,
-           "music_enabled": hlib.music_enabled,
+           "sound_volume": hlib.sound_volume,
+           "music_volume": hlib.music_volume,
            "stereo_enabled": hlib.stereo_enabled,
            "fps_enabled": hlib.fps_enabled,
            "metroid_controls": hlib.metroid_controls,
@@ -7048,8 +7091,8 @@ finally:
     update_fullscreen()
     hlib.scale_method = cfg.get("scale_method", hlib.scale_method)
     sge.game.scale_method = hlib.scale_method
-    hlib.sound_enabled = cfg.get("sound_enabled", hlib.sound_enabled)
-    hlib.music_enabled = cfg.get("music_enabled", hlib.music_enabled)
+    hlib.sound_volume = cfg.get("sound_volume", hlib.sound_volume)
+    hlib.music_volume = cfg.get("music_volume", hlib.music_volume)
     hlib.stereo_enabled = cfg.get("stereo_enabled", hlib.stereo_enabled)
     hlib.fps_enabled = cfg.get("fps_enabled", hlib.fps_enabled)
     hlib.metroid_controls = cfg.get("metroid_controls", hlib.metroid_controls)

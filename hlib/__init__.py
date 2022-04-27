@@ -154,12 +154,12 @@ loaded_music = {}
 
 fullscreen = False
 scale_method = None
-sound_enabled = True
-music_enabled = True
+sound_volume = 1
+music_volume = 1
 stereo_enabled = True
 fps_enabled = False
 metroid_controls = False
-joystick_threshold = 0.1
+joystick_threshold = 0.5
 left_key = ["left"]
 right_key = ["right"]
 up_key = ["up"]

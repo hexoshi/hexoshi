@@ -141,8 +141,6 @@ SOUND_CENTERED_RADIUS = 75
 SOUND_TILTED_RADIUS = 500
 SOUND_TILT_LIMIT = 0.75
 
-ETANK_CHAR = '[]'
-
 scale_method = None
 sound_enabled = True
 music_enabled = True
@@ -5003,10 +5001,16 @@ class NewGameMenu(Menu):
             else:
                 name = slot.get("player_name", "Anneroy")
                 etanks = slot.get("etanks", 0)
-                if etanks:
-                    text = "{} {}".format(name, ETANK_CHAR * etanks)
-                else:
-                    text = name
+                completion = int(100 * len(slot.get("powerups", []))
+                                 / max(num_powerups + num_artifacts, 1))
+                time_taken = slot.get("time_taken", 0)
+                seconds = int(time_taken % 60)
+                minutes = int((time_taken/60) % 60)
+                hours = int(time_taken / 3600)
+                text = _("{name}: {hours}:{minutes:02}:{seconds:02},"
+                         " {completion}%").format(
+                             name=name, completion=completion,
+                             hours=hours, minutes=minutes, seconds=seconds)
                 cls.items.append(text)
 
         cls.items.append(_("Back"))
@@ -5600,18 +5604,23 @@ class PauseMenu(ModalMenu):
             minutes = int((time_taken/60) % 60)
             hours = int(time_taken / 3600)
             powerups_col = len(powerups) - artifacts
+            powerups_percent = int(100 * powerups_col / max(num_powerups, 1))
+            artifacts_percent = int(100 * artifacts / max(num_artifacts, 1))
+            completion = int(100 * len(powerups)
+                             / max(num_powerups + num_artifacts, 1))
             text = _("PLAYER STATISTICS\n\n"
                      "Time spent: {hours}:{minutes:02}:{seconds:02}\n"
-                     "Powerups collected: {powerups} ({powerups_percent}%)\n"
-                     "Artifacts collected: {artifacts} "
-                     "({artifacts_percent}%)").format(
+                     "Powerups collected: {powerups_col}"
+                     " ({powerups_percent}%)\n"
+                     "Artifacts collected: {artifacts}"
+                     " ({artifacts_percent}%)\n"
+                     "Total completion: {completion}%").format(
                          hours=hours, minutes=minutes, seconds=seconds,
-                         powerups=powerups_col,
-                         powerups_percent=int(100 * powerups_col
-                                              / max(num_powerups, 1)),
+                         powerups_col=powerups_col,
+                         powerups_percent=powerups_percent,
                          artifacts=artifacts,
-                         artifacts_percent=int(100 * artifacts
-                                               / max(num_artifacts, 1)))
+                         artifacts_percent=artifacts_percent,
+                         completion=completion)
 
             DialogBox(gui_handler, text).show()
             PauseMenu.create(default=self.choice, player_x=self.player_x,

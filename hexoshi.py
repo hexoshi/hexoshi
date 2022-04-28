@@ -836,10 +836,6 @@ class Player(xsge_physics.Collider):
             self.__hp += self.max_hp
 
         self.__hp = min(self.__hp, self.max_hp)
-
-        if self.__hp > 0:
-            new_w = healthbar_width * self.__hp / self.max_hp
-            healthbar_front_sprite.width = new_w
         self.update_hud()
 
     @property
@@ -904,7 +900,6 @@ class Player(xsge_physics.Collider):
         self.aim_direction_time = 0
         self.view = None
         self.__hp = self.max_hp
-        healthbar_front_sprite.width = healthbar_width
         self.last_xr = None
         self.last_yr = None
         self.camera_guided_y = False
@@ -1044,56 +1039,82 @@ class Player(xsge_physics.Collider):
 
     def update_hud(self):
         self.hud_sprite.draw_clear()
-        if not hlib.no_hud:
-            start_x = 8
-            start_y = 8
-            x = start_x
+        if hlib.no_hud:
+            return
+
+        self.hud_sprite.draw_lock()
+        start_x = 8
+        start_y = 8
+
+        x = start_x
+        y = start_y
+        back_left = hlib.healthbar_back_left_sprite
+        back_center = hlib.healthbar_back_center_sprite
+        back_right = hlib.healthbar_back_right_sprite
+        front = hlib.healthbar_sprite
+
+        self.hud_sprite.draw_sprite(back_left, 0, x, y)
+        x += back_left.width - back_left.origin_x
+        bar_xstart = x
+
+        w = back_center.width - back_center.origin_x
+        for i in range(self.max_hp):
+            self.hud_sprite.draw_sprite(back_center, 0, x, y)
+            x += w
+
+        self.hud_sprite.draw_sprite(back_right, 0, x, y)
+        bar_xend = x + back_right.width - back_right.origin_x
+
+        x = bar_xstart 
+        w = front.width - front.origin_x
+        for i in range(self.hp):
+            self.hud_sprite.draw_sprite(front, 0, x, y)
+            x += w
+
+        x = start_x
+        y += 4 + back_center.height
+        w = etank_empty_sprite.width
+        h = etank_empty_sprite.height
+        for i in range(hlib.etanks):
+            if x + w >= bar_xend:
+                x = start_x
+                y += h
+
+            if i < hlib.etanks - self.etanks_used:
+                self.hud_sprite.draw_sprite(etank_full_sprite, 0, x, y)
+            else:
+                self.hud_sprite.draw_sprite(etank_empty_sprite, 0, x, y)
+
+            x += w
+
+        if hlib.god or "map" in hlib.progress_flags:
+            w = 7
+            h = 5
+
+            if sge.game.current_room.fname in hlib.map_rooms:
+                rm_x, rm_y = hlib.map_rooms[sge.game.current_room.fname]
+                pl_x = rm_x + get_xregion(self.x)
+                pl_y = rm_y + get_yregion(self.y)
+                x = pl_x - w // 2
+                y = pl_y - h // 2
+            else:
+                x = 0
+                y = 0
+                pl_x = None
+                pl_y = None
+
+            map_s = draw_map(x, y, w, h, pl_x, pl_y)
+            c = sge.gfx.Color((255, 255, 255, 192))
+            map_s.draw_rectangle(0, 0, map_s.width, map_s.height, fill=c,
+                                 blend_mode=sge.BLEND_RGBA_MULTIPLY)
+
+            x = hlib.SCREEN_SIZE[0] - start_x - w*hlib.MAP_CELL_WIDTH
             y = start_y
-            self.hud_sprite.draw_sprite(healthbar_back_sprite, 0, x, y)
-            if self.hp > 0:
-                self.hud_sprite.draw_sprite(healthbar_front_sprite, 0, x, y)
+            self.hud_sprite.draw_sprite(map_s, 0, x, y)
+            self.hud_sprite.draw_rectangle(x, y, map_s.width, map_s.height,
+                                           outline=sge.gfx.Color("white"))
 
-            y += 8
-            w = etank_empty_sprite.width
-            h = etank_empty_sprite.height
-            for i in range(hlib.etanks):
-                if x + w >= start_x + healthbar_width:
-                    x = start_x
-                    y += h
-
-                if i < hlib.etanks - self.etanks_used:
-                    self.hud_sprite.draw_sprite(etank_full_sprite, 0, x, y)
-                else:
-                    self.hud_sprite.draw_sprite(etank_empty_sprite, 0, x, y)
-
-                x += w
-
-            if hlib.god or "map" in hlib.progress_flags:
-                w = 7
-                h = 5
-
-                if sge.game.current_room.fname in hlib.map_rooms:
-                    rm_x, rm_y = hlib.map_rooms[sge.game.current_room.fname]
-                    pl_x = rm_x + get_xregion(self.x)
-                    pl_y = rm_y + get_yregion(self.y)
-                    x = pl_x - w // 2
-                    y = pl_y - h // 2
-                else:
-                    x = 0
-                    y = 0
-                    pl_x = None
-                    pl_y = None
-
-                map_s = draw_map(x, y, w, h, pl_x, pl_y)
-                c = sge.gfx.Color((255, 255, 255, 192))
-                map_s.draw_rectangle(0, 0, map_s.width, map_s.height, fill=c,
-                                     blend_mode=sge.BLEND_RGBA_MULTIPLY)
-
-                x = hlib.SCREEN_SIZE[0] - start_x - w*hlib.MAP_CELL_WIDTH
-                y = start_y
-                self.hud_sprite.draw_sprite(map_s, 0, x, y)
-                self.hud_sprite.draw_rectangle(x, y, map_s.width, map_s.height,
-                                               outline=sge.gfx.Color("white"))
+        self.hud_sprite.draw_unlock()
                 
 
     def show_hud(self):
@@ -6867,12 +6888,10 @@ font_small_sprite = sge.gfx.Sprite.from_tileset(
 font_big_sprite = sge.gfx.Sprite.from_tileset(
     os.path.join(d, "font_big.png"), columns=8, rows=12, width=14, height=14,
     xsep=2, ysep=2)
-healthbar_back_sprite = sge.gfx.Sprite("healthbar_back", d, origin_x=2,
-                                       origin_y=1)
-healthbar_front_sprite = sge.gfx.Sprite("healthbar_front", d,
-                                        transparent=False)
-healthbar_width = healthbar_front_sprite.width
-healthbar_height = healthbar_front_sprite.height
+hlib.healthbar_sprite = sge.gfx.Sprite("healthbar", d, origin_x=1)
+hlib.healthbar_back_left_sprite = sge.gfx.Sprite("healthbar_back_left", d)
+hlib.healthbar_back_center_sprite = sge.gfx.Sprite("healthbar_back_center", d)
+hlib.healthbar_back_right_sprite = sge.gfx.Sprite("healthbar_back_right", d)
 etank_empty_sprite = sge.gfx.Sprite("etank_empty", d)
 etank_empty_sprite.draw_rectangle(
     0, 0, etank_empty_sprite.width, etank_empty_sprite.height,

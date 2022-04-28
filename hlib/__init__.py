@@ -17,6 +17,8 @@
 import math
 import os
 
+from . import game
+
 
 SCREEN_SIZE = [400, 240]
 TILE_SIZE = 16

@@ -503,7 +503,7 @@ class Level(sge.dsp.Room):
                                       halign="center", valign="middle",
                                       outline=sge.gfx.Color("black"),
                                       outline_thickness=1)
-                sge.game.refresh()
+                hlib.game.refresh_screen(0, 0)
             else:
                 print(_("Loading \"{}\"…").format(fname))
 
@@ -4998,7 +4998,7 @@ class OptionsMenu(Menu):
             pass
 
         self.destroy()
-        sge.game.refresh()
+        hlib.game.refresh_screen(0, 0)
         self.event_choose(True)
 
     def event_press_right(self):
@@ -5406,7 +5406,7 @@ class ModalMenu(xsge_gui.MenuDialog):
                 selection_prefix="«", selection_suffix="»")
             default %= len(self.widgets)
             self.keyboard_focused_widget = self.widgets[default]
-            sge.game.refresh()
+            hlib.game.refresh_screen(0, 0)
             self.show()
             return self
 
@@ -5439,13 +5439,13 @@ class PauseMenu(ModalMenu):
         self.keyboard_focused_widget = self.widgets[default]
         self.player_x = player_x
         self.player_y = player_y
-        sge.game.refresh()
+        hlib.game.refresh_screen(0, 0)
         self.show()
         return self
 
     def event_choose(self):
         self.hide()
-        sge.game.refresh()
+        hlib.game.refresh_screen(0, 0)
 
         def check_quit():
             if hlib.current_save_slot is not None:
@@ -5524,7 +5524,7 @@ class ModalKeyboardMenu(ModalMenu, KeyboardMenu):
 
     def event_choose(self):
         self.hide()
-        sge.game.refresh()
+        hlib.game.refresh_screen(0, 0)
         if self.choice is not None and self.choice < len(self.items) - 1:
             super().event_choose()
         else:
@@ -5535,7 +5535,7 @@ class ModalJoystickMenu(ModalMenu, JoystickMenu):
 
     def event_choose(self):
         self.hide()
-        sge.game.refresh()
+        hlib.game.refresh_screen(0, 0)
         if self.choice is not None and self.choice < len(self.items) - 1:
             super().event_choose()
         else:
@@ -5843,7 +5843,7 @@ def wait_key(text):
                               outline_thickness=1)
 
         # Refresh
-        sge.game.refresh()
+        hlib.game.refresh_screen(0, 0)
 
 
 def wait_js(text):
@@ -5882,7 +5882,7 @@ def wait_js(text):
                               outline_thickness=1)
 
         # Refresh
-        sge.game.refresh()
+        hlib.game.refresh_screen(0, 0)
 
 
 def show_error(message):

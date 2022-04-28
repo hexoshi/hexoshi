@@ -135,29 +135,6 @@ if args.lang:
 with open(os.path.join(hlib.datadir, "ai_data.json"), 'r') as f:
     ai_data = json.load(f)
 
-abort = False
-
-current_save_slot = None
-player_name = "Anneroy"
-watched_timelines = []
-current_level = None
-spawn_point = None
-map_revealed = []
-map_explored = []
-map_removed = []
-warp_pads = []
-powerups = []
-rooms_killed = set()
-progress_flags = []
-artifacts = 0
-etanks = 0
-time_taken = 0
-
-spawn_xoffset = 0
-spawn_yoffset = 0
-
-player = None
-
 
 class Game(sge.dsp.Game):
 
@@ -194,17 +171,14 @@ class Game(sge.dsp.Game):
             sys.stdout.flush()
 
     def event_key_release(self, key):
-        global map_revealed
-        global map_explored
-
         if key == "f7":
             if self.cheatcode:
                 print()
 
                 if self.cheatcode.lower() == "knowitall":
-                    map_revealed = list(map_objects.keys())
+                    hlib.map_revealed = list(map_objects.keys())
                 elif self.cheatcode.lower() == "seenitall":
-                    map_explored = map_revealed
+                    hlib.map_explored = hlib.map_revealed
                 elif self.cheatcode.startswith("tele"):
                     warp(self.cheatcode[4:] + ".json")
                 else:
@@ -331,8 +305,8 @@ class Level(sge.dsp.Room):
         credits_room.start()
 
     def event_room_start(self):
-        if player is not None:
-            self.add(player)
+        if hlib.player is not None:
+            self.add(hlib.player)
         ##self.add(lava_animation)
 
         xsge_lighting.clear_lights()
@@ -343,10 +317,7 @@ class Level(sge.dsp.Room):
         play_music(self.music, noloop=self.music_noloop)
 
     def event_step(self, time_passed, delta_mult):
-        global watched_timelines
-        global time_taken
-
-        time_taken += time_passed / 1000
+        hlib.time_taken += time_passed / 1000
 
         for view in self.views:
             for obj in self.get_objects_at(
@@ -419,9 +390,9 @@ class Level(sge.dsp.Room):
                             self.music = arg
                             play_music(arg)
                         elif command == "timeline":
-                            if self.timeline_name not in watched_timelines:
-                                watched_timelines = watched_timelines[:]
-                                watched_timelines.append(self.timeline_name)
+                            if self.timeline_name not in hlib.watched_timelines:
+                                hlib.watched_timelines = hlib.watched_timelines[:]
+                                hlib.watched_timelines.append(self.timeline_name)
                             self.load_timeline(arg)
                             break
                         elif command == "skip_to":
@@ -454,11 +425,11 @@ class Level(sge.dsp.Room):
                                     self.timeline[i] = []
                                     break
                         elif command == "if_watched":
-                            if self.timeline_name not in watched_timelines:
+                            if self.timeline_name not in hlib.watched_timelines:
                                 self.timeline[i] = []
                                 break
                         elif command == "if_not_watched":
-                            if self.timeline_name in watched_timelines:
+                            if self.timeline_name in hlib.watched_timelines:
                                 self.timeline[i] = []
                                 break
                         elif command == "while":
@@ -489,9 +460,9 @@ class Level(sge.dsp.Room):
                 break
         else:
             if (self.timeline_name and
-                    self.timeline_name not in watched_timelines):
-                watched_timelines = watched_timelines[:]
-                watched_timelines.append(self.timeline_name)
+                    self.timeline_name not in hlib.watched_timelines):
+                hlib.watched_timelines = hlib.watched_timelines[:]
+                hlib.watched_timelines.append(self.timeline_name)
                 self.timeline_name = ""
 
         self.timeline_step += delta_mult
@@ -561,8 +532,8 @@ class SpecialScreen(Level):
 
     def event_room_start(self):
         super().event_room_start()
-        if player is not None:
-            player.destroy()
+        if hlib.player is not None:
+            hlib.player.destroy()
 
 
 class TitleScreen(SpecialScreen):
@@ -860,7 +831,7 @@ class Player(xsge_physics.Collider):
             self.etanks_used -= 1
             self.__hp -= self.max_hp
 
-        while self.__hp <= 0 and self.etanks_used < etanks:
+        while self.__hp <= 0 and self.etanks_used < hlib.etanks:
             self.etanks_used += 1
             self.__hp += self.max_hp
 
@@ -1085,19 +1056,19 @@ class Player(xsge_physics.Collider):
             y += 8
             w = etank_empty_sprite.width
             h = etank_empty_sprite.height
-            for i in range(etanks):
+            for i in range(hlib.etanks):
                 if x + w >= start_x + healthbar_width:
                     x = start_x
                     y += h
 
-                if i < etanks - self.etanks_used:
+                if i < hlib.etanks - self.etanks_used:
                     self.hud_sprite.draw_sprite(etank_full_sprite, 0, x, y)
                 else:
                     self.hud_sprite.draw_sprite(etank_empty_sprite, 0, x, y)
 
                 x += w
 
-            if "map" in progress_flags:
+            if "map" in hlib.progress_flags:
                 w = 7
                 h = 5
 
@@ -1155,7 +1126,7 @@ class Player(xsge_physics.Collider):
         sge.game.current_room.add_timeline_object(self)
         self.view = sge.game.current_room.views[self.player]
         for obj in sge.game.current_room.objects:
-            if isinstance(obj, SpawnPoint) and obj.spawn_id == spawn_point:
+            if isinstance(obj, SpawnPoint) and obj.spawn_id == hlib.spawn_point:
                 obj.spawn(self)
                 break
         self.init_position()
@@ -1262,9 +1233,6 @@ class Player(xsge_physics.Collider):
                 self.yvelocity = 0
 
     def event_step(self, time_passed, delta_mult):
-        global map_revealed
-        global map_explored
-
         on_floor = self.get_bottom_touching_wall()
         self.on_slope = self.get_bottom_touching_slope() if not on_floor else []
         self.was_on_floor = self.on_floor
@@ -1319,12 +1287,12 @@ class Player(xsge_physics.Collider):
             yr += get_yregion(self.y)
             if xr != self.last_xr or yr != self.last_yr:
                 pos = (xr, yr)
-                if pos not in map_explored:
-                    map_explored = map_explored[:]
-                    map_explored.append(pos)
-                if pos not in map_revealed:
-                    map_revealed = map_revealed[:]
-                    map_revealed.append(pos)
+                if pos not in hlib.map_explored:
+                    hlib.map_explored = hlib.map_explored[:]
+                    hlib.map_explored.append(pos)
+                if pos not in hlib.map_revealed:
+                    hlib.map_revealed = hlib.map_revealed[:]
+                    hlib.map_revealed.append(pos)
                 self.update_hud()
             self.last_xr = xr
             self.last_yr = yr
@@ -1358,7 +1326,7 @@ class Player(xsge_physics.Collider):
             if (key in hlib.secondary_key and not self.secondary_pressed):
                 self.secondary()
             if key in hlib.map_key:
-                if "map" in progress_flags:
+                if "map" in hlib.progress_flags:
                     play_sound(select_sound)
                     MapDialog(self.last_xr, self.last_yr).show()
 
@@ -1393,7 +1361,7 @@ class Player(xsge_physics.Collider):
                 if js in hlib.secondary_js and not self.secondary_pressed:
                     self.secondary()
                 if js in hlib.map_js:
-                    if "map" in progress_flags:
+                    if "map" in hlib.progress_flags:
                         play_sound(select_sound)
                         MapDialog(self.last_xr, self.last_yr).show()
             else:
@@ -1669,7 +1637,7 @@ class Anneroy(Player):
 
         if not self.crouching and not self.ball and not self.walljumping:
             if (not self.on_floor and not self.was_on_floor and
-                    "monkey_boots" in progress_flags):
+                    "monkey_boots" in hlib.progress_flags):
                 if self.facing > 0 and self.get_right_touching_wall():
                     self.reset_image()
                     self.sprite = anneroy_wall_right_sprite
@@ -1743,7 +1711,7 @@ class Anneroy(Player):
         if "shoot_lock" in self.alarms:
             return
 
-        if "life_orb" not in progress_flags:
+        if "life_orb" not in hlib.progress_flags:
             if self.aim_direction is None:
                 self.aim_direction = 0
             self.alarms["shooting"] = 30
@@ -1755,7 +1723,7 @@ class Anneroy(Player):
             return
 
         if self.ball:
-            if ("hedgehog_hormone" in progress_flags and not self.hedgehog
+            if ("hedgehog_hormone" in hlib.progress_flags and not self.hedgehog
                     and "hedgehog_lock" not in self.alarms):
                 self.hedgehog = True
                 self.sprite = anneroy_hedgehog_start_sprite
@@ -1770,7 +1738,7 @@ class Anneroy(Player):
                            self.image_ycenter)
                 self.rolling = False
 
-                if "sloth_ball" in progress_flags:
+                if "sloth_ball" in hlib.progress_flags:
                     self.hedgehog_autocancel = False
                     self.max_speed = hlib.ANNEROY_SLOTH_MAX_SPEED
                 else:
@@ -1780,7 +1748,7 @@ class Anneroy(Player):
             if self.aim_direction is None:
                 self.aim_direction = 0
             self.alarms["shooting"] = 30
-            apct = min(1, artifacts / max(1, num_artifacts))
+            apct = min(1, hlib.artifacts / max(1, num_artifacts))
             self.alarms["shoot_lock"] = 30 - 26*apct
             self.last_aim_direction = self.aim_direction
 
@@ -1931,7 +1899,8 @@ class Anneroy(Player):
         play_sound(cancel_sound)
 
     def compress(self):
-        if "atomic_compressor" in progress_flags and not self.shoot_pressed:
+        if ("atomic_compressor" in hlib.progress_flags
+                and not self.shoot_pressed):
             if self.fixed_sprite != "compress":
                 self.reset_image()
                 self.sprite = anneroy_compress_sprite
@@ -2667,7 +2636,7 @@ class Enemy(InteractiveObject):
         self.destroy()
 
     def event_create(self):
-        if sge.game.current_room.fname in rooms_killed:
+        if sge.game.current_room.fname in hlib.rooms_killed:
             self.destroy()
 
     def event_alarm(self, alarm_id):
@@ -2947,7 +2916,7 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def event_create(self):
-        if sge.game.current_room.fname in rooms_killed:
+        if sge.game.current_room.fname in hlib.rooms_killed:
             self.destroy()
             return
 
@@ -4123,20 +4092,16 @@ class Powerup(InteractiveObject):
         pass
 
     def touch(self, other):
-        global powerups
-        global map_removed
-        global rooms_killed
-
         play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
-        powerups = powerups[:]
-        powerups.append(i)
+        hlib.powerups = hlib.powerups[:]
+        hlib.powerups.append(i)
 
         # Remove the powerup from the map
         px = get_xregion(self.image_xcenter)
         py = get_yregion(self.image_ycenter)
-        map_removed.append(("powerup", sge.game.current_room.fname, px, py))
+        hlib.map_removed.append(("powerup", sge.game.current_room.fname, px, py))
 
         self.collect(other)
 
@@ -4146,7 +4111,7 @@ class Powerup(InteractiveObject):
 
         DialogBox(gui_handler, self.message, self.sprite).show()
 
-        rooms_killed.update(self.kill_rooms)
+        hlib.rooms_killed.update(self.kill_rooms)
         for obj in sge.game.current_room.objects[:]:
             if isinstance(obj, Enemy):
                 obj.kill()
@@ -4157,7 +4122,7 @@ class Powerup(InteractiveObject):
         self.kill_rooms.append(sge.game.current_room.fname)
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
-        if i in powerups:
+        if i in hlib.powerups:
             self.destroy()
 
 
@@ -4170,14 +4135,11 @@ class Artifact(Powerup):
         return _("HEXOSHI ARTIFACT\n\n"
                  "{amt}/{total} ({pct}%)\n\n"
                  "Fire rate increased").format(
-                     amt=artifacts, total=num_artifacts,
-                     pct=int(100 * artifacts / max(num_artifacts, 1)))
+                     amt=hlib.artifacts, total=num_artifacts,
+                     pct=int(100 * hlib.artifacts / max(num_artifacts, 1)))
 
     def collect(self, other):
-        global artifacts
-        artifacts += 1
-        # TODO: Check to see if this is the last artifact, and set up a
-        # victory condition if so.
+        hlib.artifacts += 1
 
 
 class Etank(Powerup):
@@ -4187,8 +4149,7 @@ class Etank(Powerup):
         return _("E-TANK\n\nExtra energy capacity acquired")
 
     def collect(self, other):
-        global etanks
-        etanks += 1
+        hlib.etanks += 1
         other.refresh()
 
 
@@ -4205,9 +4166,8 @@ class LifeOrb(Powerup):
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
-        global progress_flags
-        progress_flags = progress_flags[:]
-        progress_flags.append("life_orb")
+        hlib.progress_flags = hlib.progress_flags[:]
+        hlib.progress_flags.append("life_orb")
 
 
 class Map(Powerup):
@@ -4223,9 +4183,8 @@ class Map(Powerup):
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
-        global progress_flags
-        progress_flags = progress_flags[:]
-        progress_flags.append("map")
+        hlib.progress_flags = hlib.progress_flags[:]
+        hlib.progress_flags.append("map")
 
 
 class MapDisk(Powerup):
@@ -4242,8 +4201,6 @@ class MapDisk(Powerup):
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
-        global map_revealed
-
         for fname in self.rooms:
             sge.game.pump_input()
             if fname in map_rooms:
@@ -4268,9 +4225,9 @@ class MapDisk(Powerup):
                     for x in range(rm_x, rm_x + rm_w):
                         sge.game.pump_input()
                         if ((x, y) not in ignore_regions
-                                and (x, y) not in map_revealed):
-                            map_revealed = map_revealed[:]
-                            map_revealed.append((x, y))
+                                and (x, y) not in hlib.map_revealed):
+                            hlib.map_revealed = hlib.map_revealed[:]
+                            hlib.map_revealed.append((x, y))
 
         sge.game.regulate_speed()
         sge.game.pump_input()
@@ -4289,9 +4246,8 @@ class AtomicCompressor(Powerup):
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
-        global progress_flags
-        progress_flags = progress_flags[:]
-        progress_flags.append("atomic_compressor")
+        hlib.progress_flags = hlib.progress_flags[:]
+        hlib.progress_flags.append("atomic_compressor")
 
 
 class MonkeyBoots(Powerup):
@@ -4317,9 +4273,8 @@ class MonkeyBoots(Powerup):
         super().event_create()
 
     def collect(self, other):
-        global progress_flags
-        progress_flags = progress_flags[:]
-        progress_flags.append("monkey_boots")
+        hlib.progress_flags = hlib.progress_flags[:]
+        hlib.progress_flags.append("monkey_boots")
 
     def event_destroy(self):
         if self.emitter is not None:
@@ -4349,9 +4304,8 @@ class HedgehogHormone(Powerup):
         super().event_create()
 
     def collect(self, other):
-        global progress_flags
-        progress_flags = progress_flags[:]
-        progress_flags.append("hedgehog_hormone")
+        hlib.progress_flags = hlib.progress_flags[:]
+        hlib.progress_flags.append("hedgehog_hormone")
 
     def event_destroy(self):
         if self.emitter is not None:
@@ -4368,10 +4322,8 @@ class Tunnel(InteractiveObject):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def touch(self, other):
-        global spawn_xoffset
-        global spawn_yoffset
-        spawn_xoffset = other.x - self.x
-        spawn_yoffset = other.y - self.y
+        hlib.spawn_xoffset = other.x - self.x
+        hlib.spawn_yoffset = other.y - self.y
 
         if self.dest:
             warp(self.dest)
@@ -4389,8 +4341,8 @@ class SpawnPoint(sge.dsp.Object):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def spawn(self, other):
-        other.x = self.x + spawn_xoffset
-        other.y = self.y + spawn_yoffset
+        other.x = self.x + hlib.spawn_xoffset
+        other.y = self.y + hlib.spawn_yoffset
         if self.spawn_direction == 0:
             other.bbox_left = self.bbox_right
         elif self.spawn_direction == 90:
@@ -4404,7 +4356,7 @@ class SpawnPoint(sge.dsp.Object):
         other.init_position()
 
     def event_create(self):
-        if spawn_point == self.spawn_id:
+        if hlib.spawn_point == self.spawn_id:
             for obj in sge.game.current_room.objects:
                 if isinstance(obj, Player):
                     self.spawn(obj)
@@ -4430,20 +4382,16 @@ class WarpPad(SpawnPoint):
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def activate(self):
-        global current_level
-        global spawn_point
-        global warp_pads
-
         self.activated = True
         self.sprite = warp_pad_active_sprite
-        current_level = sge.game.current_room.fname
-        spawn_point = self.spawn_id
+        hlib.current_level = sge.game.current_room.fname
+        hlib.spawn_point = self.spawn_id
         x = get_xregion(self.image_xcenter)
         y = get_yregion(self.image_ycenter)
         i = (sge.game.current_room.fname, self.spawn_id, x, y)
-        if i not in warp_pads:
-            warp_pads = warp_pads[:]
-            warp_pads.append(i)
+        if i not in hlib.warp_pads:
+            hlib.warp_pads = hlib.warp_pads[:]
+            hlib.warp_pads.append(i)
 
     def spawn(self, other):
         if not self.created:
@@ -4487,8 +4435,6 @@ class WarpPad(SpawnPoint):
             self.create_children()
 
     def event_collision(self, other, xdirection, ydirection):
-        global progress_flags
-
         if isinstance(other, Player):
             if xdirection or ydirection:
                 if not self.activated:
@@ -4497,8 +4443,8 @@ class WarpPad(SpawnPoint):
                     play_sound(warp_pad_sound, self.image_xcenter,
                                self.image_ycenter)
 
-                    if "warp" not in progress_flags:
-                        progress_flags.append("warp")
+                    if "warp" not in hlib.progress_flags:
+                        hlib.progress_flags.append("warp")
                         DialogBox(gui_handler, self.message).show()
 
                 save_game()
@@ -4925,7 +4871,6 @@ class NewGameMenu(Menu):
                 cls.items.append(_("-Empty-"))
             else:
                 name = slot.get("player_name", "Anneroy")
-                etanks = slot.get("etanks", 0)
                 completion = int(100 * len(slot.get("powerups", []))
                                  / max(num_powerups + num_artifacts, 1))
                 time_taken = slot.get("time_taken", 0)
@@ -4943,17 +4888,14 @@ class NewGameMenu(Menu):
         return cls.create(default)
 
     def event_choose(self):
-        global abort
-        global current_save_slot
-
-        abort = False
+        hlib.abort = False
 
         if self.choice in range(len(hlib.save_slots)):
             play_sound(confirm_sound)
-            current_save_slot = self.choice
-            if hlib.save_slots[current_save_slot] is None:
+            hlib.current_save_slot = self.choice
+            if hlib.save_slots[hlib.current_save_slot] is None:
                 set_new_game()
-                if not abort:
+                if not hlib.abort:
                     start_game()
                 else:
                     NewGameMenu.create(default=self.choice)
@@ -4969,36 +4911,31 @@ class OverwriteConfirmMenu(Menu):
     items = [_("Overwrite this save file"), _("Cancel")]
 
     def event_choose(self):
-        global abort
-
-        abort = False
+        hlib.abort = False
 
         if self.choice == 0:
             play_sound(confirm_sound)
             set_new_game()
-            if not abort:
+            if not hlib.abort:
                 start_game()
             else:
                 play_sound(cancel_sound)
-                NewGameMenu.create(default=current_save_slot)
+                NewGameMenu.create(default=hlib.current_save_slot)
         else:
             play_sound(cancel_sound)
-            NewGameMenu.create(default=current_save_slot)
+            NewGameMenu.create(default=hlib.current_save_slot)
 
 
 class LoadGameMenu(NewGameMenu):
 
     def event_choose(self):
-        global abort
-        global current_save_slot
-
-        abort = False
+        hlib.abort = False
 
         if self.choice in range(len(hlib.save_slots)):
             play_sound(confirm_sound)
-            current_save_slot = self.choice
+            hlib.current_save_slot = self.choice
             load_game()
-            if abort:
+            if hlib.abort:
                 MainMenu.create(default=1)
             elif not start_game():
                 play_sound(error_sound)
@@ -5456,7 +5393,7 @@ class PauseMenu(ModalMenu):
 
     @classmethod
     def create(cls, default=0, player_x=None, player_y=None):
-        if "map" in progress_flags:
+        if "map" in hlib.progress_flags:
             items = [_("Continue"), _("View Stats"), _("Configure keyboard"),
                      _("Configure joysticks"), _("View Map"),
                      _("Return to Title Screen")]
@@ -5486,19 +5423,19 @@ class PauseMenu(ModalMenu):
         sge.game.refresh()
 
         def check_quit():
-            if current_save_slot is not None:
-                slot = hlib.save_slots[current_save_slot]
+            if hlib.current_save_slot is not None:
+                slot = hlib.save_slots[hlib.current_save_slot]
             else:
                 slot = {}
 
-            if (slot.get("map_revealed") == map_revealed and
-                    slot.get("map_explored") == map_explored and
-                    slot.get("map_removed") == map_removed and
-                    slot.get("warp_pads") == warp_pads and
-                    slot.get("powerups") == powerups and
-                    slot.get("progress_flags") == progress_flags and
-                    slot.get("artifacts") == artifacts and
-                    slot.get("etanks") == etanks):
+            if (slot.get("map_revealed") == hlib.map_revealed
+                    and slot.get("map_explored") == hlib.map_explored
+                    and slot.get("map_removed") == hlib.map_removed
+                    and slot.get("warp_pads") == hlib.warp_pads
+                    and slot.get("powerups") == hlib.powerups
+                    and slot.get("progress_flags") == hlib.progress_flags
+                    and slot.get("artifacts") == hlib.artifacts
+                    and slot.get("etanks") == hlib.etanks):
                 sge.game.start_room.start()
             else:
                 text = _("Some progress has not been saved. If you leave the "
@@ -5509,13 +5446,13 @@ class PauseMenu(ModalMenu):
                 LoseProgressMenu.create(1)
 
         if self.choice == 1:
-            seconds = int(time_taken % 60)
-            minutes = int((time_taken/60) % 60)
-            hours = int(time_taken / 3600)
-            powerups_col = len(powerups) - artifacts
+            seconds = int(hlib.time_taken % 60)
+            minutes = int((hlib.time_taken/60) % 60)
+            hours = int(hlib.time_taken / 3600)
+            powerups_col = len(hlib.powerups) - hlib.artifacts
             powerups_percent = int(100 * powerups_col / max(num_powerups, 1))
-            artifacts_percent = int(100 * artifacts / max(num_artifacts, 1))
-            completion = int(100 * len(powerups)
+            artifacts_percent = int(100 * hlib.artifacts / max(num_artifacts, 1))
+            completion = int(100 * len(hlib.powerups)
                              / max(num_powerups + num_artifacts, 1))
             text = _("PLAYER STATISTICS\n\n"
                      "Time spent: {hours}:{minutes:02}:{seconds:02}\n"
@@ -5527,7 +5464,7 @@ class PauseMenu(ModalMenu):
                          hours=hours, minutes=minutes, seconds=seconds,
                          powerups_col=powerups_col,
                          powerups_percent=powerups_percent,
-                         artifacts=artifacts,
+                         artifacts=hlib.artifacts,
                          artifacts_percent=artifacts_percent,
                          completion=completion)
 
@@ -5545,7 +5482,7 @@ class PauseMenu(ModalMenu):
             PauseMenu.create(default=self.choice, player_x=self.player_x,
                              player_y=self.player_y)
         elif self.choice == 4:
-            if "map" in progress_flags:
+            if "map" in hlib.progress_flags:
                 play_sound(select_sound)
                 MapDialog(self.player_x, self.player_y).show()
             else:
@@ -5609,7 +5546,7 @@ class MapDialog(xsge_gui.Dialog):
         self.map.tab_focus = False
         self.left = 0
         self.top = 0
-        for rx, ry in set(map_revealed + map_explored):
+        for rx, ry in set(hlib.map_revealed + hlib.map_explored):
             self.left = min(self.left, rx)
             self.top = min(self.top, ry)
         player_x -= self.left
@@ -5660,7 +5597,7 @@ class TeleportDialog(MapDialog):
 
         self.left = 0
         self.top = 0
-        for rx, ry in set(map_revealed + map_explored):
+        for rx, ry in set(hlib.map_revealed + hlib.map_explored):
             self.left = min(self.left, rx)
             self.top = min(self.top, ry)
 
@@ -5684,23 +5621,23 @@ class TeleportDialog(MapDialog):
     def event_press_left(self):
         play_sound(select_sound)
 
-        if self.selection in warp_pads:
-            i = warp_pads.index(self.selection)
+        if self.selection in hlib.warp_pads:
+            i = hlib.warp_pads.index(self.selection)
         else:
             i = 0
 
-        self.selection = warp_pads[(i-1) % len(warp_pads)]
+        self.selection = hlib.warp_pads[(i-1) % len(hlib.warp_pads)]
         self.update_selection()
 
     def event_press_right(self):
         play_sound(select_sound)
 
-        if self.selection in warp_pads:
-            i = warp_pads.index(self.selection)
+        if self.selection in hlib.warp_pads:
+            i = hlib.warp_pads.index(self.selection)
         else:
             i = -1
 
-        self.selection = warp_pads[(i+1) % len(warp_pads)]
+        self.selection = hlib.warp_pads[(i+1) % len(hlib.warp_pads)]
         self.update_selection()
 
     def event_press_up(self):
@@ -5807,13 +5744,11 @@ def get_yregion(y):
 
 
 def warp(dest):
-    global spawn_point
-
     if ":" in dest:
-        level_f, spawn_point = dest.split(':', 1)
+        level_f, hlib.spawn_point = dest.split(':', 1)
     else:
         level_f = dest
-        spawn_point = sge.game.current_room.fname
+        hlib.spawn_point = sge.game.current_room.fname
 
     if level_f:
         level = sge.game.current_room.__class__.load(level_f)
@@ -5979,7 +5914,8 @@ def play_sound(sound, x=None, y=None, force=True):
         else:
             balance = 0
 
-        sound.play(volume=(volume * sound_volume), balance=balance, force=force)
+        sound.play(volume=(volume * hlib.sound_volume), balance=balance,
+                   force=force)
 
 
 def play_music(music, force_restart=False, noloop=False):
@@ -6033,35 +5969,20 @@ def play_music(music, force_restart=False, noloop=False):
 
 
 def set_new_game():
-    global player_name
-    global watched_timelines
-    global current_level
-    global spawn_point
-    global warp_pads
-    global map_revealed
-    global map_explored
-    global map_removed
-    global powerups
-    global rooms_killed
-    global progress_flags
-    global artifacts
-    global etanks
-    global time_taken
-
-    player_name = "Anneroy"
-    watched_timelines = []
-    current_level = None
-    spawn_point = "save"
-    map_revealed = []
-    map_explored = []
-    map_removed = []
-    warp_pads = []
-    powerups = []
-    rooms_killed = set()
-    progress_flags = []
-    artifacts = 0
-    etanks = 0
-    time_taken = 0
+    hlib.player_name = "Anneroy"
+    hlib.watched_timelines = []
+    hlib.current_level = None
+    hlib.spawn_point = "save"
+    hlib.map_revealed = []
+    hlib.map_explored = []
+    hlib.map_removed = []
+    hlib.warp_pads = []
+    hlib.powerups = []
+    hlib.rooms_killed = set()
+    hlib.progress_flags = []
+    hlib.artifacts = 0
+    hlib.etanks = 0
+    hlib.time_taken = 0
 
 
 def write_to_disk():
@@ -6110,63 +6031,48 @@ def write_to_disk():
 
 
 def save_game():
-    if current_save_slot is not None:
-        hlib.save_slots[current_save_slot] = {
+    if hlib.current_save_slot is not None:
+        hlib.save_slots[hlib.current_save_slot] = {
             "save_format": 2,
-            "player_name": player_name,
-            "watched_timelines": watched_timelines[:],
-            "current_level": current_level,
-            "spawn_point": spawn_point,
-            "map_revealed": map_revealed[:],
-            "map_explored": map_explored[:],
-            "map_removed": map_removed[:],
-            "warp_pads": warp_pads[:],
-            "powerups": powerups[:],
-            "rooms_killed": sorted(rooms_killed),
-            "progress_flags": progress_flags[:],
-            "artifacts": artifacts,
-            "etanks": etanks,
-            "time_taken": time_taken}
+            "player_name": hlib.player_name,
+            "watched_timelines": hlib.watched_timelines[:],
+            "current_level": hlib.current_level,
+            "spawn_point": hlib.spawn_point,
+            "map_revealed": hlib.map_revealed[:],
+            "map_explored": hlib.map_explored[:],
+            "map_removed": hlib.map_removed[:],
+            "warp_pads": hlib.warp_pads[:],
+            "powerups": hlib.powerups[:],
+            "rooms_killed": sorted(hlib.rooms_killed),
+            "progress_flags": hlib.progress_flags[:],
+            "artifacts": hlib.artifacts,
+            "etanks": hlib.etanks,
+            "time_taken": hlib.time_taken}
 
     write_to_disk()
 
 
 def load_game():
-    global player_name
-    global watched_timelines
-    global current_level
-    global spawn_point
-    global map_revealed
-    global map_explored
-    global map_removed
-    global warp_pads
-    global powerups
-    global rooms_killed
-    global progress_flags
-    global artifacts
-    global etanks
-    global time_taken
-
-    if (current_save_slot is not None
-            and hlib.save_slots[current_save_slot] is not None):
-        slot = hlib.save_slots[current_save_slot]
+    if (hlib.current_save_slot is not None
+            and hlib.save_slots[hlib.current_save_slot] is not None):
+        slot = hlib.save_slots[hlib.current_save_slot]
         save_format = slot.get("save_format", 0)
 
         if save_format == 2:
-            player_name = slot.get("player_name", "Anneroy")
-            watched_timelines = slot.get("watched_timelines", [])
-            current_level = slot.get("current_level")
-            spawn_point = slot.get("spawn_point")
-            map_revealed = [tuple(i) for i in slot.get("map_revealed", [])]
-            map_explored = [tuple(i) for i in slot.get("map_explored", [])]
-            map_removed = [tuple(i) for i in slot.get("map_removed", [])]
-            warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
-            powerups = [tuple(i) for i in slot.get("powerups", [])]
-            rooms_killed = set(slot.get("rooms_killed"))
-            progress_flags = slot.get("progress_flags", [])
-            artifacts = slot.get("artifacts", 0)
-            etanks = slot.get("etanks", 0)
-            time_taken = slot.get("time_taken", 0)
+            hlib.player_name = slot.get("player_name", "Anneroy")
+            hlib.watched_timelines = slot.get("watched_timelines", [])
+            hlib.current_level = slot.get("current_level")
+            hlib.spawn_point = slot.get("spawn_point")
+            hlib.map_revealed = [tuple(i) for i in slot.get("map_revealed", [])]
+            hlib.map_explored = [tuple(i) for i in slot.get("map_explored", [])]
+            hlib.map_removed = [tuple(i) for i in slot.get("map_removed", [])]
+            hlib.warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
+            hlib.powerups = [tuple(i) for i in slot.get("powerups", [])]
+            hlib.rooms_killed = set(slot.get("rooms_killed"))
+            hlib.progress_flags = slot.get("progress_flags", [])
+            hlib.artifacts = slot.get("artifacts", 0)
+            hlib.etanks = slot.get("etanks", 0)
+            hlib.time_taken = slot.get("time_taken", 0)
         elif save_format == 1:
             set_new_game()
     else:
@@ -6174,14 +6080,12 @@ def load_game():
 
 
 def start_game():
-    global player
+    hlib.player = Anneroy(0, 0)
 
-    player = Anneroy(0, 0)
-
-    if current_level is None:
+    if hlib.current_level is None:
         level = SpecialScreen.load("special/intro.json")
     else:
-        level = Level.load(current_level)
+        level = Level.load(hlib.current_level)
 
     if level is not None:
         level.start()
@@ -6396,7 +6300,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
         right = 0
         top = 0
         bottom = 0
-        for rx, ry in set(map_revealed + map_explored):
+        for rx, ry in set(hlib.map_revealed + hlib.map_explored):
             left = min(left, rx)
             right = max(right, rx)
             top = min(top, ry)
@@ -6412,7 +6316,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
             h = bottom - y + 1
 
     removed = []
-    for obj, fname, ox, oy in map_removed:
+    for obj, fname, ox, oy in hlib.map_removed:
         if fname in map_rooms:
             rm_x, rm_y = map_rooms[fname]
             removed.append((obj, rm_x + ox, rm_y + oy))
@@ -6421,14 +6325,14 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
     map_sprite = sge.gfx.Sprite(width=s_w, height=s_h)
     map_sprite.draw_rectangle(0, 0, s_w, s_h, fill=sge.gfx.Color("black"))
 
-    for ex, ey in map_explored:
+    for ex, ey in hlib.map_explored:
         dx = (ex - x) * hlib.MAP_CELL_WIDTH
         dy = (ey - y) * hlib.MAP_CELL_HEIGHT
         map_sprite.draw_rectangle(
             dx, dy, hlib.MAP_CELL_WIDTH, hlib.MAP_CELL_HEIGHT,
             fill=sge.gfx.Color((170, 68, 153)))
 
-    for ox, oy in set(map_objects) & set(map_revealed + map_explored):
+    for ox, oy in set(map_objects) & set(hlib.map_revealed + hlib.map_explored):
         if x <= ox < x + w and y <= oy < y + h:
             for obj in map_objects[(ox, oy)]:
                 if (obj, ox, oy) in removed:
@@ -7073,11 +6977,11 @@ else:
     generate_map()
 
 if SAVE_MAP:
-    map_revealed = list(map_objects.keys())
-    map_explored = map_revealed
+    hlib.map_revealed = list(map_objects.keys())
+    hlib.map_explored = hlib.map_revealed
     draw_map().save("map.png")
-    map_revealed = []
-    map_explored = []
+    hlib.map_revealed = []
+    hlib.map_explored = []
 
 try:
     with open(os.path.join(hlib.configdir, "config.json")) as f:

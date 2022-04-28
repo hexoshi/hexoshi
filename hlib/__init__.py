@@ -185,3 +185,26 @@ aim_down_js = [(0, "button", 4), (0, "button", 6)]
 pause_js = [(0, "button", 9)]
 map_js = [(0, "button", 8)]
 save_slots = [None for i in range(SAVE_NSLOTS)]
+
+abort = False
+
+current_save_slot = None
+player_name = "Anneroy"
+watched_timelines = []
+current_level = None
+spawn_point = None
+map_revealed = []
+map_explored = []
+map_removed = []
+warp_pads = []
+powerups = []
+rooms_killed = set()
+progress_flags = []
+artifacts = 0
+etanks = 0
+time_taken = 0
+
+spawn_xoffset = 0
+spawn_yoffset = 0
+
+player = None

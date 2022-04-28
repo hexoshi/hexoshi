@@ -176,7 +176,7 @@ class Game(sge.dsp.Game):
                 print()
 
                 if self.cheatcode.lower() == "knowitall":
-                    hlib.map_revealed = list(map_objects.keys())
+                    hlib.map_revealed = set(hlib.map_objects.keys())
                 elif self.cheatcode.lower() == "seenitall":
                     hlib.map_explored = hlib.map_revealed
                 elif self.cheatcode.startswith("tele"):
@@ -1072,8 +1072,8 @@ class Player(xsge_physics.Collider):
                 w = 7
                 h = 5
 
-                if sge.game.current_room.fname in map_rooms:
-                    rm_x, rm_y = map_rooms[sge.game.current_room.fname]
+                if sge.game.current_room.fname in hlib.map_rooms:
+                    rm_x, rm_y = hlib.map_rooms[sge.game.current_room.fname]
                     pl_x = rm_x + get_xregion(self.x)
                     pl_y = rm_y + get_yregion(self.y)
                     x = pl_x - w // 2
@@ -1281,18 +1281,18 @@ class Player(xsge_physics.Collider):
         self.last_x = self.x
         self.last_y = self.y
 
-        if sge.game.current_room.fname in map_rooms:
-            xr, yr = map_rooms[sge.game.current_room.fname]
+        if sge.game.current_room.fname in hlib.map_rooms:
+            xr, yr = hlib.map_rooms[sge.game.current_room.fname]
             xr += get_xregion(self.x)
             yr += get_yregion(self.y)
             if xr != self.last_xr or yr != self.last_yr:
                 pos = (xr, yr)
                 if pos not in hlib.map_explored:
-                    hlib.map_explored = hlib.map_explored[:]
-                    hlib.map_explored.append(pos)
+                    hlib.map_explored = hlib.map_explored.copy()
+                    hlib.map_explored.add(pos)
                 if pos not in hlib.map_revealed:
-                    hlib.map_revealed = hlib.map_revealed[:]
-                    hlib.map_revealed.append(pos)
+                    hlib.map_revealed = hlib.map_revealed.copy()
+                    hlib.map_revealed.add(pos)
                 self.update_hud()
             self.last_xr = xr
             self.last_yr = yr
@@ -1748,7 +1748,7 @@ class Anneroy(Player):
             if self.aim_direction is None:
                 self.aim_direction = 0
             self.alarms["shooting"] = 30
-            apct = min(1, hlib.artifacts / max(1, num_artifacts))
+            apct = min(1, hlib.artifacts / max(1, hlib.num_artifacts))
             self.alarms["shoot_lock"] = 30 - 26*apct
             self.last_aim_direction = self.aim_direction
 
@@ -4095,13 +4095,13 @@ class Powerup(InteractiveObject):
         play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
-        hlib.powerups = hlib.powerups[:]
-        hlib.powerups.append(i)
+        hlib.powerups = hlib.powerups.copy()
+        hlib.powerups.add(i)
 
         # Remove the powerup from the map
         px = get_xregion(self.image_xcenter)
         py = get_yregion(self.image_ycenter)
-        hlib.map_removed.append(("powerup", sge.game.current_room.fname, px, py))
+        hlib.map_removed.add(("powerup", sge.game.current_room.fname, px, py))
 
         self.collect(other)
 
@@ -4135,8 +4135,8 @@ class Artifact(Powerup):
         return _("HEXOSHI ARTIFACT\n\n"
                  "{amt}/{total} ({pct}%)\n\n"
                  "Fire rate increased").format(
-                     amt=hlib.artifacts, total=num_artifacts,
-                     pct=int(100 * hlib.artifacts / max(num_artifacts, 1)))
+                     amt=hlib.artifacts, total=hlib.num_artifacts,
+                     pct=int(100 * hlib.artifacts / max(hlib.num_artifacts, 1)))
 
     def collect(self, other):
         hlib.artifacts += 1
@@ -4166,8 +4166,8 @@ class LifeOrb(Powerup):
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
-        hlib.progress_flags = hlib.progress_flags[:]
-        hlib.progress_flags.append("life_orb")
+        hlib.progress_flags = hlib.progress_flags.copy()
+        hlib.progress_flags.add("life_orb")
 
 
 class Map(Powerup):
@@ -4183,8 +4183,8 @@ class Map(Powerup):
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
-        hlib.progress_flags = hlib.progress_flags[:]
-        hlib.progress_flags.append("map")
+        hlib.progress_flags = hlib.progress_flags.copy()
+        hlib.progress_flags.add("map")
 
 
 class MapDisk(Powerup):
@@ -4203,9 +4203,9 @@ class MapDisk(Powerup):
     def collect(self, other):
         for fname in self.rooms:
             sge.game.pump_input()
-            if fname in map_rooms:
+            if fname in hlib.map_rooms:
                 room = Level.load(fname, True)
-                rm_x, rm_y = map_rooms[fname]
+                rm_x, rm_y = hlib.map_rooms[fname]
                 rm_w = int(math.ceil(room.width / hlib.SCREEN_SIZE[0]))
                 rm_h = int(math.ceil(room.height / hlib.SCREEN_SIZE[1]))
 
@@ -4226,8 +4226,8 @@ class MapDisk(Powerup):
                         sge.game.pump_input()
                         if ((x, y) not in ignore_regions
                                 and (x, y) not in hlib.map_revealed):
-                            hlib.map_revealed = hlib.map_revealed[:]
-                            hlib.map_revealed.append((x, y))
+                            hlib.map_revealed = hlib.map_revealed.copy()
+                            hlib.map_revealed.add((x, y))
 
         sge.game.regulate_speed()
         sge.game.pump_input()
@@ -4246,8 +4246,8 @@ class AtomicCompressor(Powerup):
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
-        hlib.progress_flags = hlib.progress_flags[:]
-        hlib.progress_flags.append("atomic_compressor")
+        hlib.progress_flags = hlib.progress_flags.copy()
+        hlib.progress_flags.add("atomic_compressor")
 
 
 class MonkeyBoots(Powerup):
@@ -4273,8 +4273,8 @@ class MonkeyBoots(Powerup):
         super().event_create()
 
     def collect(self, other):
-        hlib.progress_flags = hlib.progress_flags[:]
-        hlib.progress_flags.append("monkey_boots")
+        hlib.progress_flags = hlib.progress_flags.copy()
+        hlib.progress_flags.add("monkey_boots")
 
     def event_destroy(self):
         if self.emitter is not None:
@@ -4304,8 +4304,8 @@ class HedgehogHormone(Powerup):
         super().event_create()
 
     def collect(self, other):
-        hlib.progress_flags = hlib.progress_flags[:]
-        hlib.progress_flags.append("hedgehog_hormone")
+        hlib.progress_flags = hlib.progress_flags.copy()
+        hlib.progress_flags.add("hedgehog_hormone")
 
     def event_destroy(self):
         if self.emitter is not None:
@@ -4390,8 +4390,8 @@ class WarpPad(SpawnPoint):
         y = get_yregion(self.image_ycenter)
         i = (sge.game.current_room.fname, self.spawn_id, x, y)
         if i not in hlib.warp_pads:
-            hlib.warp_pads = hlib.warp_pads[:]
-            hlib.warp_pads.append(i)
+            hlib.warp_pads = hlib.warp_pads.copy()
+            hlib.warp_pads.add(i)
 
     def spawn(self, other):
         if not self.created:
@@ -4444,7 +4444,7 @@ class WarpPad(SpawnPoint):
                                self.image_ycenter)
 
                     if "warp" not in hlib.progress_flags:
-                        hlib.progress_flags.append("warp")
+                        hlib.progress_flags.add("warp")
                         DialogBox(gui_handler, self.message).show()
 
                 save_game()
@@ -4869,19 +4869,20 @@ class NewGameMenu(Menu):
         for slot in hlib.save_slots:
             if slot is None:
                 cls.items.append(_("-Empty-"))
-            else:
-                name = slot.get("player_name", "Anneroy")
-                completion = int(100 * len(slot.get("powerups", []))
-                                 / max(num_powerups + num_artifacts, 1))
-                time_taken = slot.get("time_taken", 0)
-                seconds = int(time_taken % 60)
-                minutes = int((time_taken/60) % 60)
-                hours = int(time_taken / 3600)
-                text = _("{name}: {hours}:{minutes:02}:{seconds:02},"
-                         " {completion}%").format(
-                             name=name, completion=completion,
-                             hours=hours, minutes=minutes, seconds=seconds)
-                cls.items.append(text)
+                continue
+
+            name = slot.get("player_name", "Anneroy")
+            completion = int(100 * len(slot.get("powerups", []))
+                             / max(hlib.num_powerups + hlib.num_artifacts, 1))
+            time_taken = slot.get("time_taken", 0)
+            seconds = int(time_taken % 60)
+            minutes = int((time_taken/60) % 60)
+            hours = int(time_taken / 3600)
+            text = _("{name}: {hours}:{minutes:02}:{seconds:02},"
+                     " {completion}%").format(
+                         name=name, completion=completion,
+                         hours=hours, minutes=minutes, seconds=seconds)
+            cls.items.append(text)
 
         cls.items.append(_("Back"))
 
@@ -5428,14 +5429,14 @@ class PauseMenu(ModalMenu):
             else:
                 slot = {}
 
-            if (slot.get("map_revealed") == hlib.map_revealed
-                    and slot.get("map_explored") == hlib.map_explored
-                    and slot.get("map_removed") == hlib.map_removed
-                    and slot.get("warp_pads") == hlib.warp_pads
-                    and slot.get("powerups") == hlib.powerups
-                    and slot.get("progress_flags") == hlib.progress_flags
-                    and slot.get("artifacts") == hlib.artifacts
-                    and slot.get("etanks") == hlib.etanks):
+            if (set(slot.get("map_revealed", [])) == hlib.map_revealed
+                    and set(slot.get("map_explored", [])) == hlib.map_explored
+                    and set(slot.get("map_removed", [])) == hlib.map_removed
+                    and set(slot.get("warp_pads", [])) == hlib.warp_pads
+                    and set(slot.get("powerups", [])) == hlib.powerups
+                    and set(slot.get("progress_flags", [])) == hlib.progress_flags
+                    and slot.get("artifacts", 0) == hlib.artifacts
+                    and slot.get("etanks", 0) == hlib.etanks):
                 sge.game.start_room.start()
             else:
                 text = _("Some progress has not been saved. If you leave the "
@@ -5450,10 +5451,12 @@ class PauseMenu(ModalMenu):
             minutes = int((hlib.time_taken/60) % 60)
             hours = int(hlib.time_taken / 3600)
             powerups_col = len(hlib.powerups) - hlib.artifacts
-            powerups_percent = int(100 * powerups_col / max(num_powerups, 1))
-            artifacts_percent = int(100 * hlib.artifacts / max(num_artifacts, 1))
+            powerups_percent = int(100 * powerups_col
+                                   / max(hlib.num_powerups, 1))
+            artifacts_percent = int(100 * hlib.artifacts
+                                    / max(hlib.num_artifacts, 1))
             completion = int(100 * len(hlib.powerups)
-                             / max(num_powerups + num_artifacts, 1))
+                             / max(hlib.num_powerups + hlib.num_artifacts, 1))
             text = _("PLAYER STATISTICS\n\n"
                      "Time spent: {hours}:{minutes:02}:{seconds:02}\n"
                      "Powerups collected: {powerups_col}"
@@ -5546,7 +5549,7 @@ class MapDialog(xsge_gui.Dialog):
         self.map.tab_focus = False
         self.left = 0
         self.top = 0
-        for rx, ry in set(hlib.map_revealed + hlib.map_explored):
+        for rx, ry in hlib.map_revealed & hlib.map_explored:
             self.left = min(self.left, rx)
             self.top = min(self.top, ry)
         player_x -= self.left
@@ -5595,9 +5598,12 @@ class TeleportDialog(MapDialog):
         self.location_indicator.sprite = map_player_sprite
         self.location_indicator.tab_focus = False
 
+        # Sorted copy of available warp pads for cycling through.
+        self.warp_pads = sorted(hlib.warp_pads)
+
         self.left = 0
         self.top = 0
-        for rx, ry in set(hlib.map_revealed + hlib.map_explored):
+        for rx, ry in hlib.map_revealed & hlib.map_explored:
             self.left = min(self.left, rx)
             self.top = min(self.top, ry)
 
@@ -5609,10 +5615,10 @@ class TeleportDialog(MapDialog):
         self.update_selection()
 
     def update_selection(self):
-        if self.selection[0] in map_rooms:
+        if self.selection[0] in hlib.map_rooms:
             xcells = int(sge.game.width / hlib.MAP_CELL_WIDTH)
             ycells = int(sge.game.height / hlib.MAP_CELL_HEIGHT)
-            x, y = map_rooms[self.selection[0]]
+            x, y = hlib.map_rooms[self.selection[0]]
             x += self.selection[2] - self.left
             y += self.selection[3] - self.top
             self.map.x = (xcells//2 - x) * hlib.MAP_CELL_WIDTH
@@ -5621,23 +5627,23 @@ class TeleportDialog(MapDialog):
     def event_press_left(self):
         play_sound(select_sound)
 
-        if self.selection in hlib.warp_pads:
-            i = hlib.warp_pads.index(self.selection)
+        if self.selection in self.warp_pads:
+            i = self.warp_pads.index(self.selection)
         else:
             i = 0
 
-        self.selection = hlib.warp_pads[(i-1) % len(hlib.warp_pads)]
+        self.selection = self.warp_pads[(i-1) % len(self.warp_pads)]
         self.update_selection()
 
     def event_press_right(self):
         play_sound(select_sound)
 
-        if self.selection in hlib.warp_pads:
-            i = hlib.warp_pads.index(self.selection)
+        if self.selection in self.warp_pads:
+            i = self.warp_pads.index(self.selection)
         else:
             i = -1
 
-        self.selection = hlib.warp_pads[(i+1) % len(hlib.warp_pads)]
+        self.selection = self.warp_pads[(i+1) % len(self.warp_pads)]
         self.update_selection()
 
     def event_press_up(self):
@@ -5973,13 +5979,13 @@ def set_new_game():
     hlib.watched_timelines = []
     hlib.current_level = None
     hlib.spawn_point = "save"
-    hlib.map_revealed = []
-    hlib.map_explored = []
-    hlib.map_removed = []
-    hlib.warp_pads = []
-    hlib.powerups = []
+    hlib.map_revealed = set()
+    hlib.map_explored = set()
+    hlib.map_removed = set()
+    hlib.warp_pads = set()
+    hlib.powerups = set()
     hlib.rooms_killed = set()
-    hlib.progress_flags = []
+    hlib.progress_flags = set()
     hlib.artifacts = 0
     hlib.etanks = 0
     hlib.time_taken = 0
@@ -6038,13 +6044,13 @@ def save_game():
             "watched_timelines": hlib.watched_timelines[:],
             "current_level": hlib.current_level,
             "spawn_point": hlib.spawn_point,
-            "map_revealed": hlib.map_revealed[:],
-            "map_explored": hlib.map_explored[:],
-            "map_removed": hlib.map_removed[:],
-            "warp_pads": hlib.warp_pads[:],
-            "powerups": hlib.powerups[:],
+            "map_revealed": sorted(hlib.map_revealed),
+            "map_explored": sorted(hlib.map_explored),
+            "map_removed": sorted(hlib.map_removed),
+            "warp_pads": sorted(hlib.warp_pads),
+            "powerups": sorted(hlib.powerups),
             "rooms_killed": sorted(hlib.rooms_killed),
-            "progress_flags": hlib.progress_flags[:],
+            "progress_flags": sorted(hlib.progress_flags),
             "artifacts": hlib.artifacts,
             "etanks": hlib.etanks,
             "time_taken": hlib.time_taken}
@@ -6063,13 +6069,13 @@ def load_game():
             hlib.watched_timelines = slot.get("watched_timelines", [])
             hlib.current_level = slot.get("current_level")
             hlib.spawn_point = slot.get("spawn_point")
-            hlib.map_revealed = [tuple(i) for i in slot.get("map_revealed", [])]
-            hlib.map_explored = [tuple(i) for i in slot.get("map_explored", [])]
-            hlib.map_removed = [tuple(i) for i in slot.get("map_removed", [])]
-            hlib.warp_pads = [tuple(i) for i in slot.get("warp_pads", [])]
-            hlib.powerups = [tuple(i) for i in slot.get("powerups", [])]
-            hlib.rooms_killed = set(slot.get("rooms_killed"))
-            hlib.progress_flags = slot.get("progress_flags", [])
+            hlib.map_revealed = set(map(tuple, slot.get("map_revealed", [])))
+            hlib.map_explored = set(map(tuple, slot.get("map_explored", [])))
+            hlib.map_removed = set(map(tuple, slot.get("map_removed", [])))
+            hlib.warp_pads = set(map(tuple, slot.get("warp_pads", [])))
+            hlib.powerups = set(map(tuple, slot.get("powerups", [])))
+            hlib.rooms_killed = set(slot.get("rooms_killed", []))
+            hlib.progress_flags = set(slot.get("progress_flags", []))
             hlib.artifacts = slot.get("artifacts", 0)
             hlib.etanks = slot.get("etanks", 0)
             hlib.time_taken = slot.get("time_taken", 0)
@@ -6096,18 +6102,13 @@ def start_game():
 
 
 def generate_map():
-    global map_rooms
-    global map_objects
-    global num_powerups
-    global num_artifacts
-
     print(_("Generating new map files; this may take some time."))
     files_checked = set()
     files_remaining = {("0.json", 0, 0, None, None)}
-    map_rooms = {}
-    map_objects = {}
-    num_powerups = 0
-    num_artifacts = 0
+    hlib.map_rooms = {}
+    hlib.map_objects = {}
+    hlib.num_powerups = 0
+    hlib.num_artifacts = 0
 
     while files_remaining:
         fname, rm_x, rm_y, origin_level, origin_spawn = files_remaining.pop()
@@ -6140,7 +6141,7 @@ def generate_map():
                     origin = None
                     break
 
-        map_rooms[fname] = (rm_x, rm_y)
+        hlib.map_rooms[fname] = (rm_x, rm_y)
 
         ignore_regions = set()
         for obj in room.objects:
@@ -6171,119 +6172,133 @@ def generate_map():
                 if (dx, dy) in ignore_regions:
                     continue
 
+                pos_objects = hlib.map_objects.setdefault((dx, dy), [])
                 if isinstance(obj, LeftDoor):
-                    map_objects.setdefault((dx, dy), []).append("door_left")
+                    pos_objects.append("door_left")
                 elif isinstance(obj, RightDoor):
-                    map_objects.setdefault((dx, dy), []).append("door_right")
+                    pos_objects.append("door_right")
                 elif isinstance(obj, UpDoor):
-                    map_objects.setdefault((dx, dy), []).append("door_top")
+                    pos_objects.append("door_top")
                 elif isinstance(obj, DownDoor):
-                    map_objects.setdefault((dx, dy), []).append("door_bottom")
+                    pos_objects.append("door_bottom")
             elif isinstance(obj, WarpPad):
                 wx = rm_x + get_xregion(obj.image_xcenter)
                 wy = rm_y + get_yregion(obj.image_ycenter)
-                if (wx, wy) not in ignore_regions:
-                    map_objects.setdefault((wx, wy), []).append("warp_pad")
+                if (wx, wy) in ignore_regions:
+                    continue
+                hlib.map_objects.setdefault((wx, wy), []).append("warp_pad")
             elif isinstance(obj, Powerup):
                 if isinstance(obj, Artifact):
-                    num_artifacts += 1
+                    hlib.num_artifacts += 1
                 else:
-                    num_powerups += 1
+                    hlib.num_powerups += 1
 
                 px = rm_x + get_xregion(obj.image_xcenter)
                 py = rm_y + get_yregion(obj.image_ycenter)
-                if (px, py) not in ignore_regions:
-                    map_objects.setdefault((px, py), []).append("powerup")
+                if (px, py) in ignore_regions:
+                    continue
+                hlib.map_objects.setdefault((px, py), []).append("powerup")
             elif isinstance(obj, MapLeftWall):
                 wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wy in range(wy1, wy2 + 1):
                     if (wx, wy) not in ignore_regions:
-                        map_objects.setdefault((wx, wy), []).append("wall_left")
+                        hlib.map_objects.setdefault((wx, wy), []).append(
+                            "wall_left")
             elif isinstance(obj, MapRightWall):
                 wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wy in range(wy1, wy2 + 1):
                     if (wx, wy) not in ignore_regions:
-                        map_objects.setdefault((wx, wy), []).append("wall_right")
+                        hlib.map_objects.setdefault((wx, wy), []).append(
+                            "wall_right")
             elif isinstance(obj, MapTopWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_top)
                 for wx in range(wx1, wx2 + 1):
                     if (wx, wy) not in ignore_regions:
-                        map_objects.setdefault((wx, wy), []).append("wall_top")
+                        hlib.map_objects.setdefault((wx, wy), []).append(
+                            "wall_top")
             elif isinstance(obj, MapBottomWall):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wx in range(wx1, wx2 + 1):
                     if (wx, wy) not in ignore_regions:
-                        map_objects.setdefault((wx, wy), []).append("wall_bottom")
+                        hlib.map_objects.setdefault((wx, wy), []).append(
+                            "wall_bottom")
             elif isinstance(obj, MapLeftDoor):
                 wx = rm_x + get_xregion(obj.bbox_left)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wy in range(wy1, wy2 + 1):
                     if (wx, wy) not in ignore_regions:
-                        map_objects.setdefault((wx, wy), []).append("door_left")
+                        hlib.map_objects.setdefault((wx, wy), []).append(
+                            "door_left")
             elif isinstance(obj, MapRightDoor):
                 wx = rm_x + get_xregion(obj.bbox_right - 1)
                 wy1 = rm_y + get_yregion(obj.bbox_top)
                 wy2 = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wy in range(wy1, wy2 + 1):
                     if (wx, wy) not in ignore_regions:
-                        map_objects.setdefault((wx, wy), []).append("door_right")
+                        hlib.map_objects.setdefault((wx, wy), []).append(
+                            "door_right")
             elif isinstance(obj, MapTopDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_top)
                 for wx in range(wx1, wx2 + 1):
                     if (wx, wy) not in ignore_regions:
-                        map_objects.setdefault((wx, wy), []).append("door_top")
+                        hlib.map_objects.setdefault((wx, wy), []).append(
+                            "door_top")
             elif isinstance(obj, MapBottomDoor):
                 wx1 = rm_x + get_xregion(obj.bbox_left)
                 wx2 = rm_x + get_xregion(obj.bbox_right - 1)
                 wy = rm_y + get_yregion(obj.bbox_bottom - 1)
                 for wx in range(wx1, wx2 + 1):
                     if (wx, wy) not in ignore_regions:
-                        map_objects.setdefault((wx, wy), []).append("door_bottom")
+                        hlib.map_objects.setdefault((wx, wy), []).append(
+                            "door_bottom")
 
         for x in range(rm_x, rm_x + rm_w):
             y = rm_y
-            if ((x, y) not in ignore_regions
-                    and "door_top" not in map_objects.setdefault((x, y), [])):
-                map_objects[(x, y)].append("wall_top")
+            if (x, y) not in ignore_regions:
+                pos_objects = hlib.map_objects.setdefault((x, y), [])
+                if "door_top" not in pos_objects:
+                    pos_objects.append("wall_top")
 
             y = rm_y + rm_h - 1
-            if ((x, y) not in ignore_regions
-                    and "door_bottom" not in map_objects.setdefault((x, y),
-                                                                    [])):
-                map_objects[(x, y)].append("wall_bottom")
+            if (x, y) not in ignore_regions:
+                pos_objects = hlib.map_objects.setdefault((x, y), [])
+                if "door_bottom" not in pos_objects:
+                    pos_objects.append("wall_bottom")
 
         for y in range(rm_y, rm_y + rm_h):
             x = rm_x
-            if ((x, y) not in ignore_regions
-                    and "door_left" not in map_objects.setdefault((x, y), [])):
-                map_objects[(x, y)].append("wall_left")
+            if (x, y) not in ignore_regions:
+                pos_objects = hlib.map_objects.setdefault((x, y), [])
+                if "door_left" not in pos_objects:
+                    pos_objects.append("wall_left")
 
             x = rm_x + rm_w - 1
-            if ((x, y) not in ignore_regions
-                    and "door_right" not in map_objects.setdefault((x, y), [])):
-                map_objects[(x, y)].append("wall_right")
+            if (x, y) not in ignore_regions:
+                pos_objects = hlib.map_objects.setdefault((x, y), [])
+                if "door_right" not in pos_objects:
+                    pos_objects.append("wall_right")
 
     f_objects = {}
-    for x, y in map_objects:
+    for x, y in hlib.map_objects:
         i = "{},{}".format(x, y)
-        f_objects[i] = map_objects[(x, y)]
+        f_objects[i] = hlib.map_objects[(x, y)]
 
-    info = {"powerups": num_powerups, "artifacts": num_artifacts}
+    info = {"powerups": hlib.num_powerups, "artifacts": hlib.num_artifacts}
 
     try:
         with open(os.path.join(hlib.datadir, "map", "rooms.json"), 'w') as f:
-            json.dump(map_rooms, f, indent=4, sort_keys=True)
+            json.dump(hlib.map_rooms, f, indent=4, sort_keys=True)
 
         with open(os.path.join(hlib.datadir, "map", "objects.json"), 'w') as f:
             json.dump(f_objects, f, indent=4, sort_keys=True)
@@ -6300,7 +6315,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
         right = 0
         top = 0
         bottom = 0
-        for rx, ry in set(hlib.map_revealed + hlib.map_explored):
+        for rx, ry in hlib.map_revealed & hlib.map_explored:
             left = min(left, rx)
             right = max(right, rx)
             top = min(top, ry)
@@ -6317,8 +6332,8 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
 
     removed = []
     for obj, fname, ox, oy in hlib.map_removed:
-        if fname in map_rooms:
-            rm_x, rm_y = map_rooms[fname]
+        if fname in hlib.map_rooms:
+            rm_x, rm_y = hlib.map_rooms[fname]
             removed.append((obj, rm_x + ox, rm_y + oy))
     s_w = w * hlib.MAP_CELL_WIDTH
     s_h = h * hlib.MAP_CELL_HEIGHT
@@ -6332,9 +6347,9 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
             dx, dy, hlib.MAP_CELL_WIDTH, hlib.MAP_CELL_HEIGHT,
             fill=sge.gfx.Color((170, 68, 153)))
 
-    for ox, oy in set(map_objects) & set(hlib.map_revealed + hlib.map_explored):
+    for ox, oy in set(hlib.map_objects) & hlib.map_revealed & hlib.map_explored:
         if x <= ox < x + w and y <= oy < y + h:
-            for obj in map_objects[(ox, oy)]:
+            for obj in hlib.map_objects[(ox, oy)]:
                 if (obj, ox, oy) in removed:
                     removed.remove((obj, ox, oy))
                     continue
@@ -6358,7 +6373,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
                 elif obj == "door_bottom":
                     map_sprite.draw_sprite(map_door_bottom_sprite, 0, dx, dy)
                 elif obj == "powerup":
-                    if "warp_pad" not in map_objects[(ox, oy)]:
+                    if "warp_pad" not in hlib.map_objects[(ox, oy)]:
                         map_sprite.draw_sprite(map_powerup_sprite, 0, dx, dy)
                 elif obj == "warp_pad":
                     map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
@@ -6942,8 +6957,6 @@ sge.game.start_room = TitleScreen.load(
 sge.game.mouse.visible = False
 
 # Load map data
-map_rooms = {}
-map_objects = {}
 if not GEN_MAP:
     try:
         with open(os.path.join(hlib.datadir, "map", "rooms.json")) as f:
@@ -6952,7 +6965,7 @@ if not GEN_MAP:
         generate_map()
     else:
         for i in d:
-            map_rooms[i] = tuple(d[i])
+            hlib.map_rooms[i] = tuple(d[i])
 
     try:
         with open(os.path.join(hlib.datadir, "map", "objects.json")) as f:
@@ -6963,7 +6976,7 @@ if not GEN_MAP:
         for i in d:
             x, y = tuple(i.split(','))
             j = (int(x), int(y))
-            map_objects[j] = d[i]
+            hlib.map_objects[j] = d[i]
 
     try:
         with open(os.path.join(hlib.datadir, "map", "info.json")) as f:
@@ -6971,17 +6984,17 @@ if not GEN_MAP:
     except (OSError, ValueError):
         generate_map()
     else:
-        num_powerups = d.get("powerups", 0)
-        num_artifacts = d.get("artifacts", 0)
+        hlib.num_powerups = d.get("powerups", 0)
+        hlib.num_artifacts = d.get("artifacts", 0)
 else:
     generate_map()
 
 if SAVE_MAP:
-    hlib.map_revealed = list(map_objects.keys())
+    hlib.map_revealed = set(hlib.map_objects.keys())
     hlib.map_explored = hlib.map_revealed
     draw_map().save("map.png")
-    hlib.map_revealed = []
-    hlib.map_explored = []
+    hlib.map_revealed = set()
+    hlib.map_explored = set()
 
 try:
     with open(os.path.join(hlib.configdir, "config.json")) as f:

@@ -149,9 +149,6 @@ fsscale = None
 no_hud = False
 god = False
 
-backgrounds = {}
-loaded_music = {}
-
 fullscreen = False
 scale_method = None
 sound_volume = 1
@@ -193,13 +190,13 @@ player_name = "Anneroy"
 watched_timelines = []
 current_level = None
 spawn_point = None
-map_revealed = []
-map_explored = []
-map_removed = []
-warp_pads = []
-powerups = []
+map_revealed = set()
+map_explored = set()
+map_removed = set()
+warp_pads = set()
+powerups = set()
 rooms_killed = set()
-progress_flags = []
+progress_flags = set()
 artifacts = 0
 etanks = 0
 time_taken = 0
@@ -208,3 +205,11 @@ spawn_xoffset = 0
 spawn_yoffset = 0
 
 player = None
+
+backgrounds = {}
+loaded_music = {}
+
+map_rooms = {}
+map_objects = {}
+num_powerups = 0
+num_artifacts = 0

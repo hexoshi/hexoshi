@@ -5793,12 +5793,12 @@ def warp(dest):
 
 def set_gui_controls():
     # Set the controls for xsge_gui.
-    xsge_gui.next_widget_keys = ["down", "tab", "s", "kp_2"]
-    xsge_gui.previous_widget_keys = ["up", "w", "kp_8"]
-    xsge_gui.left_keys = ["left", "a", "kp_4"]
-    xsge_gui.right_keys = ["right", "d", "kp_6"]
-    xsge_gui.up_keys = []
-    xsge_gui.down_keys = []
+    xsge_gui.next_widget_keys = ["down", "tab"]
+    xsge_gui.previous_widget_keys = ["up"]
+    xsge_gui.left_keys = ["left"]
+    xsge_gui.right_keys = ["right"]
+    xsge_gui.up_keys = ["up"]
+    xsge_gui.down_keys = ["down"]
     xsge_gui.enter_keys = ["enter", "kp_enter", "space", "end"]
     xsge_gui.escape_keys = ["escape"]
     xsge_gui.next_widget_joystick_events = [
@@ -5807,8 +5807,8 @@ def set_gui_controls():
         (0, "axis-", 1), (0, "hat_up", 0)]
     xsge_gui.left_joystick_events = [(0, "axis-", 0), (0, "hat_left", 0)]
     xsge_gui.right_joystick_events = [(0, "axis+", 0), (0, "hat_right", 0)]
-    xsge_gui.up_joystick_events = []
-    xsge_gui.down_joystick_events = []
+    xsge_gui.up_joystick_events = [(0, "axis-", 1), (0, "hat_up", 0)]
+    xsge_gui.down_joystick_events = [(0, "axis+", 1), (0, "hat_down", 0)]
     xsge_gui.enter_joystick_events = [
         (0, "button", 0), (0, "button", 1), (0, "button", 2), (0, "button", 3),
         (0, "button", 9)]

@@ -154,7 +154,7 @@ class Game(sge.dsp.Game):
             self.fps_frames = 0
 
         if hlib.fps_enabled:
-            self.project_text(font_small, self.fps_text, self.width - 8,
+            self.project_text(hlib.font_small, self.fps_text, self.width - 8,
                               self.height - 8, z=1000000,
                               color=sge.gfx.Color("yellow"), halign="right",
                               valign="bottom", outline=sge.gfx.Color("black"),
@@ -269,7 +269,7 @@ class Level(sge.dsp.Room):
             # TODO: Add HUD showing health, ammo, etc.
 
             if self.status_text:
-                sge.game.project_text(font, self.status_text,
+                sge.game.project_text(hlib.font, self.status_text,
                                       sge.game.width / 2, sge.game.height - 16,
                                       color=sge.gfx.Color("white"),
                                       halign="center", valign="middle",
@@ -307,7 +307,6 @@ class Level(sge.dsp.Room):
     def event_room_start(self):
         if hlib.player is not None:
             self.add(hlib.player)
-        ##self.add(lava_animation)
 
         xsge_lighting.clear_lights()
 
@@ -327,10 +326,6 @@ class Level(sge.dsp.Room):
                 if isinstance(obj, InteractiveObject):
                     if not self.disable_lights:
                         obj.project_light()
-
-                ##if not obj.active:
-                    ##if isinstance(obj, (Lava, LavaSurface)):
-                    ##    obj.image_index = lava_animation.image_index
 
         # Show HUD
         self.show_hud()
@@ -501,11 +496,11 @@ class Level(sge.dsp.Room):
             if sge.game.current_room is not None:
                 x = sge.game.width / 2
                 y = sge.game.height / 2
-                w = font.get_width(text, outline_thickness=1) + 32
-                h = font.get_height(text, outline_thickness=1) + 32
+                w = hlib.font.get_width(text, outline_thickness=1) + 32
+                h = hlib.font.get_height(text, outline_thickness=1) + 32
                 sge.game.project_rectangle(x - w/2, y - h/2, w, h,
                                            fill=sge.gfx.Color("black"))
-                sge.game.project_text(font, text, x, y,
+                sge.game.project_text(hlib.font, text, x, y,
                                       color=sge.gfx.Color("white"),
                                       halign="center", valign="middle",
                                       outline=sge.gfx.Color("black"),
@@ -562,17 +557,17 @@ class CreditsScreen(SpecialScreen):
             sections = json.load(f)
 
         logo_section = sge.dsp.Object.create(self.width / 2, self.height,
-                                             sprite=logo_sprite,
+                                             sprite=hlib.logo_sprite,
                                              tangible=False)
         self.sections = [logo_section]
         for section in sections:
             if "title" in section:
                 head_sprite = sge.gfx.Sprite.from_text(
-                    font_big, section["title"], width=self.width,
+                    hlib.font_big, section["title"], width=self.width,
                     color=sge.gfx.Color("white"), halign="center",
                     outline=sge.gfx.Color("black"), outline_thickness=1)
                 x = self.width / 2
-                y = self.sections[-1].bbox_bottom + font_big.size*3
+                y = self.sections[-1].bbox_bottom + hlib.font_big.size*3
                 head_section = sge.dsp.Object.create(x, y, sprite=head_sprite,
                                                      tangible=False)
                 self.sections.append(head_section)
@@ -580,11 +575,11 @@ class CreditsScreen(SpecialScreen):
             if "lines" in section:
                 for line in section["lines"]:
                     list_sprite = sge.gfx.Sprite.from_text(
-                        font, line, width=self.width - 2*hlib.TILE_SIZE,
+                        hlib.font, line, width=self.width - 2*hlib.TILE_SIZE,
                         color=sge.gfx.Color("white"), halign="center",
                         outline=sge.gfx.Color("black"), outline_thickness=1)
                     x = self.width / 2
-                    y = self.sections[-1].bbox_bottom + font.size
+                    y = self.sections[-1].bbox_bottom + hlib.font.size
                     list_section = sge.dsp.Object.create(
                         x, y, sprite=list_sprite, tangible=False)
                     self.sections.append(list_section)
@@ -1073,17 +1068,17 @@ class Player(xsge_physics.Collider):
 
         x = start_x
         y += 4 + back_center.height
-        w = etank_empty_sprite.width
-        h = etank_empty_sprite.height
+        w = hlib.etank_empty_sprite.width
+        h = hlib.etank_empty_sprite.height
         for i in range(hlib.etanks):
             if x + w >= bar_xend:
                 x = start_x
                 y += h
 
             if i < hlib.etanks - self.etanks_used:
-                self.hud_sprite.draw_sprite(etank_full_sprite, 0, x, y)
+                self.hud_sprite.draw_sprite(hlib.etank_full_sprite, 0, x, y)
             else:
-                self.hud_sprite.draw_sprite(etank_empty_sprite, 0, x, y)
+                self.hud_sprite.draw_sprite(hlib.etank_empty_sprite, 0, x, y)
 
             x += w
 
@@ -3772,7 +3767,7 @@ class Boss(InteractiveObject):
 class LifeForce(InteractiveObject):
 
     def __init__(self, *args, **kwargs):
-        kwargs["sprite"] = life_force_sprite
+        kwargs["sprite"] = hlib.life_force_sprite
         super().__init__(*args, **kwargs)
 
     def move(self):
@@ -4851,7 +4846,7 @@ class Menu(xsge_gui.MenuWindow):
         if cls.items:
             self = cls.from_text(
                 gui_handler, sge.game.width / 2, sge.game.height * 2 / 3,
-                cls.items, font_normal=font,
+                cls.items, font_normal=hlib.font,
                 color_normal=menu_text_color,
                 color_selected=menu_text_selected_color,
                 background_color=menu_color, margin=4, halign="center",
@@ -5402,7 +5397,7 @@ class ModalMenu(xsge_gui.MenuDialog):
         if cls.items:
             self = cls.from_text(
                 gui_handler, sge.game.width / 2, sge.game.height / 2,
-                cls.items, font_normal=font,
+                cls.items, font_normal=hlib.font,
                 color_normal=menu_text_color,
                 color_selected=menu_text_selected_color,
                 background_color=menu_color, margin=9, halign="center",
@@ -5434,7 +5429,7 @@ class PauseMenu(ModalMenu):
 
         self = cls.from_text(
             gui_handler, sge.game.width / 2, sge.game.height / 2,
-            items, font_normal=font, color_normal=menu_text_color,
+            items, font_normal=hlib.font, color_normal=menu_text_color,
             color_selected=menu_text_selected_color,
             background_color=menu_color, margin=9, halign="center",
             valign="middle", outline_normal=sge.gfx.Color("black"),
@@ -5716,16 +5711,16 @@ class DialogBox(xsge_gui.Dialog):
             portrait_h = 0
         label_w = max(1, width - portrait_w - x_padding)
         height = max(1, portrait_h + y_padding,
-                     font.get_height(text, width=label_w, outline_thickness=1)
-                         + y_padding)
+                     y_padding + hlib.font.get_height(text, width=label_w,
+                                                      outline_thickness=1))
         x = sge.game.width/2 - width/2
         y = sge.game.height/2 - height/2
         super().__init__(parent, x, y, width, height,
                          background_color=menu_color, border=False)
         label_h = max(1, height - y_padding)
 
-        self.label = DialogLabel(self, label_x, label_y, 0, text, font=font,
-                                 width=label_w, height=label_h,
+        self.label = DialogLabel(self, label_x, label_y, 0, text,
+                                 font=hlib.font, width=label_w, height=label_h,
                                  color=sge.gfx.Color("white"), rate=rate)
 
         if portrait is not None:
@@ -5840,7 +5835,7 @@ def wait_key(text):
         sge.game.regulate_speed(fps=10)
 
         # Project text
-        sge.game.project_text(font, text, sge.game.width / 2,
+        sge.game.project_text(hlib.font, text, sge.game.width / 2,
                               sge.game.height / 2, width=sge.game.width,
                               height=sge.game.height,
                               color=sge.gfx.Color("white"),
@@ -5879,7 +5874,7 @@ def wait_js(text):
         sge.game.regulate_speed(fps=10)
 
         # Project text
-        sge.game.project_text(font, text, sge.game.width / 2,
+        sge.game.project_text(hlib.font, text, sge.game.width / 2,
                               sge.game.height / 2, width=sge.game.width,
                               height=sge.game.height,
                               color=sge.gfx.Color("white"),
@@ -6881,24 +6876,17 @@ map_warp_pad_sprite = sge.gfx.Sprite("warp_pad", d)
 map_player_sprite = sge.gfx.Sprite("player", d)
 
 d = os.path.join(hlib.datadir, "images", "misc")
-logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)
-font_sprite = sge.gfx.Sprite.from_tileset(
-    os.path.join(d, "font.png"), columns=18, rows=19, width=7, height=9)
-font_small_sprite = sge.gfx.Sprite.from_tileset(
-    os.path.join(d, "font_small.png"), columns=8, rows=12, width=7, height=7)
-font_big_sprite = sge.gfx.Sprite.from_tileset(
-    os.path.join(d, "font_big.png"), columns=8, rows=12, width=14, height=14,
-    xsep=2, ysep=2)
+hlib.logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)
 hlib.healthbar_sprite = sge.gfx.Sprite("healthbar", d, origin_x=1)
 hlib.healthbar_back_left_sprite = sge.gfx.Sprite("healthbar_back_left", d)
 hlib.healthbar_back_center_sprite = sge.gfx.Sprite("healthbar_back_center", d)
 hlib.healthbar_back_right_sprite = sge.gfx.Sprite("healthbar_back_right", d)
-etank_empty_sprite = sge.gfx.Sprite("etank_empty", d)
-etank_empty_sprite.draw_rectangle(
-    0, 0, etank_empty_sprite.width, etank_empty_sprite.height,
+hlib.etank_empty_sprite = sge.gfx.Sprite("etank_empty", d)
+hlib.etank_empty_sprite.draw_rectangle(
+    0, 0, hlib.etank_empty_sprite.width, hlib.etank_empty_sprite.height,
     fill=sge.gfx.Color((0, 0, 0, 128)), blend_mode=sge.BLEND_RGBA_SUBTRACT)
-etank_full_sprite = sge.gfx.Sprite("etank_full", d)
-life_force_sprite = sge.gfx.Sprite(
+hlib.etank_full_sprite = sge.gfx.Sprite("etank_full", d)
+hlib.life_force_sprite = sge.gfx.Sprite(
     "life_force", d, origin_x=7, origin_y=7, fps=10)
 
 # Load backgrounds
@@ -6931,9 +6919,9 @@ fname = os.path.join(hlib.datadir, "fonts",
                      #/ use. Please change this if and only if the target
                      #/ language cannot use the default font.
                      gettext.pgettext("font_file", "DejaVuSans-Bold.ttf"))
-font = sge.gfx.Font(fname, size=9)
-font_big = sge.gfx.Font(fname, size=16)
-font_small = sge.gfx.Font(fname, size=7)
+hlib.font = sge.gfx.Font(fname, size=9)
+hlib.font_big = sge.gfx.Font(fname, size=16)
+hlib.font_small = sge.gfx.Font(fname, size=7)
 
 # Load sounds
 shoot_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "shoot.wav"),
@@ -6976,8 +6964,6 @@ error_sound = cancel_sound
 type_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "type.wav"))
 
 # Create objects
-##lava_animation = sge.dsp.Object(0, 0, sprite=lava_body_sprite, visible=False,
-##                                tangible=False)
 
 # Create rooms
 sge.game.start_room = TitleScreen.load(

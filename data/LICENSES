@@ -358,6 +358,10 @@ images/map/wall_top.png
 images/map/warp_pad.png
 images/misc/healthbar_back.png
 images/misc/healthbar_front.png
+images/misc/healthbar.png
+images/misc/healthbar_back_center.png
+images/misc/healthbar_back_left.png
+images/misc/healthbar_back_right.png
 images/misc/logo.png
 images/misc/logo-is.svg
 map/objects.json

@@ -1068,7 +1068,7 @@ class Player(xsge_physics.Collider):
 
                 x += w
 
-            if "map" in hlib.progress_flags:
+            if hlib.god or "map" in hlib.progress_flags:
                 w = 7
                 h = 5
 
@@ -1326,7 +1326,7 @@ class Player(xsge_physics.Collider):
             if (key in hlib.secondary_key and not self.secondary_pressed):
                 self.secondary()
             if key in hlib.map_key:
-                if "map" in hlib.progress_flags:
+                if hlib.god or "map" in hlib.progress_flags:
                     play_sound(select_sound)
                     MapDialog(self.last_xr, self.last_yr).show()
 
@@ -1361,7 +1361,7 @@ class Player(xsge_physics.Collider):
                 if js in hlib.secondary_js and not self.secondary_pressed:
                     self.secondary()
                 if js in hlib.map_js:
-                    if "map" in hlib.progress_flags:
+                    if hlib.god or "map" in hlib.progress_flags:
                         play_sound(select_sound)
                         MapDialog(self.last_xr, self.last_yr).show()
             else:
@@ -1634,46 +1634,49 @@ class Anneroy(Player):
     def jump(self):
         if self.crouching:
             self.press_up()
+            return
 
-        if not self.crouching and not self.ball and not self.walljumping:
-            if (not self.on_floor and not self.was_on_floor and
-                    "monkey_boots" in hlib.progress_flags):
-                if self.facing > 0 and self.get_right_touching_wall():
-                    self.reset_image()
-                    self.sprite = anneroy_wall_right_sprite
-                    self.image_index = 0
-                    self.image_speed = anneroy_wall_right_sprite.speed
-                    self.image_xscale = abs(self.image_xscale)
-                    self.fixed_sprite = "wall"
-                    self.walljumping = True
-                    self.wall_direction = 1
-                    self.has_jumped = False
-                    if "fixed_sprite" in self.alarms:
-                        del self.alarms["fixed_sprite"]
-                    self.torso.visible = False
-                    self.input_lock = True
-                    self.xvelocity = 0
-                    self.yvelocity = 0
-                    self.gravity = 0
-                elif self.facing < 0 and self.get_left_touching_wall():
-                    self.reset_image()
-                    self.sprite = anneroy_wall_left_sprite
-                    self.image_index = 0
-                    self.image_speed = anneroy_wall_left_sprite.speed
-                    self.image_xscale = abs(self.image_xscale)
-                    self.fixed_sprite = "wall"
-                    self.walljumping = True
-                    self.wall_direction = -1
-                    self.has_jumped = False
-                    if "fixed_sprite" in self.alarms:
-                        del self.alarms["fixed_sprite"]
-                    self.torso.visible = False
-                    self.input_lock = True
-                    self.xvelocity = 0
-                    self.yvelocity = 0
-                    self.gravity = 0
-            else:
-                super().jump()
+        if self.ball or self.walljumping:
+            return
+
+        if (not self.on_floor and not self.was_on_floor
+                and (hlib.god or "monkey_boots" in hlib.progress_flags)):
+            if self.facing > 0 and self.get_right_touching_wall():
+                self.reset_image()
+                self.sprite = anneroy_wall_right_sprite
+                self.image_index = 0
+                self.image_speed = anneroy_wall_right_sprite.speed
+                self.image_xscale = abs(self.image_xscale)
+                self.fixed_sprite = "wall"
+                self.walljumping = True
+                self.wall_direction = 1
+                self.has_jumped = False
+                if "fixed_sprite" in self.alarms:
+                    del self.alarms["fixed_sprite"]
+                self.torso.visible = False
+                self.input_lock = True
+                self.xvelocity = 0
+                self.yvelocity = 0
+                self.gravity = 0
+            elif self.facing < 0 and self.get_left_touching_wall():
+                self.reset_image()
+                self.sprite = anneroy_wall_left_sprite
+                self.image_index = 0
+                self.image_speed = anneroy_wall_left_sprite.speed
+                self.image_xscale = abs(self.image_xscale)
+                self.fixed_sprite = "wall"
+                self.walljumping = True
+                self.wall_direction = -1
+                self.has_jumped = False
+                if "fixed_sprite" in self.alarms:
+                    del self.alarms["fixed_sprite"]
+                self.torso.visible = False
+                self.input_lock = True
+                self.xvelocity = 0
+                self.yvelocity = 0
+                self.gravity = 0
+        else:
+            super().jump()
 
     def retract_spikes(self):
         self.hedgehog = False
@@ -1711,7 +1714,7 @@ class Anneroy(Player):
         if "shoot_lock" in self.alarms:
             return
 
-        if "life_orb" not in hlib.progress_flags:
+        if not hlib.god and "life_orb" not in hlib.progress_flags:
             if self.aim_direction is None:
                 self.aim_direction = 0
             self.alarms["shooting"] = 30
@@ -1723,32 +1726,36 @@ class Anneroy(Player):
             return
 
         if self.ball:
-            if ("hedgehog_hormone" in hlib.progress_flags and not self.hedgehog
-                    and "hedgehog_lock" not in self.alarms):
-                self.hedgehog = True
-                self.sprite = anneroy_hedgehog_start_sprite
+            if ((not hlib.god and "hedgehog_hormone" not in hlib.progress_flags)
+                    or self.hedgehog or "hedgehog_lock" in self.alarms):
+                return
 
-                if self.fixed_sprite:
-                    self.image_speed = (abs(self.xvelocity)
-                                        * hlib.ANNEROY_BALL_FRAMES_PER_PIXEL)
+            self.hedgehog = True
+            self.sprite = anneroy_hedgehog_start_sprite
 
-                self.fixed_sprite = "hedgehog"
-                self.alarms["hedgehog_extend"] = hlib.ANNEROY_HEDGEHOG_FRAME_TIME
-                play_sound(hedgehog_spikes_sound, self.image_xcenter,
-                           self.image_ycenter)
-                self.rolling = False
+            if self.fixed_sprite:
+                self.image_speed = (abs(self.xvelocity)
+                                    * hlib.ANNEROY_BALL_FRAMES_PER_PIXEL)
 
-                if "sloth_ball" in hlib.progress_flags:
-                    self.hedgehog_autocancel = False
-                    self.max_speed = hlib.ANNEROY_SLOTH_MAX_SPEED
-                else:
-                    self.hedgehog_autocancel = True
-                    self.max_speed = 0
+            self.fixed_sprite = "hedgehog"
+            self.alarms["hedgehog_extend"] = hlib.ANNEROY_HEDGEHOG_FRAME_TIME
+            play_sound(hedgehog_spikes_sound, self.image_xcenter,
+                       self.image_ycenter)
+            self.rolling = False
+
+            if hlib.god or "sloth_ball" in hlib.progress_flags:
+                self.hedgehog_autocancel = False
+                self.max_speed = hlib.ANNEROY_SLOTH_MAX_SPEED
+            else:
+                self.hedgehog_autocancel = True
+                self.max_speed = 0
         else:
             if self.aim_direction is None:
                 self.aim_direction = 0
             self.alarms["shooting"] = 30
             apct = min(1, hlib.artifacts / max(1, hlib.num_artifacts))
+            if hlib.god:
+                apct = 1
             self.alarms["shoot_lock"] = 30 - 26*apct
             self.last_aim_direction = self.aim_direction
 
@@ -1899,23 +1906,25 @@ class Anneroy(Player):
         play_sound(cancel_sound)
 
     def compress(self):
-        if ("atomic_compressor" in hlib.progress_flags
-                and not self.shoot_pressed):
-            if self.fixed_sprite != "compress":
-                self.reset_image()
-                self.sprite = anneroy_compress_sprite
-                self.image_index = 0
-            self.image_speed = anneroy_compress_sprite.speed
-            self.fixed_sprite = "compress"
-            self.torso.visible = False
-            self.crouching = False
-            self.ball = True
-            self.rolling = True
-            self.bouncing = False
-            self.hedgehog = False
-            self.max_speed = self.__class__.max_speed
-            self.bbox_y = hlib.ANNEROY_BALL_BBOX_Y
-            self.bbox_height = hlib.ANNEROY_BALL_BBOX_HEIGHT
+        if ((not hlib.god and "atomic_compressor" not in hlib.progress_flags)
+                or self.shoot_pressed):
+            return
+
+        if self.fixed_sprite != "compress":
+            self.reset_image()
+            self.sprite = anneroy_compress_sprite
+            self.image_index = 0
+        self.image_speed = anneroy_compress_sprite.speed
+        self.fixed_sprite = "compress"
+        self.torso.visible = False
+        self.crouching = False
+        self.ball = True
+        self.rolling = True
+        self.bouncing = False
+        self.hedgehog = False
+        self.max_speed = self.__class__.max_speed
+        self.bbox_y = hlib.ANNEROY_BALL_BBOX_Y
+        self.bbox_height = hlib.ANNEROY_BALL_BBOX_HEIGHT
 
     def hurt(self, damage=1, touching=False):
         if (not touching) or (not self.hedgehog):
@@ -5394,7 +5403,7 @@ class PauseMenu(ModalMenu):
 
     @classmethod
     def create(cls, default=0, player_x=None, player_y=None):
-        if "map" in hlib.progress_flags:
+        if hlib.god or "map" in hlib.progress_flags:
             items = [_("Continue"), _("View Stats"), _("Configure keyboard"),
                      _("Configure joysticks"), _("View Map"),
                      _("Return to Title Screen")]
@@ -5485,7 +5494,7 @@ class PauseMenu(ModalMenu):
             PauseMenu.create(default=self.choice, player_x=self.player_x,
                              player_y=self.player_y)
         elif self.choice == 4:
-            if "map" in hlib.progress_flags:
+            if hlib.god or "map" in hlib.progress_flags:
                 play_sound(select_sound)
                 MapDialog(self.player_x, self.player_y).show()
             else:

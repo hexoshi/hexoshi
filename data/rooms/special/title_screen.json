@@ -4,7 +4,7 @@
  "layers":[
         {
          "compression":"zlib",
-         "data":"eJzdV0kOwkAMm+fwJ1qexQ5ivYG48T7GolatqD20GpQGS1FalUOMs6YUF49sVba5dyAF8MxWewdRCBvvAAph7R1AISy9AyiEf+GxyrYT2zb+7RnUCKA+0H8XjVWN3TyDGgHoQR7w6MOYKRfPoHqwF9Mcwjtipga1vE+RxzHbOdspfWO1cVst4K8egQ7AK7Ux04MHdaCPUB\/Yrfjfd+kRhQcAXerU6qE5hue7X2iDgZ5LHuxZU+5XfcCOyLnBemGtRNIDs6OrPmBR6gMAD2pBHchl6n1XgR3RzkHmV7S8srsVtYnEA3rofOccjJZX6LuMW3MLPhIP6MH6Zr0zryL1K85B1UN3lSi3VN8NpfpE4ML5URmzsx13ypT5cH4wr+yuaO9E3l7wB+P5Te+1bfP919ikdobb20prRr8tUrduOkP5O\/721z1D9xLyUR72WU13ZNvv7Ewaw2PWY11gv\/oAYXV4Pg==",
+         "data":"eJzdV1tug0AM3NPkTgGOlRT6UEvbv0b96wG7ozJiZC1KghYZdyTLIPIxzviZUlx8ZWuyHb2JVMAlW+tNohJ6bwKV8OBNoBJO3gQq4b\/Ecc72KDZM\/seT1AqgPtB\/u8mayT48Sa0A9GAc8OjDmCmjI6clPIlpDuEdnKlBK++jB9EreMn2lu01\/XG1vK0W8O8uTG\/Hd5o50yMO6kAfoT6wW\/G\/L+kRJQ4AurRp1kNzDM+fftTuBnou42DP2nO\/WgJ2RM4N1gtrJZIemB2l+oBFqQ8AcVAL6sBY9t53FdgR7RxkfkXLK7tbUZtIcUAPne+cg9HyCn2XvDW34CPFAT1Y36x35lWkfsU5qHrorhLlllq6oVSfCLFwfjTG7GzHnbLneDg\/mFd2V7R3Im8v+Gfj+U3vtWH6vjX6NM9we1tpzei3LpV10xnK3\/G3W\/cM3UsYj8Zhn9V0R7b9zs6kNXEcFqwE9qtf\/j92EA==",
          "encoding":"base64",
          "height":30,
          "id":3,
@@ -22,7 +22,7 @@
          "name":"Object Layer 1",
          "objects":[
                 {
-                 "gid":81,
+                 "gid":79,
                  "height":40,
                  "id":4,
                  "name":"",
@@ -34,7 +34,7 @@
                  "y":232
                 }, 
                 {
-                 "gid":82,
+                 "gid":80,
                  "height":48,
                  "id":5,
                  "name":"",
@@ -46,7 +46,7 @@
                  "y":56
                 }, 
                 {
-                 "gid":83,
+                 "gid":81,
                  "height":48,
                  "id":6,
                  "name":"",
@@ -67,19 +67,7 @@
          "draworder":"topdown",
          "id":5,
          "name":"Object Layer 2",
-         "objects":[
-                {
-                 "gid":1,
-                 "height":34,
-                 "id":1,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":250,
-                 "x":76,
-                 "y":48
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -90,6 +78,11 @@
  "nextobjectid":7,
  "orientation":"orthogonal",
  "properties":[
+        {
+         "name":"ambient_light",
+         "type":"color",
+         "value":"#ff606080"
+        }, 
         {
          "name":"bgname",
          "type":"string",
@@ -122,15 +115,15 @@
          "tilewidth":250
         }, 
         {
-         "firstgid":4,
+         "firstgid":2,
          "source":"..\/..\/tilesets\/extras.json"
         }, 
         {
-         "firstgid":81,
+         "firstgid":79,
          "source":"..\/..\/tilesets\/title_objects.json"
         }, 
         {
-         "firstgid":84,
+         "firstgid":82,
          "source":"..\/..\/tilesets\/main.json"
         }],
  "tilewidth":8,

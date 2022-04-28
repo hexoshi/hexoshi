@@ -217,7 +217,7 @@ class Level(sge.dsp.Room):
         self.load_timeline(timeline)
 
         if ambient_light:
-            self.ambient_light = sge.gfx.Color(ambient_light)
+            self.ambient_light = ambient_light
             if (self.ambient_light.red >= 255 and
                     self.ambient_light.green >= 255 and
                     self.ambient_light.blue >= 255):
@@ -266,8 +266,6 @@ class Level(sge.dsp.Room):
             xsge_lighting.clear_lights()
 
         if not hlib.no_hud:
-            # TODO: Add HUD showing health, ammo, etc.
-
             if self.status_text:
                 sge.game.project_text(hlib.font, self.status_text,
                                       sge.game.width / 2, sge.game.height - 16,
@@ -533,9 +531,6 @@ class SpecialScreen(Level):
 
 class TitleScreen(SpecialScreen):
 
-    def show_hud(self):
-        pass
-
     def event_room_start(self):
         super().event_room_start()
         MainMenu.create()
@@ -543,6 +538,10 @@ class TitleScreen(SpecialScreen):
     def event_room_resume(self):
         super().event_room_resume()
         MainMenu.create()
+
+    def event_step(self, time_passed, delta_mult):
+        super().event_step(time_passed, delta_mult)
+        sge.game.project_sprite(hlib.logo_sprite, 0, self.width / 2, 16)
 
     def event_key_press(self, key, char):
         pass

@@ -5579,7 +5579,7 @@ class MapDialog(xsge_gui.Dialog):
         self.map.tab_focus = False
         self.left = 0
         self.top = 0
-        for rx, ry in hlib.map_revealed & hlib.map_explored:
+        for rx, ry in hlib.map_revealed | hlib.map_explored:
             self.left = min(self.left, rx)
             self.top = min(self.top, ry)
         player_x -= self.left
@@ -5633,7 +5633,7 @@ class TeleportDialog(MapDialog):
 
         self.left = 0
         self.top = 0
-        for rx, ry in hlib.map_revealed & hlib.map_explored:
+        for rx, ry in hlib.map_revealed | hlib.map_explored:
             self.left = min(self.left, rx)
             self.top = min(self.top, ry)
 
@@ -6345,7 +6345,7 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
         right = 0
         top = 0
         bottom = 0
-        for rx, ry in hlib.map_revealed & hlib.map_explored:
+        for rx, ry in hlib.map_revealed | hlib.map_explored:
             left = min(left, rx)
             right = max(right, rx)
             top = min(top, ry)
@@ -6377,7 +6377,8 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
             dx, dy, hlib.MAP_CELL_WIDTH, hlib.MAP_CELL_HEIGHT,
             fill=sge.gfx.Color((170, 68, 153)))
 
-    for ox, oy in set(hlib.map_objects) & hlib.map_revealed & hlib.map_explored:
+    for ox, oy in (set(hlib.map_objects)
+                   & (hlib.map_revealed | hlib.map_explored)):
         if x <= ox < x + w and y <= oy < y + h:
             for obj in hlib.map_objects[(ox, oy)]:
                 if (obj, ox, oy) in removed:

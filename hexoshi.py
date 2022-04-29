@@ -4895,6 +4895,11 @@ class NewGameMenu(Menu):
                 cls.items.append(_("-Empty-"))
                 continue
 
+            save_format = slot.get("save_format", 0)
+            if save_format != 2:
+                cls.items.append(_("! Incompatible Save !"))
+                continue
+
             name = slot.get("player_name", "Anneroy")
             completion = int(100 * len(slot.get("powerups", []))
                              / max(hlib.num_powerups + hlib.num_artifacts, 1))
@@ -6103,7 +6108,7 @@ def load_game():
             hlib.artifacts = slot.get("artifacts", 0)
             hlib.etanks = slot.get("etanks", 0)
             hlib.time_taken = slot.get("time_taken", 0)
-        elif save_format == 1:
+        else:
             set_new_game()
     else:
         set_new_game()

@@ -16,6 +16,18 @@
 
 import sge
 
+import hlib
+
+
+def update_fullscreen():
+    if hlib.fullscreen:
+        sge.game.scale = hlib.fsscale or None
+        sge.game.fullscreen = True
+    else:
+        sge.game.fullscreen = False
+        sge.game.scale = hlib.scale
+        sge.game.scale = None
+
 
 def refresh_screen(time_passed, delta_mult):
     """

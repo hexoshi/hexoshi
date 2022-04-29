@@ -2134,7 +2134,7 @@ class Anneroy(Player):
                     aim_direction, idle_torso_left)
 
         # Position torso
-        x, y = anneroy_torso_offset.setdefault(
+        x, y = hlib.anneroy_torso_offset.setdefault(
             (id(self.sprite), self.image_index % self.sprite.frames), (0, 0))
         self.torso.x = self.x + x*self.image_xscale
         self.torso.y = self.y + y*self.image_yscale
@@ -2648,7 +2648,7 @@ class Enemy(InteractiveObject):
 
         for i in range(shard_num):
             shard = Shard.create(self.x, self.y, self.z,
-                                 sprite=enemy_fragment_sprite)
+                                 sprite=hlib.enemy_fragment_sprite)
             shard.speed = random.randint(self.shard_speed_min,
                                          self.shard_speed_max)
             shard.move_direction = random.randrange(360)
@@ -2789,16 +2789,16 @@ class Frog(Enemy, FallingObject, CrowdObject):
                 self.image_xscale = math.copysign(self.image_xscale, xvec)
 
         if self.was_on_floor:
-            self.sprite = frog_stand_sprite
+            self.sprite = hlib.frog_stand_sprite
             if self.yvelocity == 0:
                 # Set xvelocity to 0 in case the frog happened to have
                 # yvelocity == 0 as it started touching the floor (which
                 # prevents stop_down from being called).
                 self.xvelocity = 0
         elif self.yvelocity < 0:
-            self.sprite = frog_jump_sprite
+            self.sprite = hlib.frog_jump_sprite
         else:
-            self.sprite = frog_fall_sprite
+            self.sprite = hlib.frog_fall_sprite
 
     def event_alarm(self, alarm_id):
         if alarm_id == "jump":
@@ -2852,7 +2852,7 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
         self.bbox_height = 14
         self.rolling = False
         self.anim_lock = False
-        self.sprite = hedgehog_stand_sprite
+        self.sprite = hlib.hedgehog_stand_sprite
 
     def event_step(self, time_passed, delta_mult):
         self.xacceleration = 0
@@ -2878,12 +2878,12 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
             if abs(self.xvelocity) < self.walk_speed:
                 self.rolling = False
                 self.anim_lock = True
-                self.sprite = hedgehog_uncompress_sprite
+                self.sprite = hlib.hedgehog_uncompress_sprite
                 self.image_index = 0
                 self.image_speed = None
 
             if not self.anim_lock:
-                self.sprite = hedgehog_ball_sprite
+                self.sprite = hlib.hedgehog_ball_sprite
                 self.image_speed = (abs(self.xvelocity)
                                     * self.roll_frames_per_pixel)
 
@@ -2907,7 +2907,7 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
                                                            self.xvelocity)
                             self.rolling = True
                             self.anim_lock = True
-                            self.sprite = hedgehog_compress_sprite
+                            self.sprite = hlib.hedgehog_compress_sprite
                             self.image_index = 0
                             self.image_speed = None
             else:
@@ -2915,11 +2915,11 @@ class Hedgehog(Enemy, FallingObject, CrowdBlockingObject):
 
             if not self.anim_lock:
                 if self.xvelocity:
-                    self.sprite = hedgehog_walk_sprite
+                    self.sprite = hlib.hedgehog_walk_sprite
                     self.image_speed = (abs(self.xvelocity)
                                         * self.walk_frames_per_pixel)
                 else:
-                    self.sprite = hedgehog_stand_sprite
+                    self.sprite = hlib.hedgehog_stand_sprite
 
         self.image_xscale = math.copysign(self.image_xscale, self.xvelocity)
 
@@ -2935,7 +2935,7 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
     repeat_delay = 90
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = worm_sprite
+        kwargs["sprite"] = hlib.worm_sprite
         kwargs["collision_precise"] = True
         kwargs["tangible"] = False
         kwargs["image_fps"] = 0
@@ -2947,7 +2947,7 @@ class Worm(Enemy, InteractiveCollider, CrowdBlockingObject):
             return
 
         sge.dsp.Object.create(
-            self.x, self.y, self.z + 0.1, sprite=worm_base_sprite,
+            self.x, self.y, self.z + 0.1, sprite=hlib.worm_base_sprite,
             tangible=False)
 
     def event_step(self, time_passed, delta_mult):
@@ -2984,7 +2984,7 @@ class Bat(Enemy, InteractiveCollider, CrowdBlockingObject):
 
     def __init__(self, x, y, **kwargs):
         self.scattering = False
-        kwargs["sprite"] = bat_sprite
+        kwargs["sprite"] = hlib.bat_sprite
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def touch(self, other):
@@ -3046,7 +3046,7 @@ class Jellyfish(Enemy, CrowdBlockingObject):
     swim_interval = hlib.FPS
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = jellyfish_idle_sprite
+        kwargs["sprite"] = hlib.jellyfish_idle_sprite
         kwargs["regulate_origin"] = True
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
@@ -3092,18 +3092,18 @@ class Jellyfish(Enemy, CrowdBlockingObject):
 
             self.image_xscale = math.copysign(self.image_xscale, xv)
             self.image_yscale = math.copysign(self.image_yscale, yv)
-            self.sprite = jellyfish_swim_start_sprite
+            self.sprite = hlib.jellyfish_swim_start_sprite
             self.image_index = 0
 
     def event_animation_end(self):
-        if self.sprite == jellyfish_swim_start_sprite:
-            self.sprite = jellyfish_swim_sprite
+        if self.sprite == hlib.jellyfish_swim_start_sprite:
+            self.sprite = hlib.jellyfish_swim_sprite
             self.image_index = 0
             self.xvelocity = math.copysign(self.swim_speed, self.image_xscale)
             self.yvelocity = math.copysign(self.swim_speed, self.image_yscale)
             self.alarms["swim"] = self.swim_interval
-        elif self.sprite != jellyfish_idle_sprite:
-            self.sprite = jellyfish_idle_sprite
+        elif self.sprite != hlib.jellyfish_idle_sprite:
+            self.sprite = hlib.jellyfish_idle_sprite
             self.image_index = 0
 
 
@@ -4850,9 +4850,9 @@ class Menu(xsge_gui.MenuWindow):
             self = cls.from_text(
                 gui_handler, sge.game.width / 2, sge.game.height * 2 / 3,
                 cls.items, font_normal=hlib.font,
-                color_normal=menu_text_color,
-                color_selected=menu_text_selected_color,
-                background_color=menu_color, margin=4, halign="center",
+                color_normal=hlib.menu_text_color,
+                color_selected=hlib.menu_text_selected_color,
+                background_color=hlib.menu_color, margin=4, halign="center",
                 valign="middle", outline_normal=sge.gfx.Color("black"),
                 outline_selected=sge.gfx.Color("black"),
                 outline_thickness_normal=1, outline_thickness_selected=1,
@@ -5017,7 +5017,7 @@ class OptionsMenu(Menu):
         if self.choice == 0:
             play_sound(hlib.select_sound)
             hlib.fullscreen = not hlib.fullscreen
-            update_fullscreen()
+            hlib.game.update_fullscreen()
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 1:
             choices = [None, "noblur", "smooth"] + sge.SCALE_METHODS
@@ -5406,9 +5406,9 @@ class ModalMenu(xsge_gui.MenuDialog):
             self = cls.from_text(
                 gui_handler, sge.game.width / 2, sge.game.height / 2,
                 cls.items, font_normal=hlib.font,
-                color_normal=menu_text_color,
-                color_selected=menu_text_selected_color,
-                background_color=menu_color, margin=9, halign="center",
+                color_normal=hlib.menu_text_color,
+                color_selected=hlib.menu_text_selected_color,
+                background_color=hlib.menu_color, margin=9, halign="center",
                 valign="middle", outline_normal=sge.gfx.Color("black"),
                 outline_selected=sge.gfx.Color("black"),
                 outline_thickness_normal=1, outline_thickness_selected=1,
@@ -5437,9 +5437,9 @@ class PauseMenu(ModalMenu):
 
         self = cls.from_text(
             gui_handler, sge.game.width / 2, sge.game.height / 2,
-            items, font_normal=hlib.font, color_normal=menu_text_color,
-            color_selected=menu_text_selected_color,
-            background_color=menu_color, margin=9, halign="center",
+            items, font_normal=hlib.font, color_normal=hlib.menu_text_color,
+            color_selected=hlib.menu_text_selected_color,
+            background_color=hlib.menu_color, margin=9, halign="center",
             valign="middle", outline_normal=sge.gfx.Color("black"),
             outline_selected=sge.gfx.Color("black"),
             outline_thickness_normal=1, outline_thickness_selected=1,
@@ -5724,7 +5724,7 @@ class DialogBox(xsge_gui.Dialog):
         x = sge.game.width/2 - width/2
         y = sge.game.height/2 - height/2
         super().__init__(parent, x, y, width, height,
-                         background_color=menu_color, border=False)
+                         background_color=hlib.menu_color, border=False)
         label_h = max(1, height - y_padding)
 
         self.label = DialogLabel(self, label_x, label_y, 0, text,
@@ -6427,16 +6427,6 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
     return map_sprite
 
 
-def update_fullscreen():
-    if hlib.fullscreen:
-        sge.game.scale = hlib.fsscale or None
-        sge.game.fullscreen = True
-    else:
-        sge.game.fullscreen = False
-        sge.game.scale = hlib.scale
-        sge.game.scale = None
-
-
 TYPES = {
     "solid_left": SolidLeft, "solid_right": SolidRight, "solid_top": SolidTop,
     "solid_bottom": SolidBottom, "solid": Solid, "slope_topleft": SlopeTopLeft,
@@ -6491,9 +6481,9 @@ gui_handler = xsge_gui.Handler()
 xsge_gui.default_font.size = 8
 xsge_gui.textbox_font.size = 8
 
-menu_color = sge.gfx.Color("black")
-menu_text_color = sge.gfx.Color((128, 128, 255))
-menu_text_selected_color = sge.gfx.Color("white")
+hlib.menu_color = sge.gfx.Color("black")
+hlib.menu_text_color = sge.gfx.Color((128, 128, 255))
+hlib.menu_text_selected_color = sge.gfx.Color("white")
 
 print(_("Loading resources…"))
 
@@ -6517,7 +6507,7 @@ if not PRINT_ERRORS:
 
 # Load sprites
 d = os.path.join(hlib.datadir, "images", "objects", "anneroy")
-anneroy_torso_offset = {}
+hlib.anneroy_torso_offset = {}
 
 fname = os.path.join(d, "anneroy_sheet.png")
 
@@ -6669,76 +6659,77 @@ if hlib.god:
         s.draw_shader(0, 0, s.width, s.height, varia_shader)
 
 n = id(anneroy_compress_sprite)
-anneroy_torso_offset[(n, 0)] = (0, 11)
-anneroy_torso_offset[(n, 1)] = (0, 11)
-anneroy_torso_offset[(n, 2)] = (0, 11)
+hlib.anneroy_torso_offset[(n, 0)] = (0, 11)
+hlib.anneroy_torso_offset[(n, 1)] = (0, 11)
+hlib.anneroy_torso_offset[(n, 2)] = (0, 11)
 
 n = id(anneroy_decompress_fail_sprite)
-anneroy_torso_offset[(n, 0)] = (0, 11)
-anneroy_torso_offset[(n, 1)] = (0, 11)
-anneroy_torso_offset[(n, 2)] = (0, 11)
+hlib.anneroy_torso_offset[(n, 0)] = (0, 11)
+hlib.anneroy_torso_offset[(n, 1)] = (0, 11)
+hlib.anneroy_torso_offset[(n, 2)] = (0, 11)
 
 n = id(anneroy_legs_run_sprite)
-anneroy_torso_offset[(n, 1)] = (0, 1)
-anneroy_torso_offset[(n, 2)] = (0, 3)
-anneroy_torso_offset[(n, 3)] = (0, 4)
-anneroy_torso_offset[(n, 4)] = (0, 2)
-anneroy_torso_offset[(n, 6)] = (0, 1)
-anneroy_torso_offset[(n, 7)] = (0, 3)
-anneroy_torso_offset[(n, 8)] = (0, 5)
-anneroy_torso_offset[(n, 9)] = (0, 3)
+hlib.anneroy_torso_offset[(n, 1)] = (0, 1)
+hlib.anneroy_torso_offset[(n, 2)] = (0, 3)
+hlib.anneroy_torso_offset[(n, 3)] = (0, 4)
+hlib.anneroy_torso_offset[(n, 4)] = (0, 2)
+hlib.anneroy_torso_offset[(n, 6)] = (0, 1)
+hlib.anneroy_torso_offset[(n, 7)] = (0, 3)
+hlib.anneroy_torso_offset[(n, 8)] = (0, 5)
+hlib.anneroy_torso_offset[(n, 9)] = (0, 3)
 
 n = id(anneroy_legs_jump_sprite)
-anneroy_torso_offset[(n, 0)] = (0, 3)
-anneroy_torso_offset[(n, 1)] = (0, -5)
-anneroy_torso_offset[(n, 2)] = (0, -2)
-anneroy_torso_offset[(n, 3)] = (0, -2)
-anneroy_torso_offset[(n, 4)] = (0, -3)
+hlib.anneroy_torso_offset[(n, 0)] = (0, 3)
+hlib.anneroy_torso_offset[(n, 1)] = (0, -5)
+hlib.anneroy_torso_offset[(n, 2)] = (0, -2)
+hlib.anneroy_torso_offset[(n, 3)] = (0, -2)
+hlib.anneroy_torso_offset[(n, 4)] = (0, -3)
 
 n = id(anneroy_legs_fall_sprite)
-anneroy_torso_offset[(n, 0)] = (0, -2)
+hlib.anneroy_torso_offset[(n, 0)] = (0, -2)
 
 n = id(anneroy_legs_land_sprite)
-anneroy_torso_offset[(n, 0)] = (0, -5)
-anneroy_torso_offset[(n, 1)] = (0, 3)
+hlib.anneroy_torso_offset[(n, 0)] = (0, -5)
+hlib.anneroy_torso_offset[(n, 1)] = (0, 3)
 
 n = id(anneroy_legs_crouched_sprite)
-anneroy_torso_offset[(n, 0)] = (0, 11)
+hlib.anneroy_torso_offset[(n, 0)] = (0, 11)
 
 n = id(anneroy_legs_crouch_sprite)
-anneroy_torso_offset[(n, 0)] = (0, 3)
-anneroy_torso_offset[(n, 1)] = (0, 9)
+hlib.anneroy_torso_offset[(n, 0)] = (0, 3)
+hlib.anneroy_torso_offset[(n, 1)] = (0, 9)
 
-enemy_fragment_sprite = sge.gfx.Sprite(width=1, height=1)
-enemy_fragment_sprite.draw_rectangle(0, 0, 1, 1, fill=sge.gfx.Color("white"))
+hlib.enemy_fragment_sprite = sge.gfx.Sprite(width=1, height=1)
+hlib.enemy_fragment_sprite.draw_rectangle(0, 0, 1, 1,
+                                          fill=sge.gfx.Color("white"))
 
 d = os.path.join(hlib.datadir, "images", "objects", "enemies")
-frog_stand_sprite = sge.gfx.Sprite("frog_stand", d)
-frog_jump_sprite = sge.gfx.Sprite("frog_jump", d)
-frog_fall_sprite = sge.gfx.Sprite("frog_fall", d)
-bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
-                            bbox_width=10, bbox_height=10)
-worm_sprite = sge.gfx.Sprite("worm", d, fps=10)
-worm_base_sprite = sge.gfx.Sprite("worm_base", d, fps=10)
+hlib.frog_stand_sprite = sge.gfx.Sprite("frog_stand", d)
+hlib.frog_jump_sprite = sge.gfx.Sprite("frog_jump", d)
+hlib.frog_fall_sprite = sge.gfx.Sprite("frog_fall", d)
+hlib.bat_sprite = sge.gfx.Sprite("bat", d, fps=10, bbox_x=3, bbox_y=4,
+                                 bbox_width=10, bbox_height=10)
+hlib.worm_sprite = sge.gfx.Sprite("worm", d, fps=10)
+hlib.worm_base_sprite = sge.gfx.Sprite("worm_base", d, fps=10)
 
 fname = os.path.join(d, "hedgehog_sheet.png")
-hedgehog_stand_sprite = sge.gfx.Sprite.from_tileset(
+hlib.hedgehog_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 0, width=20, height=20)
-hedgehog_walk_sprite = sge.gfx.Sprite.from_tileset(
+hlib.hedgehog_walk_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 20, 6, width=20, height=20)
-hedgehog_compress_sprite = sge.gfx.Sprite.from_tileset(
+hlib.hedgehog_compress_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 40, 2, width=20, height=20, fps=15)
-hedgehog_ball_sprite = sge.gfx.Sprite.from_tileset(
+hlib.hedgehog_ball_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 60, 8, width=20, height=20)
-hedgehog_uncompress_sprite = sge.gfx.Sprite.from_tileset(
+hlib.hedgehog_uncompress_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 80, 2, width=20, height=20, fps=15)
 
 fname = os.path.join(d, "jellyfish_sheet.png")
-jellyfish_idle_sprite = sge.gfx.Sprite.from_tileset(
+hlib.jellyfish_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 0, 7, width=32, height=32, origin_x=24, origin_y=24, fps=20)
-jellyfish_swim_start_sprite = sge.gfx.Sprite.from_tileset(
+hlib.jellyfish_swim_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 64, 6, width=32, height=32, origin_x=24, origin_y=24, fps=50)
-jellyfish_swim_sprite = sge.gfx.Sprite.from_tileset(
+hlib.jellyfish_swim_sprite = sge.gfx.Sprite.from_tileset(
     fname, 192, 64, 6, width=32, height=32, origin_x=24, origin_y=24, fps=50)
 
 fname = os.path.join(d, "wolf_sheet.png")
@@ -7047,7 +7038,7 @@ finally:
     cfg_version = cfg.get("version", 0)
 
     hlib.fullscreen = cfg.get("fullscreen", hlib.fullscreen)
-    update_fullscreen()
+    hlib.game.update_fullscreen()
     hlib.scale_method = cfg.get("scale_method", hlib.scale_method)
     sge.game.scale_method = hlib.scale_method
     hlib.sound_volume = cfg.get("sound_volume", hlib.sound_volume)

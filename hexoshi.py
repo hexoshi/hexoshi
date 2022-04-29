@@ -291,7 +291,7 @@ class Level(sge.dsp.Room):
               self.timeline_step < self.timeline_skip_target):
             self.timeline_skipto(self.timeline_skip_target)
         else:
-            play_sound(pause_sound)
+            play_sound(hlib.pause_sound)
             PauseMenu.create(player_x=player_x, player_y=player_y)
 
     def die(self):
@@ -992,7 +992,7 @@ class Player(xsge_physics.Collider):
 
     def hurt(self, damage=1, touching=False):
         if not self.hitstun and not self.invincible:
-            play_sound(hurt_sound, self.x, self.y)
+            play_sound(hlib.hurt_sound, self.x, self.y)
             if not hlib.god:
                 self.hp -= damage
 
@@ -1009,7 +1009,7 @@ class Player(xsge_physics.Collider):
             sge.snd.Music.stop()
             sge.game.current_room.alarms["death"] = hlib.DEATH_TIME
 
-        play_sound(death_sound, self.x, self.y)
+        play_sound(hlib.death_sound, self.x, self.y)
         self.destroy()
 
     def refresh(self):
@@ -1342,7 +1342,7 @@ class Player(xsge_physics.Collider):
                 self.secondary()
             if key in hlib.map_key:
                 if hlib.god or "map" in hlib.progress_flags:
-                    play_sound(select_sound)
+                    play_sound(hlib.select_sound)
                     MapDialog(self.last_xr, self.last_yr).show()
 
         if not isinstance(sge.game.current_room, SpecialScreen):
@@ -1377,7 +1377,7 @@ class Player(xsge_physics.Collider):
                     self.secondary()
                 if js in hlib.map_js:
                     if hlib.god or "map" in hlib.progress_flags:
-                        play_sound(select_sound)
+                        play_sound(hlib.select_sound)
                         MapDialog(self.last_xr, self.last_yr).show()
             else:
                 if js in hlib.jump_js:
@@ -1736,7 +1736,7 @@ class Anneroy(Player):
             self.alarms["shoot_lock"] = 60
             self.last_aim_direction = self.aim_direction
 
-            play_sound(cancel_sound, self.image_xcenter, self.image_ycenter)
+            play_sound(hlib.cancel_sound, self.image_xcenter, self.image_ycenter)
 
             return
 
@@ -1754,7 +1754,7 @@ class Anneroy(Player):
 
             self.fixed_sprite = "hedgehog"
             self.alarms["hedgehog_extend"] = hlib.ANNEROY_HEDGEHOG_FRAME_TIME
-            play_sound(hedgehog_spikes_sound, self.image_xcenter,
+            play_sound(hlib.hedgehog_spikes_sound, self.image_xcenter,
                        self.image_ycenter)
             self.rolling = False
 
@@ -1904,7 +1904,7 @@ class Anneroy(Player):
                 regulate_origin=True, image_xscale=abs(self.image_xscale),
                 image_yscale=self.image_yscale, image_rotation=image_rotation,
                 image_blend=self.image_blend)
-            play_sound(shoot_sound, xdest, ydest)
+            play_sound(hlib.shoot_sound, xdest, ydest)
 
     def shoot(self):
         self.shoot_default()
@@ -1918,7 +1918,7 @@ class Anneroy(Player):
 
     def secondary(self):
         # Secondary weapons not implemented yet.
-        play_sound(cancel_sound)
+        play_sound(hlib.cancel_sound)
 
     def compress(self):
         if ((not hlib.god and "atomic_compressor" not in hlib.progress_flags)
@@ -1951,7 +1951,7 @@ class Anneroy(Player):
             sge.snd.Music.stop()
             sge.game.current_room.alarms["death"] = hlib.DEATH_TIME
 
-        play_sound(death_sound, self.x, self.y)
+        play_sound(hlib.death_sound, self.x, self.y)
         self.ball = False
         self.hedgehog = False
         self.rolling = False
@@ -2255,7 +2255,7 @@ class Anneroy(Player):
             return
 
         if self.hedgehog:
-            play_sound(ball_land_sound, self.x, self.y)
+            play_sound(hlib.ball_land_sound, self.x, self.y)
         elif self.ball:
             if (not self.bouncing
                     or yv >= hlib.ANNEROY_BALL_FORCE_BOUNCE_SPEED):
@@ -2264,14 +2264,14 @@ class Anneroy(Player):
                     hlib.ANNEROY_BALL_BOUNCE_HEIGHT, self.gravity)
             else:
                 self.bouncing = False
-            play_sound(ball_land_sound, self.x, self.y)
+            play_sound(hlib.ball_land_sound, self.x, self.y)
         else:
             self.reset_image()
             self.sprite = anneroy_legs_land_sprite
             self.image_speed = None
             self.image_index = 0
             self.fixed_sprite = "anim"
-            play_sound(land_sound, self.x, self.y)
+            play_sound(hlib.land_sound, self.x, self.y)
 
     def event_jump(self):
         if not self.ball:
@@ -2637,7 +2637,8 @@ class Enemy(InteractiveObject):
             self.image_blend = sge.gfx.Color("white")
             self.image_blend_mode = sge.BLEND_RGB_SCREEN
             self.alarms["hurt_flash"] = hlib.FPS / 10
-            play_sound(enemy_hurt_sound, self.image_xcenter, self.image_ycenter)
+            play_sound(hlib.enemy_hurt_sound, self.image_xcenter,
+                       self.image_ycenter)
 
     def kill(self):
         if sge.game.fps_real >= hlib.FPS:
@@ -2656,7 +2657,8 @@ class Enemy(InteractiveObject):
             LifeForce.create(self.image_xcenter, self.image_ycenter,
                              z=self.z - 0.1)
 
-        play_sound(enemy_death_sound, self.image_xcenter, self.image_ycenter)
+        play_sound(hlib.enemy_death_sound, self.image_xcenter,
+                   self.image_ycenter)
         self.destroy()
 
     def event_create(self):
@@ -2810,7 +2812,7 @@ class Frog(Enemy, FallingObject, CrowdObject):
                     self.xvelocity = math.copysign(self.jump_speed, xvec)
                     self.yvelocity = get_jump_speed(self.jump_height,
                                                     self.gravity)
-                    play_sound(frog_jump_sound, self.image_xcenter,
+                    play_sound(hlib.frog_jump_sound, self.image_xcenter,
                                self.image_ycenter)
 
 
@@ -3119,9 +3121,9 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
     bullet_speed = 3
 
     def __init__(self, x, y, **kwargs):
-        x += scorpion_stand_sprite.origin_x
-        y += scorpion_stand_sprite.origin_y
-        kwargs["sprite"] = scorpion_stand_sprite
+        x += hlib.scorpion_stand_sprite.origin_x
+        y += hlib.scorpion_stand_sprite.origin_y
+        kwargs["sprite"] = hlib.scorpion_stand_sprite
         kwargs["bbox_x"] = -28
         kwargs["bbox_y"] = -1
         kwargs["bbox_width"] = 56
@@ -3132,11 +3134,11 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
         if not self.action:
             super().move()
             if self.xvelocity:
-                self.sprite = scorpion_walk_sprite
+                self.sprite = hlib.scorpion_walk_sprite
                 self.image_speed = (abs(self.xvelocity)
                                     * hlib.SCORPION_WALK_FRAMES_PER_PIXEL)
             else:
-                self.sprite = scorpion_stand_sprite
+                self.sprite = hlib.scorpion_stand_sprite
 
     def attack(self):
         target = self.get_nearest_player()
@@ -3147,7 +3149,7 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
                     and abs(yvec) < self.sight_threshold):
                 self.xvelocity = 0
                 self.action = "shoot_start"
-                self.sprite = scorpion_shoot_start_sprite
+                self.sprite = hlib.scorpion_shoot_start_sprite
                 self.image_index = 0
                 self.image_fps = None
                 self.image_xscale = math.copysign(self.image_xscale, xvec)
@@ -3169,21 +3171,21 @@ class Scorpion(Enemy, WalkingObject, CrowdObject):
     def event_animation_end(self):
         if self.action == "shoot_start":
             self.action = "shoot_end"
-            self.sprite = scorpion_shoot_end_sprite
+            self.sprite = hlib.scorpion_shoot_end_sprite
             self.image_index = 0
             self.image_fps = None
             xv = math.copysign(self.bullet_speed, self.image_xscale)
             x = self.x
             if self.image_xscale < 0:
-                x -= scorpion_projectile_sprite.width
+                x -= hlib.scorpion_projectile_sprite.width
             ScorpionBullet.create(
                 x, self.y, self.z + 0.1,
-                sprite=scorpion_projectile_sprite, xvelocity=xv,
+                sprite=hlib.scorpion_projectile_sprite, xvelocity=xv,
                 image_xscale=self.image_xscale, image_yscale=self.image_yscale)
-            play_sound(scorpion_shoot_sound, self.x, self.y)
+            play_sound(hlib.scorpion_shoot_sound, self.x, self.y)
         elif self.action == "shoot_end":
             self.action = None
-            self.sprite = scorpion_stand_sprite
+            self.sprite = hlib.scorpion_stand_sprite
             self.alarms["shoot"] = self.shoot_interval
 
 
@@ -3198,9 +3200,9 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
     shard_num_max = 16
 
     def __init__(self, x, y, hiding=False, wander_x=None, **kwargs):
-        x += mantanoid_stand_sprite.origin_x
-        y += mantanoid_stand_sprite.origin_y
-        kwargs["sprite"] = mantanoid_stand_sprite
+        x += hlib.mantanoid_stand_sprite.origin_x
+        y += hlib.mantanoid_stand_sprite.origin_y
+        kwargs["sprite"] = hlib.mantanoid_stand_sprite
         kwargs["bbox_x"] = hlib.MANTANOID_BBOX_X
         kwargs["bbox_y"] = hlib.MANTANOID_BBOX_Y
         kwargs["bbox_width"] = hlib.MANTANOID_BBOX_WIDTH
@@ -3273,7 +3275,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
 
         if not self.was_on_floor:
             if not self.action or self.action == "animation":
-                self.sprite = mantanoid_land_sprite
+                self.sprite = hlib.mantanoid_land_sprite
                 self.fps = None
                 self.image_index = 0
                 self.action = "animation"
@@ -3429,7 +3431,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if (self.image_xscale > 0 and not self.action and
                 self.was_on_floor and self.get_bottom_touching_wall()):
             self.image_xscale = -abs(self.image_xscale)
-            self.sprite = mantanoid_turn_sprite
+            self.sprite = hlib.mantanoid_turn_sprite
             self.image_fps = None
             self.image_index = 0
             self.action = "animation"
@@ -3438,7 +3440,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if (self.image_xscale < 0 and not self.action and
                 self.was_on_floor and self.get_bottom_touching_wall()):
             self.image_xscale = abs(self.image_xscale)
-            self.sprite = mantanoid_turn_sprite
+            self.sprite = hlib.mantanoid_turn_sprite
             self.image_fps = None
             self.image_index = 0
             self.action = "animation"
@@ -3447,7 +3449,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if (self.was_on_floor and self.yvelocity >= 0 and
                 (self.get_bottom_touching_wall() or
                  self.get_bottom_touching_slope())):
-            self.sprite = mantanoid_hop_start_sprite
+            self.sprite = hlib.mantanoid_hop_start_sprite
             self.image_fps = None
             self.image_index = 0
             self.action = "hop"
@@ -3456,7 +3458,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if (self.was_on_floor and self.yvelocity >= 0 and
                 (self.get_bottom_touching_wall() or
                  self.get_bottom_touching_slope())):
-            self.sprite = mantanoid_jump_start_sprite
+            self.sprite = hlib.mantanoid_jump_start_sprite
             self.image_fps = None
             self.image_index = 0
             self.action = "jump"
@@ -3468,7 +3470,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 self.movement_speed = hlib.MANTANOID_APPROACH_SPEED
                 if not self.has_approached:
                     self.has_approached = True
-                    play_sound(mantanoid_approach_sound, self.x, self.y)
+                    play_sound(hlib.mantanoid_approach_sound, self.x, self.y)
 
             self.alarms["action_lock"] = hlib.MANTANOID_APPROACH_INTERVAL
 
@@ -3476,7 +3478,7 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         self.hiding = False
         if self.target is not None:
             self.action = "slash"
-            self.sprite = mantanoid_slash_start_sprite
+            self.sprite = hlib.mantanoid_slash_start_sprite
             self.image_fps = None
             self.image_index = 0
 
@@ -3542,29 +3544,29 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
         if not self.action:
             if self.was_on_floor:
                 if self.xvelocity:
-                    self.sprite = mantanoid_walk_sprite
+                    self.sprite = hlib.mantanoid_walk_sprite
                     self.image_speed = abs(
                         self.xvelocity * hlib.MANTANOID_WALK_FRAMES_PER_PIXEL)
                 else:
-                    self.sprite = mantanoid_stand_sprite
+                    self.sprite = hlib.mantanoid_stand_sprite
                     if random.random() < 1 / (2*hlib.FPS):
-                        self.sprite = mantanoid_idle_sprite
+                        self.sprite = hlib.mantanoid_idle_sprite
                         self.image_fps = None
                         self.image_index = 0
                         self.action = "animation"
             else:
                 if self.yvelocity < 0:
-                    self.sprite = mantanoid_jump_sprite
+                    self.sprite = hlib.mantanoid_jump_sprite
                 else:
-                    if self.sprite == mantanoid_jump_sprite:
-                        self.sprite = mantanoid_fall_start_sprite
+                    if self.sprite == hlib.mantanoid_jump_sprite:
+                        self.sprite = hlib.mantanoid_fall_start_sprite
                         self.image_fps = None
                         self.image_index = 0
                         self.action = "animation"
                         if self.action_check_verify == "peak":
                             self.verify_action()
                     else:
-                        self.sprite = mantanoid_fall_sprite
+                        self.sprite = hlib.mantanoid_fall_sprite
 
     def event_step(self, time_passed, delta_mult):
         on_floor = (self.get_bottom_touching_wall()
@@ -3696,14 +3698,14 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                         and xdist <= hlib.MANTANOID_SLASH2_DISTANCE):
                     double = True
 
-            play_sound(mantanoid_slash_sound, self.x, self.y)
+            play_sound(hlib.mantanoid_slash_sound, self.x, self.y)
             self.image_fps = None
             self.image_index = 0
             if double:
-                self.sprite = mantanoid_slash_double_first_sprite
+                self.sprite = hlib.mantanoid_slash_double_first_sprite
                 self.action = "doubleslash"
             else:
-                self.sprite = mantanoid_slash_single_sprite
+                self.sprite = hlib.mantanoid_slash_single_sprite
                 self.action = "animation"
         elif self.action == "doubleslash":
             self.move_x(hlib.MANTANOID_DOUBLESLASH_OFFSET * self.image_xscale)
@@ -3723,8 +3725,8 @@ class Mantanoid(Enemy, FallingObject, CrowdBlockingObject):
                 elif isinstance(other, AnneroyBullet):
                     other.dissipate(other.xvelocity, other.yvelocity)
 
-            play_sound(mantanoid_slash_sound, self.x, self.y)
-            self.sprite = mantanoid_slash_double_second_sprite
+            play_sound(hlib.mantanoid_slash_sound, self.x, self.y)
+            self.sprite = hlib.mantanoid_slash_double_second_sprite
             self.image_fps = None
             self.image_index = 0
             self.action = "animation"
@@ -3783,7 +3785,7 @@ class LifeForce(InteractiveObject):
 
     def touch(self, other):
         other.hp += hlib.LIFE_FORCE_HEAL
-        play_sound(heal_sound, other.x, other.y)
+        play_sound(hlib.heal_sound, other.x, other.y)
         self.destroy()
 
 
@@ -3968,7 +3970,7 @@ class AnneroyBullet(Bullet):
             else:
                 image_rotation = 90
 
-        play_sound(bullet_death_sound, self.x, self.y)
+        play_sound(hlib.bullet_death_sound, self.x, self.y)
         Smoke.create(
             self.x, self.y, self.z, sprite=anneroy_bullet_dissipate_sprite,
             regulate_origin=True, image_xscale=self.image_xscale,
@@ -3987,16 +3989,16 @@ class ScorpionBullet(Bullet):
 
     def dissipate(self, xdirection=0, ydirection=0):
         self.destroy()
-        play_sound(scorpion_projectile_break_sound, self.image_xcenter,
+        play_sound(hlib.scorpion_projectile_break_sound, self.image_xcenter,
                    self.image_ycenter)
 
         for i in range(self.shard_num):
             life = random.uniform(hlib.FPS / 8, hlib.FPS / 2)
             image_index = random.randrange(
-                0, scorpion_projectile_shard_sprite.frames)
+                0, hlib.scorpion_projectile_shard_sprite.frames)
             shard = xsge_particle.TimedParticle.create(
                 self.x, self.y, self.z, life=life,
-                sprite=scorpion_projectile_shard_sprite,
+                sprite=hlib.scorpion_projectile_shard_sprite,
                 image_index=image_index)
             shard.speed = random.randint(self.shard_speed_min,
                                          self.shard_speed_max)
@@ -4050,7 +4052,8 @@ class Stone(xsge_physics.Solid):
                 self.fakes.append(other)
 
     def event_destroy(self):
-        play_sound(stone_break_sound, self.image_xcenter, self.image_ycenter)
+        play_sound(hlib.stone_break_sound, self.image_xcenter,
+                   self.image_ycenter)
 
         for other in self.fakes:
             other.destroy()
@@ -4062,7 +4065,7 @@ class Stone(xsge_physics.Solid):
 
         for i in range(shard_num):
             shard = Shard.create(self.x, self.y, self.z,
-                                 sprite=stone_fragment_sprite)
+                                 sprite=hlib.stone_fragment_sprite)
             shard.speed = random.randint(self.shard_speed_min,
                                          self.shard_speed_max)
             shard.move_direction = random.randrange(360)
@@ -4084,7 +4087,7 @@ class Macguffin(InteractiveObject):
     def touch(self, other):
         sge.snd.Music.clear_queue()
         sge.snd.Music.stop()
-        play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
+        play_sound(hlib.powerup_sound, self.image_xcenter, self.image_ycenter)
 
         msg1 = _("MACGUFFIN\n\n"
                  "This is the end of the demo! Thank you for playing Hexoshi "
@@ -4116,7 +4119,7 @@ class Powerup(InteractiveObject):
         pass
 
     def touch(self, other):
-        play_sound(powerup_sound, self.image_xcenter, self.image_ycenter)
+        play_sound(hlib.powerup_sound, self.image_xcenter, self.image_ycenter)
         i = (self.__class__.__name__, sge.game.current_room.fname,
              int(self.x), int(self.y))
         hlib.powerups = hlib.powerups.copy()
@@ -4186,7 +4189,7 @@ class LifeOrb(Powerup):
                  'Collect Hexoshi Artifacts for faster fire rate')
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = life_orb_sprite
+        kwargs["sprite"] = hlib.life_orb_sprite
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
@@ -4203,7 +4206,7 @@ class Map(Powerup):
                  'See full map by pressing "map" or via pause menu')
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = powerup_map_sprite
+        kwargs["sprite"] = hlib.powerup_map_sprite
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
@@ -4266,7 +4269,7 @@ class AtomicCompressor(Powerup):
                 'To uncompress: press "up"')
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = atomic_compressor_sprite
+        kwargs["sprite"] = hlib.atomic_compressor_sprite
         super().__init__(x, y, **kwargs)
 
     def collect(self, other):
@@ -4280,7 +4283,7 @@ class MonkeyBoots(Powerup):
                 'Press "jump" while touching a wall to wall-jump')
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = monkey_boots_sprite
+        kwargs["sprite"] = hlib.monkey_boots_sprite
         super().__init__(x, y, **kwargs)
         self.emitter = None
 
@@ -4289,7 +4292,7 @@ class MonkeyBoots(Powerup):
             self.bbox_left, self.bbox_top, self.z + 0.5, interval=(hlib.FPS * 2),
             particle_cls=xsge_particle.AnimationParticle,
             particle_args=[self.x, self.y, self.z + 0.5],
-            particle_kwargs={"sprite": monkey_boots_gleam_sprite},
+            particle_kwargs={"sprite": hlib.monkey_boots_gleam_sprite},
             particle_lambda_args=[
                 lambda e: random.uniform(e.x, e.x + 13),
                 lambda e: random.uniform(e.y, e.y + 4)])
@@ -4312,7 +4315,7 @@ class HedgehogHormone(Powerup):
                 'Press "shoot" while in the form of a ball to grow spikes')
 
     def __init__(self, x, y, **kwargs):
-        kwargs["sprite"] = hedgehog_hormone_sprite
+        kwargs["sprite"] = hlib.hedgehog_hormone_sprite
         super().__init__(x, y, **kwargs)
         self.emitter = None
 
@@ -4321,7 +4324,7 @@ class HedgehogHormone(Powerup):
             self.image_xcenter, self.bbox_top + 1, self.z - 0.5, interval=8,
             chance=0.5, particle_cls=xsge_particle.AnimationBubbleParticle,
             particle_args=[self.image_xcenter, self.bbox_top + 1, self.z - 0.5],
-            particle_kwargs={"sprite": hedgehog_hormone_bubble_sprite,
+            particle_kwargs={"sprite": hlib.hedgehog_hormone_bubble_sprite,
                              "yvelocity": -0.25, "turn_factor": 20,
                              "min_angle": 225, "max_angle": 315})
 
@@ -4388,7 +4391,7 @@ class SpawnPoint(sge.dsp.Object):
             if self.barrier is not None:
                 self.barrier.image_index = self.barrier.sprite.frames - 1
                 self.barrier.image_speed = -self.barrier.sprite.speed
-                play_sound(door_close_sound, self.barrier.image_xcenter,
+                play_sound(hlib.door_close_sound, self.barrier.image_xcenter,
                            self.barrier.image_ycenter)
 
 
@@ -4402,12 +4405,12 @@ class WarpPad(SpawnPoint):
         self.barrier = None
         self.created = False
         self.activated = False
-        kwargs["sprite"] = warp_pad_inactive_sprite
+        kwargs["sprite"] = hlib.warp_pad_inactive_sprite
         sge.dsp.Object.__init__(self, x, y, **kwargs)
 
     def activate(self):
         self.activated = True
-        self.sprite = warp_pad_active_sprite
+        self.sprite = hlib.warp_pad_active_sprite
         hlib.current_level = sge.game.current_room.fname
         hlib.spawn_point = self.spawn_id
         x = get_xregion(self.image_xcenter)
@@ -4428,7 +4431,7 @@ class WarpPad(SpawnPoint):
         other.refresh()
         self.activate()
         save_game()
-        play_sound(teleport_sound, self.image_xcenter, self.image_ycenter)
+        play_sound(hlib.teleport_sound, self.image_xcenter, self.image_ycenter)
 
     def teleport(self, other):
         x = get_xregion(self.image_xcenter)
@@ -4441,7 +4444,8 @@ class WarpPad(SpawnPoint):
             other.bbox_bottom = self.image_top
             other.warp_dest = "{}:{}".format(*dlg.selection[:2])
             other.warp_out()
-            play_sound(teleport_sound, self.image_xcenter, self.image_ycenter)
+            play_sound(hlib.teleport_sound, self.image_xcenter,
+                       self.image_ycenter)
 
     def create_children(self):
         self.created = True
@@ -4464,7 +4468,7 @@ class WarpPad(SpawnPoint):
                 if not self.activated:
                     self.activate()
                     other.refresh()
-                    play_sound(warp_pad_sound, self.image_xcenter,
+                    play_sound(hlib.warp_pad_sound, self.image_xcenter,
                                self.image_ycenter)
 
                     if "warp" not in hlib.progress_flags:
@@ -4516,7 +4520,7 @@ class DoorFrame(InteractiveObject):
             self.sprite = self.open_sprite
             self.barrier.tangible = False
             self.barrier.image_speed = self.barrier.sprite.speed
-            play_sound(door_open_sound, self.barrier.image_xcenter,
+            play_sound(hlib.door_open_sound, self.barrier.image_xcenter,
                        self.barrier.image_ycenter)
 
     def event_create(self):
@@ -4537,9 +4541,9 @@ class DoorFrame(InteractiveObject):
 class DoorFrameX(DoorFrame):
 
     def event_create(self):
-        self.closed_sprite = doorframe_regular_x_closed_sprite
-        self.open_sprite = doorframe_regular_x_open_sprite
-        self.barrier_sprite = door_barrier_x_sprite
+        self.closed_sprite = hlib.doorframe_regular_x_closed_sprite
+        self.open_sprite = hlib.doorframe_regular_x_open_sprite
+        self.barrier_sprite = hlib.door_barrier_x_sprite
         super().event_create()
 
 
@@ -4548,9 +4552,9 @@ class DoorFrameY(DoorFrame):
     edge2_area = (56, 0, 8, 8)
 
     def event_create(self):
-        self.closed_sprite = doorframe_regular_y_closed_sprite
-        self.open_sprite = doorframe_regular_y_open_sprite
-        self.barrier_sprite = door_barrier_y_sprite
+        self.closed_sprite = hlib.doorframe_regular_y_closed_sprite
+        self.open_sprite = hlib.doorframe_regular_y_open_sprite
+        self.barrier_sprite = hlib.door_barrier_y_sprite
         super().event_create()
 
 
@@ -4859,7 +4863,7 @@ class Menu(xsge_gui.MenuWindow):
             return self
 
     def event_change_keyboard_focus(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
 
 
 class MainMenu(Menu):
@@ -4869,13 +4873,13 @@ class MainMenu(Menu):
 
     def event_choose(self):
         if self.choice == 0:
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             NewGameMenu.create_page()
         elif self.choice == 1:
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             LoadGameMenu.create_page()
         elif self.choice == 2:
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             OptionsMenu.create_page()
         elif self.choice == 3:
             credits_room = CreditsScreen.load(os.path.join("special",
@@ -4921,7 +4925,7 @@ class NewGameMenu(Menu):
         hlib.abort = False
 
         if self.choice in range(len(hlib.save_slots)):
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             hlib.current_save_slot = self.choice
             if hlib.save_slots[hlib.current_save_slot] is None:
                 set_new_game()
@@ -4932,7 +4936,7 @@ class NewGameMenu(Menu):
             else:
                 OverwriteConfirmMenu.create(default=1)
         else:
-            play_sound(cancel_sound)
+            play_sound(hlib.cancel_sound)
             MainMenu.create(default=0)
 
 
@@ -4944,15 +4948,15 @@ class OverwriteConfirmMenu(Menu):
         hlib.abort = False
 
         if self.choice == 0:
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             set_new_game()
             if not hlib.abort:
                 start_game()
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
                 NewGameMenu.create(default=hlib.current_save_slot)
         else:
-            play_sound(cancel_sound)
+            play_sound(hlib.cancel_sound)
             NewGameMenu.create(default=hlib.current_save_slot)
 
 
@@ -4962,17 +4966,17 @@ class LoadGameMenu(NewGameMenu):
         hlib.abort = False
 
         if self.choice in range(len(hlib.save_slots)):
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             hlib.current_save_slot = self.choice
             load_game()
             if hlib.abort:
                 MainMenu.create(default=1)
             elif not start_game():
-                play_sound(error_sound)
+                play_sound(hlib.error_sound)
                 show_error(_("An error occurred when trying to load the game."))
                 MainMenu.create(default=1)
         else:
-            play_sound(cancel_sound)
+            play_sound(hlib.cancel_sound)
             MainMenu.create(default=1)
 
 
@@ -5011,7 +5015,7 @@ class OptionsMenu(Menu):
 
     def event_choose(self, left=False):
         if self.choice == 0:
-            play_sound(select_sound)
+            play_sound(hlib.select_sound)
             hlib.fullscreen = not hlib.fullscreen
             update_fullscreen()
             OptionsMenu.create_page(default=self.choice)
@@ -5022,7 +5026,7 @@ class OptionsMenu(Menu):
             else:
                 i = 0
 
-            play_sound(select_sound)
+            play_sound(hlib.select_sound)
             i += -1 if left else 1
             i %= len(choices)
             hlib.scale_method = choices[i]
@@ -5040,7 +5044,7 @@ class OptionsMenu(Menu):
                 if v > 100:
                     v = 0
             hlib.sound_volume = v / 100
-            play_sound(select_sound)
+            play_sound(hlib.select_sound)
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 3:
             # This somewhat complicated method is to prevent rounding
@@ -5059,18 +5063,18 @@ class OptionsMenu(Menu):
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 4:
             hlib.stereo_enabled = not hlib.stereo_enabled
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 5:
-            play_sound(select_sound)
+            play_sound(hlib.select_sound)
             hlib.fps_enabled = not hlib.fps_enabled
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 6:
-            play_sound(select_sound)
+            play_sound(hlib.select_sound)
             hlib.metroid_controls = not hlib.metroid_controls
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 7:
-            play_sound(select_sound)
+            play_sound(hlib.select_sound)
             # This somewhat complicated method is to prevent rounding
             # irregularities.
             if left:
@@ -5083,17 +5087,17 @@ class OptionsMenu(Menu):
             xsge_gui.joystick_threshold = threshold
             OptionsMenu.create_page(default=self.choice)
         elif self.choice == 8:
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             KeyboardMenu.create_page()
         elif self.choice == 9:
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             JoystickMenu.create_page()
         elif self.choice == 10:
             sge.joystick.refresh()
-            play_sound(heal_sound)
+            play_sound(hlib.heal_sound)
             OptionsMenu.create_page(default=self.choice)
         else:
-            play_sound(cancel_sound)
+            play_sound(hlib.cancel_sound)
             write_to_disk()
             MainMenu.create(default=2)
 
@@ -5146,100 +5150,100 @@ class KeyboardMenu(Menu):
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.left_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 1:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.right_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 2:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.up_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 3:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.down_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 4:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.jump_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 5:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.shoot_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 6:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.secondary_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 7:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.aim_diag_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 8:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.aim_up_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 9:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.aim_down_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 10:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.pause_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 11:
             k = wait_key(text)
             if k is not None:
                 bind_key(hlib.map_key, k)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         else:
-            play_sound(cancel_sound)
+            play_sound(hlib.cancel_sound)
             OptionsMenu.create_page(default=5)
 
 
@@ -5295,100 +5299,100 @@ class JoystickMenu(Menu):
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.left_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 1:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.right_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 2:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.up_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 3:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.down_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 4:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.jump_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 5:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.shoot_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 6:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.secondary_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 7:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.aim_diag_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 8:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.aim_up_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 9:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.aim_down_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 10:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.pause_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         elif self.choice == 11:
             js = wait_js(text)
             if js is not None:
                 bind_js(hlib.map_js, js)
-                play_sound(confirm_sound)
+                play_sound(hlib.confirm_sound)
             else:
-                play_sound(cancel_sound)
+                play_sound(hlib.cancel_sound)
             self.__class__.create_page(default=self.choice)
         else:
-            play_sound(cancel_sound)
+            play_sound(hlib.cancel_sound)
             OptionsMenu.create_page(default=6)
 
 
@@ -5416,7 +5420,7 @@ class ModalMenu(xsge_gui.MenuDialog):
             return self
 
     def event_change_keyboard_focus(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
 
 
 class PauseMenu(ModalMenu):
@@ -5472,7 +5476,7 @@ class PauseMenu(ModalMenu):
                          "game now, this unsaved progress will be lost. You "
                          "can save the game by touching any warp pad.")
                 DialogBox(gui_handler, text).show()
-                play_sound(type_sound)
+                play_sound(hlib.type_sound)
                 LoseProgressMenu.create(1)
 
         if self.choice == 1:
@@ -5504,25 +5508,25 @@ class PauseMenu(ModalMenu):
             PauseMenu.create(default=self.choice, player_x=self.player_x,
                              player_y=self.player_y)
         elif self.choice == 2:
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             ModalKeyboardMenu.create_page()
             PauseMenu.create(default=self.choice, player_x=self.player_x,
                              player_y=self.player_y)
         elif self.choice == 3:
-            play_sound(confirm_sound)
+            play_sound(hlib.confirm_sound)
             ModalJoystickMenu.create_page()
             PauseMenu.create(default=self.choice, player_x=self.player_x,
                              player_y=self.player_y)
         elif self.choice == 4:
             if hlib.god or "map" in hlib.progress_flags:
-                play_sound(select_sound)
+                play_sound(hlib.select_sound)
                 MapDialog(self.player_x, self.player_y).show()
             else:
                 check_quit()
         elif self.choice == 5:
             check_quit()
         else:
-            play_sound(select_sound)
+            play_sound(hlib.select_sound)
 
 
 class ModalKeyboardMenu(ModalMenu, KeyboardMenu):
@@ -5533,7 +5537,7 @@ class ModalKeyboardMenu(ModalMenu, KeyboardMenu):
         if self.choice is not None and self.choice < len(self.items) - 1:
             super().event_choose()
         else:
-            play_sound(cancel_sound)
+            play_sound(hlib.cancel_sound)
 
 
 class ModalJoystickMenu(ModalMenu, JoystickMenu):
@@ -5544,7 +5548,7 @@ class ModalJoystickMenu(ModalMenu, JoystickMenu):
         if self.choice is not None and self.choice < len(self.items) - 1:
             super().event_choose()
         else:
-            play_sound(cancel_sound)
+            play_sound(hlib.cancel_sound)
 
 
 class LoseProgressMenu(ModalMenu):
@@ -5555,7 +5559,7 @@ class LoseProgressMenu(ModalMenu):
         if self.choice == 0:
             sge.game.start_room.start()
         else:
-            play_sound(select_sound)
+            play_sound(hlib.select_sound)
 
 
 class MapDialog(xsge_gui.Dialog):
@@ -5587,27 +5591,27 @@ class MapDialog(xsge_gui.Dialog):
         self.map.y = (ycells // 2 - player_y) * hlib.MAP_CELL_HEIGHT
 
     def event_press_left(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
         self.map.x += hlib.MAP_CELL_WIDTH
 
     def event_press_right(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
         self.map.x -= hlib.MAP_CELL_WIDTH
 
     def event_press_up(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
         self.map.y += hlib.MAP_CELL_HEIGHT
 
     def event_press_down(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
         self.map.y -= hlib.MAP_CELL_HEIGHT
 
     def event_press_enter(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
         self.destroy()
 
     def event_press_escape(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
         self.destroy()
 
 
@@ -5624,7 +5628,7 @@ class TeleportDialog(MapDialog):
         self.map.sprite = draw_map()
         self.map.tab_focus = False
         self.location_indicator = xsge_gui.Widget(self, 0, 0, 1)
-        self.location_indicator.sprite = map_player_sprite
+        self.location_indicator.sprite = hlib.map_player_sprite
         self.location_indicator.tab_focus = False
 
         # Sorted copy of available warp pads for cycling through.
@@ -5654,7 +5658,7 @@ class TeleportDialog(MapDialog):
             self.map.y = (ycells//2 - y) * hlib.MAP_CELL_HEIGHT
 
     def event_press_left(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
 
         if self.selection in self.warp_pads:
             i = self.warp_pads.index(self.selection)
@@ -5665,7 +5669,7 @@ class TeleportDialog(MapDialog):
         self.update_selection()
 
     def event_press_right(self):
-        play_sound(select_sound)
+        play_sound(hlib.select_sound)
 
         if self.selection in self.warp_pads:
             i = self.warp_pads.index(self.selection)
@@ -5693,7 +5697,7 @@ class DialogLabel(xsge_gui.ProgressiveLabel):
 
     def event_add_character(self):
         if not self.text[-1].isspace():
-            play_sound(type_sound)
+            play_sound(hlib.type_sound)
 
 
 class DialogBox(xsge_gui.Dialog):
@@ -6387,31 +6391,38 @@ def draw_map(x=None, y=None, w=None, h=None, player_x=None, player_y=None):
                 dx = (ox-x) * hlib.MAP_CELL_WIDTH
                 dy = (oy-y) * hlib.MAP_CELL_HEIGHT
                 if obj == "wall_left":
-                    map_sprite.draw_sprite(map_wall_left_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_wall_left_sprite, 0,
+                                           dx, dy)
                 elif obj == "wall_right":
-                    map_sprite.draw_sprite(map_wall_right_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_wall_right_sprite, 0,
+                                           dx, dy)
                 elif obj == "wall_top":
-                    map_sprite.draw_sprite(map_wall_top_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_wall_top_sprite, 0, dx, dy)
                 elif obj == "wall_bottom":
-                    map_sprite.draw_sprite(map_wall_bottom_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_wall_bottom_sprite, 0,
+                                           dx, dy)
                 elif obj == "door_left":
-                    map_sprite.draw_sprite(map_door_left_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_door_left_sprite, 0,
+                                           dx, dy)
                 elif obj == "door_right":
-                    map_sprite.draw_sprite(map_door_right_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_door_right_sprite, 0,
+                                           dx, dy)
                 elif obj == "door_top":
-                    map_sprite.draw_sprite(map_door_top_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_door_top_sprite, 0, dx, dy)
                 elif obj == "door_bottom":
-                    map_sprite.draw_sprite(map_door_bottom_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_door_bottom_sprite, 0,
+                                           dx, dy)
                 elif obj == "powerup":
                     if "warp_pad" not in hlib.map_objects[(ox, oy)]:
-                        map_sprite.draw_sprite(map_powerup_sprite, 0, dx, dy)
+                        map_sprite.draw_sprite(hlib.map_powerup_sprite, 0,
+                                               dx, dy)
                 elif obj == "warp_pad":
-                    map_sprite.draw_sprite(map_warp_pad_sprite, 0, dx, dy)
+                    map_sprite.draw_sprite(hlib.map_warp_pad_sprite, 0, dx, dy)
 
     if player_x is not None and player_y is not None:
         dx = (player_x - x) * hlib.MAP_CELL_WIDTH
         dy = (player_y - y) * hlib.MAP_CELL_HEIGHT
-        map_sprite.draw_sprite(map_player_sprite, 0, dx, dy)
+        map_sprite.draw_sprite(hlib.map_player_sprite, 0, dx, dy)
 
     return map_sprite
 
@@ -6731,153 +6742,155 @@ jellyfish_swim_sprite = sge.gfx.Sprite.from_tileset(
     fname, 192, 64, 6, width=32, height=32, origin_x=24, origin_y=24, fps=50)
 
 fname = os.path.join(d, "wolf_sheet.png")
-wolf_right_sleep_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_right_sleep_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 0, 4, width=64, height=32, origin_x=32, fps=8)
-wolf_right_asleep_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_right_asleep_sprite = sge.gfx.Sprite.from_tileset(
     fname, 512, 0, width=64, height=32, origin_x=32)
-wolf_right_howl_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_right_howl_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 54, 4, width=64, height=42, origin_x=32, origin_y=10, fps=16)
-wolf_right_stand_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_right_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 96, width=64, height=32, origin_x=32)
-wolf_right_walk_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_right_walk_sprite = sge.gfx.Sprite.from_tileset(
     fname, 384, 96, 4, width=64, height=32, origin_x=32, fps=8)
-wolf_right_run_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_right_run_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 128, 5, width=64, height=32, origin_x=32, fps=10)
-wolf_right_attack_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_right_attack_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 160, 5, width=64, height=32, origin_x=32, fps=10)
 
-wolf_left_sleep_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_left_sleep_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 192, 4, width=64, height=32, origin_x=32, fps=8)
-wolf_left_asleep_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_left_asleep_sprite = sge.gfx.Sprite.from_tileset(
     fname, 512, 192, width=64, height=32, origin_x=32)
-wolf_left_howl_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_left_howl_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 246, 4, width=64, height=42, origin_x=32, origin_y=10, fps=16)
-wolf_left_stand_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_left_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 288, width=64, height=32, origin_x=32)
-wolf_left_walk_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_left_walk_sprite = sge.gfx.Sprite.from_tileset(
     fname, 384, 288, 4, width=64, height=32, origin_x=32, fps=8)
-wolf_left_run_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_left_run_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 320, 5, width=64, height=32, origin_x=32, fps=10)
-wolf_left_attack_sprite = sge.gfx.Sprite.from_tileset(
+hlib.wolf_left_attack_sprite = sge.gfx.Sprite.from_tileset(
     fname, 320, 352, 5, width=64, height=32, origin_x=32, fps=10)
 
 fname = os.path.join(d, "scorpion_sheet.png")
-scorpion_stand_sprite = sge.gfx.Sprite.from_tileset(
+hlib.scorpion_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 0, width=60, height=36, origin_x=30, origin_y=9)
-scorpion_walk_sprite = sge.gfx.Sprite.from_tileset(
+hlib.scorpion_walk_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 36, 6, width=60, height=36, origin_x=30, origin_y=9)
-scorpion_shoot_start_sprite = sge.gfx.Sprite.from_tileset(
+hlib.scorpion_shoot_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 108, 11, width=60, height=36, origin_x=30, origin_y=9, fps=20)
-scorpion_shoot_end_sprite = sge.gfx.Sprite.from_tileset(
+hlib.scorpion_shoot_end_sprite = sge.gfx.Sprite.from_tileset(
     fname, 0, 144, 5, width=60, height=36, origin_x=30, origin_y=9, fps=20)
 
-scorpion_projectile_sprite = sge.gfx.Sprite(
+hlib.scorpion_projectile_sprite = sge.gfx.Sprite(
     "scorpion_projectile", d, origin_y=2, bbox_x=2, bbox_y=1, bbox_width=17,
     bbox_height=4)
-scorpion_projectile_shard_sprite = sge.gfx.Sprite(
+hlib.scorpion_projectile_shard_sprite = sge.gfx.Sprite(
     "scorpion_projectile_shard", d, fps=0)
 
 fname = os.path.join(d, "mantanoid_sheet.png")
-mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 51, width=32, height=48, origin_x=15, origin_y=15)
-mantanoid_idle_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_idle_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 208, 12, xsep=5, width=33, height=50, origin_x=15, origin_y=17,
     fps=10)
-mantanoid_turn_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_turn_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 120, 3, xsep=5, width=32, height=47, origin_x=15, origin_y=14,
     fps=10)
-mantanoid_walk_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_walk_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 657, 10, xsep=3, width=41, height=49, origin_x=23, origin_y=16)
-mantanoid_hop_start_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_hop_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
     fps=10)
-mantanoid_jump_start_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_jump_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 372, 5, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
     fps=10)
-mantanoid_jump_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_jump_sprite = sge.gfx.Sprite.from_tileset(
     fname, 156, 299, width=32, height=57, origin_x=15, origin_y=24)
-mantanoid_fall_start_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_fall_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 193, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
     fps=10)
-mantanoid_fall_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_fall_sprite = sge.gfx.Sprite.from_tileset(
     fname, 304, 299, width=32, height=57, origin_x=15, origin_y=24)
-mantanoid_land_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_land_sprite = sge.gfx.Sprite.from_tileset(
     fname, 341, 299, 3, xsep=5, width=32, height=57, origin_x=15, origin_y=24,
     fps=10)
-mantanoid_slash_start_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_slash_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 41, 470, 3, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
     fps=10)
-mantanoid_slash_single_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_slash_single_sprite = sge.gfx.Sprite.from_tileset(
     fname, 191, 470, 4, xsep=5, width=45, height=65, origin_x=15, origin_y=32,
     fps=10)
-mantanoid_slash_double_first_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_slash_double_first_sprite = sge.gfx.Sprite.from_tileset(
     fname, 233, 551, 4, xsep=3, width=61, height=65, origin_x=15, origin_y=32,
     fps=10)
-mantanoid_slash_double_second_sprite = sge.gfx.Sprite.from_tileset(
+hlib.mantanoid_slash_double_second_sprite = sge.gfx.Sprite.from_tileset(
     fname, 489, 551, 3, xsep=3, width=61, height=65,
     origin_x=(15 + hlib.MANTANOID_DOUBLESLASH_OFFSET), origin_y=32, fps=10)
 
 fname = os.path.join(d, "awesomepossum.png")
-awesomepossum_stand_sprite = sge.gfx.Sprite.from_tileset(
+hlib.awesomepossum_stand_sprite = sge.gfx.Sprite.from_tileset(
     fname, 27, 123, 4, xsep=3, width=52, height=65, origin_x=20, origin_y=63,
     fps=10)
-awesomepossum_walk_sprite = sge.gfx.Sprite.from_tileset(
+hlib.awesomepossum_walk_sprite = sge.gfx.Sprite.from_tileset(
     fname, 29, 205, 4, xsep=3, width=45, height=65, origin_x=22, origin_y=64)
-awesomepossum_roll_start_sprite = sge.gfx.Sprite.from_tileset(
+hlib.awesomepossum_roll_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 88, 585, 3, xsep=3, width=56, height=65, origin_x=29, origin_y=59)
-awesomepossum_roll_sprite = sge.gfx.Sprite.from_tileset(
+hlib.awesomepossum_roll_sprite = sge.gfx.Sprite.from_tileset(
     fname, 278, 600, 4, xsep=3, width=51, height=51, origin_x=26, origin_y=45)
-awesomepossum_shoot_sprite = sge.gfx.Sprite.from_tileset(
+hlib.awesomepossum_shoot_sprite = sge.gfx.Sprite.from_tileset(
     fname, 19, 749, 6, xsep=3, width=46, height=64, origin_x=20, origin_y=62,
     fps=10)
-awesomepossum_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
+hlib.awesomepossum_bullet_start_sprite = sge.gfx.Sprite.from_tileset(
     fname, 379, 783, 4, xsep=3, width=20, height=15, origin_x=12, origin_y=8,
     fps=10)
-awesomepossum_bullet_sprite = sge.gfx.Sprite.from_tileset(
+hlib.awesomepossum_bullet_sprite = sge.gfx.Sprite.from_tileset(
     fname, 478, 783, 1, width=23, height=17, origin_x=14, origin_y=9)
 
 d = os.path.join(hlib.datadir, "images", "objects", "doors")
-door_barrier_x_sprite = sge.gfx.Sprite("barrier_x", d, origin_y=-8, fps=30,
-                                       bbox_y=8, bbox_width=8, bbox_height=48)
-door_barrier_y_sprite = sge.gfx.Sprite("barrier_y", d, origin_x=-8, fps=30,
-                                       bbox_x=8, bbox_width=48, bbox_height=8)
-doorframe_regular_x_closed_sprite = sge.gfx.Sprite("regular_x_closed", d)
-doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)
-doorframe_regular_y_closed_sprite = sge.gfx.Sprite("regular_y_closed", d)
-doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
+hlib.door_barrier_x_sprite = sge.gfx.Sprite(
+    "barrier_x", d, origin_y=-8, fps=30, bbox_y=8, bbox_width=8,
+    bbox_height=48)
+hlib.door_barrier_y_sprite = sge.gfx.Sprite(
+    "barrier_y", d, origin_x=-8, fps=30, bbox_x=8, bbox_width=48,
+    bbox_height=8)
+hlib.doorframe_regular_x_closed_sprite = sge.gfx.Sprite("regular_x_closed", d)
+hlib.doorframe_regular_x_open_sprite = sge.gfx.Sprite("regular_x_open", d)
+hlib.doorframe_regular_y_closed_sprite = sge.gfx.Sprite("regular_y_closed", d)
+hlib.doorframe_regular_y_open_sprite = sge.gfx.Sprite("regular_y_open", d)
 
 d = os.path.join(hlib.datadir, "images", "objects", "stones")
-stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
+hlib.stone_fragment_sprite = sge.gfx.Sprite("stone_fragment", d)
 
 d = os.path.join(hlib.datadir, "images", "objects", "powerups")
-life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
-powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
-atomic_compressor_sprite = sge.gfx.Sprite(
+hlib.life_orb_sprite = sge.gfx.Sprite("life_orb", d, fps=10)
+hlib.powerup_map_sprite = sge.gfx.Sprite("map", d, fps=3)
+hlib.atomic_compressor_sprite = sge.gfx.Sprite(
     "atomic_compressor", d, origin_y=1, fps=10, bbox_width=16, bbox_height=16)
-monkey_boots_sprite = sge.gfx.Sprite(
+hlib.monkey_boots_sprite = sge.gfx.Sprite(
     "monkey_boots", d, bbox_y=9, bbox_width=16, bbox_height=7)
-monkey_boots_gleam_sprite = sge.gfx.Sprite(
+hlib.monkey_boots_gleam_sprite = sge.gfx.Sprite(
     "monkey_boots_gleam", d, origin_x=10, origin_y=5, fps=15)
-hedgehog_hormone_sprite = sge.gfx.Sprite("hedgehog_hormone", d)
-hedgehog_hormone_bubble_sprite = sge.gfx.Sprite("hedgehog_hormone_bubble", d,
-                                                fps=5)
+hlib.hedgehog_hormone_sprite = sge.gfx.Sprite("hedgehog_hormone", d)
+hlib.hedgehog_hormone_bubble_sprite = sge.gfx.Sprite(
+    "hedgehog_hormone_bubble", d, fps=5)
 
 d = os.path.join(hlib.datadir, "images", "objects", "misc")
-warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)
-warp_pad_inactive_sprite = sge.gfx.Sprite("warp_pad_inactive", d)
+hlib.warp_pad_active_sprite = sge.gfx.Sprite("warp_pad_active", d)
+hlib.warp_pad_inactive_sprite = sge.gfx.Sprite("warp_pad_inactive", d)
 
 d = os.path.join(hlib.datadir, "images", "map")
-map_wall_left_sprite = sge.gfx.Sprite("wall_left", d)
-map_wall_right_sprite = sge.gfx.Sprite("wall_right", d)
-map_wall_top_sprite = sge.gfx.Sprite("wall_top", d)
-map_wall_bottom_sprite = sge.gfx.Sprite("wall_bottom", d)
-map_door_left_sprite = sge.gfx.Sprite("door_left", d)
-map_door_right_sprite = sge.gfx.Sprite("door_right", d)
-map_door_top_sprite = sge.gfx.Sprite("door_top", d)
-map_door_bottom_sprite = sge.gfx.Sprite("door_bottom", d)
-map_powerup_sprite = sge.gfx.Sprite("powerup", d)
-map_warp_pad_sprite = sge.gfx.Sprite("warp_pad", d)
-map_player_sprite = sge.gfx.Sprite("player", d)
+hlib.map_wall_left_sprite = sge.gfx.Sprite("wall_left", d)
+hlib.map_wall_right_sprite = sge.gfx.Sprite("wall_right", d)
+hlib.map_wall_top_sprite = sge.gfx.Sprite("wall_top", d)
+hlib.map_wall_bottom_sprite = sge.gfx.Sprite("wall_bottom", d)
+hlib.map_door_left_sprite = sge.gfx.Sprite("door_left", d)
+hlib.map_door_right_sprite = sge.gfx.Sprite("door_right", d)
+hlib.map_door_top_sprite = sge.gfx.Sprite("door_top", d)
+hlib.map_door_bottom_sprite = sge.gfx.Sprite("door_bottom", d)
+hlib.map_powerup_sprite = sge.gfx.Sprite("powerup", d)
+hlib.map_warp_pad_sprite = sge.gfx.Sprite("warp_pad", d)
+hlib.map_player_sprite = sge.gfx.Sprite("player", d)
 
 d = os.path.join(hlib.datadir, "images", "misc")
 hlib.logo_sprite = sge.gfx.Sprite("logo", d, origin_x=125)
@@ -6928,44 +6941,54 @@ hlib.font_big = sge.gfx.Font(fname, size=16)
 hlib.font_small = sge.gfx.Font(fname, size=7)
 
 # Load sounds
-shoot_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "shoot.wav"),
-                            volume=0.5)
-bullet_death_sound = sge.snd.Sound(
+hlib.shoot_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "shoot.wav"), volume=0.5)
+hlib.bullet_death_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "bullet_death.ogg"), volume=0.2)
-land_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "land.ogg"), volume=0.5)
-ball_land_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "ball_land.ogg"))
-hedgehog_spikes_sound = sge.snd.Sound(
+hlib.land_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "land.ogg"), volume=0.5)
+hlib.ball_land_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "ball_land.ogg"))
+hlib.hedgehog_spikes_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "hedgehog_spikes.wav"), volume=0.5)
-hurt_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "hurt.wav"))
-death_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "death.wav"))
-stone_break_sound = sge.snd.Sound(
+hlib.hurt_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "hurt.wav"))
+hlib.death_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "death.wav"))
+hlib.stone_break_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "stone_break.ogg"), volume=0.5)
-powerup_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "powerup.wav"))
-heal_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "heal.wav"))
-warp_pad_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "warp_pad.ogg"))
-teleport_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "teleport.wav"))
-door_open_sound = sge.snd.Sound(
+hlib.powerup_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "powerup.wav"))
+hlib.heal_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "heal.wav"))
+hlib.warp_pad_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "warp_pad.ogg"))
+hlib.teleport_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "teleport.wav"))
+hlib.door_open_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "door_open.ogg"), volume=0.5)
-door_close_sound = sge.snd.Sound(
+hlib.door_close_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "door_close.ogg"), volume=0.5)
-enemy_hurt_sound = stone_break_sound
-enemy_death_sound = sge.snd.Sound(
+hlib.enemy_hurt_sound = hlib.stone_break_sound
+hlib.enemy_death_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "enemy_death.wav"))
-frog_jump_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "frog_jump.wav"))
-scorpion_shoot_sound = sge.snd.Sound(
+hlib.frog_jump_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "frog_jump.wav"))
+hlib.scorpion_shoot_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "scorpion_shoot.wav"))
-scorpion_projectile_break_sound = sge.snd.Sound(
-    os.path.join(hlib.datadir, "sounds", "scorpion_projectile_break.ogg"), volume=0.5)
-mantanoid_approach_sound = sge.snd.Sound(
+hlib.scorpion_projectile_break_sound = sge.snd.Sound(
+    os.path.join(hlib.datadir, "sounds", "scorpion_projectile_break.ogg"),
+    volume=0.5)
+hlib.mantanoid_approach_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "mantanoid_approach.wav"))
-mantanoid_slash_sound = sge.snd.Sound(
+hlib.mantanoid_slash_sound = sge.snd.Sound(
     os.path.join(hlib.datadir, "sounds", "mantanoid_slash.wav"))
-select_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "select.ogg"))
-pause_sound = select_sound
-confirm_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "confirm.wav"))
-cancel_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "cancel.wav"))
-error_sound = cancel_sound
-type_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "type.wav"))
+hlib.select_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "select.ogg"))
+hlib.pause_sound = hlib.select_sound
+hlib.confirm_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "confirm.wav"))
+hlib.cancel_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "cancel.wav"))
+hlib.error_sound = hlib.cancel_sound
+hlib.type_sound = sge.snd.Sound(os.path.join(hlib.datadir, "sounds", "type.wav"))
 
 # Create objects
 

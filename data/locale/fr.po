@@ -42,7 +42,7 @@ msgid ""
 "Disable delta timing. Causes the game to slow down when it can't run at full "
 "speed instead of becoming choppier."
 msgstr ""
-"Désactivez-le Delta timing. Ralentie le jeu lorsqu'il ne peut pas fonctionner pleinement"
+"Désactivez-le Delta timing. Ralentit le jeu lorsqu'il ne peut pas fonctionner pleinement"
 "Plutôt que de laguer."
 
 #: ../../hexoshi.py:76
@@ -51,7 +51,7 @@ msgstr "Ou charger les données du jeu (Défault: \"{}\")"
 
 #: ../../hexoshi.py:79
 msgid "The scale factor to use by default in windowed mode (Default: \"{}\")"
-msgstr "La résolution a utilisé par défaut en mode fenêtré (Défault: \"{}\")"
+msgstr "La résolution a utiliser par défaut en mode fenêtré (Défault: \"{}\")"
 
 #: ../../hexoshi.py:82
 msgid "Only show solid colors for backgrounds (uses less RAM)."
@@ -128,7 +128,7 @@ msgstr "Appuyer sur la touche Menu pour passer...."
 
 #: ../../hexoshi.py:1122
 msgid "Cinematic mode enabled"
-msgstr "Mode cinématique activer"
+msgstr "Mode cinématique activé"
 
 #: ../../hexoshi.py:2569
 msgid ""
@@ -155,9 +155,9 @@ msgid ""
 "\n"
 "Absorb life force from defeated enemies"
 msgstr ""
-"ORB DE VIE\n"
+"ORBE DE VIE\n"
 "\n"
-"Absorber la force vitale d'un ennemi vaincue"
+"Absorber la force vitale d'un ennemi vaincu"
 
 #: ../../hexoshi.py:2620
 msgid ""
@@ -177,7 +177,7 @@ msgid ""
 msgstr ""
 "CARTE DISQUE\n"
 "\n"
-"Zone supplémentaire ajoutait à la carte"
+"Zone supplémentaire ajoutée à la carte"
 
 #: ../../hexoshi.py:3111
 msgid "New Game"
@@ -185,7 +185,7 @@ msgstr "Nouvelle Partie"
 
 #: ../../hexoshi.py:3111
 msgid "Load Game"
-msgstr "Charger un Partie"
+msgstr "Charger une Partie"
 
 #: ../../hexoshi.py:3111
 msgid "Options"
@@ -193,7 +193,7 @@ msgstr "Options"
 
 #: ../../hexoshi.py:3111
 msgid "Credits"
-msgstr "Credits"
+msgstr "Crédits"
 
 #: ../../hexoshi.py:3112
 msgid "Quit"
@@ -222,7 +222,7 @@ msgstr "Une erreur est survenue lors du chargement du jeu."
 
 #: ../../hexoshi.py:3226
 msgid "Fullscreen: {}"
-msgstr "Plein Ecran: {}"
+msgstr "Plein Écran: {}"
 
 #: ../../hexoshi.py:3226 ../../hexoshi.py:3228 ../../hexoshi.py:3229
 #: ../../hexoshi.py:3230 ../../hexoshi.py:3231
@@ -244,11 +244,11 @@ msgstr "Son: {}"
 
 #: ../../hexoshi.py:3229
 msgid "Music: {}"
-msgstr "Music: {}"
+msgstr "Musique: {}"
 
 #: ../../hexoshi.py:3230
 msgid "Stereo: {}"
-msgstr "Stereo: {}"
+msgstr "Stéréo: {}"
 
 #: ../../hexoshi.py:3231
 msgid "Show FPS: {}"
@@ -268,7 +268,7 @@ msgstr "Configurer la Manette"
 
 #: ../../hexoshi.py:3234
 msgid "Detect joysticks"
-msgstr "Detecter le joystick"
+msgstr "Détecter le joystick"
 
 #: ../../hexoshi.py:3323 ../../hexoshi.py:3503
 msgid "Player {}"
@@ -296,7 +296,7 @@ msgstr "Saut: {}"
 
 #: ../../hexoshi.py:3329 ../../hexoshi.py:3509
 msgid "Shoot: {}"
-msgstr "Tire: {}"
+msgstr "Tir: {}"
 
 #: ../../hexoshi.py:3330 ../../hexoshi.py:3510
 msgid "Aim Diagonal: {}"
@@ -336,11 +336,11 @@ msgstr "Voir la Carte"
 
 #: ../../hexoshi.py:3684 ../../hexoshi.py:3686
 msgid "Return to Title Screen"
-msgstr "Revenir a l'écran de démarage"
+msgstr "Revenir à l'écran de démarrage"
 
 #: ../../hexoshi.py:3975
 msgid "Press the key you wish to toggle, or Escape to cancel."
-msgstr "Appuyer sur la touche que vous voulez attribuer, ou appuyer sur la touche échappe pour annuler."
+msgstr "Appuyer sur la touche que vous voulez attribuer, ou appuyer sur la touche échap. pour annuler."
 
 #: ../../hexoshi.py:4013
 msgid ""

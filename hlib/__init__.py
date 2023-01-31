@@ -140,12 +140,18 @@ SOUND_TILTED_RADIUS = 500
 SOUND_TILT_LIMIT = 0.75
 
 datadir = "data"
-configdir = os.path.join(
-    os.getenv("XDG_CONFIG_HOME", os.path.join(os.path.expanduser("~"),
-                                              ".config")), "hexoshi")
-localdir = os.path.join(
-    os.getenv("XDG_DATA_HOME", os.path.join(os.path.expanduser("~"), ".local",
-                                            "share")), "hexoshi")
+if os.name == "nt":
+    basedir = os.getenv("APPDATA", os.path.expanduser("~"))
+    configdir = os.path.join(basedir, "Hexoshi", "config")
+    localdir = os.path.join(basedir, "Hexoshi", "data")
+    del basedir
+else:
+    configdir = os.path.join(
+        os.getenv("XDG_CONFIG_HOME", os.path.join(os.path.expanduser("~"),
+                                                  ".config")), "hexoshi")
+    localdir = os.path.join(
+        os.getenv("XDG_DATA_HOME", os.path.join(os.path.expanduser("~"),
+                                                ".local", "share")), "hexoshi")
 scale = 2
 fsscale = None
 no_hud = False

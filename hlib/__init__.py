@@ -141,7 +141,8 @@ SOUND_TILT_LIMIT = 0.75
 
 datadir = "data"
 if os.name == "nt":
-    basedir = os.getenv("APPDATA", os.path.expanduser("~"))
+    basedir = os.getenv("APPDATA", os.path.join(os.path.expanduser("~"),
+                                                "AppData", "Roaming"))
     configdir = os.path.join(basedir, "Hexoshi", "config")
     localdir = os.path.join(basedir, "Hexoshi", "data")
     del basedir

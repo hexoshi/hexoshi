@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: http://hexoshi.nongnu.org/\n"
-"POT-Creation-Date: 2018-02-26 16:07-0500\n"
-"PO-Revision-Date: 2018-03-04 17:33+0100\n"
+"POT-Creation-Date: 2023-05-28 19:56+0200\n"
+"PO-Revision-Date: 2023-06-05 17:14+0200\n"
 "Last-Translator: Jorge Maldonado Ventura <jorgesumle@freakspot.net>\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -28,22 +28,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 3.2.2\n"
 
-#: hexoshi.py:80
+#: hexoshi.py:57
 msgid "Output version information and exit."
 msgstr "Informa de la versión y finaliza."
 
-#: hexoshi.py:83
+#: hexoshi.py:60
 msgid "Print errors directly to stdout rather than saving them in a file."
 msgstr ""
 "Muestra los errores en la salida estándar en vez de guardarlos en un archivo."
 
-#: hexoshi.py:87
+#: hexoshi.py:64
 msgid "Manually choose a different language to use."
 msgstr "Elige manualmente un idioma diferente."
 
-#: hexoshi.py:90
+#: hexoshi.py:67
 msgid ""
 "Disable delta timing. Causes the game to slow down when it can't run at full "
 "speed instead of becoming choppier."
@@ -51,18 +51,17 @@ msgstr ""
 "Desactiva la sincronización delta. Hace que el juego reduzca su velocidad "
 "cuando no puede correr a toda velocidad en lugar de ir a trompicones."
 
-#: hexoshi.py:94
+#: hexoshi.py:72
 msgid "Where to load the game data from (Default: \"{}\")"
 msgstr "Desde dónde se cargan los datos del juego (Por defecto:  \"{}\")"
 
-#: hexoshi.py:97
+#: hexoshi.py:75
 msgid "The scale factor to use by default in windowed mode (Default: \"{}\")"
 msgstr ""
 "Factor de escala a usar por defecto en el modo de ventana (Por defecto: "
 "\"{}\")"
 
-#: hexoshi.py:100
-#, python-brace-format
+#: hexoshi.py:79
 msgid ""
 "Specify a scale factor to use in fullscreen mode instead of using dynamic "
 "scaling. This will cause the screen resolution to change, which may improve "
@@ -80,31 +79,43 @@ msgstr ""
 "escala de 1 siempre será lo más rápido, pero resultar en una forma de caja "
 "de la ventana."
 
-#: hexoshi.py:105
+#: hexoshi.py:91
 msgid "Only show solid colors for backgrounds (uses less RAM)."
 msgstr "Muestra solo colores sólidos en los fondos de pantalla (usa menos RAM)"
 
-#: hexoshi.py:108
+#: hexoshi.py:94
 msgid "Don't show the player's heads-up display."
 msgstr "No mostrar el HUD del jugador."
 
-#: hexoshi.py:111
+#: hexoshi.py:97
 msgid "Generate the map even if it already exists."
 msgstr "Genera el mapa aunque ya exista."
 
-#: hexoshi.py:114
+#: hexoshi.py:100
 msgid "Save an image of the full map as \"map.png\"."
 msgstr "Guarda la imagen del mapa completo como \"map.png\"."
 
-#: hexoshi.py:344
+#: hexoshi.py:103
+msgid ""
+"Write the AI data to the game data directory instead of the user data "
+"directory (for distribution)."
+msgstr ""
+"Escribe los datos de IA en el directorio de datos del juego en vez de en el "
+"directorio de datos del usuario (para distribución)."
+
+#: hexoshi.py:108
+msgid "Quit immediately on startup (useful with -m or -s)."
+msgstr "Cerrar inmediatamente al iniciar (útil con -m o -s)."
+
+#: hexoshi.py:168
 msgid "Code entry:"
 msgstr "Código en entrada:"
 
-#: hexoshi.py:364
+#: hexoshi.py:185
 msgid "Invalid cheat code: {}"
 msgstr "Código de truco inválido: {}"
 
-#: hexoshi.py:549
+#: hexoshi.py:357
 msgid ""
 "An error occurred in a timeline 'setattr' command:\n"
 "\n"
@@ -114,7 +125,7 @@ msgstr ""
 "\n"
 "{}"
 
-#: hexoshi.py:592
+#: hexoshi.py:403
 msgid ""
 "An error occurred in a timeline 'exec' command:\n"
 "\n"
@@ -124,7 +135,7 @@ msgstr ""
 "\n"
 "{}"
 
-#: hexoshi.py:599
+#: hexoshi.py:411
 msgid ""
 "An error occurred in a timeline 'if' statement:\n"
 "\n"
@@ -134,7 +145,7 @@ msgstr ""
 "\n"
 "{}"
 
-#: hexoshi.py:619
+#: hexoshi.py:432
 msgid ""
 "An error occurred in a timeline 'while' statement:\n"
 "\n"
@@ -144,15 +155,15 @@ msgstr ""
 "\n"
 "{}"
 
-#: hexoshi.py:679
+#: hexoshi.py:493
 msgid "Loading data..."
 msgstr "Cargando datos..."
 
-#: hexoshi.py:692
-msgid "Loading \"{}\"..."
+#: hexoshi.py:508
+msgid "Loading \"{}\"…"
 msgstr "Cargando \"{}\"..."
 
-#: hexoshi.py:698
+#: hexoshi.py:514
 msgid ""
 "An error occurred when trying to load the level:\n"
 "\n"
@@ -162,15 +173,15 @@ msgstr ""
 "\n"
 "{}"
 
-#: hexoshi.py:1268
-msgid "Press the Menu button to skip..."
-msgstr "Pulsa el botón del Menú para saltar..."
+#: hexoshi.py:1122
+msgid "Press the Menu button to skip…"
+msgstr "Pulsa el botón de Menú para saltar…"
 
-#: hexoshi.py:1270
+#: hexoshi.py:1124
 msgid "Cinematic mode enabled"
 msgstr "Modo cinemático habilitado"
 
-#: hexoshi.py:4074
+#: hexoshi.py:4092
 msgid ""
 "MACGUFFIN\n"
 "\n"
@@ -180,28 +191,42 @@ msgstr ""
 "\n"
 "¡Esto es el fin de la demo! Gracias por jugar a Hexoshi versión {}."
 
-#: hexoshi.py:4075
+#: hexoshi.py:4095
 msgid ""
 "Don't worry; the full game will not end this way. This is just a placeholder "
-"until the game is completed. I hope you enjoyed what you have seen so far, "
-"and I hope you enjoy the final game when it is finished! :)"
+"until the game is completed. We hope you enjoyed what you have seen so far, "
+"and we hope you enjoy the final game when it is finished!"
 msgstr ""
-"No te preocupes; el juego completo no terminará así. Esto es solo un "
-"marcador hasta que el juego esté terminado. ¡Espero que hayas disfrutado lo "
-"que has vista hasta ahora, y espero que disfrutes el juego final cuando esté "
-"terminado! :)"
+"No te preocupes; el juego completo no terminará así. Esto es solo una "
+"versión provisional hasta que el juego esté terminado. ¡Esperamos que hayas "
+"disfrutado lo que has visto hasta ahora y que disfrutes el juego final "
+"cuando esté terminado!"
 
-#: hexoshi.py:4084
+#: hexoshi.py:4109
 msgid ""
-"USELESS ARTIFACT\n"
+"USELESS OBJECT\n"
 "\n"
 "It doesn't seem to do anything"
 msgstr ""
-"ARTEFACTO INÚTIL\n"
+"OBJETO INÚTIL\n"
 "\n"
 "Parece que no hace nada"
 
-#: hexoshi.py:4122
+#: hexoshi.py:4162
+msgid ""
+"HEXOSHI ARTIFACT\n"
+"\n"
+"{amt}/{total} ({pct}%)\n"
+"\n"
+"Fire rate increased"
+msgstr ""
+"ARTEFACTO DE HEXOSHI\n"
+"\n"
+"{amt}/{total} ({pct}%)\n"
+"\n"
+"Frecuencia de disparo aumentada"
+
+#: hexoshi.py:4176
 msgid ""
 "E-TANK\n"
 "\n"
@@ -211,29 +236,35 @@ msgstr ""
 "\n"
 "Adquirida mayor capacidad de energía"
 
-#: hexoshi.py:4132
+#: hexoshi.py:4187
 msgid ""
-"LIFE ORB\n"
+"HEX ORB\n"
 "\n"
-"Absorb life force from defeated enemies"
+"Shoot bullets by pressing \"shoot\"\n"
+"\n"
+"Collect Hexoshi Artifacts for faster fire rate"
 msgstr ""
-"OJO DE VIDA\n"
+"ORBE HEX\n"
 "\n"
-"Absorbe fuerza de vida de enemigos derrotados"
+"Dispara balas pulsando \"disparar\"\n"
+"\n"
+"Recoge Artefactos de Hexoshi para una mayor frecuencia de disparo"
 
-#: hexoshi.py:4147
+#: hexoshi.py:4204
 msgid ""
 "HANDHELD MAP\n"
 "\n"
-"See mini-map in HUD; see full map by pressing \"map\" button or from pause "
-"menu"
+"See mini-map in HUD\n"
+"\n"
+"See full map by pressing \"map\" or via pause menu"
 msgstr ""
 "MAPA DE MANO\n"
 "\n"
-"Ve el mini-mapa en el HUD; ve el mapa completo pulsando el botón del \"mapa"
-"\" o desde el menú de pausa"
+"Ve el minimapa en el HUD\n"
+"\n"
+"Ve el mapa completo pulsando \"mapa\" o desde el menú de pausa"
 
-#: hexoshi.py:4161
+#: hexoshi.py:4221
 msgid ""
 "MAP DISK\n"
 "\n"
@@ -243,18 +274,23 @@ msgstr ""
 "\n"
 "Datos del área del mapa cargados"
 
-#: hexoshi.py:4208
+#: hexoshi.py:4266
 msgid ""
 "ATOMIC COMPRESSOR\n"
 "\n"
-"Press \"down\" to compress into a ball, then press \"up\" to uncompress"
+"To compress: press \"down\" while crouching, or select with \"mode\" and "
+"then press \"shoot\"\n"
+"\n"
+"To uncompress: press \"up\""
 msgstr ""
 "COMPRESOR ATÓMICO\n"
 "\n"
-"Pulsa \"abajo\" para comprimirte en una bola, después pulsa \"arriba\" para "
-"descomprimirte"
+"Para comprimirte: pulsa \"abajo\" mientras estás agachado o selecciona con "
+"\"modo\" y después pulsa \"disparar\"\n"
+"\n"
+"Para descomprimirte: pulsa \"arriba\""
 
-#: hexoshi.py:4222
+#: hexoshi.py:4282
 msgid ""
 "MONKEY BOOTS\n"
 "\n"
@@ -264,7 +300,7 @@ msgstr ""
 "\n"
 "Pulsa \"saltar\" mientras tocas una pared para saltar contra la pared"
 
-#: hexoshi.py:4254
+#: hexoshi.py:4314
 msgid ""
 "HEDGEHOG HORMONE\n"
 "\n"
@@ -274,7 +310,7 @@ msgstr ""
 "\n"
 "Pulsa \"disparar\" mientras está en forma de bola para hacer crecer pinchos"
 
-#: hexoshi.py:4342
+#: hexoshi.py:4400
 msgid ""
 "WARP PAD\n"
 "\n"
@@ -284,177 +320,190 @@ msgstr ""
 "\n"
 "Progreso guardado. Pulsa \"arriba\" para teletransportarte."
 
-#: hexoshi.py:4815
-msgid "New Game"
-msgstr "Nueva Partida"
-
-#: hexoshi.py:4815
-msgid "Load Game"
-msgstr "Cargar partida"
-
-#: hexoshi.py:4815
-msgid "Options"
-msgstr "Opciones"
-
-#: hexoshi.py:4815
+#: hexoshi.py:4871
 msgid "Credits"
 msgstr "Créditos"
 
-#: hexoshi.py:4816
+#: hexoshi.py:4871
+msgid "Load Game"
+msgstr "Cargar partida"
+
+#: hexoshi.py:4871
+msgid "New Game"
+msgstr "Nueva Partida"
+
+#: hexoshi.py:4871
+msgid "Options"
+msgstr "Opciones"
+
+#: hexoshi.py:4872
 msgid "Quit"
 msgstr "Salir"
 
-#: hexoshi.py:4846
+#: hexoshi.py:4899
 msgid "-Empty-"
 msgstr "-Vacío-"
 
-#: hexoshi.py:4856 hexoshi.py:4942 hexoshi.py:5051 hexoshi.py:5242
+#: hexoshi.py:4904
+msgid "! Incompatible Save !"
+msgstr "¡ Archivo de guardado incompatible !"
+
+#: hexoshi.py:4914
+msgid "{name}: {hours}:{minutes:02}:{seconds:02}, {completion}%"
+msgstr "{name}: {hours}:{minutes:02}:{seconds:02}, {completion}%"
+
+#: hexoshi.py:4920 hexoshi.py:4998 hexoshi.py:5128 hexoshi.py:5277
 msgid "Back"
 msgstr "Atrás"
 
-#: hexoshi.py:4884
-msgid "Overwrite this save file"
-msgstr "Sobrescribe este archivo de guardado"
-
-#: hexoshi.py:4884
+#: hexoshi.py:4945
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: hexoshi.py:4920
+#: hexoshi.py:4945
+msgid "Overwrite this save file"
+msgstr "Sobrescribe este archivo de guardado"
+
+#: hexoshi.py:4976
 msgid "An error occurred when trying to load the game."
 msgstr "A ocurrido un error al intentar cargar la partida."
 
-#: hexoshi.py:4933
+#: hexoshi.py:4989
 msgid "Fullscreen: {}"
 msgstr "Pantalla completa: {}"
 
-#: hexoshi.py:4933 hexoshi.py:4935 hexoshi.py:4936 hexoshi.py:4937
-#: hexoshi.py:4938 hexoshi.py:4939
-msgid "On"
-msgstr "Activado"
-
-#: hexoshi.py:4933 hexoshi.py:4935 hexoshi.py:4936 hexoshi.py:4937
-#: hexoshi.py:4938 hexoshi.py:4939
+#: hexoshi.py:4989 hexoshi.py:4993 hexoshi.py:4994 hexoshi.py:4995
 msgid "Off"
 msgstr "Desactivado"
 
-#: hexoshi.py:4934
+#: hexoshi.py:4989 hexoshi.py:4993 hexoshi.py:4994 hexoshi.py:4995
+msgid "On"
+msgstr "Activado"
+
+#: hexoshi.py:4990
 msgid "Scale Method: {}"
 msgstr "Método de escala: {}"
 
-#: hexoshi.py:4935
-msgid "Sound: {}"
-msgstr "Sonido: {}"
+#: hexoshi.py:4991
+msgid "Sound Volume: {}%"
+msgstr "Volumen del sonido: {}"
 
-#: hexoshi.py:4936
-msgid "Music: {}"
-msgstr "Música: {}"
+#: hexoshi.py:4992
+msgid "Music Volume: {}%"
+msgstr "Volumen de la música: {}"
 
-#: hexoshi.py:4937
+#: hexoshi.py:4993
 msgid "Stereo: {}"
 msgstr "Estéreo: {}"
 
-#: hexoshi.py:4938
+#: hexoshi.py:4994
 msgid "Show FPS: {}"
 msgstr "Muestra FPS: {}"
 
-#: hexoshi.py:4939
+#: hexoshi.py:4995
 msgid "Metroid-Style Aiming: {}"
 msgstr "Apuntar Estilo Metroid: {}"
 
-#: hexoshi.py:4940
+#: hexoshi.py:4996
 msgid "Joystick Threshold: {}%"
 msgstr "Sensibilidad de la palanca de mando: {}%"
 
-#: hexoshi.py:4941 hexoshi.py:5421 hexoshi.py:5425
+#: hexoshi.py:4997 hexoshi.py:5431 hexoshi.py:5435
 msgid "Configure keyboard"
 msgstr "Configurar teclado"
 
-#: hexoshi.py:4941 hexoshi.py:5422 hexoshi.py:5426
+#: hexoshi.py:4997 hexoshi.py:5432 hexoshi.py:5436
 msgid "Configure joysticks"
 msgstr "Configurar joysticks"
 
-#: hexoshi.py:4942
+#: hexoshi.py:4998
 msgid "Detect joysticks"
 msgstr "Detectar mandos"
 
-#: hexoshi.py:5037 hexoshi.py:5228
-msgid "Player {}"
-msgstr "Jugador {}"
-
-#: hexoshi.py:5038 hexoshi.py:5229
+#: hexoshi.py:5116 hexoshi.py:5265
 msgid "Left: {}"
 msgstr "Izquierda: {}"
 
-#: hexoshi.py:5039 hexoshi.py:5230
+#: hexoshi.py:5117 hexoshi.py:5266
 msgid "Right: {}"
 msgstr "Derecha: {}"
 
-#: hexoshi.py:5040 hexoshi.py:5231
+#: hexoshi.py:5118 hexoshi.py:5267
 msgid "Up: {}"
 msgstr "Arriba: {}"
 
-#: hexoshi.py:5041 hexoshi.py:5232
+#: hexoshi.py:5119 hexoshi.py:5268
 msgid "Down: {}"
 msgstr "Abajo: {}"
 
-#: hexoshi.py:5042 hexoshi.py:5233
+#: hexoshi.py:5120 hexoshi.py:5269
 msgid "Jump: {}"
 msgstr "Saltar: {}"
 
-#: hexoshi.py:5043 hexoshi.py:5234
+#: hexoshi.py:5121 hexoshi.py:5270
 msgid "Shoot: {}"
 msgstr "Disparar: {}"
 
-#: hexoshi.py:5044 hexoshi.py:5235
+#: hexoshi.py:5122 hexoshi.py:5271
+msgid "Secondary: {}"
+msgstr "Secundario: {}"
+
+#: hexoshi.py:5123 hexoshi.py:5272
 msgid "Aim Diagonal: {}"
 msgstr "Apuntar Diagonalmente: {}"
 
-#: hexoshi.py:5045 hexoshi.py:5236
+#: hexoshi.py:5124 hexoshi.py:5273
 msgid "Aim Up: {}"
 msgstr "Apuntar arriba: {}"
 
-#: hexoshi.py:5046 hexoshi.py:5237
+#: hexoshi.py:5125 hexoshi.py:5274
 msgid "Aim Down: {}"
 msgstr "Apuntar abajo: {}"
 
-#: hexoshi.py:5047 hexoshi.py:5238
-msgid "Reset Mode: {}"
-msgstr "Modo de recarga automática: {}"
-
-#: hexoshi.py:5048 hexoshi.py:5239
-msgid "Mode: {}"
-msgstr "Modo: {}"
-
-#: hexoshi.py:5049 hexoshi.py:5240
+#: hexoshi.py:5126 hexoshi.py:5275
 msgid "Pause: {}"
 msgstr "Pausar: {}"
 
-#: hexoshi.py:5050 hexoshi.py:5241
+#: hexoshi.py:5127 hexoshi.py:5276
 msgid "Map: {}"
 msgstr "Mapa: {}"
 
-#: hexoshi.py:5226
+#: hexoshi.py:5146
+msgid ""
+"Press the key you wish to bind to this function, or the Escape key to cancel."
+msgstr ""
+"Pulsa la tecla que deseas asociar a esta función o la tecla de Escape para "
+"cancelar."
+
+#: hexoshi.py:5262
 msgid "None"
 msgstr "Ninguna"
 
-#: hexoshi.py:5421 hexoshi.py:5425
+#: hexoshi.py:5295
+msgid ""
+"Press the joystick button, axis, or hat direction you wish to bind to this "
+"function, or the Escape key to cancel."
+msgstr ""
+"Pulsa el botón de la palanca de mando, eje o el botón direccional que deseas "
+"asignar a esta función, o la tecla de Escape para cancelar."
+
+#: hexoshi.py:5431 hexoshi.py:5435
 msgid "Continue"
 msgstr "Continuar"
 
-#: hexoshi.py:5421 hexoshi.py:5425
+#: hexoshi.py:5431 hexoshi.py:5435
 msgid "View Stats"
 msgstr "Ver Estadísticas"
 
-#: hexoshi.py:5422
+#: hexoshi.py:5432
 msgid "View Map"
 msgstr "Ver Mapa"
 
-#: hexoshi.py:5423 hexoshi.py:5426
+#: hexoshi.py:5433 hexoshi.py:5436
 msgid "Return to Title Screen"
 msgstr "Volver a la Pantalla de Inicio"
 
-#: hexoshi.py:5461
+#: hexoshi.py:5475
 msgid ""
 "Some progress has not been saved. If you leave the game now, this unsaved "
 "progress will be lost. You can save the game by touching any warp pad."
@@ -463,66 +512,77 @@ msgstr ""
 "progreso sin guardar se perderá. Puedes guardar la partida tocando cualquier "
 "teletransportador."
 
-#: hexoshi.py:5470
-#, python-brace-format
+#: hexoshi.py:5493
 msgid ""
 "PLAYER STATISTICS\n"
 "\n"
 "Time spent: {hours}:{minutes:02}:{seconds:02}\n"
-"Artifacts collected: {powerups} ({powerups_percent}%)"
+"Powerups collected: {powerups_col} ({powerups_percent}%)\n"
+"Artifacts collected: {artifacts} ({artifacts_percent}%)\n"
+"Total completion: {completion}%"
 msgstr ""
 "ESTADÍSTICAS DEL JUGADOR\n"
 "\n"
-"Tiempo jugado: {hours}:{minutes:02}:{seconds:02}\n"
-"Objetos recogidos: {powerups} ({powerups_percent}%)"
+"Tiempo invertido: {hours}:{minutes:02}:{seconds:02}\n"
+"Mejoras obtenidas: {powerups_col} ({powerups_percent}%)\n"
+"Objetos obtenidos: {powerups} ({powerups_percent}%)\n"
+"Total completado: {completion}%"
 
-#: hexoshi.py:5524
+#: hexoshi.py:5556
 msgid "Abandon unsaved progress"
 msgstr "Abandona el progreso sin guardar"
 
-#: hexoshi.py:5524
+#: hexoshi.py:5556
 msgid "Return to game"
 msgstr "Volver al juego"
 
-#: hexoshi.py:5821
-msgid "Press the key you wish to toggle, or Escape to cancel."
-msgstr "Pulsa la tecla que deseas utilizar, o Escape para cancelar."
-
-#: hexoshi.py:5859
-msgid ""
-"Press the joystick button, axis, or hat direction you wish to toggle, or the "
-"Escape key to cancel."
-msgstr ""
-"Pulsa el botón de la palanca, eje, o el botón direccional que quieras "
-"utilizar, o la tecla de Escape para cancelar."
-
-#: hexoshi.py:5875
-msgid "Error"
-msgstr "Error"
-
-#: hexoshi.py:5876
-msgid "Ok"
-msgstr "Vale"
-
-#: hexoshi.py:6120
+#: hexoshi.py:6138
 msgid "Generating new map files; this may take some time."
 msgstr "Generando nuevos archivos de mapas; esto podría tomar tiempo."
 
-#: hexoshi.py:6428
-msgid "Initializing game system..."
-msgstr "Inicializando el sistema del juego..."
+#: hexoshi.py:6471
+msgid "Initializing game system…"
+msgstr "Inicializando el sistema del juego…"
 
-#: hexoshi.py:6435
-msgid "Initializing GUI system..."
-msgstr "Inicializando el sistema de GUI..."
+#: hexoshi.py:6478
+msgid "Initializing GUI system…"
+msgstr "Inicializando el sistema de GUI…"
 
-#: hexoshi.py:6445
-msgid "Loading resources..."
-msgstr "Cargando recursos..."
+#: hexoshi.py:6488
+msgid "Loading resources…"
+msgstr "Cargando recursos…"
 
-#: hexoshi.py:6942
-msgid "Starting game..."
-msgstr "Comenzando el juego..."
+#: hexoshi.py:7110
+msgid "Starting game…"
+msgstr "Comenzando el juego…"
+
+#: hexoshi.py:7116
+msgid "Successfully started Hexoshi. Quitting now as -q was passed."
+msgstr "Hexoshi iniciado con éxito. Cerrando ahora al haber pasado -q."
+
+#~ msgid ""
+#~ "LIFE ORB\n"
+#~ "\n"
+#~ "Absorb life force from defeated enemies"
+#~ msgstr ""
+#~ "OJO DE VIDA\n"
+#~ "\n"
+#~ "Absorbe fuerza de vida de enemigos derrotados"
+
+#~ msgid "Player {}"
+#~ msgstr "Jugador {}"
+
+#~ msgid "Reset Mode: {}"
+#~ msgstr "Modo de recarga automática: {}"
+
+#~ msgid "Mode: {}"
+#~ msgstr "Modo: {}"
+
+#~ msgid "Error"
+#~ msgstr "Error"
+
+#~ msgid "Ok"
+#~ msgstr "Vale"
 
 #~ msgid "Diagonal Aim Lock: {}"
 #~ msgstr "Bloqueo al apuntar diagonalmente: {}"

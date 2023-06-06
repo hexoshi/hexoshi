@@ -18,31 +18,31 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.2\n"
-"Report-Msgid-Bugs-To: http://hexoshi.nongnu.org/\n"
-"POT-Creation-Date: 2018-08-18 01:59+0200\n"
-"PO-Revision-Date: 2018-08-18 20:37+0200\n"
-"Language-Team: C <kde-i18n-doc@kde.org>\n"
+"Report-Msgid-Bugs-To: https://hexoshi.github.io/contact.html\n"
+"POT-Creation-Date: 2023-06-05 17:16+0200\n"
+"PO-Revision-Date: 2023-06-07 00:46+0200\n"
+"Last-Translator: Jorge Maldonado Ventura <jorgesumle@freakspot.net>\n"
+"Language-Team: Esperanto\n"
+"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7.1\n"
-"Last-Translator: Jorge Maldonado Ventura <jorgesumle@freakspot.net>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: eo\n"
+"X-Generator: Poedit 3.2.2\n"
 
-#: hexoshi.py:80
+#: hexoshi.py:57
 msgid "Output version information and exit."
 msgstr "Montri programversion kaj eliri."
 
-#: hexoshi.py:83
+#: hexoshi.py:60
 msgid "Print errors directly to stdout rather than saving them in a file."
 msgstr "Printi erarojn direkte al stdout anstataŭ savi ilin en dosiero."
 
-#: hexoshi.py:87
+#: hexoshi.py:64
 msgid "Manually choose a different language to use."
 msgstr "Permane elekti alian lingvon por uzi ĝin."
 
-#: hexoshi.py:90
+#: hexoshi.py:67
 msgid ""
 "Disable delta timing. Causes the game to slow down when it can't run at full "
 "speed instead of becoming choppier."
@@ -50,17 +50,16 @@ msgstr ""
 "Malŝalti delto-timadon. Kaŭzas, ke la ludo malrapidiĝas, kiam ĝi ne povas "
 "plenumi plene rapide anstataŭ aĝi intermita."
 
-#: hexoshi.py:94
+#: hexoshi.py:72
 msgid "Where to load the game data from (Default: \"{}\")"
 msgstr "El kie ŝargi la ludajn datumojn (Defaŭlta: \"{}\")"
 
-#: hexoshi.py:97
+#: hexoshi.py:75
 msgid "The scale factor to use by default in windowed mode (Default: \"{}\")"
 msgstr ""
 "La skala faktoro por uzi defaŭlte dum fenestra reĝado (Defaŭlto: \"{}\")"
 
-#: hexoshi.py:100
-#, python-brace-format
+#: hexoshi.py:79
 msgid ""
 "Specify a scale factor to use in fullscreen mode instead of using dynamic "
 "scaling. This will cause the screen resolution to change, which may improve "
@@ -76,79 +75,91 @@ msgstr ""
 "ajn pli malgranda). Ekzemple, por celi 640x480-distingivon, uzi {ex}. Skala "
 "faktoro de 1 ĉiam estos la plej rapida, sed ĝi rezultos je \"windowboxing\"."
 
-#: hexoshi.py:105
+#: hexoshi.py:91
 msgid "Only show solid colors for backgrounds (uses less RAM)."
 msgstr "Nur montri opakajn kolorojn por fonoj (uzas malpli ĉefmemoron)."
 
-#: hexoshi.py:108
+#: hexoshi.py:94
 msgid "Don't show the player's heads-up display."
 msgstr "Ne montri na la HUD de la ludulo."
 
-#: hexoshi.py:111
+#: hexoshi.py:97
 msgid "Generate the map even if it already exists."
 msgstr "Generi la mapon eĉ se ĝi jam ekzistas."
 
-#: hexoshi.py:114
+#: hexoshi.py:100
 msgid "Save an image of the full map as \"map.png\"."
 msgstr "Konservi imagon de la plena mapo kiel \"map.png\"."
 
-#: hexoshi.py:344
+#: hexoshi.py:103
+msgid ""
+"Write the AI data to the game data directory instead of the user data "
+"directory (for distribution)."
+msgstr ""
+"Skribi la AI-datenojn en la datenara dosierujo anstataŭ en la dosierujo de "
+"uzantaj datenoj (por distribui)."
+
+#: hexoshi.py:108
+msgid "Quit immediately on startup (useful with -m or -s)."
+msgstr "Eliri tuj dum startiĝo (utila kun -m aŭ -s)."
+
+#: hexoshi.py:168
 msgid "Code entry:"
 msgstr "Enigi kodon:"
 
-#: hexoshi.py:364
+#: hexoshi.py:185
 msgid "Invalid cheat code: {}"
 msgstr "Malvalida trompkodo: {}"
 
-#: hexoshi.py:549
+#: hexoshi.py:357
 msgid ""
 "An error occurred in a timeline 'setattr' command:\n"
 "\n"
 "{}"
 msgstr ""
-"Eraro okazis en kronologia 'setattr' komando:\n"
+"Eraro okazis en kronologia 'setattr'-komando:\n"
 "\n"
 "{}"
 
-#: hexoshi.py:592
+#: hexoshi.py:403
 msgid ""
 "An error occurred in a timeline 'exec' command:\n"
 "\n"
 "{}"
 msgstr ""
-"Eraro okazis en kronologia 'exec' komando:\n"
+"Eraro okazis en kronologia 'exec'-komando:\n"
 "\n"
 "{}"
 
-#: hexoshi.py:599
+#: hexoshi.py:411
 msgid ""
 "An error occurred in a timeline 'if' statement:\n"
 "\n"
 "{}"
 msgstr ""
-"Eraro okazis en kronologia 'if' komando:\n"
+"Eraro okazis en kronologia 'if'-komando:\n"
 "\n"
 "{}"
 
-#: hexoshi.py:619
+#: hexoshi.py:432
 msgid ""
 "An error occurred in a timeline 'while' statement:\n"
 "\n"
 "{}"
 msgstr ""
-"Eraro okazis en kronologia 'while' komando:\n"
+"Eraro okazis en kronologia 'while'-komando:\n"
 "\n"
 "{}"
 
-#: hexoshi.py:679
+#: hexoshi.py:493
 msgid "Loading data..."
-msgstr "Ŝarĝata datumojn..."
+msgstr "Ŝarĝante datenojn..."
 
-#: hexoshi.py:692
-msgid "Loading \"{}\"..."
-msgstr "Ŝarĝata \"{}\"..."
+#: hexoshi.py:508
+msgid "Loading \"{}\"…"
+msgstr "Ŝarĝante \"{}\"…"
 
-#: hexoshi.py:698
+#: hexoshi.py:514
 msgid ""
 "An error occurred when trying to load the level:\n"
 "\n"
@@ -158,78 +169,97 @@ msgstr ""
 "\n"
 "{}"
 
-#: hexoshi.py:1268
-msgid "Press the Menu button to skip..."
-msgstr "Preni la Menuo-klavon por daŭrigi..."
+#: hexoshi.py:1122
+msgid "Press the Menu button to skip…"
+msgstr "Premu la Menuo-klavon por daŭrigi…"
 
-#: hexoshi.py:1270
+#: hexoshi.py:1124
 msgid "Cinematic mode enabled"
-msgstr "Kina ago ŝaltita"
+msgstr "Kina ago ebligita"
 
-#: hexoshi.py:4074
+#: hexoshi.py:4092
 msgid ""
 "MACGUFFIN\n"
 "\n"
 "This is the end of the demo! Thank you for playing Hexoshi version {}."
 msgstr ""
-"MACGUFFIN\n"
+"Makgufino\n"
 "\n"
-"Ĉi tio estas la fino de la demonstracio! Dankon por ludi je Hexoshi versione "
-"{}."
+"Ĉi tio estas la fino de la demonstracio! Dankon por ludi Hexoshi, versio {}."
 
-#: hexoshi.py:4075
+#: hexoshi.py:4095
 msgid ""
 "Don't worry; the full game will not end this way. This is just a placeholder "
-"until the game is completed. I hope you enjoyed what you have seen so far, "
-"and I hope you enjoy the final game when it is finished! :)"
+"until the game is completed. We hope you enjoyed what you have seen so far, "
+"and we hope you enjoy the final game when it is finished!"
 msgstr ""
-"Ne zorgu; la plena ludo ne finos tiamaniere. Tio estas nur lokokupo ĝis la "
-"ludo estas finita. Mi esperas, ke vi ŝatis, kion vi jam vidis, kaj mi "
-"esperas, ke vi ĝoju la finan ludon, kiam ĝi estas finita! :)"
+"Ne zorgu; la plena ludo ne finos tiamaniere. Ĉi tio estas nur provizora "
+"versio ĝis la ludo estas finita. Ni esperas, ke vi ŝatis, kion vi vidis ĝis "
+"nun, kaj ni esperas, ke vi ĝoju la finan ludon, kiam ĝi estas finita!"
 
-#: hexoshi.py:4084
+#: hexoshi.py:4109
 msgid ""
-"USELESS ARTIFACT\n"
+"USELESS OBJECT\n"
 "\n"
 "It doesn't seem to do anything"
 msgstr ""
-"NEUTILA ARTEFAKTO\n"
+"NEUTILAĴO\n"
 "\n"
-"Ŝajnas, ke ĝi ne faras ion"
+"Ŝajnas, ke ĝi faras nenion"
 
-#: hexoshi.py:4122
+#: hexoshi.py:4162
+msgid ""
+"HEXOSHI ARTIFACT\n"
+"\n"
+"{amt}/{total} ({pct}%)\n"
+"\n"
+"Fire rate increased"
+msgstr ""
+"HEXOSHI-ARTEFAKTO\n"
+"\n"
+"{amt}/{total} ({pct}%)\n"
+"\n"
+"Pafofteco pliigita"
+
+#: hexoshi.py:4176
 msgid ""
 "E-TANK\n"
 "\n"
 "Extra energy capacity acquired"
 msgstr ""
-"E-TANKO\n"
+"ENERGIUJO\n"
 "\n"
-"Ekstra energian enhavecon akirita"
+"Kroma energia enhaveco akirita"
 
-#: hexoshi.py:4132
+#: hexoshi.py:4187
 msgid ""
-"LIFE ORB\n"
+"HEX ORB\n"
 "\n"
-"Absorb life force from defeated enemies"
+"Shoot bullets by pressing \"shoot\"\n"
+"\n"
+"Collect Hexoshi Artifacts for faster fire rate"
 msgstr ""
-"VIVA SFERO\n"
+"HEKSA SFERO\n"
 "\n"
-"Ensorbu vivan forton el malvenkitaj malamikoj"
+"Pafu kuglojn premante \"pafi\"\n"
+"\n"
+"Kolektu Hexoshi-Artifaktojn por pli da pafofteco"
 
-#: hexoshi.py:4147
+#: hexoshi.py:4204
 msgid ""
 "HANDHELD MAP\n"
 "\n"
-"See mini-map in HUD; see full map by pressing \"map\" button or from pause "
-"menu"
+"See mini-map in HUD\n"
+"\n"
+"See full map by pressing \"map\" or via pause menu"
 msgstr ""
 "MANPORTEBLA MAPO\n"
 "\n"
-"Vidi mapeton en HUB; vidi plenan mapon prenante \"mapan\" klavon aŭ en paŭza "
-"menuo"
+"Vidu mapeton en HUD\n"
+"\n"
+"Vidu plenan mapon premante \"mapo\" aŭ per paŭza menuo"
 
-#: hexoshi.py:4161
+#: hexoshi.py:4221
 msgid ""
 "MAP DISK\n"
 "\n"
@@ -237,30 +267,35 @@ msgid ""
 msgstr ""
 "MAPA DISKO\n"
 "\n"
-"Arean mapdatumojn ŝargitaj"
+"Map-datenoj de la regiono ŝargitaj"
 
-#: hexoshi.py:4208
+#: hexoshi.py:4266
 msgid ""
 "ATOMIC COMPRESSOR\n"
 "\n"
-"Press \"down\" to compress into a ball, then press \"up\" to uncompress"
-msgstr ""
-"ATOMA KUMPREMILO\n"
+"To compress: press \"down\" while crouching, or select with \"mode\" and "
+"then press \"shoot\"\n"
 "\n"
-"Prenu \"malsupren\" por kunpremi iĝante bulo, poste prenu \"supren\" por "
-"malkunpremi"
+"To uncompress: press \"up\""
+msgstr ""
+"ATOMA KUNPREMILO\n"
+"\n"
+"Por kunpremi: premu \"malsupren\" dum vi kaŭras, aŭ elektu per \"reĝimo\" "
+"kaj poste premu \"pafi\"\n"
+"\n"
+"Por malkunpreni: premu \"supren\""
 
-#: hexoshi.py:4222
+#: hexoshi.py:4282
 msgid ""
 "MONKEY BOOTS\n"
 "\n"
 "Press \"jump\" while touching a wall to wall-jump"
 msgstr ""
-"SIMIAJ BOTOJ\n"
+"BOTOJ DE SIMIO\n"
 "\n"
-"Prenu \"salti\" dum tuŝas muron por muro-salti"
+"Premu \"salti\" dum vi tuŝas muron por muro-salti"
 
-#: hexoshi.py:4254
+#: hexoshi.py:4314
 msgid ""
 "HEDGEHOG HORMONE\n"
 "\n"
@@ -268,254 +303,278 @@ msgid ""
 msgstr ""
 "ERINACA HORMONO\n"
 "\n"
-"Prenu \"pafi\" dum en la formo de bulo por kreskigi pikaĵo"
+"Premu \"pafi\" dum en la formo de bulo por kreskigi pikilojn"
 
-#: hexoshi.py:4342
+#: hexoshi.py:4400
 msgid ""
 "WARP PAD\n"
 "\n"
 "Progress saved. Press \"up\" to teleport."
 msgstr ""
-"TELEPORTULO\n"
+"TELEPORTILO\n"
 "\n"
-"Konservita progreson. Prenu \"supren\" por teleporti."
+"Progreso konservita. Premu \"supren\" por teleportiĝi."
 
-#: hexoshi.py:4815
-msgid "New Game"
-msgstr "Novan Ludon"
+#: hexoshi.py:4871
+msgid "Credits"
+msgstr "Atribuoj"
 
-#: hexoshi.py:4815
+#: hexoshi.py:4871
 msgid "Load Game"
 msgstr "Ŝargi Ludon"
 
-#: hexoshi.py:4815
+#: hexoshi.py:4871
+msgid "New Game"
+msgstr "Novan Ludon"
+
+#: hexoshi.py:4871
 msgid "Options"
 msgstr "Agordoj"
 
-#: hexoshi.py:4815
-msgid "Credits"
-msgstr "Agnoskoj"
-
-#: hexoshi.py:4816
+#: hexoshi.py:4872
 msgid "Quit"
 msgstr "Eliri"
 
-#: hexoshi.py:4846
+#: hexoshi.py:4899
 msgid "-Empty-"
 msgstr "-Malplena-"
 
-#: hexoshi.py:4856 hexoshi.py:4942 hexoshi.py:5051 hexoshi.py:5242
+#: hexoshi.py:4904
+msgid "! Incompatible Save !"
+msgstr "! Nekongrua konservaĵo !"
+
+#: hexoshi.py:4914
+msgid "{name}: {hours}:{minutes:02}:{seconds:02}, {completion}%"
+msgstr "{name}: {hours}:{minutes:02}:{seconds:02}, {completion}%"
+
+#: hexoshi.py:4920 hexoshi.py:4998 hexoshi.py:5128 hexoshi.py:5277
 msgid "Back"
 msgstr "Reen"
 
-#: hexoshi.py:4884
-msgid "Overwrite this save file"
-msgstr "Anstataŭigi ĉi tiun dosieron"
-
-#: hexoshi.py:4884
+#: hexoshi.py:4945
 msgid "Cancel"
 msgstr "Nuligi"
 
-#: hexoshi.py:4920
+#: hexoshi.py:4945
+msgid "Overwrite this save file"
+msgstr "Anstataŭigi ĉi tiun dosieron"
+
+#: hexoshi.py:4976
 msgid "An error occurred when trying to load the game."
 msgstr "Eraro okazis dum la ŝargo de la ludo."
 
-#: hexoshi.py:4933
+#: hexoshi.py:4989
 msgid "Fullscreen: {}"
 msgstr "Plena ekraro: {}"
 
-#: hexoshi.py:4933 hexoshi.py:4935 hexoshi.py:4936 hexoshi.py:4937
-#: hexoshi.py:4938 hexoshi.py:4939
-msgid "On"
-msgstr "Ek"
-
-#: hexoshi.py:4933 hexoshi.py:4935 hexoshi.py:4936 hexoshi.py:4937
-#: hexoshi.py:4938 hexoshi.py:4939
+#: hexoshi.py:4989 hexoshi.py:4993 hexoshi.py:4994 hexoshi.py:4995
 msgid "Off"
 msgstr "For"
 
-#: hexoshi.py:4934
+#: hexoshi.py:4989 hexoshi.py:4993 hexoshi.py:4994 hexoshi.py:4995
+msgid "On"
+msgstr "Ek"
+
+#: hexoshi.py:4990
 msgid "Scale Method: {}"
 msgstr "Skalo-metedo: {}"
 
-#: hexoshi.py:4935
-msgid "Sound: {}"
-msgstr "Sono: {}"
+#: hexoshi.py:4991
+msgid "Sound Volume: {}%"
+msgstr "Sona laŭteco: {}"
 
-#: hexoshi.py:4936
-msgid "Music: {}"
-msgstr "Muziko: {}"
+#: hexoshi.py:4992
+msgid "Music Volume: {}%"
+msgstr "Muzika laŭteco: {}"
 
-#: hexoshi.py:4937
+#: hexoshi.py:4993
 msgid "Stereo: {}"
 msgstr "Stereofonie: {}"
 
-#: hexoshi.py:4938
+#: hexoshi.py:4994
 msgid "Show FPS: {}"
 msgstr "Montri FPS: {}"
 
-#: hexoshi.py:4939
+#: hexoshi.py:4995
 msgid "Metroid-Style Aiming: {}"
 msgstr "Metroid-Maniero por celi: {}"
 
-#: hexoshi.py:4940
+#: hexoshi.py:4996
 msgid "Joystick Threshold: {}%"
 msgstr "Stirstanga Sojlo: {}%"
 
-#: hexoshi.py:4941 hexoshi.py:5421 hexoshi.py:5425
+#: hexoshi.py:4997 hexoshi.py:5431 hexoshi.py:5435
 msgid "Configure keyboard"
 msgstr "Konfiguri klavaron"
 
-#: hexoshi.py:4941 hexoshi.py:5422 hexoshi.py:5426
+#: hexoshi.py:4997 hexoshi.py:5432 hexoshi.py:5436
 msgid "Configure joysticks"
 msgstr "Konfiguri stirstangojn"
 
-#: hexoshi.py:4942
+#: hexoshi.py:4998
 msgid "Detect joysticks"
 msgstr "Detekti stirtangojn"
 
-#: hexoshi.py:5037 hexoshi.py:5228
-msgid "Player {}"
-msgstr "Ludulo {}"
-
-#: hexoshi.py:5038 hexoshi.py:5229
+#: hexoshi.py:5116 hexoshi.py:5265
 msgid "Left: {}"
 msgstr "Maldekstren: {}"
 
-#: hexoshi.py:5039 hexoshi.py:5230
+#: hexoshi.py:5117 hexoshi.py:5266
 msgid "Right: {}"
 msgstr "Dekstren: {}"
 
-#: hexoshi.py:5040 hexoshi.py:5231
+#: hexoshi.py:5118 hexoshi.py:5267
 msgid "Up: {}"
 msgstr "Supren: {}"
 
-#: hexoshi.py:5041 hexoshi.py:5232
+#: hexoshi.py:5119 hexoshi.py:5268
 msgid "Down: {}"
 msgstr "Malsupren: {}"
 
-#: hexoshi.py:5042 hexoshi.py:5233
+#: hexoshi.py:5120 hexoshi.py:5269
 msgid "Jump: {}"
 msgstr "Salti: {}"
 
-#: hexoshi.py:5043 hexoshi.py:5234
+#: hexoshi.py:5121 hexoshi.py:5270
 msgid "Shoot: {}"
 msgstr "Pafi: {}"
 
-#: hexoshi.py:5044 hexoshi.py:5235
+#: hexoshi.py:5122 hexoshi.py:5271
+msgid "Secondary: {}"
+msgstr "Akcesora: {}"
+
+#: hexoshi.py:5123 hexoshi.py:5272
 msgid "Aim Diagonal: {}"
 msgstr "Celi Diagonale: {}"
 
-#: hexoshi.py:5045 hexoshi.py:5236
+#: hexoshi.py:5124 hexoshi.py:5273
 msgid "Aim Up: {}"
 msgstr "Celi supren: {}"
 
-#: hexoshi.py:5046 hexoshi.py:5237
+#: hexoshi.py:5125 hexoshi.py:5274
 msgid "Aim Down: {}"
 msgstr "Celi Malsupren: {}"
 
-#: hexoshi.py:5047 hexoshi.py:5238
-msgid "Reset Mode: {}"
-msgstr "Reŝarga Reĝimo: {}"
-
-#: hexoshi.py:5048 hexoshi.py:5239
-msgid "Mode: {}"
-msgstr "Reĝimo: {}"
-
-#: hexoshi.py:5049 hexoshi.py:5240
+#: hexoshi.py:5126 hexoshi.py:5275
 msgid "Pause: {}"
 msgstr "Paŭzo: {}"
 
-#: hexoshi.py:5050 hexoshi.py:5241
+#: hexoshi.py:5127 hexoshi.py:5276
 msgid "Map: {}"
 msgstr "Mapo: {}"
 
-#: hexoshi.py:5226
+#: hexoshi.py:5146
+msgid ""
+"Press the key you wish to bind to this function, or the Escape key to cancel."
+msgstr ""
+"Premu la klavon, kiun vi deziras ligi al ĉi tiu funkcio, aŭ la eskapan "
+"klavon por nuligi."
+
+#: hexoshi.py:5262
 msgid "None"
 msgstr "Nenio"
 
-#: hexoshi.py:5421 hexoshi.py:5425
+#: hexoshi.py:5295
+msgid ""
+"Press the joystick button, axis, or hat direction you wish to bind to this "
+"function, or the Escape key to cancel."
+msgstr ""
+"Premu la stirstangan butonon, akson aŭ ĉapelan direkton, kiun vi deziras "
+"ligi al ĉi tiu funkcio, aŭ la Eskapan klavon por nuligi."
+
+#: hexoshi.py:5431 hexoshi.py:5435
 msgid "Continue"
 msgstr "Daŭrigi"
 
-#: hexoshi.py:5421 hexoshi.py:5425
+#: hexoshi.py:5431 hexoshi.py:5435
 msgid "View Stats"
 msgstr "Vidi Statistikojn"
 
-#: hexoshi.py:5422
+#: hexoshi.py:5432
 msgid "View Map"
 msgstr "Vidi Mapon"
 
-#: hexoshi.py:5423 hexoshi.py:5426
+#: hexoshi.py:5433 hexoshi.py:5436
 msgid "Return to Title Screen"
 msgstr "Reveni al Titola Ekrano"
 
-#: hexoshi.py:5461
+#: hexoshi.py:5475
 msgid ""
 "Some progress has not been saved. If you leave the game now, this unsaved "
 "progress will be lost. You can save the game by touching any warp pad."
 msgstr ""
 "Iom da progreso ne estis konservita. Se vi foriras la ludon nun, ĉi tiu "
-"malkonservita progreso perdiĝi. Vi povas konservi la ludon prenante ajn "
+"malkonservita progreso perdiĝos. Vi povas konservi la ludon premante ajn "
 "teleportulon."
 
-#: hexoshi.py:5470
-#, python-brace-format
+#: hexoshi.py:5493
 msgid ""
 "PLAYER STATISTICS\n"
 "\n"
 "Time spent: {hours}:{minutes:02}:{seconds:02}\n"
-"Artifacts collected: {powerups} ({powerups_percent}%)"
+"Powerups collected: {powerups_col} ({powerups_percent}%)\n"
+"Artifacts collected: {artifacts} ({artifacts_percent}%)\n"
+"Total completion: {completion}%"
 msgstr ""
-"LUDULAJ STATISTIKOJ\n"
+"STATISTIKOJ DE LUDULO\n"
 "\n"
-"Timo uzita: {hours}:{minutes:02}:{seconds:02}\n"
-"Amasigitaj artefaktoj: {powerups} ({powerups_percent}%"
+"Tempo uzita: {hours}:{minutes:02}:{seconds:02}\n"
+"Plibonaĵoj kolektitaj: {powerups_col} ({powerups_percent}%)\n"
+"Artefaktoj kolektitaj : {artifacts} ({artifacts_percent}%)\n"
+"Entuta plenumo: {completion}%"
 
-#: hexoshi.py:5524
+#: hexoshi.py:5556
 msgid "Abandon unsaved progress"
 msgstr "Forlasi malkonservitan progreson"
 
-#: hexoshi.py:5524
+#: hexoshi.py:5556
 msgid "Return to game"
-msgstr "Reen al ludo"
+msgstr "Reen al la ludo"
 
-#: hexoshi.py:5821
-msgid "Press the key you wish to toggle, or Escape to cancel."
-msgstr "Premu la klavon, kiu vi deziras baskuligi, aŭ Eskapo por nuligi."
-
-#: hexoshi.py:5859
-msgid ""
-"Press the joystick button, axis, or hat direction you wish to toggle, or the "
-"Escape key to cancel."
-msgstr ""
-"Premu la stirstangan klavon, akson aŭ ĉapela direkto, kiu vi deziras "
-"baskuligi, aŭ la Eskapa-klavo por nuligi."
-
-#: hexoshi.py:5875
-msgid "Error"
-msgstr "Eraro"
-
-#: hexoshi.py:5876
-msgid "Ok"
-msgstr "Bone"
-
-#: hexoshi.py:6120
+#: hexoshi.py:6138
 msgid "Generating new map files; this may take some time."
 msgstr "Generata novajn mapdosierojn; tio povas daŭri iom da tempo."
 
-#: hexoshi.py:6428
-msgid "Initializing game system..."
-msgstr "Pravalorizata ludan sistemon..."
+#: hexoshi.py:6471
+msgid "Initializing game system…"
+msgstr "Pravalorizante ludan sistemon…"
 
-#: hexoshi.py:6435
-msgid "Initializing GUI system..."
-msgstr "Pravalorizata grafikan interfacan sistemon..."
+#: hexoshi.py:6478
+msgid "Initializing GUI system…"
+msgstr "Pravalorizante grafikan interfacan sistemon…"
 
-#: hexoshi.py:6445
-msgid "Loading resources..."
-msgstr "Ŝarĝata materialojn..."
+#: hexoshi.py:6488
+msgid "Loading resources…"
+msgstr "Ŝarĝante resursojn…"
 
-#: hexoshi.py:6942
-msgid "Starting game..."
-msgstr "Komenzata ludo..."
+#: hexoshi.py:7110
+msgid "Starting game…"
+msgstr "Komencante ludon…"
+
+#: hexoshi.py:7116
+msgid "Successfully started Hexoshi. Quitting now as -q was passed."
+msgstr "Oni sukcese komencis Hexoshi. Nun eliros, ĉar -q estis premita."
+
+#~ msgid ""
+#~ "LIFE ORB\n"
+#~ "\n"
+#~ "Absorb life force from defeated enemies"
+#~ msgstr ""
+#~ "VIVA SFERO\n"
+#~ "\n"
+#~ "Ensorbu vivan forton el malvenkitaj malamikoj"
+
+#~ msgid "Player {}"
+#~ msgstr "Ludulo {}"
+
+#~ msgid "Reset Mode: {}"
+#~ msgstr "Reŝarga Reĝimo: {}"
+
+#~ msgid "Mode: {}"
+#~ msgstr "Reĝimo: {}"
+
+#~ msgid "Error"
+#~ msgstr "Eraro"
+
+#~ msgid "Ok"
+#~ msgstr "Bone"
